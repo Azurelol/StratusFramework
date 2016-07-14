@@ -1,7 +1,5 @@
 # StratusFramework
-A gameplay scripting framework for the Unity Engine, written in C#.
-
-In this repository you will find the source code to the Stratus Framework, an Unity-focused framework for facilitating the composition of gameplay code.
+In this repository you will find the source code to the Stratus Framework, a C# gameplay scripting framework for facilitating the composition of gameplay code for the Unity Engine.
 Its major tenet is to provide useful features with an easy to use interface while removing of as much boilerplate code from your scripts as posssible.
 
 I consider this framework very much a work in progress. Even so I find its core features, the Events and Actions systems to be rather robust, and can be used as is. The interface for them won't be changing in the future, as any
