@@ -21,7 +21,7 @@ Examples:
 I have provided sample scripts to display the functionality in the samples folder. To test them just add them to a component in Unity and read the console's output to inspect the sequence of calls.
 Some snippets of the code within:
 
-##Events:
+#Events:
 
 ```C#
 
@@ -42,6 +42,32 @@ Some snippets of the code within:
     Trace.Script("Event dispatched", this);
     this.gameObject.Dispatch<SampleEvent>(eventObj);
   }    
+```
+
+#Actions:
+
+```C#
+
+    public float SampleFloat = 5;
+
+    void ConstructActionSequence() 
+    {
+      // Construct the action sequence, adding it onto this GameObject's list of active actions
+      var seq = Actions.Sequence(this);
+      // First action we will create is a delay, which is a *blocking* action
+      Actions.Delay(seq, 2.0f);      
+      // Second, we will interpolate the value of the field 'SampleFloat' from its initial (5) to 25 over 2 seconds using a specified easing (curve) algorithm
+      Actions.Property(seq, ()=>this.SampleFloat, 25, 2.0f, Ease.Linear);
+      // Third and last, we will invoke a specified function!
+      Actions.Call(seq, this.Boop);
+    }
+    
+    void Boop() 
+    {
+      Trace.Script("Boop!");
+    }
+    
+
 ```
 
 ---
