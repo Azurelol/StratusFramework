@@ -7,7 +7,6 @@ I consider this framework is still very much a work in progress. Even so I find 
 
 ---
 Features
----
 - Events: A custom event system using delegates that greatly simplifies the use of callbacks in code, for the implementation of code using the Observer pattern.
 - Spaces: Working in tandem with the event system, a Space is an object containing all the GameObjects in a given scene. In practice the Space becomes a proxy which provides a common point for "scene-wide" events to be sent to.
 - Actions: An Action list library with a very simplified interface for quickly construction action sets for interpolating properties, delayed function invocations, etc.
@@ -16,12 +15,11 @@ Features
 
 ---
 Examples:
----
 
 I have provided sample scripts to display the functionality in the samples folder. To test them just add them to a component in Unity and read the console's output to inspect the sequence of calls.
 Some snippets of the code within:
 
-######Events
+##Events
 
 ```C#
 
@@ -44,7 +42,7 @@ Some snippets of the code within:
   }    
 ```
 
-######Actions
+##Actions
 
 ```C#
 
@@ -56,7 +54,9 @@ Some snippets of the code within:
       var seq = Actions.Sequence(this);
       // First action we will create is a delay, which is a *blocking* action
       Actions.Delay(seq, 2.0f);      
-      // Second, we will interpolate the value of the field 'SampleFloat' from its initial (5) to 25 over 2 seconds using a specified easing (curve) algorithm
+      // Second, we will interpolate the value of the field 'SampleFloat' from its initial value (5) 
+      // to a specified value (25) over 2 seconds using a specified easing (curve) algorithm
+      //
       Actions.Property(seq, ()=>this.SampleFloat, 25, 2.0f, Ease.Linear);
       // Third and last, we will invoke a specified function!
       Actions.Call(seq, this.Boop);
