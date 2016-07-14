@@ -79,4 +79,4 @@ I have provided the Unity package for importing the framework into your Unity pr
 ---
 ##Contact
 
-As I am still but a student, I appreciate any and all constructive feedback on how to improve the framework. Shoot me an [email](ckpsm@live.com) if need be.
+If you discover any bugs or have any and all constructive feedback on how to improve the framework, feel free to contact me.
