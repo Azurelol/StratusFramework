@@ -3,7 +3,9 @@ A framework of extensions to the Unity Engine, adding new functionality to it.
 
 In this repository you will find the source code to the Stratus Framework, an Unity-focused framework for facilitating the composition of gameplay code.
 Its major tenet is to provide useful features with an easy to use interface while removing of as much boilerplate code from your scripts as posssible.
-I consider this framework is still very much a work in progress. Even so I find its core features, the Events and Actions systems to be rather robust, and can be used as is. The interface for them won't be changing in the future.
+
+I consider this framework very much a work in progress. Even so I find its core features, the Events and Actions systems to be rather robust, and can be used as is. The interface for them won't be changing in the future, as any
+future work on them will be adding features and fixing any discovered issues.
 
 ---
 ##Features
@@ -56,7 +58,6 @@ Some snippets of the code within:
       Actions.Delay(seq, 2.0f);      
       // Second, we will interpolate the value of the field 'SampleFloat' from its initial value (5) 
       // to a specified value (25) over 2 seconds using a specified easing (curve) algorithm
-      //
       Actions.Property(seq, ()=>this.SampleFloat, 25, 2.0f, Ease.Linear);
       // Third and last, we will invoke a specified function!
       Actions.Call(seq, this.Boop);
