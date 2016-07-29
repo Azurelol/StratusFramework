@@ -23,6 +23,11 @@ Some snippets of the code within:
 
 ```C#
 
+  public class SampleEvent : Stratus.Event 
+  {
+    public int Number;
+  }
+
   public void OnSampleEvent(SampleEvent eventObj)
   {
     Trace.Script("Event received!", this);
