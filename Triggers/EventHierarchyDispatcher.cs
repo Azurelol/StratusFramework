@@ -9,7 +9,7 @@ using UnityEngine;
 using Stratus;
 using System.Collections.Generic;
 
-namespace Prototype
+namespace Stratus
 {
   /**************************************************************************/
   /*!
