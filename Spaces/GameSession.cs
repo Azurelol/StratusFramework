@@ -20,29 +20,33 @@ namespace Stratus
   /**************************************************************************/
   public class GameSession : Singleton<GameSession>
   {
-    protected override string getInstanceName() { return "GameSession"; }
+    protected override string Name
+    {
+      get { return "GameSession"; }
+    }
     List<Space> ActiveSpaces = new List<Space>();
     Space DefaultSpace;
     public string DefaultScene;
     public bool Load = false;
+    public static Scene Scene;    
 
     /**************************************************************************/
     /*!
     @brief  Initializes the Script.
     */
     /**************************************************************************/
-    protected override void Initialize()
+    protected override void OnAwake()
     {
       // If the GameSession is not already on its own scene, do so
-      if (this.gameObject.scene.name != getInstanceName())
+      if (this.gameObject.scene.name != Name)
       {
-        var sceneName = getInstanceName();
+        var sceneName = Name;
         SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-        var scene = SceneManager.GetSceneByName(sceneName);
-        SceneManager.MoveGameObjectToScene(this.gameObject, scene);
-        Trace.Script("Created the GameSession scene!");
+        Scene = SceneManager.GetSceneByName(sceneName);
+        SceneManager.MoveGameObjectToScene(this.gameObject, Scene);
+        //Trace.Script("Created the GameSession scene!");
       }
-
+      
       if (this.Load)
         this.LoadDefaultScene();
       DontDestroyOnLoad(this);
@@ -99,11 +103,7 @@ namespace Stratus
       if (!Instance) Instantiate();
       Stratus.Events.Dispatch<T>(Instance.gameObject, eventObj);
     }
-
-    public void Check()
-    {
-
-    }
+    
 
   }
 

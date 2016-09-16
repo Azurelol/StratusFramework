@@ -24,32 +24,40 @@ namespace Stratus {
 
     static Dictionary<Scene, Space> SceneMap = new Dictionary<Scene, Space>();
     static public bool DoLogicUpdate = false;
-    Scene CurrentScene;
-    List<GameObject> ActiveGameObjects = new List<GameObject>();
+    Scene Scene;
+    //List<GameObject> ActiveGameObjects = new List<GameObject>();
+    static bool Tracing = false;
+    public string SceneName;
 
     //------------------------------------------------------------------------/
     // Instancing    
     //------------------------------------------------------------------------/
-    private static Space ActiveSpace;
+    private static Space DefaultSpace;
     public static Space Instance {
       get {
-        if (!ActiveSpace) {
+        if (!DefaultSpace) {
           Instantiate();
         }
-        return ActiveSpace;
+        return DefaultSpace;
       }
     }
 
     static void Instantiate()
     {
-      ActiveSpace = FindObjectOfType(typeof(Space)) as Space;
-      if (!ActiveSpace)
+      DefaultSpace = FindObjectOfType(typeof(Space)) as Space;
+      if (!DefaultSpace)
       {
-        ActiveSpace = Create("Space");
+        DefaultSpace = Create("DefaultSpace");
       }
-
-      // If instantiated onto a scene, link that scene to this Space
-      SceneMap.Add(ActiveSpace.gameObject.scene, ActiveSpace);
+    }
+    
+    // @TODO better way?
+    void OnDestroy()
+    {
+      if (DefaultSpace == this)
+      {
+        DefaultSpace = null;
+      }
     }
 
     /**************************************************************************/
@@ -61,8 +69,8 @@ namespace Stratus {
 
       // Check if the GameSession has been instantiated
       GameSession.Instance.Check();
-      ActiveSpace = this;
-      DontDestroyOnLoad(this);
+      //DefaultSpace = this;
+      //DontDestroyOnLoad(this);
     }
     //------------------------------------------------------------------------/        
     /**************************************************************************/
@@ -94,17 +102,16 @@ namespace Stratus {
       Stratus.Events.Connect(Instance.gameObject, func);
     }
 
-    /**************************************************************************/
-    /*!
-    @brief Dispatches an event onto the space.
-    @param T The event type.
-    @param eventObj The event object.
-    */
-    /**************************************************************************/
-    public void Dispatch<T>(T eventObj) where T : Stratus.Event
+    /// <summary>
+    /// Dispatches an event onto the space.
+    /// </summary>
+    /// <typeparam name="T">The event class.</typeparam>
+    /// <param name="eventObj">The event object.</param>
+    /// <param name="nextFrame">Whether it should be dispatched next frame.</param>
+    public void Dispatch<T>(T eventObj, bool nextFrame = false) where T : Stratus.Event
     {
       if (!Instance) Instantiate();
-      Stratus.Events.Dispatch<T>(Instance.gameObject, eventObj);
+      Stratus.Events.Dispatch<T>(Instance.gameObject, eventObj, nextFrame);
       //Instance.gameObject.Dispatch<T>(eventObj);
     }
 
@@ -117,22 +124,51 @@ namespace Stratus {
     public void LoadScene(string sceneName)
     {
       // Remove the current key from the map
-      SceneMap.Remove(this.CurrentScene);
-      // Unload the current scene
-      Trace.Script("Unloading current scene");
-      var gs = SceneManager.GetSceneByName(GameSession.Instance.gameObject.scene.name);
-      //var gs = SceneManager.GetSceneByName("GameSession");
-      SceneManager.MoveGameObjectToScene(this.gameObject, gs);
-      SceneManager.UnloadScene(this.CurrentScene.buildIndex);
-      // Migrate the space to the next scene?
-      Trace.Script("Loading '" + sceneName + "'");
+      SceneMap.Remove(this.Scene);
+
+      LoadNormally(sceneName);
+      return;
+    }
+
+    void LoadNewAndCool(string sceneName)
+    {
+      // Delete all of the space's children
+      foreach (var child in this.gameObject.Children())
+      {
+        Destroy(child);
+      }
+
+      // Load the scene
+
+
+      // 1. Move the space to the gamesession scene
+      //if (Tracing) Trace.Script("Moving space to GameSession temporarily");   
+      //SceneManager.MoveGameObjectToScene(this.gameObject, GameSession.Scene);
+
+      // 2. Unload the current scene
+      if (Tracing) Trace.Script("Unloading " + this.Scene.name);
+      if (!SceneManager.UnloadScene(this.Scene.name))
+      {
+        if (Tracing) Trace.Script("Failed to unload current scene!");
+      }
+
+      // Migrate the space to tdahe next scene?
+      //Trace.Script("Loading '" + sceneName + "'");
       SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
       var nextScene = SceneManager.GetSceneByName(sceneName);
+
+      if (Tracing) Trace.Script("Moving space to new scene");
       SceneManager.MoveGameObjectToScene(this.gameObject, nextScene);
-      // Set the next scene as the current scene      
-      this.CurrentScene = nextScene;
+      // Set the next scene as the scene for this space
+      this.Scene = nextScene;
+      SceneManager.SetActiveScene(this.Scene);
       // Update the map
-      SceneMap.Add(this.CurrentScene, this);
+      SceneMap.Add(this.Scene, this);
+    }
+
+    void LoadNormally(string sceneName)
+    {
+      SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
     /**************************************************************************/
@@ -141,23 +177,51 @@ namespace Stratus {
     @param name The name of the space.
     */
     /**************************************************************************/
-    public static Space Create(string name)
+    public static Space Create(string name = "Space")
     {
       var obj = new GameObject();
       obj.name = name;
+      if (Tracing) Trace.Script(name);
+
+      // Construct the space component
       var space = obj.AddComponent<Space>();
+      space.Scene = space.gameObject.scene;
+      space.SceneName = space.Scene.name;
+      //if (Tracing) Trace.Script(name + " belongs to the scene " + space.Scene.name);
+      // Add it to the static dictionary of scenes/spaces
+      SceneMap.Add(space.Scene, space);
+
+      space.transform.parent = GameSession.Instance.transform;
+
+      // If there is no default space
+      if (!DefaultSpace)
+        DefaultSpace = space;
+
       return space;
     }
+
     public static Space getSpace(Scene scene)
     {
       // If the Space is already present...
-      if (SceneMap.ContainsKey(scene))
+      if (SceneMap.ContainsKey(scene)) {
+        //if (Tracing) Trace.Script("Found the space for the scene: " + scene.name);
         return SceneMap[scene];
+      }
 
       // If not, instantiate it
-      var space = Create(scene.name + "'s Space");
-      SceneMap.Add(scene, space);
+      //if (Tracing) Trace.Script("Could not find the space for the scene: " + scene.name);
+      //PrintMap();
+      var space = Create();     
       return space;
+    }
+
+    static void PrintMap()
+    {
+      Trace.Script("Current scene map:");
+      foreach(var scene in SceneMap)
+      {
+        Trace.Script(scene.Key.name);
+      }
     }
 
   }

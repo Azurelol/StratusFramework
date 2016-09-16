@@ -14,148 +14,194 @@ using System;
 
 namespace Stratus
 {
-  // By string
-  using DelegateList = List<EventCallback>;
-  using SortedDelegateList = SortedList<string, List<EventCallback>>;
-  using DelegateContainer = Dictionary<GameObject, SortedList<string, List<EventCallback>>>;
   // By type
   using DelegateTypeList = List<Delegate>;
-  using SortedDelegateTypeList = SortedList<string, List<Delegate>>;
-  using DelegateTypeContainer = Dictionary<GameObject, SortedList<string, List<Delegate>>>;
-
-  /**************************************************************************/
-  /*!
-  @class Events The class which manages the overlying event system.
-  */
-  /**************************************************************************/
-  public class Events : MonoBehaviour
+  using SortedDelegateTypeList = Dictionary<string, List<Delegate>>;
+  using DelegateTypeContainer = Dictionary<GameObject, Dictionary<string, List<Delegate>>>;
+  
+  /// <summary>
+  /// The class which manages the overlying event system.
+  /// </summary>
+  public class Events : Singleton<Events>
   {
+    public class TracingSetup
+    {
+      public bool Construction = false;
+      public bool Register = false;
+      public bool Connect = false;
+      public bool Dispatch = false;
+    }
+
+    //------------------------------------------------------------------------/
+    // Properties    
+    //------------------------------------------------------------------------/
     // Whether debugging output is present
-    public static bool Tracing = false;
-    // A container of all the delegates for every GameObject
-    private DelegateContainer Delegates;
-    private DelegateTypeContainer DelegatesByType;
-    // Singular instance of the Event system manager
-    private static bool Active = false;
+    /// <summary>
+    /// Whether we are doing tracing for debugging purposes.
+    /// 
+    /// </summary>
+    public static TracingSetup Tracing = new TracingSetup();    
+    /// <summary>
+    /// A container of all the delegates for every GameObject
+    /// </summary>
+    DelegateTypeContainer Delegates;        
+    /// <summary>
+    /// A dictionary of all components that have connected to events, and a list of their delegates.
+    /// </summary>
+    Dictionary<MonoBehaviour, List<GameObject>> ConnectedComponents = new Dictionary<MonoBehaviour, List<GameObject>>();
+    /// <summary>
+    /// A list of all event types that are being watched for at the moment.
+    /// </summary>
+    List<string> WatchList = new List<string>();
 
     //------------------------------------------------------------------------/
     // Instancing    
     //------------------------------------------------------------------------/
-    private static Events EventManagerInst;
-    public static Events Instance
+    protected override string Name
     {
       get
       {
-        if (!EventManagerInst)
-        {
-          // Look for the event instance in the scene
-          EventManagerInst = FindObjectOfType(typeof(Events)) as Events;
-
-          // If it can't find it, instantiate it
-          if (!EventManagerInst)
-          {
-            Instantiate();
-          }
-          
-        }
-        return EventManagerInst;
+        return "Event System";
       }
     }
-    static void Instantiate()
-    {
-      //Instantiate(Resources.Load("StratusFramework"));
-      var gameObj = new GameObject();
-      gameObj.name = "Stratus Event System";
-      EventManagerInst = gameObj.AddComponent<Events>();
-      //gameObj.AddComponent<Space>();
-    }
-
-    void Awake()
-    {
-      Initialize();
-    }
-
-    ~Events()
-    {
-      Active = false;
-    }
+    
     //------------------------------------------------------------------------/
-    /**************************************************************************/
-    /*!
-    @brief Initializes the Event system manager.
-    */
-    /**************************************************************************/
-    void Initialize()
+    // Methods
+    //------------------------------------------------------------------------/
+    /// <summary>
+    /// Initializes the event system manager.
+    /// </summary>
+    protected override void OnAwake()
     {
-      if (Active)
-        return;
-
       DontDestroyOnLoad(this);
-      Delegates = new DelegateContainer();
-      DelegatesByType = new DelegateTypeContainer();
-      EventManagerInst = this;
-      Active = true;
-      if (Tracing) Trace.Script("Initializing the event system manager");
-    }
+      Delegates = new DelegateTypeContainer();
+    }    
 
-    /**************************************************************************/
-    /*!
-    @brief Connects to the event of a given object.
-    @param obj The object to which to connect to.
-    @param eventName The name of the event to which to listen for.
-    @param memFunc The member function which to use as a callback for the event.
-    */
-    /**************************************************************************/
-    public static void Connect<T>(GameObject obj, Action<T> memFunc)
+    /// <summary>
+    /// Connects to the event of a given object.
+    /// </summary>
+    /// <typeparam name="T">The event class. </typeparam>
+    /// <param name="gameObj">The GameObject we are connecting to whose events we are connecting to. </param>
+    /// <param name="memFunc">The member function to connect to. </param>
+    public static void Connect<T>(GameObject gameObj, Action<T> memFunc)
     {
-      if (Tracing)
-        Trace.Script(obj.name);              
-
       var key = typeof(T).ToString();
 
       // If the GameObject hasn't registered yet, add its key
-      if (!Events.Instance.DelegatesByType.ContainsKey(obj))
+      if (!Events.Instance.Delegates.ContainsKey(gameObj))
       {
-        Subscribe(obj);
+        Register(gameObj);
       }
 
       // If the event has no delegates yet, add it
-      if (!Events.Instance.DelegatesByType[obj].ContainsKey(key))
+      if (!Events.Instance.Delegates[gameObj].ContainsKey(key))
       {
-        Events.Instance.DelegatesByType[obj].Add(key, new DelegateTypeList());
+        Events.Instance.Delegates[gameObj].Add(key, new DelegateTypeList());
       }
 
       // If the delegate is already present, do not add it
-      if (Events.Instance.DelegatesByType[obj][key].Contains(memFunc))
+      if (Events.Instance.Delegates[gameObj][key].Contains(memFunc))
         return;
 
-      // Add it
-      Events.Instance.DelegatesByType[obj][key].Add(memFunc);
-      if (Tracing)
-        Trace.Script(memFunc.ToString() + " has connected to " + obj.name);
+      // Add the component's delegate onto the gameobject
+      AddDelegate(gameObj, key, memFunc);
+      //Events.Instance.Delegates[gameObj][key].Add(memFunc);
+      // Record that this component has connected to this GameObject
+      Register((MonoBehaviour)memFunc.Target, gameObj);
+
+      if (Tracing.Connect)
+        Trace.Script(memFunc.ToString() + " has connected to " + gameObj.name);
       //Trace.Script(obj.name + " now has '" + Events.Instance.DelegatesByType[obj].Count + "' delegates");
     }
 
-    public static void Disconnect(GameObject obj, string eventName)
+    /// <summary>
+    /// Disconnects this component from all events it has subscribed to.
+    /// </summary>
+    /// <param name="component"></param>
+    public static void Disconnect(MonoBehaviour component)
     {
-      // WRONG. This should be removing the one method, not all of them, man.
-      Events.Instance.Delegates[obj].Remove(eventName);
+      if (Quitting)
+        return;
+
+      // If the component is already connected and present in the event system
+      if (Instance.ConnectedComponents.ContainsKey(component))
+      {
+        // For every gameobject that it has connected to
+        foreach(var gameobj in Instance.ConnectedComponents[component])
+        {
+          // Disconnect its delegates from it
+          DisconnectProcedure(component, gameobj);
+        }
+      }
+
+      // Remove the component from the event system
+      Instance.ConnectedComponents.Remove(component);
+    }    
+        
+
+    /// <summary>
+    /// Disconnects this component from all events it has subscribed on
+    /// the given GameoObject.
+    /// </summary>
+    /// <param name="gameObj"></param>
+    /// <param name="component"></param>
+    public static void Disconnect(MonoBehaviour component, GameObject gameObj)
+    {
+      DisconnectProcedure(component, gameObj);
+      // Remove the gameobject from the component's list in the system
+      Instance.ConnectedComponents[component].Remove(gameObj);
+    }
+
+    /// <summary>
+    /// Disconnects this component from all events it has subscribed on
+    /// the given GameoObject.
+    /// </summary>
+    /// <param name="gameObj"></param>
+    /// <param name="component"></param>
+    static void DisconnectProcedure(MonoBehaviour component, GameObject gameObj)
+    {
+      // If the GameObject has been removed previously...
+      if (!Events.Instance.Delegates.ContainsKey(gameObj))
+        return;
+
+      // For every delegate this GameObject has
+      foreach (var pair in Events.Instance.Delegates[gameObj])
+      {        
+        // For every delegate in the list
+        foreach (var deleg in pair.Value)
+        {          
+          if ((MonoBehaviour)deleg.Target == component)
+          {
+            if (Tracing.Connect)
+              Trace.Script("Disconnecting <i>" + deleg.Method.Name + "</i> from " + gameObj.name);
+            // Remove this delegate
+            pair.Value.Remove(deleg);
+            break;
+          }
+        }
+      }
     }
     
-    /**************************************************************************/
-    /*!
-    @brief Dispatches the given event of the specified type onto the object.
-    @param obj The object to which to connect to.
-    @param eventName The name of the event to which to listen for.
-    @param eventObj The event object.
-    */
-    /**************************************************************************/
-    public static void Dispatch<T>(GameObject obj, T eventObj) where T : Event
+    /// <summary>
+    /// Dispatches the given event of the specified type onto the object.
+    /// </summary>
+    /// <typeparam name="T">The event class.</typeparam>
+    /// <param name="obj">The object to which to connect to.</param>
+    /// <param name="eventObj">The name of the event to which to listen for.</param>
+    /// <param name="nextFrame">Whether to send this event on the next frame.</param>
+    public static void Dispatch<T>(GameObject obj, T eventObj, bool nextFrame = false) where T : Event
     {
       var key = typeof(T).ToString();
 
-      if (Tracing)
+      if (Tracing.Connect)
         Trace.Script("'" + key + "' to '" + obj.name + "'");
+      
+      // If this a delayed dispatch...
+      if (nextFrame)
+      {
+        //Trace.Script("Delayed dispatch!");
+        Instance.StartCoroutine(DispatchNextFrame<T>(obj, eventObj));
+      }
 
       // Check if the object has been registered onto the event system.
       // If not, it will be.
@@ -164,68 +210,90 @@ namespace Stratus
       // If there is no delegate registered to this object, do nothing.
       if (!HasDelegate(obj, key))
       {
-        if (Tracing)
-          Trace.Script("No delegate registered to " + obj.name);
+        if (Tracing.Dispatch)
+          Trace.Script("No delegate registered to " + obj.name + " for " + eventObj.ToString());
         return;
       }
 
+      // If we are watching events of this type
+      bool watching = false;
+      if (Instance.WatchList.Contains(key))
+        watching = true;
+
+
       // Invoke the method for every delegate
-      foreach (var deleg in Events.Instance.DelegatesByType[obj][key])
+      foreach (var deleg in Events.Instance.Delegates[obj][key])
       {
+        // If we are watching events of this type
+        if (watching)
+          Trace.Script("Invoking member function on " + deleg.Target.ToString());        
+
         deleg.DynamicInvoke(eventObj);      
       }
 
     }
 
-    /**************************************************************************/
-    /*!
-    @brief Dispatches the given event of the specified type onto the object.
-    @param obj The object to which to connect to.
-    @param eventName The name of the event to which to listen for.
-    @param eventObj The event object.
-    */
-    /**************************************************************************/
-    public static void DispatchDown<T>(GameObject obj, T eventObj) where T : Event
+    /// <summary>
+    /// Dispatches the event on the next frame.
+    /// </summary>
+    /// <typeparam name="T">The event class.</typeparam>
+    /// <param name="obj">The object to which to dispatch to.</param>
+    /// <param name="eventObj">The event object we are sending.</param>
+    /// <returns></returns>
+    public static IEnumerator DispatchNextFrame<T>(GameObject obj, T eventObj) where T : Event
     {
-      var key = typeof(T).ToString();
+      // Wait 1 frame
+      yield return 0;
+      // Dispatch the event
+      //Trace.Script("Now dispatching!");
+      Dispatch<T>(obj, eventObj);
+    }
 
-      if (Tracing)
-        Trace.Script("'" + key + "' to '" + obj.name + "' and all children...");
-
-      foreach(Transform child in obj.transform)
+    /// <summary>
+    /// Dispatches the given event of the specified type onto the GameObject amd all its children.
+    /// </summary>
+    /// <typeparam name="T">The event class. </typeparam>
+    /// <param name="gameObj">The GameObject to which to dispatch to.</param>
+    /// <param name="eventObj">The event object. </param>
+    public static void DispatchDown<T>(GameObject gameObj, T eventObj, bool nextFrame = false) where T : Event
+    {
+      foreach(var child in gameObj.Children())
       {
-        // Goddamn it, Unity
-        if (child != obj.transform.GetChild(0))
-        {
-          DispatchDown(child.gameObject, eventObj);
-        }
-      }
-
-      // Invoke the method for every delegate
-      foreach (var deleg in Events.Instance.DelegatesByType[obj][key])
-      {
-        deleg.DynamicInvoke(eventObj);
+        Dispatch<T>(child, eventObj, nextFrame);
       }
 
     }
 
-    /**************************************************************************/
-    /*!
-    @brief Checks if the GameObject has been the given delegate.
-    @param obj A reference to the object.        
-    @param key The key to the delegate list.
-    @return True if it has the delegate, false otherwise.
-    */
-    /**************************************************************************/
-    static bool HasDelegate(GameObject obj, string key)
+    /// <summary>
+    /// Dispatches an event up the tree on each parent recursively.
+    /// </summary>
+    /// <typeparam name="T">The event class. </typeparam>
+    /// <param name="gameObj">The GameObject to which to dispatch to.</param>
+    /// <param name="eventObj">The event object. </param>
+    public static void DispatchUp<T>(GameObject gameObj, T eventObj, bool nextFrame = false) where T : Event
     {
-      if (Events.Instance.DelegatesByType[obj] != null
-          && Events.Instance.DelegatesByType[obj].ContainsKey(key))
+      var parents = gameObj.transform.GetComponentsInParent<Transform>();
+      foreach(var parent in parents)
+      {
+        Dispatch<T>(parent.gameObject, eventObj, nextFrame);
+      }
+    }
+
+      /// <summary>
+      /// Checks if the GameObject has been the given delegate.
+      /// </summary>
+      /// <param name="obj">A reference to the GameObject.</param>
+      /// <param name="key">The key to the delegate list.</param>
+      /// <returns>True if it has the delegate, false otherwise.</returns>
+      static bool HasDelegate(GameObject obj, string key)
+    {
+      if (Events.Instance.Delegates[obj] != null
+          && Events.Instance.Delegates[obj].ContainsKey(key))
       {
         return true;
       }
 
-      if (Tracing)
+      if (Tracing.Dispatch)
       //if (true)
       {
         Trace.Script("Events of type '" + key + "' for '" + obj.name + "' have no delegates yet!");
@@ -240,100 +308,129 @@ namespace Stratus
       return false;
     }
 
-    /**************************************************************************/
-    /*!
-    @brief Checks if the GameObject has been registered onto the event system.
-    @param obj A reference to the object.        
-    */
-    /**************************************************************************/
-    static void CheckRegistration(GameObject obj)
+    /// <summary>
+    /// Checks if the GameObject has been registered onto the event system.
+    /// </summary>
+    /// <param name="gameObj">A reference to the GameObject. </param>
+    static void CheckRegistration(GameObject gameObj)
     {
       // If the GameObject hasn't registered yet, add its key
-      if (!Events.Instance.DelegatesByType.ContainsKey(obj))
+      if (!Events.Instance.Delegates.ContainsKey(gameObj))
       {
-        Events.Subscribe(obj);
+        Events.Register(gameObj);
       }
     }
 
-    static void Subscribe(GameObject obj)
+    /// <summary>
+    /// Registers the GameObject to the event system.
+    /// </summary>
+    /// <param name="gameObj">The GameObject which is being registered. </param>
+    static void Register(GameObject gameObj)
     {
-      if (Tracing)
-        Trace.Script(obj.name + " has been registered to the event system");
-      Events.Instance.DelegatesByType.Add(obj, new SortedDelegateTypeList());
-      obj.AddComponent<EventsRegistration>();
+      if (Tracing.Register)
+        Trace.Script(gameObj.name + " has been registered to the event system");
+      Events.Instance.Delegates.Add(gameObj, new SortedDelegateTypeList());
+      gameObj.AddComponent<EventsRegistration>();
     }
+
+    /// <summary>
+    /// Registers the MonoBehaviour to the event system.
+    /// </summary>
+    /// <param name="component"></param>
+    static void Register(MonoBehaviour component, GameObject gameObject)
+    {
+      // If its component hasn't registered yet...
+      if (!Instance.ConnectedComponents.ContainsKey(component))
+      {
+        // Record it
+        Instance.ConnectedComponents.Add(component, new List<GameObject>());
+      }
+
+      // If we haven't recorded that this component has connected to this GameObject yet
+      if (!Instance.ConnectedComponents[component].Contains(gameObject))
+      {
+        //Trace.Script(component.name + " has connected to " + gameObject.name);
+        Instance.ConnectedComponents[component].Add(gameObject);
+      }
+    }
+
+    /// <summary>
+    /// Unregisters the GameObject from the event system.
+    /// </summary>
+    /// <param name="obj"></param>
     public static void Unsubscribe(GameObject obj)
     {
       // Do not instnatiate!
-      if (!Events.EventManagerInst)      
+      //if (!Events.EventManagerInst)      
+      //  return;
+      if (Quitting)
         return;
 
-      if (Events.Instance.DelegatesByType.ContainsKey(obj))
+      if (Events.Instance.Delegates == null)
+        return;
+
+      // Remove all delegates connected to it
+      if (Events.Instance.Delegates.ContainsKey(obj))
       {
-        if (Tracing)
+        if (Tracing.Register)
           Trace.Script(obj.name + " has been deregistered from the event system");
-        Events.Instance.DelegatesByType.Remove(obj);
+        Events.Instance.Delegates.Remove(obj);
       }
+
+      // Remove all of the delegates it created?
     }
 
-    //------------------------------------------------------------------------/  
-    // Deprecated
-    //------------------------------------------------------------------------/
-    /**************************************************************************/
-    /*!
-    @brief Connects to the event of a given object.
-    @param obj The object to which to connect to.
-    @param eventName The name of the event to which to listen for.
-    @param memFunc The member function which to use as a callback for the event.
-    */
-    /**************************************************************************/
-    public static void Connect(GameObject obj, string eventName, EventCallback memFunc)
+    /// <summary>
+    /// Adds the specified event to watch list, informing the user whenever
+    /// the event is being dispatched.
+    /// </summary>
+    /// <typeparam name="T">The event type.</typeparam>
+    public static void Watch<T>()
     {
-      if (Tracing)
-        Debug.Log("Connect: " + obj.name);
-
-      // If the GameObject hasn't registered yet, add its key
-      if (!Events.Instance.Delegates.ContainsKey(obj))
-      {
-        if (Tracing)
-          Trace.Script(obj.name + " has been registered to the event system");
-        Events.Instance.Delegates.Add(obj, new SortedDelegateList());
-      }
-
-      // If the event has no delegates yet, add it
-      if (!Events.Instance.Delegates[obj].ContainsKey(eventName))
-      {
-        Events.Instance.Delegates[obj].Add(eventName, new DelegateList());
-      }
-
-      // Add it
-      Events.Instance.Delegates[obj][eventName].Add(memFunc);
-
-      if (Tracing)
-        Trace.Script(obj.name + " now has '" + Events.Instance.Delegates[obj].Count + "' delegates");
+      var type = typeof(T).ToString();
+      if (Tracing.Dispatch)
+        Trace.Script("Now watching for events of type '" + type + "'");
+      if (!Instance.WatchList.Contains(type))
+        Instance.WatchList.Add(type);
     }
 
-
-    /**************************************************************************/
-    /*!
-    @brief Dispatches the given event of the specified type onto the object.
-    @param obj The object to which to connect to.
-    @param eventName The name of the event to which to listen for.
-    @param eventObj The event object.
-    */
-    /**************************************************************************/
-    public static void Dispatch(GameObject obj, string eventName, Event eventObj)
+    /// <summary>
+    /// Adds a member function delegate of a specific type onto the GameObject.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="gameObj"></param>
+    /// <param name="key"></param>
+    /// <param name="memFunc"></param>
+    static void AddDelegate<T>(GameObject gameObj, string key, Action<T> memFunc)
     {
-      if (Tracing)
-        Trace.Script("'" + eventName + "' to '" + obj.name + "'");
+      if (Tracing.Connect)
+        Trace.Script("Adding delegate for event: " + key);
+      Events.Instance.Delegates[gameObj][key].Add(memFunc);
+    }
 
-      // Invoke the method for every delegate
-      foreach (var deleg in Events.Instance.Delegates[obj][eventName])
+    //void RemoveDelegate()
+
+    public static IEnumerator WaitForFrames(int frameCount)
+    {
+      while (frameCount > 0)
       {
-        deleg.Invoke(eventObj);
+        frameCount--;
+        yield return null;
       }
     }
 
+
+    /// <summary>
+    /// Handles cleanup operations for MonoBehaviours that are connecting to 
+    /// events in the Stratus Event System.
+    /// </summary>
+    public class Setup
+    {
+      MonoBehaviour Owner;
+
+      public Setup(MonoBehaviour owner) { Owner = owner; }
+      ~Setup() { Owner.Disconnect(); }
+    }
 
   }
 

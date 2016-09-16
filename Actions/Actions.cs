@@ -27,6 +27,23 @@ namespace Stratus {
 
     /**************************************************************************/
     /*!
+    @brief Cancels all actions of the ActionsOwner.
+    @param owner A reference to the owner of this action sequence.
+    */
+    /**************************************************************************/
+    public static void Cancel(ActionsOwner owner)
+    {
+      owner.Clear();
+    }
+
+    public static void Cancel(MonoBehaviour component)
+    {
+      component.gameObject.Actions().Clear();
+    }
+
+
+    /**************************************************************************/
+    /*!
     @brief Creates an action sequence.
     @param owner A reference to the owner of this action sequence.
     @return An ActionGroup object, used for Action constructors.

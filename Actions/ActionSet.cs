@@ -41,7 +41,7 @@ namespace Stratus
       {
         StackTrace stackTrace = new StackTrace();
         var methodName = stackTrace.GetFrame(2).GetMethod().Name;
-        var className = stackTrace.GetFrame(2).GetMethod().ReflectedType.Name;
+        //var className = stackTrace.GetFrame(2).GetMethod().ReflectedType.Name;
         Trace.Script("Adding " + action.Type + " from " + methodName);
       }
 
@@ -66,10 +66,10 @@ namespace Stratus
 
     /**************************************************************************/
     /*!
-    @brief  Clears all inactive actions.
+    @brief  Sweeps all inactive actions.
     */
     /**************************************************************************/
-    public void Clear()
+    public void Sweep()
     {
       // No actions to clear
       if (this.ActiveActions.Count == 0)
@@ -77,6 +77,17 @@ namespace Stratus
 
       // Remove all actions that are finished
       this.ActiveActions.RemoveAll(x => x.Finished == true);
+    }
+
+    /**************************************************************************/
+    /*!
+    @brief  Clears all actions.
+    */
+    /**************************************************************************/
+    public void Clear()
+    {
+      this.ActiveActions.Clear();
+      this.RecentlyAddedActions.Clear();
     }
 
 

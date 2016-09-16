@@ -7,6 +7,7 @@
 */
 /******************************************************************************/
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Stratus
 {
@@ -17,18 +18,36 @@ namespace Stratus
   /**************************************************************************/
   public class EventsRegistration : MonoBehaviour
   {
-    /**************************************************************************/
-    /*!
-    @class When this GameObject dies, it gets deregistered from the Stratus
-           Events system.
-    */
-    /**************************************************************************/
-    void OnDestroy()
+    public MonoBehaviour[] SubscribedComponents;
+    bool Quitting = false;
+    
+    void Start()
+    {
+      SubscribedComponents = gameObject.GetComponents<MonoBehaviour>();
+    }
+
+    /// <summary>
+    /// Unsubscribes this GameObject and all its components from the Stratus
+    /// event system.
+    /// </summary>
+   void OnDestroy()
    {
+      if (Quitting)
+        return;
+
       //Trace.Script("Unsubscribed!", this);
+      
+      // Unsubscribe this GameObject (removing all delegates attached to it)
       if (this.enabled)
         Events.Unsubscribe(this.gameObject);
    }    
+
+
+   void OnApplicationQuit()
+    {
+      Quitting = true;
+    }
+
 
   }
 

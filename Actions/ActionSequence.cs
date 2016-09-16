@@ -46,7 +46,7 @@ namespace Stratus
       }
 
       // Sweep all inactive actions
-      this.Clear();
+      this.Sweep();
 
       return dt - timeLeft;
     }

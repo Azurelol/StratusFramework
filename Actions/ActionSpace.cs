@@ -9,107 +9,55 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 namespace Stratus
 {
   // Aliases, ho!
   using ActionsOwnerContainer = Dictionary<GameObject, ActionsOwner>;
 
-  /**************************************************************************/
-  /*!
-  @class ActionSpace Manages the updating of all actions.
-  */
-  /**************************************************************************/
-  public class ActionSpace : MonoBehaviour
+  /// <summary>
+  /// Handles the updating of all actions.
+  /// </summary>
+  public class ActionSpace : Singleton<ActionSpace>
   {
-    public bool Debugging
-    {
-      get { return Actions.Debugging; }
-      set { Actions.Debugging = value; }
-    }
-
+    protected override string Name { get { return "Action System"; } }
     //------------------------------------------------------------------------/
-    private bool Active = false;
     private ActionsOwnerContainer AllActions;
     private ActionsOwnerContainer RecentlyAddedActions;
-    //------------------------------------------------------------------------/
-    private static ActionSpace ActionSpaceInst;
-    public static ActionSpace Instance
+    //------------------------------------------------------------------------/    
+    /// <summary>
+    /// Initializes the ActionSpace
+    /// </summary>
+    protected override void OnAwake()
     {
-      get
-      {
-        if (!ActionSpaceInst)
-        {
-          // Look for it in the scene
-          ActionSpaceInst = FindObjectOfType(typeof(ActionSpace)) as ActionSpace;
-          // If not instantiated, do it ourselves
-          if (!ActionSpaceInst)
-          {
-            var gameObj = new GameObject();
-            gameObj.name = "Stratus Action System";
-            gameObj.AddComponent<ActionSpace>();
-          }
-        }
-        return ActionSpaceInst;
-      }
-    }
-    //------------------------------------------------------------------------/
-
-    /**************************************************************************/
-    /*!
-    @brief Initializes the ActionSpace
-    */
-    /**************************************************************************/
-    void Initialize()
-    {
-      if (Active)
-        return;
-
-      if (Actions.Debugging) Trace.Script("Initializing the ActionSpace");
-
       AllActions = new ActionsOwnerContainer();
       RecentlyAddedActions = new ActionsOwnerContainer();
-      ActionSpaceInst = this;
-      Active = true;
-      DontDestroyOnLoad(this);
-    }
-
-    void Awake()
-    {
-      if (!ActionSpaceInst)
-        this.Initialize();
-    }
-
-    /**************************************************************************/
-    /*!
-    @brief ActionSpace destructor.
-    */
-    /**************************************************************************/
-    ~ActionSpace()
-    {
-      AllActions.Clear();
-      Active = false;
-    }
-
-    /**************************************************************************/
-    /*!
-    @brief Updates all the Actions in the ActionSpace, through the ActionOwners
-           for every GameObject.
-    */
-    /**************************************************************************/
+      DontDestroyOnLoad(this.gameObject);
+    }        
+    
+    /// <summary>
+    /// Updates all the Actions in the ActionSpace, through the ActionOwners
+    /// for every GameObject.
+    /// </summary>
     void LateUpdate()
     {
       Propagate();
     }
-
-    /**************************************************************************/
-    /*!
-    @brief Propagates an update to all active actions through ActionOwners.
-    */
-    /**************************************************************************/
+    
+    /// <summary>
+    /// Propagates an update to all active actions through ActionOwners.
+    /// </summary>
     void Propagate()
     {
       // Add recently added action owners (to prevent desync)
+      if (RecentlyAddedActions == null)
+      {
+        Debug.Break();
+        throw new System.Exception("WTF?");
+      }
+
+
       foreach (var action in RecentlyAddedActions)
       {
         AllActions.Add(action.Key, action.Value);
@@ -126,60 +74,62 @@ namespace Stratus
       }
     }
 
-    /**************************************************************************/
-    /*!
-    @brief Subscribe the specified GameObject to the ActionSpace.
-    @param gameObj A reference to the gameobject.
-    */
-    /**************************************************************************/
-    static public ActionsOwner Subscribe(GameObject gameObj)
+    ActionsOwner SubscribeRoutine(GameObject gameObj)
     {
-      //if (Actions.Trace)
-
-      // If it is already present in the ActionSpace
-      if (ActionSpace.Instance.AllActions.ContainsKey(gameObj))
-        return ActionSpace.Instance.AllActions[gameObj];
+      if (AllActions.ContainsKey(gameObj))
+        return AllActions[gameObj];
 
       // If it has not already been added to the ActionSpace, do so
-      if (!ActionSpace.Instance.RecentlyAddedActions.ContainsKey(gameObj))
+      if (!RecentlyAddedActions.ContainsKey(gameObj))
       {
         //Trace.Script("'" + gameObj.name + "'");
         //Trace.Script("Adding '" + gameObj.name +  "' to the ActionSpace");
         if (Actions.Debugging) Trace.Script("Adding the GameObject to the ActionSpace");
         var owner = new ActionsOwner(gameObj);
-        ActionSpace.Instance.RecentlyAddedActions.Add(gameObj, owner);
+        RecentlyAddedActions.Add(gameObj, owner);
         gameObj.AddComponent<ActionsRegistration>();
       }
 
-      return ActionSpace.Instance.RecentlyAddedActions[gameObj];
+      return RecentlyAddedActions[gameObj];
     }
 
-    /**************************************************************************/
-    /*!
-    @brief Unsubscribes the specified GameObject from the ActionSpace.
-    @param gameObj A reference to the gameobject.
-    */
-    /**************************************************************************/
-    static public void Unsubscribe(GameObject gameObj)
+    void UnsubscribeRoutine(GameObject gameObj)
     {
-      if (!ActionSpaceInst)
-        return;
-
       if (Actions.Debugging)
         Trace.Script("'" + gameObj.name + "'");
-      ActionSpace.Instance.AllActions.Remove(gameObj);
-      ActionSpace.Instance.RecentlyAddedActions.Remove(gameObj);
+      AllActions.Remove(gameObj);
+      RecentlyAddedActions.Remove(gameObj);
     }
 
-    void PrintActiveActions()
+    public static void PrintActiveActions()
     {
       string actionsLeft = "Active Actions: ";
       foreach (var action in ActionSpace.Instance.AllActions)
       {
-        actionsLeft += action.Key.name + " ";
+        actionsLeft += action.Key.name + ", ";
       }
       Trace.Script(actionsLeft);
     }
+
+    /// <summary>
+    /// Subscribe the specified GameObject to the ActionSpace.
+    /// </summary>
+    /// <param name="gameObj">< reference to the gameobject./param>
+    /// <returns></returns>
+    static public ActionsOwner Subscribe(GameObject gameObj)
+    {
+      return Instance.SubscribeRoutine(gameObj);
+    }
+
+    /// <summary>
+    /// Unsubscribes the specified GameObject from the ActionSpace.
+    /// </summary>
+    /// <param name="gameObj">A reference to the gameobject.</param>
+    static public void Unsubscribe(GameObject gameObj)
+    {
+      Instance.UnsubscribeRoutine(gameObj);
+    }
+
 
   }
 }

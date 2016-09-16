@@ -21,11 +21,11 @@ namespace Stratus
                              float duration = 1.0f, Ease ease = Ease.Linear, float delay = 0.5f)
     {
       var gameObj = renderer.gameObject;
-      Trace.Script("Flashing '" + gameObj.name + "'");
+      //Trace.Script("Flashing '" + gameObj.name + "'");
       var currentColor = renderer.material.color;
       var seq = Actions.Sequence(gameObj.Actions());
       Actions.Property(seq, flashing, true, 0.0f, Ease.Linear);
-      Actions.Color(seq, renderer, Color.red, duration, Ease.Linear);
+      Actions.Color(seq, renderer, color, duration, Ease.Linear);
       Actions.Delay(seq, delay);
       Actions.Color(seq, renderer, currentColor, duration / 2, Ease.Linear);
       Actions.Property(seq, flashing, false, 0.0f, Ease.Linear);
@@ -36,7 +36,7 @@ namespace Stratus
     {
       var gameObj = transform.gameObject;
       Trace.Script("Scaling '" + gameObj.name + "'");
-      var oldScale = transform.lossyScale;
+      //var oldScale = transform.lossyScale;
 
     }
 

@@ -29,8 +29,7 @@ public class ActionsSample : MonoBehaviour {
   }
 
   void Test_ActionSequence()
-  {
-    Trace.Log("Starting Action Sequence/Delay/Call/Property test!");
+  {    
     var seq = Actions.Sequence(this.gameObject.Actions());
       // Alternatively, it can be written in shorthand as:
       // var seq = Actions.Sequence(this);

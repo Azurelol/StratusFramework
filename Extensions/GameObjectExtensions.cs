@@ -74,5 +74,27 @@ public static class GameObjectExtensions {
     return false;
   }
 
+  /**************************************************************************/
+  /*!
+  @brief  Checks whether this GameObject has the specified component.
+  @return True if the component was present, false otherwise.
+  */
+  /**************************************************************************/
+  public static GameObject FindChild(this GameObject gameObj, string name)
+  {
+    return gameObj.transform.Find(name).gameObject;
+  }
+
+
+  /**************************************************************************/
+  /*!
+  @brief  Checks whether this GameObject has the specified component.
+  @return True if the component was present, false otherwise.
+  */
+  /**************************************************************************/
+  //public static Transform FindChildByName(this Transform transform, string name)
+  //{
+  //  return transform.ch.Children().Find(x => x.name == name);
+  //}
 
 }

@@ -46,7 +46,7 @@ namespace Stratus
       }
 
       // Sweep inactive actions
-      this.Clear();
+      this.Sweep();
 
       return mostTimeElapsed;
     }
