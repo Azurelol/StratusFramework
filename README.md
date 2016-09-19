@@ -86,7 +86,7 @@ An example of using a generic *EventTrigger* component alongside a custom *Event
 ---
 ##Download
 
-I have provided the Unity package for importing the framework into your Unity project [here](StratusFramework.unitypackage)
+I have provided the Unity package for importing the framework into your Unity project [here](https://github.com/Azurelol/Binaries/blob/master/StratusFramework.unitypackage)
 
 ---
 ##Contact
