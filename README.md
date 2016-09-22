@@ -11,7 +11,7 @@ I consider this framework very much a work in progress. Even so I find its core 
 - **Actions**: An Action list library with a very simplified interface for quickly construction action sets for interpolating properties, delayed function invocations, etc.
 - **Triggers**: A family of components that are activated on conditions specific to each one. For example a *CollisionTrigger* will activate when it detects a specified type of collision with a specified target. When a trigger component is activated, it will send a *Trigger* event to a specified target by either a direct invocation on a specific method (through *UnityEvent*) or through an event object sent to that GameObject. 
 These *Trigger* events are received by additional family of components called *EventDispatchers* which upon receiving them, perform some generic functionality, such as transforming an object, changing the scene, etc. By using both these families together the possibility space for what you can do without having to write boilerplate code is very high! 
-- **Link-Interface System**: An UI framework that's being developed to work within Unity's Canvas system. It provides a way to easily create hierarchical menus and windows with the minimum amount of boilerplate. It is still currently very much a WIP. 
+- **Link-Interface System**: An UI framework that's being developed to work within Unity's Canvas system. It provides a way to easily create hierarchical menus and windows with the minimum amount of boilerplate. It is still currently very much a WIP. While working on a prototype for Unity and finding myself in the need of making menus for it, I remembered how I have written menu code in the past. Like most novice programmers, I would write a script that would have a bunch of references to the physical buttons on the scene, have a stack for navigating down the menu, have the navigation code by checking for directional input and confirmation on update and so on.
 - **Trace**: A small library that decorates logging calls appropriately for quickly logging methods, member variables, etc.
 - **Extensions**: A few extension methods which I found missing from the main classes we regularly interface with in Unity, such as GameObject and Monobehaviour.
 
@@ -82,6 +82,9 @@ An example of using a generic *EventTrigger* component alongside a custom *Event
 
 ![](TriggerExample.png)
 
+####UI
+
+![](UIExample.png)
 
 ---
 ##Download
