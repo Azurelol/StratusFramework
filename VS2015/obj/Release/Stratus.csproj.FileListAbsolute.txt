@@ -1,0 +1,6 @@
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Release\Stratus.dll
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Release\Stratus.pdb
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Release\UnityEngine.dll
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Release\UnityEngine.xml
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\obj\Release\Stratus.dll
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\obj\Release\Stratus.pdb

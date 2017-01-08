@@ -1,0 +1,7 @@
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Debug\Trace.dll
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Debug\Trace.pdb
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Debug\UnityEngine.dll
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Debug\UnityEngine.xml
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\obj\Debug\Trace.csprojResolveAssemblyReference.cache
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\obj\Debug\Trace.dll
+c:\users\azurelol\documents\visual studio 2015\Projects\Trace\obj\Debug\Trace.pdb
