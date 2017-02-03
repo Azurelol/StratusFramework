@@ -1,0 +1,2615 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Stratus</name>
+    </assembly>
+    <members>
+        <member name="T:Stratus.ActionCall">
+            <summary>
+            Invokes a function immediately
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionCall.#ctor(Stratus.ActionCall.Delegate)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="deleg">A provided function which to invoke.</param>
+        </member>
+        <member name="M:Stratus.ActionCall.Update(System.Single)">
+            <summary>
+            Updates the action
+            </summary>
+            <param name="dt">The delta time.</param>
+            <returns>How much time was consumed during this action.</returns>
+        </member>
+        <member name="T:Stratus.ActionCall`1">
+            <summary>
+            Invokes a function immediately
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionCall`1.#ctor(Stratus.ActionCall{`0}.Delegate)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="deleg">A provided function which to invoke.</param>
+        </member>
+        <member name="M:Stratus.ActionCall`1.Update(System.Single)">
+            <summary>
+            Updates the action
+            </summary>
+            <param name="dt">The delta time.</param>
+            <returns>How much time was consumed during this action.</returns>
+        </member>
+        <member name="T:Stratus.Ease">
+            <summary>
+            Common interpolation algorithms
+            </summary>
+        </member>
+        <member name="F:Stratus.Ease.Linear">
+            <summary>
+            Linear interpolation
+            </summary>
+        </member>
+        <member name="T:Stratus.Easing">
+            <summary>
+            Provides methods for common interpolation algorithms.
+            </summary>
+        </member>
+        <member name="T:Stratus.ActionProperty">
+            <summary>
+            A type of action that modifies the value of
+            a given property over a specified amount of time, using a specified
+            interpolation formula(Ease).
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionProperty.#ctor(System.Single,Stratus.Ease)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="duration">How long should the action delay for</param>
+            <param name="ease">The interpolation algorithm to use</param>
+        </member>
+        <member name="M:Stratus.ActionProperty.Update(System.Single)">
+            <summary>
+            Updates the action
+            </summary>
+            <param name="dt">The delta time</param>
+            <returns>How much time was consumed during this action</returns>
+        </member>
+        <member name="T:Stratus.Actions">
+            <summary>
+            Interface class that the client will be using for constructing action sets
+            </summary>
+        </member>
+        <member name="M:Stratus.Actions.Cancel(Stratus.ActionsOwner)">
+            <summary>
+            Cancels all active actions of the ActionsOwner.
+            </summary>
+            <param name="owner">A reference to the owner of this action sequence.</param>
+        </member>
+        <member name="M:Stratus.Actions.Cancel(UnityEngine.MonoBehaviour)">
+            <summary>
+            Cancels all active actions in the component.
+            </summary>
+            <param name="component"></param>
+        </member>
+        <member name="M:Stratus.Actions.Sequence(Stratus.ActionsOwner)">
+            <summary>
+            Creates an action sequence.
+            </summary>
+            <param name="owner">A reference to the owner of this action sequence.</param>
+            <returns>An ActionSet object, used for Action constructors.</returns>
+        </member>
+        <member name="M:Stratus.Actions.Sequence(UnityEngine.MonoBehaviour)">
+            <summary>
+            Creates an action sequence.
+            </summary>
+            <param name="owner">The component which is creating the action.</param>
+            <returns>An ActionSet object, used for Action constructors.</returns>
+        </member>
+        <member name="M:Stratus.Actions.Group(Stratus.ActionsOwner)">
+            <summary>
+            Creates an action group, a set which runs all actions in parallel
+            </summary>
+            <param name="owner">A reference to the owner of this action sequence.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Actions.Delay(Stratus.ActionSet,System.Single)">
+            <summary>
+            Creates an ActionDelay and adds it to the specified set.
+            </summary>
+            <param name="set">A reference to the ActionSet that this action belongs to.</param>
+            <param name="duration"> duration How long should the delay run for.</param>
+        </member>
+        <member name="M:Stratus.Actions.Call(Stratus.ActionSet,Stratus.ActionCall.Delegate)">
+            <summary>
+            Adds a function to be invoked as part of the action set.
+            </summary>
+            <param name="set">A reference to the action set.</param>
+            <param name="func">The function to which to call.</param>
+        </member>
+        <member name="M:Stratus.Actions.Call``1(Stratus.ActionSet,Stratus.ActionCall{``0}.Delegate)">
+            <summary>
+            Adds a function to be invoked as part of the action set, alongside any arguments
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="set">A reference to the action set.</param>
+            <param name="func">A lambda expression containing a function call with any given arguments. [Example: ()=>Foo(1)] </param>
+        </member>
+        <member name="M:Stratus.Actions.Call``1(UnityEngine.MonoBehaviour,Stratus.ActionCall{``0}.Delegate,System.Single)">
+            <summary>
+            Invokes a function after a specified amount of time.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="set">A reference to the action set.</param>
+            <param name="func">A lambda expression containing a function call with any given arguments. [Example: ()=>Foo(1)] </param>
+        </member>
+        <member name="M:Stratus.Actions.Trace(Stratus.ActionSet,System.Object)">
+            <summary>
+            Adds a trace, adding it to the specified set.
+            </summary>
+            <param name="set">A reference to the set.</param>
+            <param name="message">The message which to print.</param>
+        </member>
+        <member name="M:Stratus.Actions.Color(Stratus.ActionSet,UnityEngine.Renderer,UnityEngine.Color,System.Single,Stratus.Ease)">
+            **************************************************************************/
+        </member>
+        <member name="M:Stratus.Actions.Property``1(Stratus.ActionSet,System.Linq.Expressions.Expression{System.Func{``0}},``0,System.Single,Stratus.Ease)">
+            <summary>
+            Adds a property change to the action set.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="set">A reference to the set.</param>
+            <param name="varExpr">A lambda expression encapsulating a reference to the property which will be modified</param>
+            <param name="value">The new value for the property</param>
+            <param name="duration">Over how long should the property be changed</param>
+            <param name="ease">What interpolation algorithm to use</param>
+        </member>
+        <member name="T:Stratus.ActionSpace">
+            <summary>
+            Handles the updating of all actions.
+            </summary>
+        </member>
+        <member name="P:Stratus.ActionSpace.Name">
+            <summary>
+            The name of the action space
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionSpace.OnAwake">
+            <summary>
+            Initializes the ActionSpace
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionSpace.LateUpdate">
+            <summary>
+            Updates all the Actions in the ActionSpace, through the ActionOwners
+            for every GameObject.
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionSpace.Propagate">
+            <summary>
+            Propagates an update to all active actions through ActionOwners.
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionSpace.PrintActiveActions">
+            <summary>
+            Prints all active actions
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionSpace.Subscribe(UnityEngine.GameObject)">
+            <summary>
+            Subscribe the specified GameObject to the ActionSpace.
+            </summary>
+            <param name="gameObj">reference to the gameobject.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.ActionSpace.Unsubscribe(UnityEngine.GameObject)">
+            <summary>
+            Unsubscribes the specified GameObject from the ActionSpace.
+            </summary>
+            <param name="gameObj">A reference to the gameobject.</param>
+        </member>
+        <member name="T:Stratus.ActionsRegistration">
+            <summary>
+            Registers this GameObject onto the Action system.
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionsRegistration.Start">
+            <summary>
+            Saves a reference to this GameObject.
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionsRegistration.OnDestroy">
+            <summary>
+            When this GameObject dies, it gets deregistered from the Stratus
+            Actions system.
+            </summary>
+        </member>
+        <member name="M:Stratus.ActionsRegistration.OnApplicationQuit">
+            <summary>
+            Invoked when the application is about to quit
+            </summary>
+        </member>
+        <member name="F:Stratus.Utilities.GUIStyles.Name">
+            <summary>
+            The name of this style
+            </summary>
+        </member>
+        <member name="F:Stratus.Utilities.GUIStyles.Style">
+            <summary>
+            The style
+            </summary>
+        </member>
+        <member name="F:Stratus.Utilities.GUIStyles.Skin">
+            <summary>
+            What
+            </summary>            
+        </member>
+        <member name="M:Stratus.Utilities.GUIStyles.GetStyle(System.String)">
+            <summary>
+            Looks for a given style by name
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Stratus.Utilities.Counter">
+            <summary>
+            A counter which is incremented one at a time.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.Counter.Increment">
+            <summary>
+            Increments this counter
+            </summary>
+            <returns>True if the counter is full, false otherwise</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Graphical.Fade(UnityEngine.MonoBehaviour,System.Single,System.Single)">
+            <summary>
+            Tweens the alpha of this and all its children.
+            </summary>
+            <param name="alpha"></param>
+            <param name="duration"></param>
+        </member>
+        <member name="M:Stratus.Utilities.Graphical.FadeIn(UnityEngine.MonoBehaviour,System.Single,System.Single)">
+            <summary>
+            Tweens the alpha of this and all its children after initializing it to 0.
+            </summary>
+            <param name="target"></param>
+            <param name="alpha"></param>
+            <param name="duration"></param>
+        </member>
+        <member name="M:Stratus.Utilities.Graphical.HexToColor(System.String)">
+            <summary>
+            Makes a color struct from a given hex value
+            </summary>
+            <param name="hex">The hex value</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stratus.Utilities.Interpolator`1">
+            <summary>
+            A general-purpose utility class for interpolation of struct types
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:Stratus.Utilities.Interpolator`1.StartingValue">
+            <summary>
+            The starting value
+            </summary>
+        </member>
+        <member name="P:Stratus.Utilities.Interpolator`1.CurrentValue">
+            <summary>
+            The current value
+            </summary>
+        </member>
+        <member name="P:Stratus.Utilities.Interpolator`1.EndingValue">
+            <summary>
+            The ending value
+            </summary>
+        </member>
+        <member name="P:Stratus.Utilities.Interpolator`1.Active">
+            <summary>
+            Whether it is currently interpolating
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.Interpolator`1.Start(System.Single)">
+            <summary>
+            Begins interpolation
+            </summary>
+            <param name="time"></param>
+        </member>
+        <member name="M:Stratus.Utilities.Interpolator`1.Update">
+            <summary>
+            Updates the interpolator
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.Interpolator`1.Update(System.Single)">
+            <summary>
+            Updates the interpolator
+            </summary>
+            <param name="dt"></param>
+        </member>
+        <member name="T:Stratus.Utilities.Vector3Interpolator">
+            <summary>
+            Interpolates a Vector3
+            </summary>
+        </member>
+        <member name="T:Stratus.Utilities.Vector2Interpolator">
+            <summary>
+            Interpolates a Vector2
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.Types.IsNumeric(System.Object)">
+            <summary>
+            Whether this object is a numeric type
+            </summary>
+            <param name="obj"></param>
+            <returns>True if its a numeric type, false otherwise.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Types.IsNumeric(System.Type)">
+            <summary>
+            Whether this type is numeric
+            </summary>
+            <param name="type"></param>
+            <returns>True if the type is numeric, false otherwise.</returns>
+        </member>
+        <member name="T:Stratus.Utilities.NumericTypeExpectedException">
+            <summary>
+            An exception that is thrown whenever a numeric type is expected as an input somewhere but the input wasn't numeric.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric.#ctor(System.Object)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric.op_LessThan(Stratus.Utilities.INumeric,Stratus.Utilities.INumeric)">
+            <summary>
+            Checks if the value of the left is lesser than that of the right
+            </summary>
+            <param name="lhs"></param>
+            <param name="rhs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric.op_GreaterThan(Stratus.Utilities.INumeric,Stratus.Utilities.INumeric)">
+            <summary>
+            Checks if the value of left is greater than the value of right.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric.op_Equality(Stratus.Utilities.INumeric,Stratus.Utilities.INumeric)">
+            <summary>
+            Checks if the value of left is the same as the value of right.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric.op_Inequality(Stratus.Utilities.INumeric,Stratus.Utilities.INumeric)">
+            <summary>
+            Checks if the value of left is not the same as the value of right.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric.op_LessThanOrEqual(Stratus.Utilities.INumeric,Stratus.Utilities.INumeric)">
+            <summary>
+            Checks if left is either equal or smaller than right.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric.op_GreaterThanOrEqual(Stratus.Utilities.INumeric,Stratus.Utilities.INumeric)">
+            <summary>
+            Checks if left is either equal or greater than right.
+            </summary>
+        </member>
+        <member name="T:Stratus.Utilities.INumeric`1">
+            <summary>
+            For generic numeric types
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric`1.op_LessThan(Stratus.Utilities.INumeric{`0},Stratus.Utilities.INumeric{`0})">
+            <summary>
+            Checks if the value of left is smaller than the value of right.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric`1.op_GreaterThan(Stratus.Utilities.INumeric{`0},Stratus.Utilities.INumeric{`0})">
+            <summary>
+            Checks if the value of left is greater than the value of right.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric`1.op_Equality(Stratus.Utilities.INumeric{`0},Stratus.Utilities.INumeric{`0})">
+            <summary>
+            Checks if the value of left is the same as the value of right.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric`1.op_Inequality(Stratus.Utilities.INumeric{`0},Stratus.Utilities.INumeric{`0})">
+            <summary>
+            Checks if the value of left is not the same as the value of right.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric`1.op_LessThanOrEqual(Stratus.Utilities.INumeric{`0},Stratus.Utilities.INumeric{`0})">
+            <summary>
+            Checks if left is either equal or smaller than right.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.INumeric`1.op_GreaterThanOrEqual(Stratus.Utilities.INumeric{`0},Stratus.Utilities.INumeric{`0})">
+            <summary>
+            Checks if left is either equal or greater than right.
+            </summary>
+        </member>
+        <member name="T:Stratus.Utilities.Reflection.VariableReference">
+            <summary>
+            Holds a reference to a given variable
+            </summary>
+        </member>
+        <member name="F:Stratus.Utilities.Reflection.VariableReference.Target">
+            <summary>
+            The object instance on which this variable resides
+            </summary>
+        </member>
+        <member name="F:Stratus.Utilities.Reflection.VariableReference.Field">
+            <summary>
+            Information about the variable if it's a field type
+            </summary>
+        </member>
+        <member name="F:Stratus.Utilities.Reflection.VariableReference.Property">
+            <summary>
+            Information about the variable if it's a property type
+            </summary>
+        </member>
+        <member name="F:Stratus.Utilities.Reflection.VariableReference.Type">
+            <summary>
+            The type of this variable
+            </summary>
+        </member>
+        <member name="F:Stratus.Utilities.Reflection.VariableReference.Name">
+            <summary>
+            The name fo this variable
+            </summary>
+        </member>
+        <member name="P:Stratus.Utilities.Reflection.VariableReference.Value">
+            <summary>
+            Retrieves the current value of the property
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetAllTypesWithAttributeAsEnumerable(System.Reflection.Assembly,System.Type)">
+            <summary>
+            Gets all the types that have at least one attribute in the given assembly
+            </summary>
+            <param name="assembly"></param>
+            <param name="attribute"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetAllTypesWithAttribute(System.Reflection.Assembly,System.Type)">
+            <summary>
+            Get all the types that have at least one attribute in the given assembly
+            </summary>
+            <param name="assembly"></param>
+            <param name="attribute"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetNestedObject``1(System.Object,System.String)">
+            <summary>
+            Finds the most nested object inside of an object.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="obj"></param>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetFieldOrProperty``1(System.Object,System.String,System.Reflection.BindingFlags)">
+            <summary>
+            Gets a property or a field of an object by a name.
+            </summary>
+            <typeparam name="T">Type of the field/property.</typeparam>
+            <param name="obj">Object the field/property should be found in.</param>
+            <param name="name">Name of the field/property.</param>
+            <param name="bindingFlags">Filters for the field/property it can find. (optional)</param>
+            <returns>The field/property.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetField``1(System.Object,System.String,System.Reflection.BindingFlags)">
+            <summary>
+            Gets a field inside of an object by a name.
+            </summary>
+            <typeparam name="T">Type of the field.</typeparam>
+            <param name="obj">Object the field should be found in.</param>
+            <param name="name">Name of the field.</param>
+            <param name="bindingFlags">Filters for the fields it can find. (optional)</param>
+            <returns>The field.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetProperty``1(System.Object,System.String,System.Reflection.BindingFlags)">
+            <summary>
+            Gets a property inside of an object by a name.
+            </summary>
+            <typeparam name="T">Type of the property.</typeparam>
+            <param name="obj">Object the property should be found in.</param>
+            <param name="name">Name of the property.</param>
+            <param name="bindingFlags">Filters for the properties it can find. (optional)</param>
+            <returns>The property.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.SetFieldOrProperty``1(System.Object,System.String,``0,System.Reflection.BindingFlags)">
+            <summary>
+            Sets a field or a property inside of an object by name.
+            </summary>
+            <typeparam name="T">Type of the field/property.</typeparam>
+            <param name="obj">Object contaning the field/property.</param>
+            <param name="name">Name of the field/property.</param>
+            <param name="value">New value of the field/property.</param>
+            <param name="bindingFlags">Filters for the field/property it can find. (optional)</param>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.SetField``1(System.Object,System.String,``0,System.Reflection.BindingFlags)">
+            <summary>
+            Sets a field inside of an object by name.
+            </summary>
+            <typeparam name="T">Type of the field.</typeparam>
+            <param name="obj">Object contaning the field.</param>
+            <param name="name">Name of the field.</param>
+            <param name="value">New value of the field.</param>
+            <param name="bindingFlags">Filters for the fields it can find. (optional)</param>>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.SetProperty``1(System.Object,System.String,``0,System.Reflection.BindingFlags)">
+            <summary>
+            Sets a property inside of an object by name.
+            </summary>
+            <typeparam name="T">Type of the property.</typeparam>
+            <param name="obj">Object contaning the property.</param>
+            <param name="name">Name of the property.</param>
+            <param name="value">New value of the property.</param>
+            <param name="bindingFlags">Filters for the properties it can find. (optional)</param>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetAllFieldsOrProperties``1(System.Object,System.Reflection.BindingFlags)">
+            <summary>
+            Gets all the properties and fields in obj of type T.
+            </summary>
+            <typeparam name="T">The type of the fields/properties.</typeparam>
+            <param name="obj">Object to find the fields/properties in.</param>
+            <param name="bindingFlags">Filters for the types of fields/properties that can be found.</param>
+            <returns>The fields/properties found.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetAllFieldsOrProperties(System.Object,System.Reflection.BindingFlags)">
+            <summary>
+            Gets all the properties and fields in obj.
+            </summary>
+            <param name="obj">Object to find the fields/properties in.</param>
+            <param name="bindingFlags">Filters for the types of fields/properties that can be found.</param>
+            <returns>The fields/properties found.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetAllFields``1(System.Object,System.Reflection.BindingFlags)">
+            <summary>
+            Gets all the fields in obj of type T.
+            </summary>
+            <typeparam name="T">Type of the fields allowed.</typeparam>
+            <param name="obj">Object to find the fields in.</param>
+            <param name="bindingFlags">Filters of the fields allowed.</param>
+            <returns>The fields found.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetAllFields(System.Object,System.Reflection.BindingFlags)">
+            <summary>
+            Gets all the fields in obj.
+            </summary>
+            <param name="obj">Object to find the fields in.</param>
+            <param name="bindingFlags">Filters of the fields allowed.</param>
+            <returns>The fields found.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetAllProperties``1(System.Object,System.Reflection.BindingFlags)">
+            <summary>
+            Gets all the properties in obj of type T.
+            </summary>
+            <typeparam name="T">Type of the properties allowed.</typeparam>
+            <param name="obj">Object to find the properties in.</param>
+            <param name="bindingFlags">Filters of the properties allowed.</param>
+            <returns>The properties found.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetAllProperties(System.Object,System.Reflection.BindingFlags)">
+            <summary>
+            Gets all the properties in obj.
+            </summary>
+            <param name="obj">Object to find the properties in.</param>
+            <param name="bindingFlags">Filters of the properties allowed.</param>
+            <returns>The properties found.</returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetSubclassNames``1(System.Boolean)">
+            <summary>
+            Get the name of all classes derived from the given one
+            </summary>
+            <typeparam name="ClassType"></typeparam>
+            <param name="includeAbstract"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetSubclass``1(System.Boolean)">
+            <summary>
+            Get an array of types of all the classes derived from the given one
+            </summary>
+            <typeparam name="ClassType"></typeparam>
+            <param name="includeAbstract"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Utilities.Reflection.GetReference``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+            Retrieves the name of this property / field as well as its owning object.
+            Note: This is quite an expensive call so use sparingly.
+            </summary>
+            <param name="varExpr">A lambda expression capturing a reference to a field or property</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stratus.Utilities.Reflection.FieldNotFoundException">
+            <summary>
+            An exception that is thrown whenever a field was not found inside of an object when using Reflection.
+            </summary>
+        </member>
+        <member name="T:Stratus.Utilities.Reflection.PropertyNotFoundException">
+            <summary>
+            An exception that is thrown whenever a property was not found inside of an object when using Reflection.
+            </summary>
+        </member>
+        <member name="T:Stratus.Utilities.Reflection.PropertyOrFieldNotFoundException">
+            <summary>
+            An exception that is thrown whenever a field or a property was not found inside of an object when using Reflection.
+            </summary>
+        </member>
+        <member name="T:Stratus.Utilities.BaseTimer">
+            <summary>
+            The base class for all timers
+            </summary>
+        </member>
+        <member name="F:Stratus.Utilities.BaseTimer.OnFinished">
+            <summary>
+            The callback function for when this timer finishes
+            </summary>
+        </member>
+        <member name="P:Stratus.Utilities.BaseTimer.Progress">
+            <summary>
+            The current progress in this timer as a percentage value ranging from 0 to 1.
+            </summary>
+        </member>
+        <member name="P:Stratus.Utilities.BaseTimer.Percentage">
+            <summary>
+            The current progress in this timer as a percentage value ranging from 0 to 100.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.BaseTimer.Finish">
+            <summary>
+            Finishes the timer
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.BaseTimer.SetCallback(Stratus.Utilities.BaseTimer.Callback)">
+            <summary>
+            Sets a callback function to be called when this timer finishes
+            </summary>
+            <param name="onFinished"></param>
+        </member>
+        <member name="M:Stratus.Utilities.BaseTimer.Reset">
+            <summary>
+            Resets the timer
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.BaseTimer.Update">
+            <summary>
+            Updates the timer by the default delta time (Time.deltaTime)
+            </summary>
+            <returns>True if is done, false otherwise</returns>
+        </member>
+        <member name="T:Stratus.Utilities.Timer">
+            <summary>
+            Counts up to the specified amount of time, starting from 0.0f.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.Timer.#ctor(System.Single)">
+            <summary>
+            Constructor for the countdown.
+            </summary>
+            <param name="total">The total amount of time to countdown.</param>
+        </member>
+        <member name="M:Stratus.Utilities.Timer.OnReset">
+            <summary>
+            Resets the countdown.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.Timer.Set(System.Single)">
+            <summary>
+            Sets the timer
+            </summary>
+            <param name="total"></param>
+        </member>
+        <member name="M:Stratus.Utilities.Timer.Update(System.Single)">
+            <summary>
+            Updates the timer by the specified delta time.
+            </summary>
+            <returns>True if is done, false otherwise</returns>
+        </member>
+        <member name="T:Stratus.Utilities.Countdown">
+            <summary>
+            Counts down from the specified amount of time. 
+            From <i>n</i> amount of time to 0.0f;
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.Countdown.#ctor(System.Single)">
+            <summary>
+            Constructor for the countdown.
+            </summary>
+            <param name="total">The total amount of time to countdown.</param>
+        </member>
+        <member name="M:Stratus.Utilities.Countdown.OnReset">
+            <summary>
+            Resets the countdown.
+            </summary>
+        </member>
+        <member name="M:Stratus.Utilities.Countdown.Set(System.Single)">
+            <summary>
+            Sets the countdown's time
+            </summary>
+            <param name="time"></param>
+        </member>
+        <member name="M:Stratus.Utilities.Countdown.Update(System.Single)">
+            <summary>
+            Updates the timer by the specified delta time.
+            </summary>
+            <returns>True if is done, false otherwise</returns>
+        </member>
+        <member name="T:Stratus.PreferencesWindow">
+            <summary>
+            The preferences window for the Stratus Framework
+            </summary>
+        </member>
+        <member name="M:Stratus.PreferencesWindow.Save">
+            <summary>
+            Writes all preferences to disk
+            </summary>
+        </member>
+        <member name="M:Stratus.PreferencesWindow.Load">
+            <summary>
+            Loads all preferences from disk
+            </summary>
+        </member>
+        <member name="T:Stratus.StartUp">
+            <summary>
+            Default start-up for the Stratus Framework. Loads editor settings.
+            </summary>
+        </member>
+        <member name="T:Stratus.WindowInspector">
+            <summary>
+            Allows Stratus.UI Windows to be inspected
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.Target">
+            <summary>
+            The current window being inspected
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.PreviousTarget">
+            <summary>
+            The previous window selected
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.AvailableWindows">
+            <summary>
+            The windows currently available to inspect
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.LeftPanelWidth">
+            <summary>
+            The width of the left panel
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.RightPanelWidth">
+            <summary>
+            The width of the right panel
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.Height">
+            <summary>
+            The height of the window
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.LeftPanel">
+            <summary>
+            The left panel
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.RightPanel">
+            <summary>
+            The right panel
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.ScrollingPosition">
+            <summary>
+            The current position of the scrollbar
+            </summary>
+        </member>
+        <member name="F:Stratus.WindowInspector.Margin">
+            <summary>
+            The margin to use for content inside panels
+            </summary>
+        </member>
+        <member name="M:Stratus.WindowInspector.SelectWindow">
+            <summary>
+            Displays all available windows in a scrolling list, allowing any given one to be selected
+            </summary>
+        </member>
+        <member name="M:Stratus.WindowInspector.ShowWindowDetails">
+            <summary>
+            Shows details about the currently selected window
+            </summary>
+        </member>
+        <member name="M:Stratus.WindowInspector.ShowOptions">
+            <summary>
+            Shows all available options for this window
+            </summary>
+        </member>
+        <member name="M:Stratus.WindowInspector.FindAllWindows">
+            <summary>
+            Finds all available windows in the scene
+            </summary>
+        </member>
+        <member name="M:Stratus.WindowInspector.SelectWindow(Stratus.UI.Window)">
+            <summary>
+            Selects the current window
+            </summary>
+        </member>
+        <member name="M:Stratus.WindowInspector.OpenWindow">
+            <summary>
+            Opens the target window
+            </summary>
+        </member>
+        <member name="M:Stratus.WindowInspector.CloseWindow">
+            <summary>
+            Closes the target window
+            </summary>
+        </member>
+        <member name="M:Stratus.WindowInspector.IsPlaying">
+            <summary>
+            Detects whether the editor is currently in playmode. If not, shows an error notification until is
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Stratus.Events">
+            <summary>
+            The class which manages the overlying event system.
+            </summary>
+        </member>
+        <member name="F:Stratus.Events.Tracing">
+            <summary>
+            Whether we are doing tracing for debugging purposes.
+            
+            </summary>
+        </member>
+        <member name="F:Stratus.Events.Delegates">
+            <summary>
+            A container of all the delegates for every GameObject
+            </summary>
+        </member>
+        <member name="F:Stratus.Events.ConnectedComponents">
+            <summary>
+            A dictionary of all components that have connected to events, and a list of their delegates.
+            </summary>
+        </member>
+        <member name="F:Stratus.Events.WatchList">
+            <summary>
+            A list of all event types that are being watched for at the moment.
+            </summary>
+        </member>
+        <member name="M:Stratus.Events.OnAwake">
+            <summary>
+            Initializes the event system manager.
+            </summary>
+        </member>
+        <member name="M:Stratus.Events.Connect``1(UnityEngine.GameObject,System.Action{``0})">
+            <summary>
+            Connects to the event of a given object.
+            </summary>
+            <typeparam name="T">The event class. </typeparam>
+            <param name="gameObj">The GameObject we are connecting to whose events we are connecting to. </param>
+            <param name="memFunc">The member function to connect to. </param>
+        </member>
+        <member name="M:Stratus.Events.Disconnect(UnityEngine.Behaviour)">
+            <summary>
+            Disconnects this component from all events it has subscribed to.
+            </summary>
+            <param name="component"></param>
+        </member>
+        <member name="M:Stratus.Events.Disconnect(UnityEngine.Behaviour,UnityEngine.GameObject)">
+            <summary>
+            Disconnects this component from all events it has subscribed on
+            the given GameoObject.
+            </summary>
+            <param name="gameObj"></param>
+            <param name="component"></param>
+        </member>
+        <member name="M:Stratus.Events.DisconnectProcedure(UnityEngine.Behaviour,UnityEngine.GameObject)">
+            <summary>
+            Disconnects this component from all events it has subscribed on
+            the given GameoObject.
+            </summary>
+            <param name="gameObj"></param>
+            <param name="component"></param>
+        </member>
+        <member name="M:Stratus.Events.Dispatch``1(UnityEngine.GameObject,``0,System.Boolean)">
+            <summary>
+            Dispatches the given event of the specified type onto the object.
+            </summary>
+            <typeparam name="T">The event class.</typeparam>
+            <param name="obj">The object to which to connect to.</param>
+            <param name="eventObj">The name of the event to which to listen for.</param>
+            <param name="nextFrame">Whether to send this event on the next frame.</param>
+        </member>
+        <member name="M:Stratus.Events.DispatchNextFrame``1(UnityEngine.GameObject,``0)">
+            <summary>
+            Dispatches the event on the next frame.
+            </summary>
+            <typeparam name="T">The event class.</typeparam>
+            <param name="obj">The object to which to dispatch to.</param>
+            <param name="eventObj">The event object we are sending.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Events.DispatchDown``1(UnityEngine.GameObject,``0,System.Boolean)">
+            <summary>
+            Dispatches the given event of the specified type onto the GameObject amd all its children.
+            </summary>
+            <typeparam name="T">The event class. </typeparam>
+            <param name="gameObj">The GameObject to which to dispatch to.</param>
+            <param name="eventObj">The event object. </param>
+        </member>
+        <member name="M:Stratus.Events.DispatchUp``1(UnityEngine.GameObject,``0,System.Boolean)">
+            <summary>
+            Dispatches an event up the tree on each parent recursively.
+            </summary>
+            <typeparam name="T">The event class. </typeparam>
+            <param name="gameObj">The GameObject to which to dispatch to.</param>
+            <param name="eventObj">The event object. </param>
+        </member>
+        <member name="M:Stratus.Events.HasDelegate(UnityEngine.GameObject,System.String)">
+            <summary>
+            Checks if the GameObject has been the given delegate.
+            </summary>
+            <param name="obj">A reference to the GameObject.</param>
+            <param name="key">The key to the delegate list.</param>
+            <returns>True if it has the delegate, false otherwise.</returns>
+        </member>
+        <member name="M:Stratus.Events.CheckRegistration(UnityEngine.GameObject)">
+            <summary>
+            Checks if the GameObject has been registered onto the event system.
+            </summary>
+            <param name="gameObj">A reference to the GameObject. </param>
+        </member>
+        <member name="M:Stratus.Events.Register(UnityEngine.GameObject)">
+            <summary>
+            Registers the GameObject to the event system.
+            </summary>
+            <param name="gameObj">The GameObject which is being registered. </param>
+        </member>
+        <member name="M:Stratus.Events.Register(UnityEngine.MonoBehaviour,UnityEngine.GameObject)">
+            <summary>
+            Registers the MonoBehaviour to the event system.
+            </summary>
+            <param name="component"></param>
+        </member>
+        <member name="M:Stratus.Events.Unsubscribe(UnityEngine.GameObject)">
+            <summary>
+            Unregisters the GameObject from the event system.
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:Stratus.Events.Watch``1">
+            <summary>
+            Adds the specified event to watch list, informing the user whenever
+            the event is being dispatched.
+            </summary>
+            <typeparam name="T">The event type.</typeparam>
+        </member>
+        <member name="M:Stratus.Events.AddDelegate``1(UnityEngine.GameObject,System.String,System.Action{``0})">
+            <summary>
+            Adds a member function delegate of a specific type onto the GameObject.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="gameObj"></param>
+            <param name="key"></param>
+            <param name="memFunc"></param>
+        </member>
+        <member name="T:Stratus.Events.Setup">
+            <summary>
+            Handles cleanup operations for MonoBehaviours that are connecting to 
+            events in the Stratus Event System.
+            </summary>
+        </member>
+        <member name="M:Stratus.EventsRegistration.OnDestroy">
+            <summary>
+            Unsubscribes this GameObject and all its components from the Stratus
+            event system.
+            </summary>
+        </member>
+        <member name="T:Stratus.MouseButton">
+            <summary>
+            A mouse button
+            </summary>
+        </member>
+        <member name="T:Stratus.GamepadButton">
+            <summary>
+            A gamepad button
+            </summary>
+        </member>
+        <member name="T:Stratus.InputMap">
+            <summary>
+            An event-driven input map
+            </summary>
+        </member>
+        <member name="F:Stratus.InputMap.Actions">
+            <summary>
+            Named actions
+            </summary>
+        </member>
+        <member name="F:Stratus.InputMap.UnnamedActions">
+            <summary>
+            Unnamed actions
+            </summary>
+        </member>
+        <member name="T:Stratus.InputMap.Action">
+            <summary>
+            A callback-based input binding. Set the appropiate callbacks in order
+            to be notified when the input is being used or not.
+            </summary>
+        </member>
+        <member name="F:Stratus.InputMap.Action.OnDown">
+            <summary>
+            Whether the control is currently down
+            </summary>
+        </member>
+        <member name="F:Stratus.InputMap.Action.OnPressed">
+            <summary>
+            Whether the control is currently being pressed 
+            </summary>
+        </member>
+        <member name="F:Stratus.InputMap.Action.OnUp">
+            <summary>
+            Whether the control has been let go
+            </summary>
+        </member>
+        <member name="M:Stratus.InputMap.Action.#ctor(System.String)">
+            <summary>
+            A named action
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:Stratus.InputMap.Action.#ctor">
+            <summary>
+            An unnamed action
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:Stratus.InputMap.Action.Setup(Stratus.InputMap.Action.DownCallback,Stratus.InputMap.Action.PressedCallback,Stratus.InputMap.Action.UpCallback)">
+            <summary>
+            Configures this action, setting the appropiate callbacks
+            </summary>
+            <param name="onDown">The function which will be invoked when this input is first pressed</param>
+            <param name="onPressed">The function which will be invoked when this input is being pressed every frame</param>
+            <param name="onUp">The function which will be invoked when this input is first released after being pressed</param>
+        </member>
+        <member name="M:Stratus.InputMap.Action.Convert(Stratus.GamepadButton)">
+            <summary>
+            Converts from our enumeration to a value that Unity can use.
+            </summary>
+            <param name="mouse"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.InputMap.Action.Convert(Stratus.MouseButton)">
+            <summary>
+            Converts from our enumeration to a value that Unity can use.
+            </summary>
+            <param name="mouse"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.InputMap.Action.Poll">
+            <summary>
+            Polls this input
+            </summary>
+        </member>
+        <member name="P:Stratus.InputMap.Action.IsPressed">
+            <summary>
+            Returns whether the given button is held down
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Stratus.InputMap.Action.IsDown">
+            <summary>
+            Returns true during the frame the user pressed the given button.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Stratus.Scene">
+            <summary>
+            A space for scene-specific events, accessible to all objects
+            </summary>
+        </member>
+        <member name="M:Stratus.Scene.Load(System.String)">
+            <summary>
+            Loads the specified scene
+            </summary>
+            <param name="sceneName"></param>
+        </member>
+        <member name="M:Stratus.Scene.Connect``1(System.Action{``0})">
+            <summary>
+            Subscribes to events dispatched onto the scene
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="func"></param>
+        </member>
+        <member name="M:Stratus.Scene.Dispatch``1(``0)">
+            <summary>
+            Dispatches an event to the scene
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="eventObj"></param>
+        </member>
+        <member name="M:Stratus.Scene.OnSceneChangedFunc(UnityEngine.SceneManagement.Scene,UnityEngine.SceneManagement.Scene)">
+            <summary>
+            Received when the scene changes
+            </summary>
+            <param name="prevScene"></param>
+            <param name="nextScene"></param>
+        </member>
+        <member name="T:Stratus.StratusBehaviour">
+            <summary>
+            A MonoBehaviour derivation to be used within the Stratus Event System. 
+            This is due to needing to remove all delegates a component has subscribed to
+            when it is being destroyed. Thus, the need to guarantee the cleanup code is
+            always called on components which subscribe to events.
+            </summary>
+        </member>
+        <member name="M:Stratus.StratusBehaviour.OnDestroyed">
+            <summary>
+            This is called by the StratusBehaviour class's OnDestroy method when the
+            component is being destroyed.
+            </summary>
+        </member>
+        <member name="M:Stratus.StratusBehaviour.OnDestroy">
+            <summary>
+            Initializes the StratusBehaviour script.
+            </summary>
+        </member>
+        <member name="M:Stratus.StratusBehaviour.OnApplicationQuit">
+            <summary>
+            Invoked when the application is about to quit
+            </summary>
+        </member>
+        <member name="T:Stratus.ComparisonType">
+            <summary>
+            Type of comparison
+            </summary>
+        </member>
+        <member name="T:Stratus.PropertyDrawingType">
+            <summary>
+            What to do with the property if the attribute is not validated
+            </summary>
+        </member>
+        <member name="T:Stratus.DrawIfAttribute">
+            <summary>
+            Draws the field/property only if the predicate comparing the property returns true
+            </summary>
+        </member>
+        <member name="M:Stratus.DrawIfAttribute.#ctor(System.String,System.Object,Stratus.ComparisonType,Stratus.PropertyDrawingType)">
+            <summary>
+            Only draws the field if the condition is met
+            </summary>
+            <param name="comparedPropertyName">The name of the property that is being compared</param>
+            <param name="comparedValue">The value the property is being compared to</param>
+            <param name="comparison">The predicate to use</param>
+            <param name="default">What should happen if the condition is not met</param>
+        </member>
+        <member name="T:Stratus.ReadOnlyAttribute">
+            <summary>
+            Makes the property read-only, unable to be modified in the editor
+            </summary>
+        </member>
+        <member name="M:Stratus.Extensions.Shuffle``1(System.Collections.Generic.List{``0})">
+            <summary>
+            Shuffles the list using a randomized range based on its size.
+            </summary>
+            <typeparam name="T">The type of the list.</typeparam>
+            <param name="list">A reference to the list.</param>
+            <remarks>Courtesy of Mike Desjardins #UnityTips</remarks>
+            <returns>A new, shuffled list.</returns>
+        </member>
+        <member name="M:Stratus.Extensions.Random``1(System.Collections.Generic.List{``0})">
+            <summary>
+            Returns a random element from the list
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Extensions.Empty``1(System.Collections.Generic.List{``0})">
+            <summary>
+            Finds out whether the list is currently empty or not.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list">The list.</param>
+            <returns>True if the list is empty, false otherwise</returns>
+        </member>
+        <member name="M:Stratus.Extensions.Copy``1(System.Collections.Generic.Stack{``0},System.Collections.Generic.List{``0})">
+            <summary>
+            Copies every element of the list into the stack.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="stack">The stack.</param>
+            <param name="list">The list</param>
+        </member>
+        <member name="M:Stratus.StructExtensions.SetAlpha(UnityEngine.Color,System.Single)">
+            <summary>
+            Sets the alpha on the color instantly.
+            </summary>
+            <param name="color">The color whose alpha to change</param>
+            <param name="alpha">The alpha value to set</param>
+        </member>
+        <member name="M:Stratus.StructExtensions.Contains(UnityEngine.Vector2,System.Single)">
+            <summary>
+            Checks the specified value is within the range of this vector
+            </summary>
+            <param name="range">A vector containing a min-max range.</param>
+            <param name="value">The value to check.</param>
+            <returns>True if the value is within the range, false otherwise</returns>
+        </member>
+        <member name="M:Stratus.StructExtensions.Average(UnityEngine.Vector2)">
+            <summary>
+            Gets the average between the values of the vector.
+            </summary>
+            <param name="range">The vector containing two values.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.StructExtensions.ToHex(UnityEngine.Color)">
+            <summary>
+            Retrieves the hex value of the given color
+            </summary>
+            <param name="color">The color from which we want to know the hex value</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.StructExtensions.Set(UnityEngine.Color,System.String)">
+            <summary>
+            Sets this color based on the given hex value
+            </summary>
+            <param name="color">The color to be set</param>
+            <param name="hex">A hex value</param>
+        </member>
+        <member name="T:Stratus.Overlay">
+            <summary>
+            A programmatic overlay for debugging use. You can use the preset window
+            for quick prototyping, or make your own windows.
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Enabled">
+            <summary>
+            Whether the overlay is enabled or not
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Windows">
+            <summary>
+            The anchored position of the default overlay window
+            </summary>
+        </member>
+        <member name="P:Stratus.Overlay.Name">
+            <summary>
+            The name of this object
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.CustomWindows">
+            <summary>
+            All custom windows written by the user
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Reset">
+            <summary>
+            Resets all windows to their defaults
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.OnSceneChanged">
+            <summary>
+            When the scene changes, reset all windows!
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Watch``1(System.Linq.Expressions.Expression{System.Func{``0}},UnityEngine.MonoBehaviour)">
+            <summary>
+            Keeps watch of a given property/field
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="varExpr">An expression of a given variable</param>
+            <param name="behaviour">The owner object of this variable</param>
+            <example>Overlay.Watch(()=> foo, this);</example>
+        </member>
+        <member name="M:Stratus.Overlay.AddButton(System.String,Stratus.Overlay.Callback)">
+            <summary>
+            Adds a button to the overlay
+            </summary>
+            <param name="message"></param>
+            <param name="callback"></param>
+        </member>
+        <member name="M:Stratus.Overlay.Show">
+            <summary>
+            Shows the overlay
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Hide">
+            <summary>
+            Hides the overlay
+            </summary>
+        </member>
+        <member name="T:Stratus.Overlay.Button">
+            <summary>
+            A button with a provided callback function
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Button.Callback">
+            <summary>
+            The function to call for this button
+            </summary>
+        </member>
+        <member name="T:Stratus.Overlay.Console">
+            <summary>
+            A text console that receives lines of text
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Console.BufferSize">
+            <summary>
+            The size of the text buffer
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Console.Buffer">
+            <summary>
+            The buffer of strings to print to the console
+            </summary>
+        </member>
+        <member name="P:Stratus.Overlay.Console.Active">
+            <summary>
+            This window is active as long as there are any messages on it
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Console.#ctor(System.String,UnityEngine.Vector2,UnityEngine.Color,Stratus.Overlay.Anchor)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="name"></param>
+            <param name="bufferSize"></param>
+        </member>
+        <member name="M:Stratus.Overlay.Console.OnDrawWindow">
+            <summary>
+            Draws the console
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Console.Print(System.String)">
+            <summary>
+            Prints a single message
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Console.Log(System.Object)">
+            <summary>
+            Adds a message to the console
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="T:Stratus.Overlay.Element">
+            <summary>
+            An UI element of the overlay
+            </summary>         
+        </member>
+        <member name="F:Stratus.Overlay.Element.Enabled">
+            <summary>
+            Whether this element is currently enabled
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Element.Name">
+            <summary>
+            The name of this element
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Element.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:Stratus.Overlay.Element.Draw">
+            <summary>
+            Draws this element
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Element.OnDraw">
+            <summary>
+            Draws this element
+            </summary>
+        </member>
+        <member name="T:Stratus.Overlay.Anchor">
+            <summary>
+            Where should the window be anchored to
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.FindRelativeDimensions(System.Single,System.Single)">
+            <summary>
+            Finds the dimensions relative to screen space, from a given percentage (0 to 1).
+            So for example if you wanted to cover 10% of the screen's width and 20% of its height,
+            you would pass in (0.1f, 0,2f)
+            </summary>
+            <param name="widthRatio">The relative width of the screen as a percentage (from 0 to 1)</param>
+            <param name="heightRatio">The relative height of the screen as a percentage (from 0 to 1)</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Overlay.FindAnchoredPosition(Stratus.Overlay.Anchor,System.Single,System.Single)">
+            <summary>
+            Computes a proper rect from a given anchored position along with the width and height
+            </summary>
+            <param name="anchor">The relative position of the rect in screen space</param>
+            <param name="width">The width the rect should have</param>
+            <param name="height">The height the rect should have</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Overlay.MakeTexture(System.Int32,System.Int32,UnityEngine.Color,UnityEngine.RectOffset,UnityEngine.Color)">
+            <summary>
+            Makes a texture
+            </summary>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="textureColor"></param>
+            <param name="border"></param>
+            <param name="bordercolor"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Stratus.Overlay.Watcher">
+            <summary>
+            Keeps watch over a given variable
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Watcher.Variable">
+            <summary>
+            A reference to the given variable
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Watcher.Behaviour">
+            <summary>
+            The owner of this variable
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Watcher.#ctor(Stratus.Utilities.Reflection.VariableReference,UnityEngine.MonoBehaviour)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="prefix">A given prefix for this variable</param>
+            <param name="variable">The variable being watched</param>
+        </member>
+        <member name="M:Stratus.Overlay.Watcher.OnDraw">
+            <summary>
+            Draws the variable to the window
+            </summary>
+        </member>
+        <member name="T:Stratus.Overlay.WatcherWindow">
+            <summary>
+            Window for watching variables
+            </summary>
+        </member>
+        <member name="T:Stratus.Overlay.AbstractWindow">
+            <summary>
+            The base class for all windows
+            </summary>
+        </member>
+        <member name="P:Stratus.Overlay.AbstractWindow.Active">
+            <summary>
+            Whether this window is currently active
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.AbstractWindow.Position">
+            <summary>
+            The anchored position of the overlay
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.AbstractWindow.Dimensions">
+            <summary>
+            The dimensions of this window as ratios between 0 and 1
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.AbstractWindow.Background">
+            <summary>
+            The background texture
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.AbstractWindow.BackgroundStyle">
+            <summary>
+            The style of this window's background
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.AbstractWindow.#ctor(System.String,UnityEngine.Vector2,UnityEngine.Color,Stratus.Overlay.Anchor)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="title">The title of this window</param>
+            <param name="relativeDimensions">The relative dimensions of this window</param>
+            <param name="color"></param>
+            <param name="position"></param>
+        </member>
+        <member name="M:Stratus.Overlay.AbstractWindow.OnDraw">
+            <summary>
+            Draws this window
+            </summary>
+        </member>
+        <member name="T:Stratus.Overlay.Window">
+            <summary>
+            An UI element that contains other elements, which are parented to it
+            </summary>
+        </member>
+        <member name="P:Stratus.Overlay.Window.Active">
+            <summary>
+            This window is active whenever there are elements on it
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Window.Elements">
+            <summary>
+            All child elements
+            </summary>
+        </member>
+        <member name="F:Stratus.Overlay.Window.ScrollPosition">
+            <summary>
+            The position of the scrolling bar
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Window.Add(Stratus.Overlay.Element)">
+            <summary>
+            Adds an element to be drawn inside the window
+            </summary>
+            <param name="element"></param>
+        </member>
+        <member name="M:Stratus.Overlay.Window.Remove(Stratus.Overlay.Element)">
+            <summary>
+            Removes an element from the window
+            </summary>
+            <param name="element"></param>
+        </member>
+        <member name="M:Stratus.Overlay.Window.OnDrawWindow">
+            <summary>
+            Draws all active elements in the window
+            </summary>
+        </member>
+        <member name="M:Stratus.Overlay.Window.DrawElements">
+            <summary>
+            Draws the elements of the window
+            </summary>
+        </member>
+        <member name="T:Stratus.EnableEvent">
+            <summary>
+            Enables a specified GameObject.
+            </summary>
+        </member>
+        <member name="T:Stratus.EnableTriggerEvent">
+            <summary>
+            An event which enables another trigger.
+            </summary>
+        </member>
+        <member name="T:Stratus.EventDispatcher">
+            <summary>
+            When triggered by an EventTrigger, will perform the specified action.
+            </summary>
+        </member>
+        <member name="F:Stratus.EventDispatcher.Tracing">
+            <summary>
+            Whether we are printing debug output
+            </summary>
+        </member>
+        <member name="F:Stratus.EventDispatcher.IsTriggerable">
+            <summary>
+            Whether this event dispatcher will respond to trigger events
+            </summary>
+        </member>
+        <member name="F:Stratus.EventDispatcher.Delay">
+            <summary>
+            Whether this event dispatcher will respond to trigger events
+            </summary>
+        </member>
+        <member name="M:Stratus.EventDispatcher.Awake">
+            <summary>
+            Called when the script instance is first being loaded.
+            </summary>
+        </member>
+        <member name="M:Stratus.EventDispatcher.OnDisable">
+            <summary>
+            Called when the behavior is disabled or inactive.
+            </summary>
+        </member>
+        <member name="M:Stratus.EventDispatcher.Initialize">
+            <summary>
+            Initializes the EventDispatcher.
+            </summary>
+        </member>
+        <member name="M:Stratus.EventDispatcher.OnTriggerEvent(Stratus.EventTrigger.TriggerEvent)">
+            <summary>
+            When the trigger event is received, runs the trigger sequence.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Stratus.EventDispatcher.Trigger">
+            <summary>
+            Triggers the EventDispatcher.
+            </summary>
+        </member>
+        <member name="M:Stratus.EventDispatcher.RunTriggerSequence">
+            <summary>
+            Runs the trigger sequence. After a specified delay, it will invoke
+            the abstract 'OnTrigger' method.
+            </summary>
+        </member>
+        <member name="T:Stratus.EventTrigger">
+            <summary>
+            Triggers an event when the specified condition is met.
+            </summary>
+        </member>
+        <member name="M:Stratus.EventTrigger.Trigger">
+            <summary>
+            Triggers the event
+            </summary>
+        </member>
+        <member name="M:Stratus.EventTrigger.Trigger(UnityEngine.GameObject)">
+            <summary>
+            Manually dispatches a trigger event onto the specified game bject.
+            </summary>
+            <param name="gameObject"></param>
+        </member>
+        <member name="T:Stratus.InvokeDispatcher">
+            <summary>
+            Invokes a method when triggered.
+            </summary>
+        </member>
+        <member name="M:Stratus.ObjectTransformEvent.Transform(UnityEngine.Vector3)">
+            <summary>
+            Interpolates to the specified transformation.
+            </summary>
+        </member>
+        <member name="M:Stratus.ObjectTransformEvent.Revert">
+            <summary>
+            Reverts to the previous transformation.
+            </summary>
+        </member>
+        <member name="T:Stratus.TimerTrigger">
+            <summary>
+            After a specified amount of time, triggers the event
+            </summary>
+        </member>
+        <member name="T:Stratus.WindowEventTrigger">
+            <summary>
+            Trigger for a Window-related event.
+            </summary>
+        </member>
+        <member name="T:Stratus.Singleton`1">
+            <summary>
+            Singleton for components without events.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:Stratus.StratusSingleton`1">
+            <summary>
+            Singleton for components that receive events.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:Stratus.UI.Button">
+            <summary>
+            Represents a button that can be pressed
+            </summary>
+        </member>
+        <member name="P:Stratus.UI.Button.Sprite">
+            <summary>
+            What sprite to use for this button
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Button.Press">
+            <summary>
+            Presses the button!
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Button.Destroy(System.Single)">
+            <summary>
+            Destroys this button within the specified amount of time.
+            </summary>
+            <param name="t">How long before this button is destroyed.</param>
+        </member>
+        <member name="T:Stratus.UI.CancelLink">
+            <summary>
+            Sends a cancel command when confirmed on.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.ExecutableLink">
+            <summary>
+            Executes the specified method when opened.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.ExecutableLink.Set(UnityEngine.Events.UnityAction)">
+            <summary>
+            Sets the callback for this link, overwriting any previous ones.
+            </summary>
+            <param name="call">An UnityAction, lambda expression, etc.</param>
+        </member>
+        <member name="T:Stratus.UI.InputLink">
+            <summary>
+            Redirects input either to specified callback functions or to a gameobject.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.InputLink.Type">
+            <summary>
+            The type of redirection to be used.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.InputLink.OnNavigate(Stratus.UI.Navigation)">
+            <summary>
+            Invoked when the link receives a navigation event.
+            </summary>
+            <param name="dir"></param>
+        </member>
+        <member name="M:Stratus.UI.InputLink.OnConfirm">
+            <summary>
+            Invoked when the link receives a confirm event.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.Link">
+            <summary>
+            The base class for all links in the framework.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Link.LinkStyle.Animator">
+            <summary>
+            The animator controller for this link.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.Link.NavigateEvent">
+            <summary>
+            Contains navigation data used for input in the system.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.Link.SelectEvent">
+            <summary>
+            Received by a link when it is selected by a link interface.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.Link.DeselectEvent">
+            <summary>
+            Received by a link when it is deselected by a link interface.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.Link.ConfirmEvent">
+            <summary>
+            Used for confirming the current link.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.Link.CancelEvent">
+            <summary>
+            Used for cancelling the current link. 
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.Link.OpenedEvent">
+            <summary>
+            Used when a link has been opened.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.Link.ClosedEvent">
+            <summary>
+            Used when a link has been closed.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Link.Enabled">
+            <summary>
+            Whether the link can be activated.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Link.Hidden">
+            <summary>
+            A hidden link cannot be navigated to by other links.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Link.Description">
+             <summary>
+            The description of this link 
+             </summary>
+        </member>
+        <member name="F:Stratus.UI.Link.Navigation">
+            <summary>
+            The neighbouring links 
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Link.Active">
+            <summary>
+            Whether this link has been activated 
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Link.Interface">
+            <summary>
+            The interface this link has been registered to 
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Link.Tracing">
+            <summary>
+            Whether this link is currently logging.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Link.State">
+            <summary>
+            The current state of this link
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Link.Start">
+            <summary>
+            Initializes the Link.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Link.AssignNeighbors">
+            <summary>
+            Looks for this link's neighbors amongst the parent's children.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Link.Navigate(Stratus.UI.Navigation)">
+            <summary>
+            Navigates this link.
+            </summary>
+            <param name="dir">The direction of navigation.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.UI.Link.Enable(System.Boolean)">
+            <summary>
+            Enables this link.
+            </summary>
+            <param name="enabled"></param>
+        </member>
+        <member name="M:Stratus.UI.Link.Activate">
+            <summary>
+            Activates this link.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Link.Deactivate">
+            <summary>
+            Deactivates this link.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Link.TransitionTo(Stratus.UI.Link.LinkState)">
+            <summary>
+            Transitions to another state
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:Stratus.UI.Link.Show(System.Boolean,System.Boolean)">
+            <summary>
+            Shows or hides this link.
+            </summary>
+            <param name="show"></param>
+            <param name="immediate">Whether this should be done immediately. </param>
+        </member>
+        <member name="M:Stratus.UI.Link.Animate">
+            <summary>
+            Animates this link, depending on its state
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Link.Tint(UnityEngine.Color)">
+            <summary>
+            Changes the color of this link.
+            </summary>
+            <param name="enabled"></param>
+        </member>
+        <member name="T:Stratus.UI.LinkAnimator">
+            <summary>
+            Animates the link it is attached to.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.LinkController">
+            <summary>
+            The manager for all links that the overlying LinkInterface has access to.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkController.Style">
+            <summary>
+            The common style used by all the links managed by this controller
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkController.DefaultLayer">
+            <summary>
+            The default layer of links for this controller
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkController.CurrentLayer">
+            <summary>
+            The currently selected layer
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkController.PreviousLayer">
+            <summary>
+            The previously selected layer
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkController.Tracing">
+            <summary>
+            Whether to pring debug output
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkController.Links">
+            <summary>
+            All the links belonging to this controller
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkController.Layers">
+            <summary>
+            All the layers belonging to this controller
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkController.Interface">
+            <summary>
+            The interface this controller belongs to
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkController.Awake">
+            <summary>
+            Initializes the LinkController script.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkController.Connect(Stratus.UI.LinkInterface)">
+            <summary>
+            Connects the controller with the Link Interface.
+            </summary>
+            <param name="linkInterface"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkController.Connect">
+            <summary>
+            Connects all layers and links.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkController.SwitchLayer(Stratus.UI.LinkLayer)">
+            <summary>
+            Switches to the specified layer.
+            </summary>
+            <param name="layer"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkController.SwitchLayer(System.String)">
+            <summary>
+            Switches to the specified layer.
+            </summary>
+            <param name="layerName">The name of the layer to switch to.</param>
+        </member>
+        <member name="M:Stratus.UI.LinkController.SwitchLayerToPrevious">
+            <summary>
+            Switches back to the previous layer.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.UI.LinkController.ConnectLinks">
+            <summary>
+            Registers all links under this controller, including those parented to
+            LinkLayers.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkController.ConnectLayers">
+            <summary>
+            Registers all link layers under this controller, using a string dictionary
+            to later access them.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkController.SelectFirstLink">
+            <summary>
+            Selects the first link among available links.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.UI.LinkController.SetDefaultStyle">
+            <summary>
+            Sets the default style on all registered links.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkController.Enable(System.Boolean,System.Boolean)">
+            <summary>
+            Enables or disables all registered links.
+            </summary>
+            <param name="enabled">Whether the link should be enabled or not.</param>
+            <param name="immediate">Whether this change should be done immediately.</param>
+        </member>
+        <member name="M:Stratus.UI.LinkController.Find(System.String)">
+            <summary>
+            Finds a specified link by name.
+            </summary>
+            <param name="name">The name of the GameObject with the link.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.UI.LinkController.DeselectAll">
+            <summary>
+            Deselects all links
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.LinkInterface">
+            <summary>
+            Base class for the LinkInterfaceSystem.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkInterface.Tracing">
+            <summary>
+            Whether to print debug output
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkInterface.Active">
+            <summary>
+            Whether this link interface is active
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkInterface.InputDelay">
+            <summary>
+            Time before input is accepted after opening
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkInterface.Controller">
+            <summary>
+            The manager for all links
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkInterface.CurrentLink">
+            <summary>
+            The currently selected link
+            </summary>
+        </member>
+        <member name="P:Stratus.UI.LinkInterface.IsAcceptingInput">
+             <summary>
+            Whether this link interface is accepting input
+             </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkInterface._IsAcceptingInput">
+            <summary>
+            Whether this link interface is accepting input
+            </summary>      
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.OnInterfaceInitialize">
+            <summary>
+            Whether this link interface is already active
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.Awake">
+            <summary>
+            Initializes the LinkInterface, subscribing to all link navigation
+            events, registering the link controller, etc...
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.OnNavigateEvent(Stratus.UI.Link.NavigateEvent)">
+            <summary>
+            Invoked upon receiving 'Navigational' input
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.OnConfirmEvent(Stratus.UI.Link.ConfirmEvent)">
+            <summary>
+            Invoked upon receiving a 'Confirm' input
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.OnCancelEvent(Stratus.UI.Link.CancelEvent)">
+            <summary>
+            Invoked upon receiving a 'Cancel' input
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.OnLinkSelectEvent(Stratus.UI.Link.SelectEvent)">
+            <summary>
+            Invoked when a link has been selected.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.OnLinkOpenedEvent(Stratus.UI.Link.OpenedEvent)">
+            <summary>
+            Invoked when a link has been opened (by this Interface)
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.OnLinkClosedEvent(Stratus.UI.Link.ClosedEvent)">
+            <summary>
+            Invoked when a link has been closed.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.RedirectInput``1(``0)">
+            <summary>
+            Redirects input events to the window if there is one open.
+            </summary>
+            <typeparam name="U">The input event class</typeparam>
+            <param name="inputEvent">The input event.</param>
+            <returns>True if input was redirected, false otherwise. </returns>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.Open">
+            <summary>
+            Opens the link interface. This will call the subclass OnOpen as well.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.Close">
+            <summary>
+            Closes the link interface. This will call the subclass OnClose as well.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.SwitchLayer(Stratus.UI.LinkLayer,System.Boolean)">
+            <summary>
+            Switches to a new link layer.
+            </summary>
+            <param name="layer">The layer which to switch to. </param>
+            <param name="resetState">Whether to reset to the default state of this layer.</param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.SwitchLayer(System.String,System.Boolean)">
+            <summary>
+            Switches to a new link layer.
+            </summary>
+            <param name="layerName">The name layer which to switch to. </param>
+            <param name="resetState">Whether to reset to the default state of this layer.</param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.SwitchLayerToPrevious(System.Boolean)">
+            <summary>
+            Switches to the previous link layer.
+            </summary>
+            <param name="resetState"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.ResetLayer(System.Boolean)">
+            <summary>
+            Resets the state of the current layer.
+            </summary>
+            <param name="resetState"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.SelectFirstLink">
+            <summary>
+            Selects the first available link among all links.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.SelectLink(Stratus.UI.Link)">
+            <summary>
+            Selects the specified link.
+            </summary>
+            <param name="link"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.DeselectLink">
+            <summary>
+            Deselects the current link.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.OpenLink(Stratus.UI.Link)">
+            <summary>
+            Selects, then opens the specified link.
+            </summary>
+            <param name="link"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.OpenLink(System.String)">
+            <summary>
+            Selects, then opens the specified link.
+            </summary>
+            <param name="name">The name of the link.</param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.Toggle(System.Boolean)">
+            <summary>
+            Toggles the LinkInterface on and off.
+            </summary>
+            <param name="toggle"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.ToggleGraphics(System.Boolean)">
+            <summary>
+            Toggles graphics for the LinkInterface.
+            </summary>
+            <param name="showing"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.ToggleControls(System.Boolean,System.Boolean)">
+            <summary>
+            Toggles input for the LinkInterface.
+            </summary>
+            <param name="enabled"></param>
+        </member>
+        <member name="M:Stratus.UI.LinkInterface.DisableInput(System.Single)">
+            <summary>
+            Disables input for a specified duration.
+            </summary>
+            <param name="duration">How long should input be disabled for.</param>
+        </member>
+        <member name="T:Stratus.UI.LinkLayer">
+            <summary>
+            A group of links, so that they can only navigate with those within the layer.
+            Also allows them to be shown/hidden at once.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.LinkLayer.Links">
+            <summary>
+            The links currently attached to this layer.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkLayer.Awake">
+            <summary>
+            Initializes the LinkLayer
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkLayer.RegisterLinks">
+            <summary>
+            Registers all links under this layer.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkLayer.Restore">
+            <summary>
+            Restores the state of this layer.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkLayer.Reset">
+            <summary>
+            Resets the state of this layer to default. This will deactivate all links.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.LinkLayer.Enable(System.Boolean,System.Boolean)">
+            <summary>
+            Enables or disables all registered links.
+            </summary>
+            <param name="enabled">Whether the link should be enabled or not.</param>
+        </member>
+        <member name="T:Stratus.UI.Navigation">
+            <summary>
+            Used to specify navigational direction for links.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.NavigationAxis">
+            <summary>
+            What axis to use when navigating.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.NavigationCallback">
+            <summary>
+            Custom callback for a method taking a direction.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.PropertyLink">
+            <summary>
+            A link which allows a property to be modified through a slider
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.ScrollingLinks">
+            <summary>
+            Provides a scrolling list interface for links, using Unity's Canvas UI.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.ScrollingLinks.Add``1(System.String,System.String)">
+            <summary>
+            Adds a link and positions it dynamically.
+            </summary>
+            <typeparam name="T">The type of link to add</typeparam>
+        </member>
+        <member name="M:Stratus.UI.ScrollingLinks.Clear">
+            <summary>
+            Clears all scrolling links.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.SoundEffects">
+            <summary>
+            Plays sound effects used by the UI.
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.Window">
+            <summary>
+            Base window class for the LinkInterfaceSystem.
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Window.ClosingThreshold">
+            <summary>
+            How long before the window can be closed
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.Window.CanBeClosed">
+            <summary>
+            Whether this window can be closed currently
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Window.Fit">
+            <summary>
+            Resizes and repositions this Window to fit on the canvas.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Window.RequestOpen">
+            <summary>
+            Requests this Window to open.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Window.RequestClose">
+            <summary>
+            Requests this Window to close.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.Window.Fade(System.Single,System.Single)">
+            <summary>
+            Tweens the alpha of this window and all its children.
+            </summary>
+            <param name="alpha"></param>
+            <param name="duration"></param>
+        </member>
+        <member name="T:Stratus.UI.WindowElement">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.WindowFadeTransition">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowFadeTransition.OnWindowInitialize">
+            <summary>
+            Called upon when the window has initialized.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowFadeTransition.OnWindowOpen">
+            <summary>
+            Called upon when the window is about to open.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowFadeTransition.OnWindowClose">
+            <summary>
+            Called upon when the window is about to close.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowFadeTransition.Fade(System.Single,System.Single)">
+            <summary>
+            Tweens the alpha of this window and all its children.
+            </summary>
+            <param name="alpha"></param>
+            <param name="duration"></param>
+        </member>
+        <member name="F:Stratus.UI.WindowInspector.Target">
+            <summary>
+            The current window being inspected
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.WindowInspector.Dropdown">
+            <summary>
+            The dropdown menu used to select what window to debug
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.WindowInspector.CurrentLinkText">
+            <summary>
+            The text describing the current link
+            </summary>
+        </member>
+        <member name="F:Stratus.UI.WindowInspector.AvailableWindows">
+            <summary>
+            The windows currently available to inspect
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowInspector.Start">
+            <summary>
+            Configures the dropdown list of available windows 
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowInspector.ChangeWindow(System.Int32)">
+            <summary>
+            Changes the current window
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:Stratus.UI.WindowInspector.ShowCurrentLink">
+            <summary>
+            Shows the currently selected link
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowInspector.Populate">
+            <summary>
+            Populates the dropdown list
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowInspector.Open">
+            <summary>
+            Opens the target window
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowInspector.Close">
+            <summary>
+            Closes the target window
+            </summary>
+        </member>
+        <member name="T:Stratus.UI.WindowTransition">
+            <summary>
+            Add-on for the Window class that handles automated transitions.
+            </summary>
+        </member>
+        <member name="M:Stratus.UI.WindowTransition.Awake">
+            <summary>
+            Initializes the WindowTransition script.
+            </summary>
+        </member>
+        <member name="T:Stratus.Slideshow">
+            <summary>
+            Presents a series of Graphical objects in sequence, using events
+            and triggers to fade them in and out.
+            </summary>
+        </member>
+        <member name="M:Stratus.Slideshow.AdvanceSlide">
+            <summary>
+            Advances to the next slide.
+            </summary>
+        </member>
+        <member name="M:Stratus.UIElement.OnDestroyed">
+            <summary>
+            This is called by the StratusBehaviour class's OnDestroy method when the
+            component is being destroyed.
+            </summary>
+        </member>
+        <member name="M:Stratus.UIElement.OnDestroy">
+            <summary>
+            Initializes the StratusBehaviour script.
+            </summary>
+        </member>
+        <member name="M:Stratus.UIElement.OnApplicationQuit">
+            <summary>
+            Invoked when the application is about to quit
+            </summary>
+        </member>
+        <member name="T:Stratus.ArrayNavigate`1">
+            <summary>
+            Provides a generic way to navigate a 1D array using directional axis.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Stratus.ArrayNavigate`1.First">
+            <summary>
+            Retrieves the first element in the array.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.ArrayNavigate`1.Last">
+            <summary>
+            Retrieves the last element in the array.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.ArrayNavigate`1.Random">
+            <summary>
+            Retrieves a random element in the array.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:Stratus.Trace.Enabled">
+            <summary>
+            Whether tracing is currently enabled
+            </summary>
+        </member>
+        <member name="F:Stratus.Trace.Font">
+            <summary>
+            What font to use
+            </summary>
+        </member>
+        <member name="F:Stratus.Trace.TimeStamp">
+            <summary>
+            Whether time stamps are enabled
+            </summary>
+        </member>
+        <member name="F:Stratus.Trace.MethodColor">
+            <summary>
+            The color of the function being called
+            </summary>
+        </member>
+        <member name="F:Stratus.Trace.ClassColor">
+            <summary>
+            The color of the class the function being called belongs to
+            </summary>
+        </member>
+        <member name="F:Stratus.Trace.GameObjectColor">
+            <summary>
+            The color used of the GameObject of the class being called
+            </summary>
+        </member>
+        <member name="F:Stratus.Trace.TimeStampColor">
+            <summary>
+            The color of the time stamp
+            </summary>
+        </member>
+        <member name="M:Stratus.Trace.Reset">
+            <summary>
+            Resets to the default color and styles
+            </summary>
+        </member>
+        <member name="M:Stratus.Trace.Function(System.Int32)">
+            <summary>
+            Returns the name of the method that called this function
+            </summary>
+            <param name="frame">How far up the stack to go</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stratus.Trace.Script(System.Object,UnityEngine.Behaviour,System.Nullable{UnityEngine.Color})">
+            <summary>
+            Prints the given message, prefixing it with the name of the method
+            and the class name. (And optionally, its owner GameObject)
+            </summary>
+            <param name="message">The message object.</param>
+            <param name="component">The component which invoked this method. </param>
+            <param name="color">The color of the message</param>
+        </member>
+        <member name="M:Stratus.Trace.Error(System.Object,UnityEngine.Behaviour,System.Boolean)">
+            <summary>
+            Prints the given message, prefixing it with the name of the method
+            and the class name. This is printed as an error followed by an exception.
+            </summary>
+            <param name="message">The error message.</param>
+            <param name="component">The component which invoked the method.</param>
+            <param name="throwException">Whether to throw an exception.</param>
+        </member>
+        <member name="M:Stratus.Trace.Format(System.Object,UnityEngine.Color,Stratus.Trace.TextStyle)">
+            <summary>
+            Formats a string, applying stylying and coloring to it
+            </summary>
+            <param name="obj"></param>
+            <param name="color"></param>
+            <param name="italic"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EventsExtensions.Connect``1(UnityEngine.GameObject,System.Action{``0})">
+            <summary>
+            Connects to the specified event on this given object.
+            </summary>
+            <typeparam name="T">The event class. </typeparam>
+            <param name="gameObj">The GameObject to which to connect to.</param>
+            <param name="func">The member function callback. </param>
+        </member>
+        <member name="M:EventsExtensions.Disconnect(UnityEngine.Behaviour)">
+            <summary>
+            Disconnects this component from all events.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="gameObj"></param>
+        </member>
+        <member name="M:EventsExtensions.Disconnect(UnityEngine.MonoBehaviour,UnityEngine.GameObject)">
+            <summary>
+            Disconnects this component from events from the specified GameObject.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="gameObj"></param>
+        </member>
+        <member name="M:EventsExtensions.Dispatch``1(UnityEngine.GameObject,``0,System.Boolean)">
+            <summary>
+            Dispatches the given event of the specified type onto this object.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="gameObj">The GameObject to which to connect to.</param>
+            <param name="eventObj">The event object. </param>
+            <param name="nextFrame">Whether the event should be sent next frame.</param>
+        </member>
+        <member name="M:EventsExtensions.DispatchDown``1(UnityEngine.GameObject,``0,System.Boolean)">
+            <summary>
+            Dispatches the given event of the specified type to this object and all its children.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="gameObj">The GameObject to which to connect to.</param>
+            <param name="eventObj">The event object. </param>
+        </member>
+        <member name="M:EventsExtensions.DispatchUp``1(UnityEngine.GameObject,``0,System.Boolean)">
+            <summary>
+            Dispatches an event up the tree on each parent recursively.
+            </summary>
+            <typeparam name="T">The event class. </typeparam>
+            <param name="gameObj">The GameObject to which to dispatch to.</param>
+            <param name="eventObj">The event object. </param>
+        </member>
+        <member name="M:ComponentExtensions.Copy``1(UnityEngine.Component,``0)">
+            <summary>
+            Copies a component, constructing a new one from the same type and
+            copying the values from the original wholesale.
+            </summary>
+            <typeparam name="T">The component class</typeparam>
+            <param name="component">The component to copy into.</param>
+            <param name="otherComponent">The component being copied</param>
+            <returns>A reference to the new component</returns>
+        </member>
+        <member name="M:ComponentExtensions.Center(UnityEngine.Transform,UnityEngine.Transform)">
+            <summary>
+            Centers this transform on the parent
+            </summary>
+            <param name="transform"></param>
+            <param name="parent"></param>
+        </member>
+        <member name="M:GameObjectExtensions.FindChild(UnityEngine.GameObject,System.String)">
+            <summary>
+            Finds the child of this GameObject with a given name
+            </summary>
+            <param name="gameObj"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GameObjectExtensions.FindChildBFS(UnityEngine.Transform,System.String)">
+            <summary>
+            Finds the child of this transform, using Breadth-first search
+            </summary>
+            <param name="parent"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GameObjectExtensions.Destroy(UnityEngine.GameObject)">
+            <summary>
+            Destroys the GameObject.
+            </summary>
+            <param name="go"></param>
+        </member>
+        <member name="M:StringExtensions.Clear(System.String)">
+            <summary>
+            Clears the string
+            </summary>
+            <param name="str"></param>
+        </member>
+    </members>
+</doc>

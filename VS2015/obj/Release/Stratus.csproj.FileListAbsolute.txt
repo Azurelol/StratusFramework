@@ -4,3 +4,24 @@ c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Release\UnityE
 c:\users\azurelol\documents\visual studio 2015\Projects\Trace\bin\Release\UnityEngine.xml
 c:\users\azurelol\documents\visual studio 2015\Projects\Trace\obj\Release\Stratus.dll
 c:\users\azurelol\documents\visual studio 2015\Projects\Trace\obj\Release\Stratus.pdb
+G:\Repositories\StratusFramework\VS2015\bin\Release\Stratus.dll.config
+G:\Repositories\StratusFramework\VS2015\bin\Release\Stratus.XML
+G:\Repositories\StratusFramework\VS2015\bin\Release\Stratus.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\Stratus.pdb
+G:\Repositories\StratusFramework\VS2015\obj\Release\Stratus.dll
+G:\Repositories\StratusFramework\VS2015\obj\Release\Stratus.pdb
+G:\Repositories\StratusFramework\VS2015\obj\Release\Stratus.csprojResolveAssemblyReference.cache
+G:\Repositories\StratusFramework\VS2015\bin\Release\UnityEditor.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\UnityEditor.Graphs.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\UnityEngine.UI.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\Mono.Cecil.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\Unity.SerializationLogic.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\Unity.DataContract.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\ICSharpCode.NRefactory.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\Unity.UNetWeaver.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\nunit.framework.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\Unity.CecilTools.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\Mono.Cecil.Pdb.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\Mono.Cecil.Mdb.dll
+G:\Repositories\StratusFramework\VS2015\bin\Release\UnityEditor.xml
+G:\Repositories\StratusFramework\VS2015\bin\Release\UnityEngine.UI.xml

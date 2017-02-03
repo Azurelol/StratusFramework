@@ -6,8 +6,7 @@ I consider this framework very much a work in progress. Even so I find its core 
 
 ---
 ##Features
-- **Events**: A custom event system using delegates that greatly simplifies the use of callbacks in code, for the implementation of code using the Observer pattern.
-- **Spaces**: Working in tandem with the event system, a Space is an object containing all the GameObjects in a given scene. In practice the Space becomes a proxy which provides a common point for "scene-wide" events to be sent to.
+- **Events**: A custom event system using delegates that greatly simplifies the use of callbacks in code, for the implementation of code using the Observer pattern. Events can be dispatched either to GameObjects directly, or to the whole Scene. Monobehaviours can subscribe to events on either GameObjects or to the scene.
 - **Actions**: An Action list library with a very simplified interface for quickly construction action sets for interpolating properties, delayed function invocations, etc.
 - **Triggers**: A family of components that are activated on conditions specific to each one. For example a *CollisionTrigger* will activate when it detects a specified type of collision with a specified target. When a trigger component is activated, it will send a *Trigger* event to a specified target by either a direct invocation on a specific method (through *UnityEvent*) or through an event object sent to that GameObject. 
 These *Trigger* events are received by additional family of components called *EventDispatchers* which upon receiving them, perform some generic functionality, such as transforming an object, changing the scene, etc. By using both these families together the possibility space for what you can do without having to write boilerplate code is very high! 
@@ -43,7 +42,7 @@ Some snippets of the code within:
     // Construct the event object
     SampleEvent eventObj = new SampleEvent();
     eventObj.Number = 5;
-    // Dispatch the event
+    // Dispatch the event to the gameobject
     Trace.Script("Event dispatched", this);
     this.gameObject.Dispatch<SampleEvent>(eventObj);
   }    
@@ -66,11 +65,17 @@ Some snippets of the code within:
       Actions.Property(seq, ()=>this.SampleFloat, 25, 2.0f, Ease.Linear);
       // Third and last, we will invoke a specified function!
       Actions.Call(seq, this.Boop);
+      Actions.Call(seq, ()=>this.Boop(7));
     }
     
     void Boop() 
     {
       Trace.Script("Boop!");
+    }
+    
+    void Boop(int times) 
+    {
+      Trace.Script("You booped " + times + " times", this);
     }
     
 
