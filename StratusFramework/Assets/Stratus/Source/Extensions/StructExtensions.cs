@@ -86,7 +86,6 @@ namespace Stratus
       return randomPos;
     }
 
-
     /// <summary>
     /// Sets this color based on the given hex value
     /// </summary>

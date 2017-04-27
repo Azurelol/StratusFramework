@@ -42,7 +42,7 @@ namespace Stratus
     public override float Update(float dt)
     {
       Trace.Script(Message, this.Object);
-      this.Finished = true;
+      this.IsFinished = true;
 
       if (Actions.Debugging)
         Debug.Log("#" + this.ID + ": Finished!");

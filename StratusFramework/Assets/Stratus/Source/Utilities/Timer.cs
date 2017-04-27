@@ -8,46 +8,72 @@
 /******************************************************************************/
 using UnityEngine;
 using Stratus;
+using System;
 
 namespace Stratus
 {
   namespace Utilities
   {
+
     /// <summary>
     /// The base class for all timers
     /// </summary>
     public abstract class BaseTimer
     {
+      public abstract bool Update(float dt);
+    }
+
+    public abstract class Timer : BaseTimer
+    {
+      //------------------------------------------------------------------------/
+      // Declarations
+      //------------------------------------------------------------------------/
       public delegate void Callback();
 
-      protected float Total_;
-      protected float Current_;
-      protected bool Finished_ = false;
-
+      //------------------------------------------------------------------------/
+      // Properties
+      //------------------------------------------------------------------------/
       /// <summary>
-      /// The callback function for when this timer finishes
+      /// Returns the maximum duration for this timer
       /// </summary>
-      Callback OnFinished;
-
       public float Total { get { return Total_; } }
+      /// <summary>
+      /// Returns the currently elapsed time for this timer
+      /// </summary>
       public float Current { get { return Current_; } }
-      public bool Finished { get { return Finished_; } }
-
+      /// <summary>
+      /// Whether this timer has finished running
+      /// </summary>
+      public bool IsFinished { get { return Finished_; } }
       /// <summary>
       /// The current progress in this timer as a percentage value ranging from 0 to 1.
       /// </summary>
       public float Progress { get { if (Total == 0.0f) return 0.0f; return (Current / Total); } }
-
       /// <summary>
       /// The current progress in this timer as a percentage value ranging from 0 to 100.
       /// </summary>
       public float Percentage { get { if (Total == 0.0f) return 0.0f; return (Current / Total) * 100.0f; } }
 
+      //------------------------------------------------------------------------/
+      // Fields
+      //------------------------------------------------------------------------/
+      protected float Total_;
+      protected float Current_;
+      protected bool Finished_ = false;
+      /// <summary>
+      /// The callback function for when this timer finishes
+      /// </summary>
+      Callback OnFinished;
 
+      //------------------------------------------------------------------------/
+      // Interface
+      //------------------------------------------------------------------------/
       public abstract void Set(float time);
-      public abstract bool Update(float dt);
       protected abstract void OnReset();
-
+            
+      //------------------------------------------------------------------------/
+      // Ro
+      //------------------------------------------------------------------------/
       /// <summary>
       /// Finishes the timer
       /// </summary>
@@ -84,19 +110,35 @@ namespace Stratus
         return Update(Time.deltaTime);
       }
 
+      /// <summary>
+      /// Updates the timer, invoking the provided callback upon completion, then resets the timer.
+      /// </summary>
+      /// <param name="dt"></param>
+      public void AutomaticUpdate(float dt)
+      {
+        Update(dt);
+        if (this.IsFinished)
+        {
+          //if (this.OnFinished == null)
+          //  Trace.Error("The provided callback function was not set!");
+          //this.OnFinished();
+          this.Reset();
+        }
+      }
+
 
     }
 
     /// <summary>
     /// Counts up to the specified amount of time, starting from 0.0f.
     /// </summary>
-    public class Timer : BaseTimer
+    public class Stopwatch : Timer
     {
       /// <summary>
       /// Constructor for the countdown.
       /// </summary>
       /// <param name="total">The total amount of time to countdown.</param>
-      public Timer(float total)
+      public Stopwatch(float total)
       {
         Total_ = total;
         Current_ = 0.0f;
@@ -108,7 +150,7 @@ namespace Stratus
       protected override void OnReset()
       {
         Current_ = 0.0f;
-        Finished_ = true;
+        Finished_ = false;
       }
 
       /// <summary>
@@ -129,6 +171,7 @@ namespace Stratus
       {
         if (Current_ >= Total_)
         {
+          Current_ = Total_;
           Finish();
           return true;
         }
@@ -143,7 +186,7 @@ namespace Stratus
     /// Counts down from the specified amount of time. 
     /// From <i>n</i> amount of time to 0.0f;
     /// </summary>
-    public class Countdown : BaseTimer
+    public class Countdown : Timer
     {
       /// <summary>
       /// Constructor for the countdown.
@@ -181,6 +224,7 @@ namespace Stratus
       {
         if (Current_ <= 0.0f)
         {
+          Current_ = 0f;
           Finish();
           return true;
         }
@@ -188,7 +232,56 @@ namespace Stratus
         Current_ -= dt;
         return false;
       }
-    } 
+    }
+
+    public class Cooldown : BaseTimer
+    {
+      /// <summary>
+      /// Whether this cooldown timer is currently ticking
+      /// </summary>
+      public bool IsActive { get { return Active; } }
+      public float Current { get { return Countdown.Current; } }
+
+      private Countdown Countdown;
+      private bool Active;
+
+      public Cooldown(float cooldownPeriod, bool startOnCooldown = false)
+      {
+        Active = startOnCooldown;
+        Countdown = new Countdown(cooldownPeriod);
+        //if (!Application.isEditor && Timers.Instance != null)
+        //  Timers.Add(this);
+      }
+
+      ~Cooldown()
+      {
+        //if (!Application.isEditor && Timers.Instance != null)
+        //  Timers.Remove(this);
+      }
+
+      /// <summary>
+      /// Triggers this cooldown
+      /// </summary>
+      public void Activate()
+      {
+        Active = true;
+        Countdown.Reset();
+      }
+      
+      public override bool Update(float dt)
+      {
+        if (Countdown.Update(dt))
+        {
+          Active = false;
+          return true;
+        }
+
+        return false;        
+      }
+      
+    }
+
+
   }
 
 }

@@ -27,7 +27,7 @@ namespace Stratus
       protected T _CurrentValue;
       protected T _EndingValue;
       bool _Active;
-      Timer Timer;
+      Stopwatch Timer;
 
       //----------------------------------------------------------------------/
       // Properties
@@ -89,7 +89,7 @@ namespace Stratus
       /// <param name="time"></param>
       public void Start(float time)
       {
-        Timer = new Timer(time);
+        Timer = new Stopwatch(time);
         _Active = true;
       }
 

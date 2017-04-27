@@ -14,27 +14,27 @@ namespace Stratus
 {  
   using ActionContainer = System.Collections.Generic.List<Action>;
 
-  /**************************************************************************/
-  /*!
-  @class The ActionSet is the base class from which all other sets derive.
-         Sets such as Sequence, Group and the unique set used by entities.
-  */
-  /**************************************************************************/
+  /// <summary>
+  /// The ActionSet is the base class from which all other sets derive.
+  /// Sets such as Sequence, Group and the unique set used by entities.
+  /// </summary>
   public abstract class ActionSet : Action
   {
+    public UpdateMode Mode = UpdateMode.Normal;
     protected ActionContainer ActiveActions = new ActionContainer();
     protected ActionContainer RecentlyAddedActions = new ActionContainer();
     public bool TraceStack = false;
 
-    public ActionSet(string type) : base(type) {}
+    public ActionSet(string type, UpdateMode mode) : base(type)
+    {
+      Mode = mode;
+    }
     public override abstract float Update(float dt);
 
-    /**************************************************************************/
-    /*!
-    @brief Add an action to this set
-    @param action The specified action.
-    */
-    /**************************************************************************/
+    /// <summary>
+    /// Add an action to this set
+    /// </summary>
+    /// <param name="action">The specified action.</param>
     public virtual void Add(Action action)
     { 
       if (TraceStack)
@@ -48,12 +48,10 @@ namespace Stratus
       if (Actions.Debugging) Trace.Script("'" + action.Type + "'");
       this.RecentlyAddedActions.Add(action);
     }
-
-    /**************************************************************************/
-    /*!
-    @brief Migrates new actions over.
-    */
-    /**************************************************************************/
+    
+    /// <summary>
+    /// Migrates new actions over.
+    /// </summary>
     public void Migrate()
     {
       // Add the new actions (to prevent desync)
@@ -64,11 +62,9 @@ namespace Stratus
       RecentlyAddedActions.Clear();
     }
 
-    /**************************************************************************/
-    /*!
-    @brief  Sweeps all inactive actions.
-    */
-    /**************************************************************************/
+    /// <summary>
+    /// Sweeps all inactive actions.
+    /// </summary>
     public void Sweep()
     {
       // No actions to clear
@@ -76,14 +72,12 @@ namespace Stratus
         return;
 
       // Remove all actions that are finished
-      this.ActiveActions.RemoveAll(x => x.Finished == true);
+      this.ActiveActions.RemoveAll(x => x.IsFinished == true);
     }
 
-    /**************************************************************************/
-    /*!
-    @brief  Clears all actions.
-    */
-    /**************************************************************************/
+    /// <summary>
+    /// Clears all actions.
+    /// </summary>
     public void Clear()
     {
       this.ActiveActions.Clear();

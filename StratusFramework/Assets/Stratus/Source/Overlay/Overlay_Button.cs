@@ -8,6 +8,7 @@
 /******************************************************************************/
 using UnityEngine;
 using Stratus;
+using System;
 
 namespace Stratus
 {
@@ -18,21 +19,42 @@ namespace Stratus
     /// </summary>
     public class Button : Element
     {
+      public delegate void Callback();
       /// <summary>
       /// The function to call for this button
       /// </summary>
-      public Callback Callback;
-      public Button(string name, Callback callback) : base(name)
+      public Callback OnButtonDown;
+      public Button(string name, Callback onButtonDown) : base(name)
       {
-        Callback = callback;
+        OnButtonDown = onButtonDown;
       }
 
       protected override void OnDraw()
       {
         if (GUILayout.Button(Name, GUI.skin.button))
-          Callback();
+          OnButtonDown.DynamicInvoke();
+          //Callback();
       }
 
     }
+
+    public class Button<T> : Element
+    {
+      public delegate void Callback(T arg);
+      Callback OnButtonDown;
+
+      public Button(string name, Callback onButtonDown) : base(name)
+      {
+        this.OnButtonDown = onButtonDown;
+      }
+
+      protected override void OnDraw()
+      {
+        if (GUILayout.Button(Name, GUI.skin.button))
+          OnButtonDown.DynamicInvoke();
+      }
+    }
+
+
   }
 }

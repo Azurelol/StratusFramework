@@ -24,7 +24,7 @@ namespace Stratus
     /// <summary>
     /// The name of the action space
     /// </summary>
-    protected override string Name { get { return "Action System"; } }
+    protected override string Name { get { return "Stratus Action System"; } }
     //------------------------------------------------------------------------/
     private ActionsOwnerContainer AllActions;
     private ActionsOwnerContainer RecentlyAddedActions;
@@ -43,7 +43,7 @@ namespace Stratus
     /// Updates all the Actions in the ActionSpace, through the ActionOwners
     /// for every GameObject.
     /// </summary>
-    void LateUpdate()
+    void FixedUpdate()
     {
       Propagate();
     }
@@ -98,6 +98,10 @@ namespace Stratus
 
     void UnsubscribeRoutine(GameObject gameObj)
     {
+      // @TODO: Why is this an issue?
+      if (gameObj == null)
+        return;
+
       if (Actions.Debugging)
         Trace.Script("'" + gameObj.name + "'");
       AllActions.Remove(gameObj);

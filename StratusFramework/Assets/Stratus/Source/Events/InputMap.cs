@@ -46,6 +46,7 @@ namespace Stratus
   public partial class InputMap : StratusSingleton<InputMap>
   {
     protected override string Name { get { return "Input System"; } }
+    protected override bool IsPersistent { get { return true; } }
 
     /// <summary>
     /// Named actions

@@ -157,7 +157,8 @@ namespace Stratus
       /// </summary>
       protected virtual void DrawElements()
       {
-        foreach (var element in Elements)
+        //var elements = Elements;
+        foreach (var element in this.Elements)
           element.Draw();
       }
 

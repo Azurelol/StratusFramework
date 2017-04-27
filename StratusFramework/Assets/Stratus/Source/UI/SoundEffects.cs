@@ -24,9 +24,9 @@ namespace Stratus
 
       private AudioSource Player;
       protected override string Name { get { return "SoundEffects"; } }
+      protected override bool IsPersistent { get { return true; } }
       protected override void OnAwake()
       {
-        DontDestroyOnLoad(this);
         Player = this.gameObject.GetComponent<AudioSource>();
         Player.loop = false;
         Scene.Connect<PlayEvent>(this.OnPlayEvent);

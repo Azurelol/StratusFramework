@@ -16,11 +16,13 @@ namespace Stratus
   /// </summary>
   public class TimerTrigger : EventTrigger
   {
+    [Header("Timer")]
+    [Tooltip("How long to wait before triggering")]
     public float Timer;
     
     protected override void OnInitialize()
     {
-      if (Enabled)
+      if (enabled)
         this.RunTimer();
     }
 

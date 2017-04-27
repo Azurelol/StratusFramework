@@ -17,18 +17,29 @@ namespace Stratus
   /// </summary>
   public class EnableEvent : EventDispatcher
   {
-    public GameObject Target;
-    public bool Enabling = true;
+    public enum TargetType { Component, GameObject }
+
+    public Behaviour Target;
+    public TargetType Type = TargetType.Component;
+    [Tooltip("Whether the target is being enabled or disabled")]
+    public bool Enabled = true;
 
     protected override void OnInitialize()
-    {
-      
+    {      
     }
 
     protected override void OnTrigger()
     {
       //Trace.Script("Enabling!");
-      this.Target.SetActive(this.Enabling);
+      switch (this.Type)
+      {
+        case TargetType.Component:
+          this.Target.enabled = this.Enabled;
+          break;
+        case TargetType.GameObject:
+          this.Target.gameObject.SetActive(this.Enabled);
+          break;
+      }
     }
   }
 

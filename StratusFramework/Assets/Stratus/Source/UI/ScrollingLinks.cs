@@ -38,7 +38,7 @@ namespace Stratus
         //Trace.Script("Adding '" + objectName + "'", this);
         // Add the link to the prefab, parenting to this controller
         var linkPrefab = Instantiate(Prefab) as GameObject;
-        linkPrefab.transform.SetParent(this.transform);
+        linkPrefab.transform.SetParent(this.transform, false);
         var link = linkPrefab.AddComponent<T>();
         link.name = objectName;
         link.Text.text = text;

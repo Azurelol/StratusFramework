@@ -39,7 +39,7 @@ namespace Stratus
       // If done updating
       if (timeLeft <= dt)
       {
-        this.Finished = true;
+        this.IsFinished = true;
         this.SetLast();
         return dt;
       }

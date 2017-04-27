@@ -11,25 +11,21 @@ using System.Collections;
 
 namespace Stratus
 {
-  /**************************************************************************/
-  /*!
-  @class An ActionSequence is a type of set that updates all its actions
-         and children in sequence, depleting its time slice as it updates
-         each.
-  */
-  /**************************************************************************/
+  /// <summary>
+  /// An ActionSequence is a type of set that updates all its actions
+  /// and children in sequence, depleting its time slice as it updates
+  /// each.
+  /// </summary>
   public class ActionSequence : ActionSet
   {
-    public ActionSequence() : base("ActionSequence") {}
+    public ActionSequence(UpdateMode mode = UpdateMode.Normal) : base("ActionSequence", mode) {}
 
-    /**************************************************************************/
-    /*!
-    @brief  Updates an ActionSequence, by updating the actions in the sequence
-            sequentially.
-    @param  dt The time to be updated.
-    @return How much time was consumed while updating.
-    */
-    /**************************************************************************/
+    /// <summary>
+    /// Updates an ActionSequence, by updating the actions in the sequence
+    /// sequentially.
+    /// </summary>
+    /// <param name="dt">The time to be updated</param>
+    /// <returns>How much time was consumed while updating</returns>
     public override float Update(float dt)
     {
       Migrate();
@@ -37,6 +33,10 @@ namespace Stratus
       var timeLeft = dt;
       foreach(var action in this.ActiveActions)
       {
+        // If an action is inactive, stop the sequence (since its blocking)
+        if (action.IsActive)
+          break;
+
         // Every action consumes time from the time slice given (dt)
         timeLeft -= action.Update(dt);
         // If the action was completed (Meaning there is time remaining

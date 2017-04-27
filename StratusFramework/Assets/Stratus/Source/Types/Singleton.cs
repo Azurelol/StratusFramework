@@ -91,54 +91,78 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    protected abstract string Name { get; }
-    protected abstract void OnAwake();
-    protected virtual void OnSingletonDestroyed() {} // Make this abstract later?
-    protected static T SingletonInstance;
-    static bool Tracing = false;
     public static T Instance
     {
       get
       {
         // Look for an instance in the scene
-        //if (!SingletonInstance)
-        //  SingletonInstance = (T)FindObjectOfType(typeof(T));
+        if (!SingletonInstance)
+        {
+          SingletonInstance = FindObjectOfType<T>();
+        }
         // If not found, instantiate
         if (!SingletonInstance)
-          Instantiate();
+        {
+          var obj = new GameObject();
+          SingletonInstance = obj.AddComponent<T>();
+        }
 
         return SingletonInstance;
       }
     }
+    protected virtual void OnSingletonDestroyed() {} // Make this abstract later?
+    protected static T SingletonInstance;
+    protected static bool Tracing = false;
+
+    //------------------------------------------------------------------------/
+    // Interface
+    //------------------------------------------------------------------------/
+    protected abstract string Name { get; }
+    protected abstract bool IsPersistent { get; }
+    protected abstract void OnAwake();
 
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    static protected void Instantiate()
-    {
-      var obj = new GameObject();
-      var instance = obj.AddComponent<T>();
-      SingletonInstance = instance;
-    }
-
     void Awake()
     {
-      OnAwake();
-      this.gameObject.name = Name;
-      if (Tracing)
-        Trace.Script(Name + " has been created!", this);
+      // If the singleton instance hasn't been set, set it to self
+      if (!Instance)
+        SingletonInstance = this as T;
+
+      // If we are the singleton instance that was created (or recently set)
+      if (Instance == this as T)
+      {
+        if (IsPersistent)
+        {
+          transform.SetParent(null);
+          DontDestroyOnLoad(this);
+        }
+
+        OnAwake();
+        this.gameObject.name = Name;
+        if (Tracing)
+          Trace.Script(Name + " has been created!", this);
+      }
+      // If we are not...
+      else
+      {
+        Destroy(gameObject);
+      }
       
     }
 
     protected override void OnDestroyed()
     {
       if (this != SingletonInstance) return;
-      SingletonInstance = null;
-      if (Tracing)
-        Trace.Script(Name + " is being destroyed!", this);
+      SingletonInstance = null;      
+      Trace.Script(Name + " is being destroyed!", this);
       this.OnSingletonDestroyed();
     }
 
+    protected void Poke()
+    {
+    }
 
 
 

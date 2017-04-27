@@ -88,10 +88,11 @@ namespace Stratus
     /// </summary>
     /// <param name="set">A reference to the ActionSet that this action belongs to.</param>
     /// <param name="duration"> duration How long should the delay run for.</param>
-    public static void Delay(ActionSet set, float duration)
+    public static Action Delay(ActionSet set, float duration)
     {
       Action delay = new ActionDelay(duration);
       set.Add(delay);
+      return delay;
     }
 
     /// <summary>
@@ -99,53 +100,71 @@ namespace Stratus
     /// </summary>
     /// <param name="set">A reference to the action set.</param>
     /// <param name="func">The function to which to call.</param>
-    public static void Call(ActionSet set, ActionCall.Delegate func)
+    public static Action Call(ActionSet set, ActionCall.Delegate func, float delay = 0.0f)
     {
       Action call = new ActionCall(func);
+      // Optionally, add a delay
+      if (delay != 0.0f)
+        Delay(set, delay);
       set.Add(call);
+      return call;
     }
-
+    
     /// <summary>
-    /// Adds a function to be invoked as part of the action set, alongside any arguments
+    /// Adds a function to be invoked as part of the action set, alongside any arguments. 
+    /// Optionally, it also can add a delay before the function is invoked.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="set">A reference to the action set.</param>
     /// <param name="func">A lambda expression containing a function call with any given arguments. [Example: ()=>Foo(1)] </param>
-    public static void Call<T>(ActionSet set, ActionCall<T>.Delegate func)
+    public static Action Call<T>(ActionSet set, ActionCall<T>.Delegate func, float delay = 0.0f)
     {
       Action call = new ActionCall<T>(func);
+      // Optionally, add a delay
+      if (delay != 0.0f)
+        Delay(set, delay);
       set.Add(call);
+      return call;
     }
 
     /// <summary>
-    /// Invokes a function after a specified amount of time.
+    /// Invokes a function with any given arguments after a specified amount of time.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="set">A reference to the action set.</param>
     /// <param name="func">A lambda expression containing a function call with any given arguments. [Example: ()=>Foo(1)] </param>
-    public static void Call<T>(MonoBehaviour component, ActionCall<T>.Delegate func, float delay = 0.0f)
-    {
-      var seq = Actions.Sequence(component);
-      Actions.Delay(seq, delay);
-      Action call = new ActionCall<T>(func);
-      seq.Add(call);
-    }
+    //public static void Call<T>(MonoBehaviour behaviour, ActionCall<T>.Delegate func, float delay = 0.0f)
+    //{
+    //  var seq = Actions.Sequence(behaviour);
+    //  var call = new ActionCall<T>(func);
+    //  // Optionally, add a delay
+    //  if (delay != 0.0f)
+    //    Delay(seq, delay);
+    //  seq.Add(call);
+    //}
+
 
     /// <summary>
     /// Adds a trace, adding it to the specified set.
     /// </summary>
     /// <param name="set">A reference to the set.</param>
     /// <param name="message">The message which to print.</param>
-    public static void Trace(ActionSet set, object message)
+    public static Action Trace(ActionSet set, object message)
     {
       Action trace = new ActionTrace(message);
       set.Add(trace);
+      return trace;
     }
 
     public static void Destroy(ActionSet set, UnityEngine.Object obj, float delay = 0.0f)
     {
       Call(set, ()=>GameObject.Destroy(obj, delay));
       //GameObject.Des Destroy(obj, )
+    }
+
+    public static void Toggle(System.Action<bool> toggle, float duration)
+    {
+
     }
 
 
@@ -198,6 +217,8 @@ namespace Stratus
       Action actionColor = new ActionPropertyTransformRotation(transform, value, duration, ease);
       set.Add(actionColor);
     }
+
+    
 
     /// <summary>
     /// Adds a property change to the action set.

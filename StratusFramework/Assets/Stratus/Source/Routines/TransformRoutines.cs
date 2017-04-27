@@ -1,26 +1,29 @@
 /******************************************************************************/
 /*!
-@file   Coroutines.cs
+@file   TransformRoutines.cs
 @author Christian Sagel
 @par    email: ckpsm@live.com
 @date   5/25/2016
 */
 /******************************************************************************/
 using UnityEngine;
+using Stratus;
 using System.Collections;
 
 namespace Stratus
 {
-  public static class Routines
+  public static partial class Routines
   {
-    public static IEnumerator WaitForRealSeconds(float time)
+    public static IEnumerator RotateAround(Transform transform, Transform pivot, float angle, float duration)
     {
-      float start = Time.realtimeSinceStartup;
-      while (Time.realtimeSinceStartup < start + time)
+      float t = 0f;
+      while (t <= 1f)
       {
-        yield return null;
+        t += Time.fixedDeltaTime / duration;
+
+        
+        yield return new WaitForFixedUpdate();
       }
     }
   }
-
 }

@@ -40,7 +40,7 @@ namespace Stratus
         Trace.Script("#" + this.ID + ": Calling function '" + DelegateInstance.Method.Name + "'");
       
       DelegateInstance.DynamicInvoke();
-      this.Finished = true;
+      this.IsFinished = true;
 
       if (Tracing)
         Trace.Script("#" + this.ID + ": Finished!");
@@ -76,9 +76,13 @@ namespace Stratus
     {
       if (Tracing)
         Trace.Script("#" + this.ID + ": Calling function '" + DelegateInstance.Method.Name + "'");
-      
+
+      // If the target was destroyed in the meantime...
+      if (DelegateInstance.Target == null)
+        return 0f;
+
       DelegateInstance.DynamicInvoke();
-      this.Finished = true;
+      this.IsFinished = true;
 
       if (Tracing)
         Trace.Script("#" + this.ID + ": Finished!");

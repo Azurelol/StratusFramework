@@ -26,6 +26,21 @@ namespace Stratus
     int ElementCount { get { return Array.Length - 1; } }
     int ElementIndex = 0;
 
+    public ArrayNavigate()
+    {
+      ElementIndex = 0;
+    }
+
+    public ArrayNavigate(T[] array)
+    {
+      Array = array;
+      ElementIndex = 0;
+    }
+
+    /// <summary>
+    /// Sets an updated array to use for navigation
+    /// </summary>
+    /// <param name="array"></param>
     public void Set(T[] array)
     {
       Array = array;
@@ -48,6 +63,28 @@ namespace Stratus
     public T Last()
     {
       return Array[ElementCount];
+    }
+
+    /// <summary>
+    /// Updates the current index to point at the given element
+    /// </summary>
+    /// <param name="element"></param>
+    public bool UpdateIndex(T element)
+    {
+      // Look for the element in the array
+      var index = 0;
+      foreach(var e in Array)
+      {
+        // The element was found
+        if (e.Equals(element))
+        {
+          ElementIndex = index;
+          return true;
+        }
+        index++;
+      }
+
+      return false;
     }
 
     /// <summary>

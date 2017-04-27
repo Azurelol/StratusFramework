@@ -7,6 +7,8 @@
 /******************************************************************************/
 using UnityEngine;
 using Stratus;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Stratus
 {
@@ -41,6 +43,9 @@ namespace Stratus
     // Properties
     //--------------------------------------------------------------------------/
     bool Quitting = false;
+    //List<IEnumerator> ActiveCoroutines = new List<IEnumerator>();
+
+
     //--------------------------------------------------------------------------/
     // Methods
     //--------------------------------------------------------------------------/
@@ -59,11 +64,22 @@ namespace Stratus
       if (Quitting)
         return;
       //Trace.Script(name + " is being destroyed!", this);
+
+      // Cancel all actions, really?
+      //Actions.Cancel()
+
       // Disconnect from all events
       this.Disconnect();
       // Call the subclass method
       this.OnDestroyed();     
-    }
+    }    
+
+    //public new Coroutine StartCoroutine(IEnumerator routine)
+    //{
+    //  ActiveCoroutines.Add(routine);
+    //  return base.StartCoroutine(routine);      
+    //}
+    
 
     /// <summary>
     /// Invoked when the application is about to quit

@@ -23,7 +23,6 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Events
     //------------------------------------------------------------------------/
-    public delegate void Callback();
 
     public class OverlayWindows
     {
@@ -78,8 +77,8 @@ namespace Stratus
     /// </summary>
     void Reset()
     { 
-      Windows.Watch = new Window("Watch", new Vector2(0.3f, 0.2f), Color.grey, Anchor.TopLeft);      
-      Windows.Buttons = new Window("Buttons", new Vector2(0.3f, 0.2f), Color.grey, Anchor.BottomLeft);
+      Windows.Watch = new Window("Watch", new Vector2(0.3f, 0.2f), Color.grey, Anchor.TopRight);      
+      Windows.Buttons = new Window("Buttons", new Vector2(0.3f, 0.4f), Color.grey, Anchor.BottomRight);
       //Windows.Console = new Console("Console", new Vector2(0.2f, 0.2f), Color.grey, Anchor.TopRight);
     }
 
@@ -88,7 +87,7 @@ namespace Stratus
     /// </summary>
     void OnSceneChanged()
     {
-      Trace.Script("Scene changed!");
+      //Trace.Script("Scene changed!");
       Reset();
     }    
 
@@ -122,13 +121,13 @@ namespace Stratus
     /// Keeps watch of a given property/field
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="varExpr">An expression of a given variable</param>
+    /// <param name="varExpr">An expression of a given variable of the form: '(()=> foo')</param>
     /// <param name="behaviour">The owner object of this variable</param>
     /// <example>Overlay.Watch(()=> foo, this);</example>
-    public static void Watch<T>(Expression<Func<T>> varExpr, MonoBehaviour behaviour = null)
+    public static void Watch<T>(Expression<Func<T>> varExpr, string description = null, MonoBehaviour behaviour = null)
     {
       var variableRef = Reflection.GetReference(varExpr);
-      var watcher = new Watcher(variableRef, behaviour);
+      var watcher = new Watcher(variableRef, description, behaviour);
       Instance.Windows.Watch.Add(watcher);      
     }
 
@@ -142,13 +141,25 @@ namespace Stratus
     //}
 
     /// <summary>
-    /// Adds a button to the overlay
+    /// Adds a button to the overlay which invokes a function with no parameters.
     /// </summary>
-    /// <param name="message"></param>
-    /// <param name="callback"></param>
-    public static void AddButton(string message, Callback callback)
+    /// <param name="description">What description to use for the button</param>
+    /// <param name="onButtonDown">The function to be invoked when the button is pressed</param>
+    public static void AddButton(string description, Button.Callback onButtonDown)
     {
-      var button = new Button(message, callback);
+      var button = new Button(description, onButtonDown);
+      Instance.Windows.Buttons.Add(button);
+    }
+
+    /// <summary>
+    /// Adds a button to the overlay which invokes a function with any parameters.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="description">What description to use for the button</param>
+    /// <param name="onButtonDown">The function to be invoked when the button is pressed, using a lambda expresion to pass it: '()=>Foo(7)</param>
+    public static void AddButton<T>(string description, Button<T>.Callback onButtonDown)
+    {
+      var button = new Button<T>(description, onButtonDown);
       Instance.Windows.Buttons.Add(button);
     }
 

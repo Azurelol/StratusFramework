@@ -22,22 +22,24 @@ namespace Stratus
     public class TriggerEvent : Stratus.Event {}
     public class EnableEvent : Stratus.Event { public bool Enabled;
       public EnableEvent(bool enabled) { Enabled = enabled; } }
-    public enum TriggerScope { Event, Invoke }
+    public enum DeliveryMethod { Event, Invoke }
 
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
+    //[Tooltip("Whether we are currently debugging this trigger")]
+    private bool IsDebug = false;
+
     [Header("Targeting")]
-    [Tooltip("Whether this trigger is enabled")]
-    public bool Enabled = true;
     [Tooltip("What component to send the trigger event to")]
     public EventDispatcher Target;
-    [Tooltip("Whether the trigger will be sent to the GameObject as an event, or invoked directly on the dispatcher component")]
-    public TriggerScope Scope = TriggerScope.Event;
-    public bool IncludeChildren = false;
-    bool Tracing = false;
-    [Tooltip("Whether the trigger should stay enabled after being triggered")]
+    [Tooltip("Whether the trigger will be sent to the GameObject as an event or invoked directly on the dispatcher component")]
+    public DeliveryMethod Delivery = DeliveryMethod.Event;
+    [Tooltip("Whether it should also trigger all of the object's children")]
+    public bool Recursive = false;
+    [Tooltip("Whether the trigger should persist after being triggered")]
     public bool Persistent = true;
+
 
     //------------------------------------------------------------------------/
     // Methods
@@ -50,7 +52,7 @@ namespace Stratus
 
     void OnEnableEvent(EnableEvent e)
     {
-      this.Enabled = true;
+      enabled = true;
       this.OnEnabled();
     }
 
@@ -59,9 +61,9 @@ namespace Stratus
     /// </summary>
     protected void Trigger()
     {
-      if (Enabled)
+      if (enabled)
       {
-        if (Scope == TriggerScope.Event)
+        if (Delivery == DeliveryMethod.Event)
         {
           if (!this.Target)
           {
@@ -69,7 +71,7 @@ namespace Stratus
           }
 
           this.Target.gameObject.Dispatch<TriggerEvent>(new TriggerEvent());
-          if (this.IncludeChildren)
+          if (this.Recursive)
           {
             foreach(var child in this.Target.gameObject.Children())
             {
@@ -78,16 +80,18 @@ namespace Stratus
           }
         }
 
-        else if (Scope == TriggerScope.Invoke)
+        else if (Delivery == DeliveryMethod.Invoke)
         {
           this.Target.Trigger();
         }
 
         // If not persistent, disable
         if (!Persistent)
-          this.Enabled = false;
+        {          
+          this.enabled = false;
+        }
 
-        if (Tracing) Trace.Script("Triggering!", this);
+        if (IsDebug) Trace.Script("Triggering!", this);
       }
     }
     

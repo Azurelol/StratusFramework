@@ -27,11 +27,6 @@ namespace Stratus
     /// <summary>
     /// Whether this event dispatcher will respond to trigger events
     /// </summary>
-    [Tooltip("Whether this event dispatcher will respond to trigger events")]
-    public bool IsTriggerable = true;
-    /// <summary>
-    /// Whether this event dispatcher will respond to trigger events
-    /// </summary>
     [Tooltip("How long after activation before the event is fired")]
     public float Delay;
 
@@ -93,7 +88,7 @@ namespace Stratus
     /// </summary>
     public void Trigger()
     {
-      if (!IsTriggerable)
+      if (!enabled)
         return;
       this.RunTriggerSequence();
     }

@@ -13,6 +13,8 @@ namespace Stratus
 {
   public partial class Overlay
   {
+    protected override bool IsPersistent { get { return true; } }
+
     /// <summary>
     /// Keeps watch over a given variable
     /// </summary>
@@ -29,14 +31,25 @@ namespace Stratus
       private MonoBehaviour Behaviour;
 
       /// <summary>
+      /// A description of the variable
+      /// </summary>
+      private string Description;
+
+      /// <summary>
       /// Constructor
       /// </summary>
       /// <param name="prefix">A given prefix for this variable</param>
       /// <param name="variable">The variable being watched</param>
-      public Watcher(Reflection.VariableReference variable, MonoBehaviour behaviour) : base(variable.Name)
+      public Watcher(Reflection.VariableReference variable, string description, MonoBehaviour behaviour) : base(variable.Name)
       {
         Behaviour = behaviour;
         Variable = variable;
+
+        // Whether to use the default variable name or a custom description
+        if (description != null)
+          Description = description;
+        else
+          Description = variable.Name;
       }
 
       /// <summary>
@@ -49,12 +62,12 @@ namespace Stratus
         //GUILayout.EndVertical();
         //
         //GUILayout.BeginVertical();
-        //GUILayout.Label(Variable.Value);
+        //GUILayout.Label(Variable.Value);        
         //GUILayout.EndVertical();
         if (Behaviour != null)
-          GUILayout.Label(Behaviour.gameObject.name + "." + Behaviour.GetType().Name + "." + Variable.Name + " = " + Variable.Value);
+          GUILayout.Label(Behaviour.gameObject.name + "." + Behaviour.GetType().Name + "." + Description + ":  " + Variable.Value);
         else
-          GUILayout.Label(Variable.Name + " = " + Variable.Value);
+          GUILayout.Label(Description + ": " + Variable.Value);
 
       }
     }

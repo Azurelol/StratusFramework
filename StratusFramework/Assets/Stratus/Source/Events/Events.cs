@@ -61,7 +61,7 @@ namespace Stratus
     {
       get
       {
-        return "Event System";
+        return "Stratus Event System";
       }
     }
     

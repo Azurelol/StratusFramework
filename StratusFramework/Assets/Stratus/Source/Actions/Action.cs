@@ -10,13 +10,10 @@ using UnityEngine;
 using System.Collections;
 
 namespace Stratus
-{
-
-  /**************************************************************************/
-  /*!
-  @class Action is the base class from which all other actions derive from.
-  */
-  /**************************************************************************/
+{  
+  /// <summary>
+  /// Action is the base class from which all other actions derive from.
+  /// </summary>
   public abstract class Action
   {
     //------------------------------------------------------------------------/
@@ -25,12 +22,35 @@ namespace Stratus
     static int Created = 0;
     static int Destroyed = 0;
     //--------------------------/
-    public string Type;
-    public int ID;
+    /// <summary>
+    /// The name of this action
+    /// </summary>
+    public string Type { get; protected set; }
+    /// <summary>
+    /// A private identifier for this action.
+    /// </summary>
+    public int ID { get; private set; }
+    /// <summary>
+    /// How much time has elapsed since the action started running
+    /// </summary>
     public float Elapsed = 0.0f;
+    /// <summary>
+    /// The total amount of time the action will run for
+    /// </summary>
     public float Duration = 0.0f;
-    public bool Finished = false;
-    //--------------------------/
+    /// <summary>
+    /// Whether the action is currently active. If not active it may end up
+    /// blocking others behind it (if its on a sequence).
+    /// </summary>
+    public bool IsActive { get; private set; }
+    /// <summary>
+    /// Whether the action has finished running.
+    /// </summary>
+    public bool IsFinished = false;
+    
+    /// <summary>
+    /// Whether we are logging actions
+    /// </summary>
     static protected bool Tracing = false;
     //------------------------------------------------------------------------/
     // Interface
@@ -51,6 +71,31 @@ namespace Stratus
       Destroyed++;
     }
 
+    /// <summary>
+    /// Resumes running the action.
+    /// </summary>
+    public void Resume()
+    {
+      this.IsActive = true;
+    }
+
+    /// <summary>
+    /// Pauses the update of this action. This will block a sequence
+    /// if there's other actions behind it.
+    /// </summary>
+    public void Pause()
+    {
+      this.IsActive = false;
+    }
+
+    /// <summary>
+    /// Cancels execution of this action. It will cleaned up at the next opportunity.
+    /// </summary>
+    public void Cancel()
+    {
+      this.IsActive = false;
+      this.IsFinished = true;
+    }
     
 
   }

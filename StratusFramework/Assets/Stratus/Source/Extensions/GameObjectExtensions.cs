@@ -3,126 +3,101 @@
 @file   GameObjectExtensions.cs
 @author Christian Sagel
 @par    email: ckpsm@live.com
-@date   5/25/2016
 */
 /******************************************************************************/
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
-/**************************************************************************/
-/*!
-@class GameObjectExtensions 
-*/
-/**************************************************************************/
-public static class GameObjectExtensions {
-  
-  static void ListChildren(GameObject obj, List<GameObject> children)
+namespace Stratus
+{
+  public static partial class Extensions
   {
-    foreach (Transform child in obj.transform)
+
+    static void ListChildren(GameObject obj, List<GameObject> children)
     {
-      children.Add(child.gameObject);
-      ListChildren(child.gameObject, children);
+      foreach (Transform child in obj.transform)
+      {
+        children.Add(child.gameObject);
+        ListChildren(child.gameObject, children);
+      }
     }
-  }
 
-  /**************************************************************************/
-  /*!
-  @brief  Returns a container of all the children of this GameObject.
-  @return A container of all the children of this GameObject.
-  */
-  /**************************************************************************/
-  public static List<GameObject> Children(this GameObject gameObj)
-  {
-    var children = new List<GameObject>();
-    ListChildren(gameObj, children);
-    return children;
-  }
-
-  /**************************************************************************/
-  /*!
-  @brief  Returns the parent of this GameObject.
-  @return A reference to the GameObject parent of this GameObject.
-  */
-  /**************************************************************************/
-  public static GameObject Parent(this GameObject gameObj)
-  {
-    return gameObj.transform.parent.gameObject;
-  }
-
-  /**************************************************************************/
-  /*!
-  @brief  Adds a component to this GameObject, through copying an existing one.
-  @oaram componentToCopy The component to copy.
-  @return A reference to the newly added Component.
-  */
-  /**************************************************************************/
-  public static T AddComponent<T>(this GameObject gameObj, T componentToCopy) where T : Component
-  {
-    return gameObj.AddComponent<T>().Copy(componentToCopy);
-  }
-
-  /**************************************************************************/
-  /*!
-  @brief  Checks whether this GameObject has the specified component.
-  @return True if the component was present, false otherwise.
-  */
-  /**************************************************************************/
-  public static bool HasComponent<T>(this GameObject gameObj) where T : Component
-  {
-    if (gameObj.GetComponent<T>())
-      return true;
-    return false;
-  }
-
-  /// <summary>
-  /// Finds the child of this GameObject with a given name
-  /// </summary>
-  /// <param name="gameObj"></param>
-  /// <param name="name"></param>
-  /// <returns></returns>
-  public static GameObject FindChild(this GameObject gameObj, string name)
-  {
-    return FindChildBFS(gameObj.transform, name).gameObject;
-  }
-
-  /// <summary>
-  /// Finds the child of this transform, using Breadth-first search
-  /// </summary>
-  /// <param name="parent"></param>
-  /// <param name="name"></param>
-  /// <returns></returns>
-  public static Transform FindChildBFS(this Transform parent, string name)
-  {
-    var result = parent.Find(name);
-    if (result != null)
-      return result;
-    foreach (Transform child in parent)
+    /// <summary>
+    /// Returns a container of all the children of this GameObject.
+    /// </summary>
+    /// <param name="gameObj"></param>
+    /// <returns>A container of all the children of this GameObject.</returns>
+    public static List<GameObject> Children(this GameObject gameObj)
     {
-      result = child.FindChildBFS(name);
-      if (result != null)
-        return result;
+      var children = new List<GameObject>();
+      ListChildren(gameObj, children);
+      return children;
     }
-    return null;
-  }
-  
-  /// <summary>
-  /// Destroys the GameObject.
-  /// </summary>
-  /// <param name="go"></param>
-  public static void Destroy(this GameObject go)
-  {
-    GameObject.DestroyImmediate(go);
-  }
 
-  /**************************************************************************/
-  /*!
-  @brief  Checks whether this GameObject has the specified component.
-  @return True if the component was present, false otherwise.
-  */
-  /**************************************************************************/
-  //public static Transform FindChildByName(this Transform transform, string name)
-  //{
-  //  return transform.ch.Children().Find(x => x.name == name);
-  //}
+    /// <summary>
+    /// Returns the parent GameObject of this GameObject.
+    /// </summary>
+    /// <param name="gameObj"></param>
+    /// <returns>A reference to the GameObject parent of this GameObject.</returns>
+    public static GameObject Parent(this GameObject gameObj)
+    {
+      return gameObj.transform.parent.gameObject;
+    }
 
+    /// <summary>
+    /// Adds a component to this GameObject, through copying an existing one.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="gameObj"></param>
+    /// <param name="componentToCopy">The component to copy.</param>
+    /// <returns>A reference to the newly added component.</returns>
+    public static T AddComponent<T>(this GameObject gameObj, T componentToCopy) where T : Component
+    {
+      return gameObj.AddComponent<T>().Copy(componentToCopy);
+    }
+
+    /// <summary>
+    /// Checks whether this GameObject has the specified component.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="gameObj"></param>
+    /// <returns>True if the component was present, false otherwise.</returns>
+    public static bool HasComponent<T>(this GameObject gameObj) where T : Component
+    {
+      if (gameObj.GetComponent<T>())
+        return true;
+      return false;
+    }
+
+    /// <summary>
+    /// Finds the child of this GameObject with a given name
+    /// </summary>
+    /// <param name="gameObj"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static GameObject FindChild(this GameObject gameObj, string name)
+    {
+      return FindChildBFS(gameObj.transform, name).gameObject;
+    }
+
+    /// <summary>
+    /// Destroys the GameObject.
+    /// </summary>
+    /// <param name="go"></param>
+    public static void Destroy(this GameObject go)
+    {
+      GameObject.DestroyImmediate(go);
+    }
+
+    /// <summary>
+    /// Gets or if not present, adds the specified component to the GameObject.
+    /// </summary>
+    public static T GetOrAddComponent<T>(this GameObject go) where T : Component
+    {
+      return go.transform.GetOrAddComponent<T>();
+    }
+
+
+  }
 }

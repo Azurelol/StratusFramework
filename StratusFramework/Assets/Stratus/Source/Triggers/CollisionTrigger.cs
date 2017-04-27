@@ -11,22 +11,22 @@ using System;
 
 namespace Stratus
 {
-  /**************************************************************************/
-  /*!
-  @class CollisionTrigger 
-  */
-  /**************************************************************************/
-  public class CollisionTrigger : EventTrigger
-  {
-    public enum TriggerType { Enter, Exit }
-    public TriggerType Type;
-    public Transform CollisionTarget;  
 
-    /**************************************************************************/
-    /*!
-    @brief  Initializes the CollisionTrigger.
-    */
-    /**************************************************************************/
+  /// <summary>
+  /// Triggers an event when its collider collides with a GameObject with the
+  /// given specified tag.
+  /// </summary>
+  [RequireComponent(typeof(Collider))]
+  public class CollisionTrigger : EventTrigger
+  {    
+    public enum CollisionType { Collision, Trigger }
+    public enum TriggerType { Enter, Exit }
+
+    [Header("Collision")]
+    public TriggerType Type;
+    [Tooltip("What targets we are allowed to collide with")] [Tag] 
+    public string Tag;  
+
     protected override void OnInitialize()
     {      
     }
@@ -35,33 +35,31 @@ namespace Stratus
     {
     }
 
-    /**************************************************************************/
-    /*!
-    @brief If its activated when it detects a collision with a target..
-    */
-    /**************************************************************************/
-    void OnCollisionEnter(Collision collision)
+    /// <summary>
+    /// If its activated when it detects a collision with a target.
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnTriggerEnter(Collider other)
     {
       if (Type != TriggerType.Enter)
-        return;      
-      
-      if (collision.collider.gameObject.transform == this.CollisionTarget)
-      {
-        this.Trigger();
-      }
-    }
+        return;
 
-    /**************************************************************************/
-    /*!
-    @brief If its activated when it detects a collision with a target..
-    */
-    /**************************************************************************/
-    void OnCollisionExit(Collision collision)
+      if (other.gameObject.CompareTag(this.Tag))      
+        this.Trigger();
+      
+    }
+       
+
+    /// <summary>
+    /// If its activated when it detects a collision with a target..
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnTriggerExit(Collider other)
     {
       if (Type != TriggerType.Exit)
         return;
 
-      if (collision.collider.gameObject == this.CollisionTarget)
+      if (other.gameObject.CompareTag(this.Tag))
         this.Trigger();
     }
 

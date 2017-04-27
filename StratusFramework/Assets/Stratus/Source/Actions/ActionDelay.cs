@@ -46,7 +46,7 @@ namespace Stratus
 
       if (this.Elapsed >= this.Duration)
       {
-        this.Finished = true;
+        this.IsFinished = true;
         if (Trace)
           Debug.Log("Finished!");
       }

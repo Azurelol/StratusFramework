@@ -17,7 +17,7 @@ namespace Stratus
   /**************************************************************************/
   public class ObjectInstantiateEvent : EventDispatcher
   {
-    public enum InstantiateProcedure { Parent, Replace }
+    public enum InstantiateProcedure { Parent, Replace, Unparent }
     public InstantiateProcedure Type = InstantiateProcedure.Parent;
     public GameObject Prefab;
 
@@ -29,12 +29,18 @@ namespace Stratus
       {
         obj.transform.SetParent(this.transform);
       }
+      else if (Type == InstantiateProcedure.Unparent)
+      {
+        obj.transform.SetParent(null);
+        Destroy(this.gameObject);
+      }
       else if (Type == InstantiateProcedure.Replace)
       {
         var parent = transform.parent;
         obj.transform.SetParent(parent, false);
         Destroy(this.gameObject);
       }     
+
     }
 
     protected override void OnInitialize()
