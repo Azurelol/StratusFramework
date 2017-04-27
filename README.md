@@ -66,6 +66,8 @@ Some snippets of the code within:
       // Third and last, we will invoke a specified function!
       Actions.Call(seq, this.Boop);
       Actions.Call(seq, ()=>this.Boop(7));
+	  Actions.Call(seq, ()=> { Trace.Script("Boop!"); });
+
     }
     
     void Boop() 
