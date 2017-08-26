@@ -19,10 +19,34 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Events
     //------------------------------------------------------------------------/
+    public enum Instruction
+    {
+      /// <summary>
+      /// Instructs the triggerable to activate (default)
+      /// </summary>
+      [Tooltip("Instructs the triggerable to activate (default)")]
+      On,
+      /// <summary>
+      /// Instructs the triggerable to deactivate
+      /// </summary>
+      [Tooltip("Instructs the triggerable to deactivate")]
+      Off
+    }
+
+    
+
     /// <summary>
     /// When received by a triggerable component, it will activate it
     /// </summary>
-    public class TriggerEvent : Stratus.Event { }
+    public class TriggerEvent : Stratus.Event
+    {
+      public Instruction instruction;
+
+      public TriggerEvent(Instruction instruction = Instruction.On)
+      {
+        this.instruction = instruction;
+      }
+    }
 
     /// <summary>
     /// When received by a trigger, enables it
@@ -50,10 +74,13 @@ namespace Stratus
     [Header("Targeting")]
     [Tooltip("What component to send the trigger event to")]
     public Stratus.Triggerable target;
+    [Tooltip("What instruction to send to the triggerable")]
+    public Instruction instruction;
     [Tooltip("Whether the trigger will be sent to the GameObject as an event or invoked directly on the dispatcher component")]
     public DeliveryMethod delivery = DeliveryMethod.All;
-    [Tooltip("Whether it should also trigger all of the object's children")]
+    [Tooltip("Whether it should also trigger all of the target's children")]
     public bool recursive = false;
+    
     [Header("Lifetime")]
     [Tooltip("Whether the trigger should persist after being activated")]    
     public bool persistent = true;
@@ -70,6 +97,10 @@ namespace Stratus
     /// Whether we are currently debugging the trigger (development purposes)
     /// </summary>
     private bool isDebug => false;
+    /// <summary>
+    /// The trigger event being dispatched
+    /// </summary>
+    private TriggerEvent triggerEvent => new TriggerEvent(instruction);
 
     //------------------------------------------------------------------------/
     // Methods
@@ -107,12 +138,12 @@ namespace Stratus
             Trace.Error("No target set!", this, true);
           }
 
-          this.target.gameObject.Dispatch<TriggerEvent>(new TriggerEvent());
+          this.target.gameObject.Dispatch<TriggerEvent>(triggerEvent);
           if (this.recursive)
           {
             foreach (var child in this.target.gameObject.Children())
             {
-              child.Dispatch<TriggerEvent>(new TriggerEvent());
+              child.Dispatch<TriggerEvent>(triggerEvent);
             }
           }
         }
@@ -133,14 +164,14 @@ namespace Stratus
       }
     }
 
-    /// <summary>
-    /// Manually dispatches a trigger event onto the specified game bject.
-    /// </summary>
-    /// <param name="gameObject"></param>
-    public static void Activate(GameObject gameObject)
-    {
-      gameObject.Dispatch<TriggerEvent>(new TriggerEvent());
-    }
+    ///// <summary>
+    ///// Manually dispatches a trigger event onto the specified game bject.
+    ///// </summary>
+    ///// <param name="gameObject"></param>
+    //public static void Activate(GameObject gameObject)
+    //{
+    //  gameObject.Dispatch<TriggerEvent>(triggerEvent);
+    //}
 
     /// <summary>
     /// Invoked the first time this trigger is initialized

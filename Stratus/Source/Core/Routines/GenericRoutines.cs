@@ -71,7 +71,7 @@ namespace Stratus
         {
           t += timeScale.GetTime() / duration;
           onUpdate(t);
-          yield return new WaitForFixedUpdate();
+          yield return timeScale.Yield();
         }
       }
 

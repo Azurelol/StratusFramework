@@ -107,6 +107,8 @@ namespace Stratus
       Vector3 dir = target - vec;
       return target + (dir * dist);
     }
+    
+
 
     public enum Vector3Component { x, y, z }
 

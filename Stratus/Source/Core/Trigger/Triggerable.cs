@@ -17,6 +17,11 @@ namespace Stratus
   /// </summary>
   public abstract class Triggerable : MonoBehaviour
   {
+    //public interface IToggleable
+    //{
+    //  void OnTrigger(Trigger.Instruction instruction);
+    //}
+
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
@@ -32,11 +37,22 @@ namespace Stratus
     [Tooltip("How long after activation before the event is fired")]
     public float Delay;
     
+    /// <summary>
+    /// The latest received trigger event
+    /// </summary>
+    protected Trigger.TriggerEvent triggerEvent { get; private set; }
+
+    /// <summary>
+    /// The latest received instruction
+    /// </summary>
+    protected Trigger.Instruction instruction { get; private set; }
+    
     //------------------------------------------------------------------------/
     // Interface
     //------------------------------------------------------------------------/
     abstract protected void OnAwake();
     abstract protected void OnTrigger();
+    //protected virtual void OnTrigger(Trigger.Instruction instruction) {}
     virtual protected void PreInitialize() {}
 
     //------------------------------------------------------------------------/
@@ -78,6 +94,8 @@ namespace Stratus
     /// <param name="e"></param>
     protected void OnTriggerEvent(Trigger.TriggerEvent e)
     {
+      triggerEvent = e;
+      instruction = triggerEvent.instruction;
       this.RunTriggerSequence();
     }
 
@@ -103,10 +121,17 @@ namespace Stratus
       var seq = Actions.Sequence(this.gameObject.Actions());
       Actions.Delay(seq, this.Delay);
       Actions.Call(seq, this.OnTrigger);
-      Actions.Call(seq, this.PostTrigger);
     }
 
-    protected virtual void PostTrigger() {}
+    //void ForwardTrigger()
+    //{
+    //  //if (this is IToggleable)
+    //  //{
+    //  //  var toggled = this as IToggleable;
+    //  //  toggled.OnTrigger()
+    //  //}
+    //}
+    
 
 
 

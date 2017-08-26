@@ -49,7 +49,7 @@ namespace Stratus
     }
 
     /// <summary>
-    /// Starts a 
+    /// Manages a coroutine under a specific tag
     /// </summary>
     /// <param name="mb"></param>
     /// <param name="routine"></param>

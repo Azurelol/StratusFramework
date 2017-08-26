@@ -3,11 +3,9 @@
 @file   RendererRoutines.cs
 @author Christian Sagel
 @par    email: ckpsm@live.com
-@date   5/25/2016
 */
 /******************************************************************************/
 using UnityEngine;
-using Stratus;
 using System.Collections;
 
 namespace Stratus
@@ -61,6 +59,35 @@ namespace Stratus
       {
         sr.transform.gameObject.SetActive(setActive);
       }
+    }
+
+    public static IEnumerator Fade(Light light, Color color, float range, float intensity, float duration, TimeScale timeScale = TimeScale.Delta)
+    {
+      Color startColor = light.color;
+      float startRange = light.range;
+      float startIntensity = light.intensity;
+
+      System.Action<float> func = (float t) =>
+      {
+        light.color = Color.Lerp(startColor, color, t);
+        light.range = Lerp(startRange, range, t);
+        light.intensity = Lerp(startIntensity, intensity, t);
+        //Trace.Script($" color = {light.color} range = {light.range} intensity = {light.intensity}");
+      };
+
+      yield return Lerp(func, duration, timeScale);
+    }
+
+    /// <summary>
+    /// Commonly used for alpha blending
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    public static float Lerp(float a, float b, float t)
+    {
+      return (1 - t) * a + t * b;
     }
 
   }

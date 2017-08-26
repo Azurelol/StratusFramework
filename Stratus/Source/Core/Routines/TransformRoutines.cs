@@ -104,7 +104,7 @@ namespace Stratus
     /// <param name="endPos"></param>
     /// <param name="duration"></param>
     /// <returns></returns>
-    public static IEnumerator MoveTo(Transform transform, Vector3 endPos, float duration, float distFromTarget = 0f, System.Action onFinished = null)
+    public static IEnumerator MoveTo(Transform transform, Vector3 endPos, float duration, float distFromTarget = 0f, System.Action onFinished = null, TimeScale timeScale = TimeScale.Delta)
     {
       Vector3 startPos = transform.position;
 
@@ -119,7 +119,7 @@ namespace Stratus
 
       //IEnumerator lerp = Lerp(func, duration);
       //yield return lerp;
-      yield return Lerp(func, duration);
+      yield return Lerp(func, duration, timeScale);
       onFinished?.Invoke();
     }
 

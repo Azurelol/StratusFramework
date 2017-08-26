@@ -28,9 +28,6 @@ namespace Stratus
 
     protected override void OnInitialize()
     {
-      // Make sure the collider is set to trigger ?
-      //trigger = GetComponent<Collider>();
-      //if (trigger.isTrigger
     }
 
     protected override void OnEnabled()

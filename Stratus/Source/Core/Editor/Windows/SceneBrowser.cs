@@ -166,6 +166,7 @@ namespace Stratus
       if (GUILayout.Button("Add", EditorStyles.miniButtonRight) && !BookmarkedScenes.Contains(sceneToAdd))
       {
         BookmarkedScenes.Add(sceneToAdd);
+        Preferences.Save();
       }
 
       EditorGUILayout.EndHorizontal();

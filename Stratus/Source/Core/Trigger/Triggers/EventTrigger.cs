@@ -13,25 +13,25 @@ namespace Stratus
     [Header("Event")]
     [ClassExtends(typeof(Stratus.Event), Grouping = ClassGrouping.ByNamespace)]
     [Tooltip("What type of event this trigger will activate on")]
-    public ClassTypeReference Type;
+    public ClassTypeReference type;
     [Tooltip("The scope of the event")]
-    public Event.Scope Scope;
+    public Event.Scope scope;
 
     protected override void OnInitialize()
     {
-      if (Type.Type == null)
+      if (type.Type == null)
       {
         Trace.Error("Type not set. Please select the Stratus.Event type to connect to!", this);
         return;
       }
 
-      switch (this.Scope)
+      switch (this.scope)
       {
         case Event.Scope.GameObject:
-          this.gameObject.Connect(this.OnEvent, this.Type);
+          this.gameObject.Connect(this.OnEvent, this.type);
           break;
         case Event.Scope.Scene:
-          Scene.Connect(this.OnEvent, this.Type);
+          Scene.Connect(this.OnEvent, this.type);
           break;
       }
     }
@@ -42,7 +42,7 @@ namespace Stratus
 
     void OnEvent<T>(T e) where T : Stratus.Event
     {
-      Trace.Script("Triggered by " + Type.Type.Name, this);
+      Trace.Script("Triggered by " + type.Type.Name, this);
       //if (e.GetType() == this.Type.Type) {
       //}      
     }
