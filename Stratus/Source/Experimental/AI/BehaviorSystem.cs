@@ -85,7 +85,7 @@ namespace Stratus
         var instance = Instantiate(this) as T;
         instance.Agent = agent;
         instance.Blackboard = this.BlackboardAsset.Instantiate();
-        instance.Sensor = agent.Sensor;
+        instance.Sensor = agent.sensor;
         return instance;
       }
 

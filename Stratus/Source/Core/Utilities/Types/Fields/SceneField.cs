@@ -130,11 +130,15 @@ namespace Stratus
     /// <param name="sceneField"></param>
     public static implicit operator string(SceneField sceneField)
     {
+      string name;
       #if UNITY_EDITOR
-      return System.IO.Path.GetFileNameWithoutExtension(UnityEditor.AssetDatabase.GetAssetPath(sceneField.SceneAsset));
+      name = System.IO.Path.GetFileNameWithoutExtension(UnityEditor.AssetDatabase.GetAssetPath(sceneField.SceneAsset));
+      if (name == null || name == string.Empty)
+        name = sceneField.SceneName;
       #else
-        return sceneField.SceneName;
+        name = sceneField.SceneName;
       #endif
+      return name;
     }
 
     public override string ToString()

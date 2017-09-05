@@ -335,7 +335,6 @@ namespace Stratus
       }
 
       if (logging.Dispatch)
-      //if (true)
       {
         Trace.Script("Events of type '" + key + "' for '" + obj.name + "' have no delegates yet!");
 

@@ -10,7 +10,7 @@ namespace Stratus
   /// <summary>
   /// The main data asset containing all the saved settings present among the Stratus framework's utilities
   /// </summary>
-  [SingletonAsset("Assets", "Stratus Preferences", hidden = true)]
+  [SingletonAsset("Assets", "Stratus Preferences")]
   public class Preferences : SingletonAsset<Preferences>
   {
     /// <summary>

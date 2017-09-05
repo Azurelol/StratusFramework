@@ -68,34 +68,34 @@ namespace Stratus
       /// How often this sensor should be scanning
       /// </summary>
       [Range(0.0f, 2.0f)]
-      public float ScanInterval = 3.0f;
+      public float scanInterval = 3.0f;
       /// <summary>
       /// The field of view of this sensor
       /// </summary>
       [Range(0.0f, 180.0f)]
-      public float FieldOfView = 180.0f;
+      public float fieldOfView = 180.0f;
       /// <summary>
       /// The range at which objects are considered to be in line of sight
       /// </summary>
-      public float Range = 30.0f;
+      public float range = 30.0f;
 
       [Header("Interaction")]
       [Tooltip("Whether this agent can react to interactives in the environment")]
-      public bool IsInteracting = false;
+      public bool isInteracting = false;
       /// <summary>
       /// The radius of the interaction sphere for the agent
       /// </summary>
-      public float InteractionRadius = 5.0f;
+      public float interactionRadius = 5.0f;
       /// <summary>
-      /// The offset for the player's interaction sphere
+      /// The offset for the agents's interaction sphere
       /// </summary>
-      public Vector3 Offset = new Vector3();
+      public Vector3 offset = new Vector3();
 
       [Header("Debug")]
       /// <summary>
       /// Whether there is debugging output
       /// </summary>
-      public bool IsDebugging = false;
+      public bool isDebugging = false;
 
       //------------------------------------------------------------------------/
       // Private Members
@@ -103,33 +103,29 @@ namespace Stratus
       /// <summary>
       /// The position from which the scan will be originated
       /// </summary>
-      Vector3 ScanPosition { get { return transform.position + Offset; } }
+      Vector3 scanPosition { get { return transform.position + offset; } }
       /// <summary>
       /// The current interactives in range
       /// </summary>
-      public InteractionQuery[] InteractivesInRange { get; private set; }
+      public InteractionQuery[] interactivesInRange { get; private set; }
       /// <summary>
       /// The current object(s) that the agent can interact with
       /// </summary>
-      public InteractionTrigger ClosestInteractive
+      public InteractionTrigger closestInteractive
       {
         get
         {
-          if (InteractivesInRange.Length == 0)
+          if (interactivesInRange == null || interactivesInRange.Length == 0)
             return null;
-          return InteractivesInRange[0].Interactive;
+          return interactivesInRange[0].Interactive;
         }
       }
-
-      /// <summary>
-      /// The agent this sensor belongs to
-      /// </summary>
-      private Agent Agent;
-
       
-      //private Color DetectedColor = Color.red;
-      private Color IdleColor = Color.green;
-      private Stopwatch ScanTimer;
+      private Agent agent;      
+      private Color idleColor = Color.green;
+      private Color detectionColor => new Color(1f, 0.5f, 0f, 0.1f);
+      private Color interactionColor => new Color(0f, 1f, 0f, 0.1f);
+      private Stopwatch scanTimer;
 
 
       //------------------------------------------------------------------------/
@@ -155,11 +151,11 @@ namespace Stratus
         if (!enabled)
           return;
 
-        if (ScanTimer.Update(Time.deltaTime))
+        if (scanTimer.Update(Time.deltaTime))
         {
           //OnScan();
           Scan();
-          ScanTimer.Reset();
+          scanTimer.Reset();
         }
 
         
@@ -177,7 +173,7 @@ namespace Stratus
       {
         //Overlay.Watch(() => transform.forward, "Forward");
 
-        if (IsInteracting)
+        if (isInteracting)
           DrawInteractionSphere();
 
         switch (this.Mode)
@@ -211,8 +207,8 @@ namespace Stratus
       /// </summary>
       void Configure()
       {
-        this.Agent = GetComponent<Agent>();
-        this.ScanTimer = new Stopwatch(this.ScanInterval);
+        this.agent = GetComponent<Agent>();
+        this.scanTimer = new Stopwatch(this.scanInterval);
         this.OnConfigure();
       }
 
@@ -222,7 +218,7 @@ namespace Stratus
       public void Scan()
       {
         //this.ScanInteractives();
-        if (this.IsInteracting) ScanInteractives();
+        if (this.isInteracting) ScanInteractives();
         this.OnScan();
       }
 
@@ -244,7 +240,7 @@ namespace Stratus
       /// <returns></returns>
       public bool CheckDistance(Transform target)
       {
-        return Library.CheckDistance(this.transform, target, this.Range);
+        return Library.CheckDistance(this.transform, target, this.range);
       }
 
       /// <summary>
@@ -255,29 +251,33 @@ namespace Stratus
       {
         // If the target is within range...
         if (CheckDistance(target))
-          return Library.CheckFieldOfView(this.transform, target, FieldOfView);
+          return Library.CheckFieldOfView(this.transform, target, fieldOfView);
         return false;
       }
 
       void DrawInteractionSphere()
       {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(this.ScanPosition, this.InteractionRadius);        
+        #if UNITY_EDITOR
+        UnityEditor.Handles.color = interactionColor;
+        UnityEditor.Handles.DrawSolidDisc(this.scanPosition, Vector3.up, this.interactionRadius);
+        #endif
       }
 
       void DrawDetectionRange()
       {
-        Gizmos.color = IdleColor;
-        Gizmos.DrawWireSphere(this.transform.position, this.Range);
+        #if UNITY_EDITOR
+        UnityEditor.Handles.color = detectionColor;
+        UnityEditor.Handles.DrawSolidDisc(this.transform.position, Vector3.up, this.range);
+        #endif
       }
 
       void DrawFIeldOfView()
       {
-        Gizmos.color = IdleColor;
+        Gizmos.color = idleColor;
         //Gizmos.DrawFrustum(this.transform.position, this.FieldOfView, this.SightRange, 0f, 1f);
-        var dir = (transform.forward) * this.Range;
-        var left = Quaternion.AngleAxis(-(this.FieldOfView / 2f), Vector3.up);
-        var right = Quaternion.AngleAxis((this.FieldOfView / 2f), Vector3.up);
+        var dir = (transform.forward) * this.range;
+        var left = Quaternion.AngleAxis(-(this.fieldOfView / 2f), Vector3.up);
+        var right = Quaternion.AngleAxis((this.fieldOfView / 2f), Vector3.up);
         Gizmos.DrawLine(transform.position, dir);
         Gizmos.DrawLine(transform.position, left * dir);
         Gizmos.DrawLine(transform.position, right * dir);
@@ -288,13 +288,13 @@ namespace Stratus
       //------------------------------------------------------------------------/
       void ScanInteractives()
       {
-        Collider[] castResults = Physics.OverlapSphere(this.ScanPosition, this.InteractionRadius);
+        Collider[] castResults = Physics.OverlapSphere(this.scanPosition, this.interactionRadius);
         var interactions = new List<InteractionQuery>();
         bool foundInteractions = false;
 
         // The scan event that will be sent
         var scanEvent = new ScanEvent();
-        scanEvent.Agent = this.Agent;
+        scanEvent.Agent = this.agent;
 
         if (castResults != null)
         {
@@ -328,12 +328,12 @@ namespace Stratus
         // Sort the interactions by the closest one?
         interactions.Sort((a, b) => a.Distance.CompareTo(b.Distance));
         // Save the current interactions
-        InteractivesInRange = interactions.ToArray();
+        interactivesInRange = interactions.ToArray();
 
         // Now inform the agent of the current results
         var scanResult = new InteractScanResultEvent();
         scanResult.HasFoundInteractions = foundInteractions;
-        this.Agent.gameObject.Dispatch<InteractScanResultEvent>(scanResult);
+        this.agent.gameObject.Dispatch<InteractScanResultEvent>(scanResult);
       }
 
     }

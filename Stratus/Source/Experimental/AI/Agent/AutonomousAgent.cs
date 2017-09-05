@@ -23,48 +23,39 @@ namespace Stratus
     public abstract class AutonomousAgent : Agent
     {
       //------------------------------------------------------------------------/
-      // Properties
+      // Public Fields
       //------------------------------------------------------------------------/
       [Header("Settings")]
-
       /// <summary>
       /// How long to wait before deciding on the next action
       /// </summary>
       [Range(0.4f, 2f)]
       public float AssessmentTime = 1.0f;
-
       /// <summary>
       /// The collection of behaviors to run on this agent (a behavior system such as a BT, Planner, etc)
       /// </summary>
       public BehaviorSystem Behaviors;
-
       /// <summary>
       /// The blackboard this agent is using
       /// </summary>
-      public override Blackboard Blackboard { get { return Behaviors.Blackboard; } }
+      public override Blackboard blackboard { get { return Behaviors.Blackboard; } }
 
       //------------------------------------------------------------------------/
       // Fields
-      //------------------------------------------------------------------------/    
-      /// <summary>
-      /// The currently running action assesssment routine
-      /// </summary>
-      protected IEnumerator AssessmentRoutine;
-      /// <summary>
-      /// The currently running interrupt sequence
-      /// </summary>
-      protected ActionSet InterruptSequence;
-      /// <summary>
-      /// 
-      /// </summary>
-      protected ActionSet AssessmentSequence;
-
-      protected virtual void OnAssess() {}
+      //------------------------------------------------------------------------/   
+      private ActionSet interruptSequence;
+      private ActionSet assessmentSequence;
 
       //------------------------------------------------------------------------/
       // Interface
-      //------------------------------------------------------------------------/
+      //------------------------------------------------------------------------/ 
+      protected virtual void OnAssessmentStarted() { }
+      protected virtual void OnAssessmentCancelled() { }
+      protected virtual void OnInterrupt(float duration) { }
 
+      //------------------------------------------------------------------------/
+      // Virtual
+      //------------------------------------------------------------------------/
       protected override void Subscribe()
       {
         base.Subscribe();
@@ -75,10 +66,10 @@ namespace Stratus
 
       protected override void OnDeath()
       {
-        CancelAssessment();
-        if (InterruptSequence != null) InterruptSequence.Cancel();
+        CancelPreviousAssessment();
+        if (interruptSequence != null) interruptSequence.Cancel();
       }
-      
+
       //------------------------------------------------------------------------/
       // Events
       //------------------------------------------------------------------------/
@@ -100,24 +91,22 @@ namespace Stratus
       /// </summary>
       public void Assess()
       {
-        if (AssessmentSequence != null && AssessmentSequence.isActive)
+        if (assessmentSequence != null && assessmentSequence.isActive)
         {
-          Trace.Script("Cannot assess!", this);
           return;
         }
 
+        // wat
         if (this == null)
           return;
 
-        //Trace.Script("Assessing the next action in " + this.AssessmentTime, this);
-        //if (AssessmentRoutine != null) StopCoroutine(AssessmentRoutine);
-        //AssessmentRoutine = Routines.Call(this.OnAssess, this.AssessmentTime);
-        //StartCoroutine(AssessmentRoutine);
+        if (logging)
+          Trace.Script("Assessing the next action in " + this.AssessmentTime + " seconds", this);
 
-        CancelAssessment();
-        AssessmentSequence = Actions.Sequence(this);
-        Actions.Delay(AssessmentSequence, this.AssessmentTime);
-        Actions.Call(AssessmentSequence, this.OnAssess);
+        CancelPreviousAssessment();
+        assessmentSequence = Actions.Sequence(this);
+        Actions.Delay(assessmentSequence, this.AssessmentTime);
+        Actions.Call(assessmentSequence, this.OnAssessmentStarted);
       }
 
       /// <summary>
@@ -126,27 +115,32 @@ namespace Stratus
       /// <param name="duration"></param>
       public void Interrupt(float duration)
       {
-        //Trace.Script("Interrupting this agent for " + duration + " seconds!", this);
-        CancelAssessment();
-        InterruptSequence = Actions.Sequence(this);
-        Actions.Call(InterruptSequence, Pause);
-        Actions.Delay(InterruptSequence, duration);
-        Actions.Call(InterruptSequence, () => { Active = true; });
-        Actions.Call(InterruptSequence, this.Assess, duration);
+        if (logging)
+          Trace.Script("Interrupting this agent for " + duration + " seconds!", this);
+        
+        interruptSequence = Actions.Sequence(this);
+        Actions.Call(interruptSequence, CancelPreviousAssessment);
+        Actions.Call(interruptSequence, Pause);
+        Actions.Call(interruptSequence, OnAssessmentCancelled);
+        Actions.Delay(interruptSequence, duration);
+        Actions.Call(interruptSequence, Resume);
+        Actions.Call(interruptSequence, this.Assess, duration);
+
+        OnInterrupt(duration);
       }
 
-      void CancelAssessment()
+      /// <summary>
+      /// Cancels the previous asssessment sequence
+      /// </summary>
+      void CancelPreviousAssessment()
       {
-        if (AssessmentSequence != null)
-        {
-          AssessmentSequence.Cancel();
-          AssessmentSequence = null;
-          //Trace.Script("Cancelling previous assessment", this);
-        }
+        if (assessmentSequence == null)
+          return;
+
+        //Trace.Script("Cancelling previous assessment", this);
+        assessmentSequence.Cancel();
+        assessmentSequence = null;
       }
-
-
-
 
     }
   }

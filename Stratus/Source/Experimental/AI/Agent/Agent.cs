@@ -40,55 +40,68 @@ namespace Stratus
       /// <summary>
       /// Whether this agent is active
       /// </summary>
-      public bool Active = true;
+      public bool active = true;
       /// <summary>
       /// Whether we are debugging the agent
       /// </summary>
-      bool IsDebugging = false;
+      public bool logging = false;
 
       //------------------------------------------------------------------------/
       // Properties: Public 
       //------------------------------------------------------------------------/
       /// <summary>
+      /// The NavMeshAgent component used by this agent
+      /// </summary>
+      public NavMeshAgent navigation { get; private set; }
+      /// <summary>
+      /// Whether the agent is currently targetable
+      /// </summary>
+      public bool targetable { get; private set; } = true;       
+      /// <summary>
       /// The blackboard this agent is using
       /// </summary>
-      public abstract Blackboard Blackboard { get; }
+      public abstract Blackboard blackboard { get; }
       /// <summary>
       /// The agent's current target
       /// </summary>
-      public Agent Target { get; protected set; }
+      public Agent target { get; protected set; }
       /// <summary>
       /// A list of all the agents engaged to this one
       /// </summary>
-      public Agent[] Engagements { get { return CurrentEngagements.ToArray(); } }
+      public Agent[] engagements { get { return currentEngagements.ToArray(); } }
       /// <summary>
       /// The current state of this agent
       /// </summary>
-      public State CurrentState { get; protected set; }
+      public State currentState { get; protected set; }
       /// <summary>
       /// Whether the agent is currently moving
       /// </summary>
-      public bool IsMoving { get { return Navigation.hasPath; } }
+      public bool isMoving { get { return navigation.hasPath; } }
       /// <summary>
       /// The sensor this agent is using
       /// </summary>
-      public Sensor Sensor { get; protected set; }      
+      public Sensor sensor { get; protected set; }      
       /// <summary>
       /// A renderer used for debugging purposes
       /// </summary>
-      protected LineRenderer LineRenderer { get; set; }
+      protected LineRenderer lineRenderer { get; set; }
+      /// <summary>
+      /// The rigidbody component used by this component
+      /// </summary>
+      public new Rigidbody rigidbody { get; private set; }
 
       //------------------------------------------------------------------------/
       // Fields: Private
       //------------------------------------------------------------------------/
+
       /// <summary>
       /// The currently running steering routine
       /// </summary>
-      private IEnumerator SteeringRoutine;
+      private IEnumerator steeringRoutine;
       /// <summary>
       /// The list of targets currently engaged to this agent
       /// </summary>
-      private List<Agent> CurrentEngagements = new List<Agent>();
+      private List<Agent> currentEngagements = new List<Agent>();
 
       //------------------------------------------------------------------------/
       // Interface
@@ -98,6 +111,7 @@ namespace Stratus
       protected abstract void OnUpdate();
       protected virtual void OnEngage(Agent target) { }
       protected virtual void OnDisengage() { }
+      protected virtual void OnDisengaged(Agent agent) {}
       protected virtual void OnCombatEnter() { }
       protected virtual void OnCombatExit() { }
       protected abstract void OnDeath();
@@ -105,7 +119,7 @@ namespace Stratus
       protected virtual bool OnMoveTo(NavMeshPath path) { return false; }
       protected virtual void OnMovementStarted() {}
       protected virtual void OnMovementEnded() {}
-      public NavMeshAgent Navigation { get { return this.gameObject.GetComponent<NavMeshAgent>(); } }
+
 
       //------------------------------------------------------------------------/
       // Messages
@@ -115,11 +129,16 @@ namespace Stratus
       /// </summary>
       void Start()
       {
-        if (this.IsDebugging) this.AddLineRenderer();
-        this.Sensor = GetComponent<Sensor>();
+        if (this.logging) this.AddLineRenderer();
+
+        // Cache the main components, ho!
+        this.navigation = GetComponent<NavMeshAgent>(); ;
+        this.sensor = GetComponent<Sensor>();
+        this.rigidbody = GetComponent<Rigidbody>();
+
         this.Subscribe();
         this.OnStart();
-        CurrentState = State.Idle;
+        currentState = State.Idle;
       }
 
       /// <summary>
@@ -127,31 +146,31 @@ namespace Stratus
       /// </summary>
       void FixedUpdate()
       {
-        if (!Active)
+        if (!active)
           return;
 
-        if (this.IsDebugging)
-          this.Debug();
+        //if (this.logging)
+        //  this.Debug();
 
         this.OnUpdate();
       }
 
       private void OnDisable()
       {
-        if (this.SteeringRoutine != null)
+        if (this.steeringRoutine != null)
         {
-          Trace.Script("Stopping steering!", this);
-          StopCoroutine(this.SteeringRoutine);
+          //Trace.Script("Stopping steering!", this);
+          StopCoroutine(this.steeringRoutine);
         }
       }
 
       private void OnEnable()
       {
-        if (this.SteeringRoutine != null)
+        if (this.steeringRoutine != null)
         {
-          Trace.Script("Resuming steering!", this);
-          this.Navigation.enabled = true;
-          StartCoroutine(this.SteeringRoutine);
+          //Trace.Script("Resuming steering!", this);
+          this.navigation.enabled = true;
+          StartCoroutine(this.steeringRoutine);
         }
       }
 
@@ -183,18 +202,19 @@ namespace Stratus
       /// <param name="e"></param>
       void OnDeathEvent(DeathEvent e)
       {
-        if (this.IsDebugging) Trace.Script("This agent has been killed.", this);
+        targetable = false;
+        if (this.logging) Trace.Script("This agent has been killed.", this);
         this.Stop();
         this.OnDeath();
       }
       void OnInteractEvent(Agent.InteractEvent e)
       {
-        if (this.Sensor.ClosestInteractive)
+        if (this.sensor.closestInteractive)
         {
-          if (this.IsDebugging) Trace.Script("Interacting!", this);
+          if (this.logging) Trace.Script("Interacting!", this);
           var interactEvent = new Agent.InteractEvent();
           interactEvent.Object = this.gameObject;
-          this.Sensor.ClosestInteractive.gameObject.Dispatch<Agent.InteractEvent>(interactEvent);
+          this.sensor.closestInteractive.gameObject.Dispatch<Agent.InteractEvent>(interactEvent);
         }
       }
 
@@ -210,33 +230,35 @@ namespace Stratus
 
       void OnEngageTargetEvent(EngageTargetEvent e)
       {
-        this.Target = e.Target;
+        this.target = e.Target;
         this.OnEngage(e.Target);
       }
 
       void OnSwitchTargetEvent(SwitchTargetEvent e)
       {
         //Trace.Script("Now switching target to " + e.Target);
-        this.Target = e.Target;
+        this.target = e.Target;
       }
 
       void OnEngagedEvent(EngagedEvent e)
       {
         //Trace.Script(e.Agent + " is engaged to me!", this);
-        CurrentEngagements.Add(e.Agent);
+        currentEngagements.Add(e.Agent);
         // This agent has just entered combat
-        if (CurrentEngagements.Count == 1)
+        if (currentEngagements.Count == 1)
           this.OnCombatEnter();
       }
 
       void OnDisengagedEvent(DisengagedEvent e)
       {
         //Trace.Script(e.Agent + " has disengaged from me!", this);
-        CurrentEngagements.Remove(e.Agent);
+        OnDisengaged(e.Agent);
+
         // This agent is no longer in combat
-        if (CurrentEngagements.Count == 0)
+        if (currentEngagements.Count == 0)
           this.OnCombatExit();
 
+        currentEngagements.Remove(e.Agent);
       }
 
       void OnDisableEvent(DisableEvent e)
@@ -262,22 +284,22 @@ namespace Stratus
         if (!enabled)
           return;
         // Reset the current path
-        Navigation.ResetPath();
+        navigation.ResetPath();
 
         // Calculate a path to the point
         NavMeshPath path = new NavMeshPath();
-        if (Navigation.CalculatePath(point, path) && path.status == NavMeshPathStatus.PathComplete)
+        if (navigation.CalculatePath(point, path) && path.status == NavMeshPathStatus.PathComplete)
         {
-          if (this.IsDebugging) PrintPath(path);
+          //if (this.logging) PrintPath(path);
           // If the path is not modified by a subclass, use it
           if (!this.OnMoveTo(path))
-            Navigation.SetPath(path);
+            navigation.SetPath(path);
         }
         else
         {
-          Navigation.SetDestination(transform.localPosition);
+          navigation.SetDestination(transform.localPosition);
 
-          if (this.IsDebugging)
+          if (this.logging)
             Trace.Script("Can not move to that position!", this);
         }
       }
@@ -292,10 +314,18 @@ namespace Stratus
       /// <param name="angle"></param>
       public void ApproachTarget(Transform target, float stoppingDistance, float angle = 0f, float speed = 5f, float acceleration = 8f)
       {
-        if (SteeringRoutine != null) StopCoroutine(SteeringRoutine);
-        SteeringRoutine = ApproachTargetRoutine(target, speed, acceleration, stoppingDistance, angle);
-        if (!enabled) return;
-        StartCoroutine(SteeringRoutine);
+        if (logging)
+          Trace.Script("Will now approach " + target.name, this);
+
+        // Previously enabled was below steering routine?
+        if (!enabled)
+          return;
+
+        if (steeringRoutine != null)
+          StopCoroutine(steeringRoutine);
+
+        steeringRoutine = ApproachTargetRoutine(target, speed, acceleration, stoppingDistance, angle);
+        StartCoroutine(steeringRoutine);
       }
 
 
@@ -305,18 +335,18 @@ namespace Stratus
       /// <param name="target"></param>
       public void Engage(Agent target)
       {
-        //if (IsDebugging)
-        Trace.Script("Now engaging " + target.name, this);
+        if (logging)
+          Trace.Script("Now engaging " + target.name, this);
 
-        if (this.Target)
+        if (this.target)
           Disengage();
 
         // Inform the target that it's been engaged on
-        this.Target = target;
-        SignalEngagement<EngagedEvent>(this.Target);
+        this.target = target;
+        SignalEngagement<EngagedEvent>(this.target);
 
         this.OnEngage(target);
-        this.CurrentState = State.Engaged;
+        this.currentState = State.Engaged;
       }
 
       /// <summary>
@@ -324,22 +354,22 @@ namespace Stratus
       /// </summary>
       public void Disengage()
       {
-        if (IsDebugging)
+        if (logging)
           Trace.Script("Disengaging!", this);
 
         // Inform that we have disengaged from the target
-        if (this.Target)
-          SignalEngagement<DisengagedEvent>(this.Target);
-        this.Target = null;
+        if (this.target)
+          SignalEngagement<DisengagedEvent>(this.target);
+        this.target = null;
 
-        if (this.Navigation.isOnNavMesh)
+        if (this.navigation.isOnNavMesh)
         {
-          this.Navigation.isStopped = true;
-          this.Navigation.ResetPath();
+          this.navigation.isStopped = true;
+          this.navigation.ResetPath();
         }
 
         this.OnDisengage();
-        this.CurrentState = State.Idle;
+        this.currentState = State.Idle;
       }
 
       /// <summary>
@@ -347,7 +377,7 @@ namespace Stratus
       /// </summary>
       public void Stop()
       {
-        if (this.IsDebugging)
+        if (this.logging)
           Trace.Script("The agent has been stopped.", this);
 
         this.Disengage();
@@ -360,9 +390,11 @@ namespace Stratus
       /// </summary>
       public void Pause()
       {
-        //Trace.Script("Pausing agent!");
-        this.Active = false;
-        this.Navigation.isStopped = true;
+        if (logging)
+          Trace.Script("Paused", this);
+        this.active = false;
+        this.navigation.isStopped = true;
+        this.navigation.enabled = false;
       }
 
 
@@ -371,8 +403,11 @@ namespace Stratus
       /// </summary>
       public void Resume()
       {
-        this.Active = true;
-        this.Navigation.isStopped = false;
+        if (logging)
+          Trace.Script("Resumed", this);
+        this.active = true;
+        this.navigation.enabled = true;
+        this.navigation.isStopped = false;
       }
 
       /// <summary>
@@ -381,10 +416,10 @@ namespace Stratus
       /// <param name="duration"></param>
       public void Disable(float duration)
       {
-        this.Active = false;
+        this.active = false;
         this.Stop();
         var seq = Actions.Sequence(this);
-        Actions.Call(seq, () => { this.Active = true; });
+        Actions.Call(seq, () => { this.active = true; });
       }
 
       /// <summary>

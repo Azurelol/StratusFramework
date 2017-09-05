@@ -50,7 +50,8 @@ namespace Stratus
           EditorGUILayout.LabelField("Available", EditorStyles.centeredGreyMiniLabel);
           foreach(var scene in link.scenePool.scenes)
           {
-            if (link.selectedScenes.Contains(scene))
+            var matchingScene = link.selectedScenes.Find(x => x.name == scene.name);
+            if (matchingScene != null)
               continue;
           
             if (GUILayout.Button(scene.name, EditorStyles.miniButton))

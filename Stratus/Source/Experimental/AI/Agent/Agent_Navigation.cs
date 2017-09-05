@@ -80,7 +80,7 @@ namespace Stratus
       IEnumerator ApproachTargetRoutine(Transform target, float speed, float acceleration, float stoppingDistance, float angle)
       {
         // Store, then set the new settings
-        var navSettings = new NavigationSettings(this.Navigation);
+        var navSettings = new NavigationSettings(this.navigation);
         navSettings.Set(speed, acceleration, stoppingDistance);
 
         //Trace.Script("Will now approach " + target.name + " up until " + stoppingDistance + " units at " + speed + " speed!", this);
@@ -98,9 +98,9 @@ namespace Stratus
         //Trace.Script("Approached " + target.name, this);
 
         // Now that we are in range of the target, let's revert to the old settings and stop moving
-        this.Navigation.isStopped = true;
+        this.navigation.isStopped = true;
         navSettings.Revert();
-        this.SteeringRoutine = null;
+        this.steeringRoutine = null;
 
         this.OnMovementEnded();        
       }
@@ -118,7 +118,7 @@ namespace Stratus
       protected IEnumerator FollowPathRoutine(Vector3[] points, float speed, float acceleration, float stoppingDistance)
       {
         // Store, then set the new settings
-        var navSettings = new NavigationSettings(this.Navigation);
+        var navSettings = new NavigationSettings(this.navigation);
         navSettings.Set(speed, acceleration, stoppingDistance);
 
         this.OnMovementStarted();
@@ -131,7 +131,7 @@ namespace Stratus
         //}
 
         IEnumerator drawRoutine = null;
-        if (this.IsDebugging)
+        if (this.logging)
         {
           drawRoutine = DrawPathRoutine(points, Color.red, Color.yellow);
           StartCoroutine(drawRoutine);
@@ -143,20 +143,20 @@ namespace Stratus
           Trace.Script("Moving to next point: " + point, this);
           while (Vector3.Distance(transform.position, point) > stoppingDistance)
           {
-            this.Navigation.SetDestination(point);
+            this.navigation.SetDestination(point);
             yield return new WaitForFixedUpdate();
           }
         }
 
         Trace.Script("Finished the path!");
-        if (this.IsDebugging)
+        if (this.logging)
         {
           StopCoroutine(drawRoutine);
         }
 
 
         this.OnMovementEnded();
-        this.Navigation.isStopped = true;
+        this.navigation.isStopped = true;
         navSettings.Revert();
 
 

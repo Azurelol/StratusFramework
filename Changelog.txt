@@ -1,0 +1,1 @@
+9/4/2017: I have fixed the issue with SingletonAsset not being saved properly when using its Save() method.

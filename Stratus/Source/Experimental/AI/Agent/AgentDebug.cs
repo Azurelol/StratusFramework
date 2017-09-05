@@ -22,7 +22,7 @@ namespace Stratus
       void Start()
       {
         //Overlay.Watch(() => Agent.Target, "Target", this);      
-        Overlay.Watch(() => Agent.CurrentState, "Behavior", this);
+        Overlay.Watch(() => Agent.currentState, "Behavior", this);
       }
 
 

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using UnityEditor;
 using System;
+using System.Linq;
 
 namespace Stratus
 {
@@ -58,9 +59,23 @@ namespace Stratus
       /// <returns></returns>
       public static T LoadOrCreateSaveData<T>(string path) where T : ScriptableObject
       {
-        var data = AssetDatabase.LoadAssetAtPath<T>(path);
-        //AssetDatabase.
-        //var data = LoadSaveData<T>(path);
+        T data = null;
+
+        // Try loading it at the specified path
+        if (data == null)
+        {
+          data = AssetDatabase.LoadAssetAtPath<T>(path);
+        }
+
+        // Try finding it anywhere
+        if (data == null)
+        {
+          var objs = FindAndLoadAssetsByType<T>();
+          if (objs.Length > 0)
+            data = objs.First();
+        }
+
+        // Try creating it
         if (data == null)
         {
           Trace.Script(path + " has not been saved, creating it!");
@@ -68,10 +83,7 @@ namespace Stratus
           CreateAssetAndDirectories(data, path);
           AssetDatabase.SaveAssets();
         }
-        else
-        {
-          //Trace.Script("Loaded " + path);
-        }
+
         return data;
       }
 
@@ -109,6 +121,29 @@ namespace Stratus
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         return instance;
+      }
+
+      /// <summary>
+      /// Returns all assets of a specified type (loading them if necessary)
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <returns></returns>
+      public static T[] FindAndLoadAssetsByType<T>() where T : ScriptableObject
+      {
+        List<T> assets = new List<T>();
+        var typeName = typeof(T).ToString().Replace("UnityEngine.", "");
+        string[] guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeName));
+        for (int i = 0; i < guids.Length; ++i)
+        {
+          string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+          T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+          if (asset != null)
+          {
+            assets.Add(asset);
+          }
+        }
+        return assets.ToArray();
+
       }
 
     }

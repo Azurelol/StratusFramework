@@ -73,7 +73,8 @@ namespace Stratus
     {
       get
       {
-        if (serializedObject_ == null) LoadOrCreate();
+        if (serializedObject_ == null)
+          LoadOrCreate();
         return serializedObject_;
       }
     }
@@ -88,9 +89,10 @@ namespace Stratus
     /// <returns></returns>
     protected static T LoadOrCreate()
     {
-      var settings = AttributeUtility.FindAttribute<SingletonAssetAttribute>(typeof(T));
+      var type = typeof(T);
+      var settings = AttributeUtility.FindAttribute<SingletonAssetAttribute>(type);
       if (settings == null)
-        throw new SingletonAssetAttribute.MissingException(typeof(T).Name);
+        throw new SingletonAssetAttribute.MissingException(type.Name);
 
       var path = settings.GetProperty<string>("path");
       var name = settings.GetProperty<string>("name");
@@ -101,7 +103,7 @@ namespace Stratus
         throw new NullReferenceException("The given folder path '" + path + "' to be used for the asset '" + name + "' could not be found!");
 
       var fullPath = folderPath + "/" + name + ".asset";
-      
+
       // Now create the proper instance
       instance = Assets.LoadOrCreateSaveData<T>(fullPath);
 
@@ -122,7 +124,7 @@ namespace Stratus
       EditorUtility.SetDirty(instance);
       AssetDatabase.SaveAssets();
     }
-
+    
     /// <summary>
     /// Inspects this asset within an OnGUI method
     /// </summary>

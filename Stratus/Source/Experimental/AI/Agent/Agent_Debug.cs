@@ -16,27 +16,39 @@ namespace Stratus
     {
       private void OnDrawGizmos()
       {
+        DrawPathByHandle();
+      }
+
+      void DrawPathByHandle()
+      {
+        if (navigation == null || navigation.path == null)
+          return;
+
+#if UNITY_EDITOR
+        UnityEditor.Handles.color = Color.red;
+        UnityEditor.Handles.DrawAAPolyLine(navigation.path.corners);
+#endif
       }
 
       private void Debug()
       {
-        if (!Navigation.hasPath)
+        if (!navigation.hasPath)
         {
-          this.LineRenderer.enabled = false;
+          this.lineRenderer.enabled = false;
           return;
         }
-        this.LineRenderer.enabled = true;
+        this.lineRenderer.enabled = true;
         this.DrawPath();
       }
 
       void AddLineRenderer()
       {
-        this.LineRenderer = this.gameObject.AddComponent<LineRenderer>();
-        this.LineRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.yellow };
-        this.LineRenderer.startWidth = 0.1f;
-        this.LineRenderer.endWidth = 0.1f;
-        this.LineRenderer.startColor = Color.yellow;
-        this.LineRenderer.endColor = Color.yellow;
+        this.lineRenderer = this.gameObject.AddComponent<LineRenderer>();
+        this.lineRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.yellow };
+        this.lineRenderer.startWidth = 0.1f;
+        this.lineRenderer.endWidth = 0.1f;
+        this.lineRenderer.startColor = Color.yellow;
+        this.lineRenderer.endColor = Color.yellow;
       }
 
       /// <summary>
@@ -44,17 +56,17 @@ namespace Stratus
       /// </summary>
       void DrawPath()
       {
-        if (this.LineRenderer == null)
+        if (this.lineRenderer == null)
         {
           this.AddLineRenderer();
         }
 
-        this.LineRenderer.positionCount = Navigation.path.corners.Length;
-        for (int i = 0; i < Navigation.path.corners.Length; i++)
+        this.lineRenderer.positionCount = navigation.path.corners.Length;
+        for (int i = 0; i < navigation.path.corners.Length; i++)
         {
-          var corner = Navigation.path.corners[i];
+          var corner = navigation.path.corners[i];
           UnityEngine.Debug.DrawRay(corner, Vector3.up, Color.red);
-          this.LineRenderer.SetPosition(i, Navigation.path.corners[i]);
+          this.lineRenderer.SetPosition(i, navigation.path.corners[i]);
         }
       }
 

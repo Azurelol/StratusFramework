@@ -167,6 +167,7 @@ namespace Stratus
       {
         BookmarkedScenes.Add(sceneToAdd);
         Preferences.Save();
+        sceneToAdd = null;
       }
 
       EditorGUILayout.EndHorizontal();

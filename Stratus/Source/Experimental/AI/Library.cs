@@ -50,11 +50,10 @@ namespace Stratus
       /// <returns></returns>
       public static bool CheckDistance(Transform source, Vector3 target, float range)
       {
-        if (Vector3.Distance(target, source.position) <= range)
-        {
-          return true;
-        }
-        return false;
+        float dist = Vector3.Distance(target, source.position);
+        bool inRange = (dist <= range);
+        //Trace.Script("Distance = " + dist);
+        return inRange;
       }
 
       /// <summary>
