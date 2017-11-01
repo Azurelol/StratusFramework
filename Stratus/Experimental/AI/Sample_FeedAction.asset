@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e043ade389b5d64cb39f3d0ca2bff2a, type: 3}
+  m_Name: Sample_FeedAction
+  m_EditorClassIdentifier: 
+  Type:
+    _classRef: 
+  Preconditions:
+    Symbols:
+    - Key: Money
+      Value:
+        Type: 0
+        Integer: 50
+        Float: 0
+        Boolean: 1
+        Vector3: {x: 0, y: 0, z: 0}
+        String: 
+    - Key: IsHungry
+      Value:
+        Type: 1
+        Integer: 0
+        Float: 0
+        Boolean: 1
+        Vector3: {x: 0, y: 0, z: 0}
+        String: 
+  Effects:
+    Symbols:
+    - Key: IsHungry
+      Value:
+        Type: 1
+        Integer: 0
+        Float: 0
+        Boolean: 0
+        Vector3: {x: 0, y: 0, z: 0}
+        String: 
+  Cost: 5
+  Action: {fileID: 0}
+--- !u!114 &114461354130411040
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 426582f4884718d43bb7742620a307b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Symbol:
+    Key: 
+    Type: 0
+  Range: 2
