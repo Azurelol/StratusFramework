@@ -246,14 +246,24 @@ namespace Stratus
           public static string dialogueBasic = @"";
 
           /// <summary>
+          /// (Value)
+          /// </summary>
+          public static string insideParentheses { get; private set; } = ComposeEnclosure('(', ')');
+
+          /// <summary>
           /// "Value"
           /// </summary>
-          public static string insideDoubleQuotes => @"\""([a-zA-Z0-9-\s]+)\""";
+          public static string insideDoubleQuotes { get; private set; } = ComposeEnclosure('"');
 
           /// <summary>
           /// [Value]
           /// </summary>
-          public static string insideSquareBrackets => @"\[([a-zA-Z0-9-\s]+)\]";
+          public static string insideSquareBrackets { get; private set; } = ComposeEnclosure('[', ']');
+
+          /// <summary>
+          /// (Value)
+          /// </summary>
+          public static string insideCurlyBraces { get; private set; } = ComposeEnclosure('{', '}');
 
           /// <summary>
           /// Variable = Operand
@@ -270,9 +280,28 @@ namespace Stratus
           /// </summary>
           public static string decrementOperator => @"(?<Variable>\w+)\-\-";
 
+          /// <summary>
+          /// Composes a regular expression that will try to match the specified enclosure.
+          /// For example, the enclosure with characters '[' and ']' will match the text [Jackson]
+          /// </summary>
+          /// <param name="enclosingCharacter"></param>
+          /// <returns></returns>
+          public static string ComposeEnclosure(char left, char right)
+          {
+            string leftEnclosure = Regex.Escape(left.ToString());
+            string rightEnclosure = Regex.Escape(right.ToString());
+            return $@"{leftEnclosure}(.*){rightEnclosure}";
+          }
+
+          /// <summary>
+          /// Composes a regular expression that will try to match the specified enclosure.
+          /// For example, the enclosure with character '"' will match the text "Boo!"
+          /// </summary>
+          /// <param name="enclosingCharacter"></param>
+          /// <returns></returns>
           public static string ComposeEnclosure(char enclosingCharacter)
           {
-            return $@"\{enclosingCharacter}([a-zA-Z0-9-\s]+)\{enclosingCharacter}";
+            return ComposeEnclosure(enclosingCharacter, enclosingCharacter);
           }
 
           /// <summary>

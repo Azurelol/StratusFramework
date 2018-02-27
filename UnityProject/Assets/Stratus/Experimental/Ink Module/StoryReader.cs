@@ -123,28 +123,6 @@ namespace Stratus
         // Initialization
         //------------------------------------------------------------------------------------------/
         /// <summary>
-        /// Once a story has been set, loads it. If its's set to save,
-        /// it will first look for the story among the specified save data
-        /// folder
-        /// </summary>
-        void InitializeStory()
-        {
-          // Announce it
-          var loadedEvent = new Story.LoadedEvent() { reader = this, story = this.story };
-          this.gameObject.Dispatch<Story.LoadedEvent>(loadedEvent);
-          Scene.Dispatch<Story.LoadedEvent>(loadedEvent);
-
-          OnStoryLoaded(story);
-
-          // If the story can't be continued, check if it should be restarted
-          //if (!story.runtime.canContinue && automaticRestart)
-          //  TryRestart();
-
-          // Now start the story
-          this.StartStory();
-        }
-
-        /// <summary>
         /// Loads a story from a story file, restarting depending on the default automatic setting
         /// </summary>
         /// <param name="storyFile"></param>
@@ -182,14 +160,14 @@ namespace Stratus
         private void LoadStory(TextAsset storyFile, bool restart = false, string knot = null)
         {
           Story newStory = null;
-
-          // If this story has already been loaded,
-          // use the previous state
+          
+          // If this story has already been loaded, use the previous state
           bool previouslyLoaded = stories.ContainsKey(storyFile.name);
+
           if (previouslyLoaded)
           {
             if (logging)
-              Trace.Script($"{storyFile.name} has already been loaded! Using it!");
+              Trace.Script($"{storyFile.name} has already been loaded! Using the previous state.");
             newStory = stories[storyFile.name];
             LoadState(newStory);
           }
@@ -197,7 +175,7 @@ namespace Stratus
           else
           {
             if (logging)
-              Trace.Script($"{storyFile.name} has not been loaded yet. Constructing a new story!");
+              Trace.Script($"{storyFile.name} has not been loaded yet. Constructing a new state.");
             newStory = ConstructStory(storyFile);
           }
 
@@ -217,11 +195,22 @@ namespace Stratus
             JumpToKnot(knot);
           }
           else if (restart || automaticRestart)
+          {
             Restart(clearStateOnRestart);
+          }
 
 
-          // Start it
-          InitializeStory();
+          // Announce that we are loding the story
+          var loadedEvent = new Story.LoadedEvent() { reader = this, story = this.story };
+          this.gameObject.Dispatch<Story.LoadedEvent>(loadedEvent);
+          Scene.Dispatch<Story.LoadedEvent>(loadedEvent);
+
+          // Invoke any subclass callbacks
+          OnStoryLoaded(story);
+
+          // Now start the story
+          // If the story was previously loaded, we need not start from a new line
+          this.StartStory(previouslyLoaded && story.started);
         }
 
         /// <summary>
@@ -262,6 +251,8 @@ namespace Stratus
             story.runtime.ResetState();
           else
             story.runtime.state.GoToStart();
+
+          story.started = false;
         }
 
         //------------------------------------------------------------------------------------------/
@@ -545,6 +536,8 @@ namespace Stratus
 
           // Update the first line of dialog
           this.ContinueStory(!resume);
+
+          story.started = true;
 
           if (logging)
           {

@@ -36,9 +36,9 @@ namespace Stratus
         /// </summary>
         public List<string> values { get; private set; } = new List<string>();
         /// <summary>
-        /// The first value of this parse (only valid for non-grouped)
+        /// The value of this parse (first valuee if grouped)
         /// </summary>
-        public string firstValue => values.Count > 0 ? values[0] : null;
+        public string value => values.Count > 0 ? values[0] : null;
         /// <summary>
         /// The captured groups for this parse
         /// </summary>

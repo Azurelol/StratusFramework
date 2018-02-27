@@ -52,16 +52,11 @@ namespace Stratus
         /// The current knot the story is on
         /// </summary>
         public string latestKnot { get; set; }
-        ///// <summary>
-        ///// Reloads the state of the story from the saved json
-        ///// </summary>
-        //public void LoadState()
-        //{
-        //  if (!runtime)
-        //    runtime = new Ink.Runtime.Story(file.text);
-        //  runtime.state.LoadJson(savedState);
-        //}
-
+        /// <summary>
+        /// Whether to the story has started
+        /// </summary>
+        public bool started;
+        
         //--------------------------------------------------------------------/
         // Definitions
         //--------------------------------------------------------------------/
@@ -71,6 +66,9 @@ namespace Stratus
         public enum Types { Integer, Boolean, String, Float }
 
 
+        /// <summary>
+        /// The type of story events
+        /// </summary>
         public enum ReaderEventType
         {
           Loaded,

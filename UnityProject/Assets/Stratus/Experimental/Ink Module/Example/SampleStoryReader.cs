@@ -22,6 +22,8 @@ namespace Stratus.Modules.InkModule
       parser.AddPattern("Speaker", RegexParser.Presets.insideSquareBrackets, RegexParser.Target.Line, RegexParser.Scope.Default);
       parser.AddPattern("Message", RegexParser.Presets.insideDoubleQuotes, RegexParser.Target.Line, RegexParser.Scope.Default);
 
+      //parser.AddPattern("Line", RegexParser.Presets.ComposeBinaryOperation("Speaker", "Message", ":"), RegexParser.Target.Line, RegexParser.Scope.Group);
+
       // Variable = operand
       parser.AddPattern("Assignment", RegexParser.Presets.assignment, RegexParser.Target.Tag, RegexParser.Scope.Group, OnParse);
       // Variable++

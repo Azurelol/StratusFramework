@@ -78,12 +78,12 @@ namespace Stratus
         else
         {
           Parse speaker = line.Find("Speaker");
+          if (speaker != null)
+            speakerText.text = speaker.value;
+
           Parse message = line.Find("Message");
-          if (speaker != null && message != null)
-          {
-            speakerText.text = speaker.firstValue;
-            messageText.text = message.firstValue;
-          }
+          if (message != null)
+            messageText.text = message.value;          
         }
       }
       

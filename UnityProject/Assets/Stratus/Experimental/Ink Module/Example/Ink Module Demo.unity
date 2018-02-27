@@ -726,6 +726,7 @@ GameObject:
   - component: {fileID: 730576740}
   - component: {fileID: 730576738}
   - component: {fileID: 730576739}
+  - component: {fileID: 730576741}
   m_Layer: 5
   m_Name: Simple Story Display
   m_TagString: Untagged
@@ -935,6 +936,27 @@ MonoBehaviour:
   saveStates: 1
   saveOnExit: 0
   clearStateOnRestart: 1
+--- !u!114 &730576741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 730576733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d581f29b2343400438e8ea539d2950dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  getters: []
+  pollFrequency: 1
+  backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  textPrefab: {fileID: 114401095632438968, guid: 662d4cd6c642a28428c1f0ffa51b221f,
+    type: 2}
+  renderSettingsList:
+  - gameObject: {fileID: 730576733}
+    offset: {x: 0, y: 0, z: 0}
+    fontSize: 14
 --- !u!1 &758722969
 GameObject:
   m_ObjectHideFlags: 0
@@ -1509,7 +1531,6 @@ MonoBehaviour:
   description: Started Knot3
   logging: 0
   delay: 0
-  message: Started knot 3
 --- !u!114 &1077472345
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1548,7 +1569,6 @@ MonoBehaviour:
   description: Ended Knot2
   logging: 0
   delay: 0
-  message: Ended Knot 2
 --- !u!114 &1077472347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1569,6 +1589,7 @@ MonoBehaviour:
   - {fileID: 1077472346}
   - {fileID: 1077472344}
   showDescriptions: 1
+  descriptionsWithLabel: 0
 --- !u!114 &1077472348
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1583,7 +1604,6 @@ MonoBehaviour:
   description: Started Knot1
   logging: 0
   delay: 0
-  message: Started knot 1
 --- !u!114 &1077472349
 MonoBehaviour:
   m_ObjectHideFlags: 2
