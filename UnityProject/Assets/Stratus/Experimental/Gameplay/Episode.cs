@@ -92,10 +92,13 @@ namespace Stratus
 
     [Header("Debug")]
     public bool debug = false;
+    [DrawIf("debug", true, ComparisonType.Equals)]
+    public Color debugTextColor = Color.white;
     public StratusGUI.Anchor windowAnchor = StratusGUI.Anchor.BottomRight;
     public InputField nextSegmentInput = new InputField(KeyCode.PageDown);
     public InputField previousSegmentInput = new InputField(KeyCode.PageUp);
-
+    [SerializeField]
+    private string debugTextColorHex;
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
@@ -119,6 +122,7 @@ namespace Stratus
     /// The index of the current segment
     /// </summary>
     private int currentSegmentIndex { get; set; }
+
 
     //------------------------------------------------------------------------/
     // Messages
@@ -165,6 +169,7 @@ namespace Stratus
 
     private void OnValidate()
     {
+      debugTextColorHex = debugTextColor.ToHex();
       SetInitialSegment(initialSegment); 
     }
 
@@ -295,11 +300,11 @@ namespace Stratus
 
     private void DrawVisualization()
     {
-      GUIContent msg = new GUIContent($"<color=green>{label}.{currentSegment.label}</color>");
+      GUIContent msg = new GUIContent($"<color=#{debugTextColorHex}>{label}.{currentSegment.label}</color>");
       Vector2 size = StratusGUIStyles.header.CalcSize(msg);
       Rect rect = StratusGUI.CalculateAnchoredPositionOnScreen(windowAnchor, size);
       GUILayout.BeginArea(rect);
-      GUILayout.Label($"{label}.{currentSegment.label}", StratusGUIStyles.header);
+      GUILayout.Label(msg, StratusGUIStyles.header);
       GUILayout.EndArea();
     }
 

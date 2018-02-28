@@ -43,7 +43,7 @@ namespace Stratus
     {
       if (collisionTarget.IsTarget(other.gameObject) && !activated) 
       {
-        Trace.Script("Activating", this);
+        //Trace.Script("Activating", this);
         this.Activate();
       }
     }

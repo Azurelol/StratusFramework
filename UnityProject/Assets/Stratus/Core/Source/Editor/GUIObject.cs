@@ -97,11 +97,11 @@ namespace Stratus
     /// <summary>
     /// Whether this button is draggable
     /// </summary>
-    public bool isDraggable => dragData != null;
+    public bool isDraggable => dragData != null && dragDataIdentifier != null;
     /// <summary>
     /// Whether this button accepts a drop operation from a drag
     /// </summary>
-    public bool isDroppable => onDrop != null;
+    public bool isDroppable => onDrop != null && dragDataIdentifier != null;
     /// <summary>
     /// Whether one of these buttons is currentl being dragged
     /// </summary>
@@ -146,9 +146,9 @@ namespace Stratus
             case 1: onRightClickUp?.Invoke(); break;
             case 2: onMiddleClickUp?.Invoke(); break;
           }
-          DragAndDrop.PrepareStartDrag();
           if (isDraggable)
           {
+            DragAndDrop.PrepareStartDrag();
             isDragging = false;
           }
           currentEvent.Use();
@@ -156,22 +156,27 @@ namespace Stratus
 
         case EventType.MouseDrag:          
           // If the drag was started here
-          object existingDragData = DragAndDrop.GetGenericData(dragDataIdentifier);
-          if (isDraggable && existingDragData != null)
+          if (isDraggable)
           {
-            DragAndDrop.StartDrag($"Dragging {label}");
-            onDrag?.Invoke();
-            currentEvent.Use();
-            isDragging = true;
+            object existingDragData = DragAndDrop.GetGenericData(dragDataIdentifier);
+            if (existingDragData != null)
+            {
+              DragAndDrop.StartDrag($"Dragging {label}");
+              onDrag?.Invoke();
+              currentEvent.Use();
+              isDragging = true;
+            }
           }
           break;
 
         case EventType.DragUpdated:
-          if (ValidateDragData())
-            DragAndDrop.visualMode = DragAndDropVisualMode.Link;
-          else
-            DragAndDrop.visualMode = DragAndDropVisualMode.Rejected;
-          
+          if (isDraggable)
+          {
+            if (ValidateDragData())
+              DragAndDrop.visualMode = DragAndDropVisualMode.Link;
+            else
+              DragAndDrop.visualMode = DragAndDropVisualMode.Rejected;
+          }          
           currentEvent.Use();
           break;
 
@@ -189,8 +194,11 @@ namespace Stratus
           break;
 
         case EventType.DragExited:
-          isDragging = false;
-          DragAndDrop.PrepareStartDrag();
+          if (isDraggable)
+          {
+            isDragging = false;
+            DragAndDrop.PrepareStartDrag();
+          }
           break;
 
         case EventType.Repaint:

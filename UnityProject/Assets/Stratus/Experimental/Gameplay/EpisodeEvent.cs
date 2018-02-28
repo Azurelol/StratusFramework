@@ -36,6 +36,9 @@ namespace Stratus
 
     protected override void OnTrigger()
     {
+      if (segment == null)
+        Trace.Error($"No segment has been set for this event!", this);
+
       switch (eventType)
       {
         case Segment.EventType.Enter:
