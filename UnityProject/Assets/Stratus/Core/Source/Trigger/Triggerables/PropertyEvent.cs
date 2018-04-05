@@ -21,8 +21,6 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     protected override void OnAwake()
     {
-      //foreach (var property in setters)
-      //  property.Initialize();
     }
 
     protected override void OnReset()

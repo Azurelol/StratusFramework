@@ -77,7 +77,7 @@ namespace Stratus
 
     private void InspectNote(ObjectNote note)
     {
-      var editor = Editor.CreateEditor(note);
+      var editor = UnityEditor.Editor.CreateEditor(note);
       editor.DrawDefaultInspector();
     }
 

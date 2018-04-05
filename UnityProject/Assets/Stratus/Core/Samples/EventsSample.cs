@@ -23,7 +23,9 @@ namespace Stratus
       /// </summary>
       public class SampleEvent : Stratus.Event
       {
-        public int Number;
+        public int number;
+        public Vector2 vector2;
+        public bool boolean;
       }
 
       void Start()
@@ -39,7 +41,7 @@ namespace Stratus
         this.gameObject.Connect<SampleEvent>(OnSampleEvent);
         // Construct the event object
         SampleEvent eventObj = new SampleEvent();
-        eventObj.Number = 5;
+        eventObj.number = 5;
         // Dispatch the event
         Trace.Script("Event dispatched", this);
         this.gameObject.Dispatch<SampleEvent>(eventObj);
@@ -52,7 +54,7 @@ namespace Stratus
         Scene.Connect<SampleEvent>(this.OnSampleEvent);
         // Construct the event object
         SampleEvent eventObj = new SampleEvent();
-        eventObj.Number = 15;
+        eventObj.number = 15;
         // Dispatch the event
         Trace.Script("Event about to be dispatched");
         Scene.Dispatch<SampleEvent>(eventObj);
@@ -65,7 +67,7 @@ namespace Stratus
       public void OnSampleEvent(SampleEvent eventObj)
       {
         Trace.Script("Event received!", this);
-        Trace.Script("Number = " + eventObj.Number, this);
+        Trace.Script("Number = " + eventObj.number, this);
       }
 
 

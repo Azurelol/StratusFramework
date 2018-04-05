@@ -6,7 +6,7 @@ namespace Stratus
   namespace AI
   {
     [CustomEditor(typeof(BehaviorTree))]
-    public class BehaviorTreeEditor : Editor
+    public class BehaviorTreeEditor : UnityEditor.Editor
     {
       BehaviorTree BehaviorTree;
 

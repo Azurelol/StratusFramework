@@ -7,9 +7,9 @@ using System;
 namespace Stratus
 {
   [CustomEditor(typeof(EpisodeTrigger))]
-  public class EpisodeTriggerEditor : BaseEditor<EpisodeTrigger>
+  public class EpisodeTriggerEditor : BehaviourEditor<EpisodeTrigger>
   {
-    private DropdownList<Segment> segments;
+    private ObjectDropdownList<Segment> segments;
     private SerializedProperty episodeProperty;
 
     protected override void OnBaseEditorEnable()
@@ -19,16 +19,18 @@ namespace Stratus
       propertyChangeCallbacks.Add(episodeProperty, MakeSegmentList);
     }
 
-    protected override void DrawDeclaredProperties()
+    protected override bool DrawDeclaredProperties()
     {
-      DrawSerializedProperty(propertyMap["episode"]);
+      bool changed = false;
+      changed |= DrawSerializedProperty(propertyMap["episode"]);
 
       if (segments != null)
       {
         segments.selectedIndex = EditorGUILayout.Popup("Segment", segments.selectedIndex, segments.displayedOptions);
-        DrawSerializedProperty(propertyMap["eventType"]);
+        changed |= DrawSerializedProperty(propertyMap["eventType"]);
         target.segment = segments.selected;
       }
+      return changed;
     }
     
     private void MakeSegmentList()
@@ -41,7 +43,7 @@ namespace Stratus
         return;
       }
 
-      segments = new DropdownList<Segment>(target.episode.segments, target.segment);
+      segments = new ObjectDropdownList<Segment>(target.episode.segments, target.segment);
     }
 
   }

@@ -16,7 +16,9 @@ namespace Stratus
   {
     public InputField input = new InputField();
     public InputField.Action action = InputField.Action.Down;
-    
+
+    public override string automaticDescription => $"On {input} {action}";
+
     protected override void OnAwake()
     {      
     }

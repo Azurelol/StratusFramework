@@ -20,7 +20,7 @@ namespace Stratus
     [SerializeField]
     private KeyCode key;
     [SerializeField]
-    private MouseButton mouseButton;
+    private MouseButton mouseButton;    
 
     public InputField()
     {
@@ -94,6 +94,22 @@ namespace Stratus
         throw new Exception("Input type not supported");
       }
     }
+
+    public override string ToString()
+    {
+      string value = null;
+      switch (type)
+      {
+        case Type.Key:
+          value = $"Key {key}";
+          break;
+        case Type.MouseButton:
+          value = $"{mouseButton} Mouse Button";
+          break;
+      }
+
+      return value;
+    }    
 
   }
 }

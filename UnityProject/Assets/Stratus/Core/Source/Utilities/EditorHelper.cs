@@ -14,11 +14,13 @@ using UnityEditor;
 #endif
 
 namespace Stratus
-{  
+{
+
+
   /// <summary>
   /// Provides a bridge to functions in the UnityEditor namespace
   /// </summary>
-  #if UNITY_EDITOR
+#if UNITY_EDITOR
   [InitializeOnLoad]
 #endif
   public static class EditorBridge    

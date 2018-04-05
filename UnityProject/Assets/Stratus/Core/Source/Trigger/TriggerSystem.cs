@@ -1,21 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq.Expressions;
-using System.Linq;
+using Stratus.Interfaces;
 
 namespace Stratus
 {
   [ExecuteInEditMode]
   [DisallowMultipleComponent]
-  public class TriggerSystem : StratusBehaviour
+  public class TriggerSystem : StratusBehaviour, Validator, ValidatorAggregator
   {
+    //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/
+    public enum ConnectionDisplay
+    {
+      Selection,
+      Grouping
+    }
+
+    public enum ConnectionStatus
+    {
+      Connected,
+      Disconnected,
+      Selected,
+      Disjoint
+    }
+
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
+    public bool showDescriptions = true;
+    public ConnectionDisplay connectionDisplay = ConnectionDisplay.Selection;
+    public bool outlines = false;
+
     public List<Trigger> triggers = new List<Trigger>();
     public List<Triggerable> triggerables = new List<Triggerable>();
-    public bool showDescriptions = false;
     public bool descriptionsWithLabel = false;
     private Dictionary<Trigger, bool> triggersInitialState = new Dictionary<Trigger, bool>();
     private Dictionary<Triggerable, bool> triggerablesInitialState = new Dictionary<Triggerable, bool>();
@@ -53,18 +72,29 @@ namespace Stratus
 
     private void OnValidate()
     {
+      //ToggleComponents(enabled);
+      triggers.RemoveNull();
+      triggerables.RemoveNull();
       ShowComponents(false);
+    }
+
+    Validation[] ValidatorAggregator.Validate()
+    {
+      var messages = new List<Validation>();
+      messages.AddIfNotNull(Validation.Generate(this));
+      messages.AddRange(Validation.Aggregate(triggers));
+      messages.AddRange(Validation.Aggregate(triggerables));      
+      return messages.ToArray();
+    }
+
+    Validation Validator.Validate()
+    {
+      return ValidateConnections();
     }
 
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    private void Initialize()
-    {
-      //Trace.Script("Initializing");
-      
-    }
-
     private void RecordTriggerStates()
     {
       foreach (var trigger in triggers)
@@ -92,18 +122,21 @@ namespace Stratus
     /// <summary>
     /// Toggles all triggers in the system on/off
     /// </summary>
-    public void Toggle(bool toggle)
+    public void ToggleRuntime(bool toggle)
     {
       foreach (var trigger in triggers)
       {
         // Skip triggers that were marked as not persistent and have been activated
         if (!trigger.persistent && trigger.activated)
           continue;
-        //Trace.Script($"Toggling {trigger.GetType().Name} to {toggle}", this);
         trigger.enabled = toggle;
       }
     }
+    
+    public void ToggleComponents(bool toggle)
+    {
 
+    }
 
 
     /// <summary>
@@ -158,7 +191,42 @@ namespace Stratus
         trigger.scope = Trigger.Scope.Component;
       }        
     }
-    
+
+    public static bool IsConnected(Trigger trigger, Triggerable triggerable)
+    {
+      if (trigger.targets.Contains(triggerable))
+        return true;
+      return false;
+    }
+
+    public static bool IsConnected(Trigger trigger)
+    {
+      return trigger.targets.NotEmpty();
+    }
+
+    public Validation ValidateConnections()
+    {
+      List<TriggerBase> disconnected = new List<TriggerBase>();
+      foreach (var t in triggers)
+      {
+        if (!IsConnected(t))
+          disconnected.Add(t);
+      }
+
+      //foreach (var t in triggerables)
+      //{
+      //  if (!IsConnected(t))
+      //    disconnected.Add(t);
+      //}
+
+      if (disconnected.Empty())
+        return null;
+
+      string msg = $"Triggers marked as disconnected ({disconnected.Count}):";
+      foreach (var t in disconnected)
+        msg += $"\n- {t.GetType().Name} : <i>{t.description}</i>";
+      return new Validation(msg, Validation.Level.Warning, this);
+    }   
 
   }
 

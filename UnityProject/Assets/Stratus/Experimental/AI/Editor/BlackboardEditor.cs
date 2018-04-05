@@ -6,7 +6,7 @@ namespace Stratus
   namespace AI
   {
     [CustomEditor(typeof(Blackboard))]
-    public class BlackboardEditor : Editor
+    public class BlackboardEditor : UnityEditor.Editor
     {
     }
 

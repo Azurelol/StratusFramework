@@ -27,7 +27,7 @@ namespace Stratus
     }
 
     //[SerializeField]
-    [Tooltip("How to pick the target")]
+    [Tooltip("Specifies what targeting mechanism to use, or how to filter the target")]
     public Type type = Type.GameObject;
 
     // Different targets
@@ -39,6 +39,31 @@ namespace Stratus
     private LayerField layer;
     [SerializeField]
     private string name;
+
+    public override string ToString()
+    {
+      string value = base.ToString();
+      switch (type)
+      {
+        case Type.GameObject:
+          if (gameObject)
+            value = $"GameObject '{gameObject.name}'";
+          break;
+        case Type.Layer:
+          value = $"Layer '{layer.name}'";
+          break;
+        case Type.Tag:
+          value = $"Tag '{tag}'";
+          break;
+        case Type.Name:
+          if (!string.IsNullOrEmpty(name))
+            value = $"Name '{name}'";
+          break;
+        default:
+          break;
+      }
+      return value;
+    }
 
     /// <summary>
     /// Checks whether the given GameObject is the given target

@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEngine;
+using System.Runtime.Serialization;
 
 namespace Stratus
 {
@@ -21,11 +22,6 @@ namespace Stratus
   {
     public static partial class Reflection
     {
-      //----------------------------------------------------------------------/
-      // Structs
-      //----------------------------------------------------------------------/
-      
-
       //----------------------------------------------------------------------/
       // Properties
       //----------------------------------------------------------------------/
@@ -452,6 +448,70 @@ namespace Stratus
         return (from Type type in Assembly.GetAssembly(baseType).GetTypes() where type.IsSubclassOf(baseType) && !type.IsAbstract select type).ToArray();
       }
 
+      /// <summary>
+      /// Get an array of types of all the classes derived from the given one
+      /// </summary>
+      /// <typeparam name="ClassType"></typeparam>
+      /// <param name="includeAbstract"></param>
+      /// <returns></returns>
+      public static Type[] GetInterfaces(Type baseType, Type interfaceType, bool includeAbstract = false)
+      {
+        if (includeAbstract)
+          return (from Type type 
+                  in Assembly.GetAssembly(baseType).GetTypes()
+                  where baseType.IsAssignableFrom(interfaceType)
+                  select type).ToArray();
+
+        return (from Type type 
+                in Assembly.GetAssembly(baseType).GetTypes()
+                where baseType.IsAssignableFrom(interfaceType) && !type.IsAbstract
+                select type).ToArray();
+      }
+
+      /// <summary>
+      /// Gets the loadable types for a given assembly
+      /// </summary>
+      /// <param name="assembly"></param>
+      /// <returns></returns>
+      public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
+      {
+        if (assembly == null) throw new ArgumentNullException("assembly");
+        try
+        {
+          return assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException e)
+        {
+          return e.Types.Where(t => t != null);
+        }
+      }
+
+      public static FieldInfo[] GetFieldsWithNullReferences<T>(T behaviour) where T : Behaviour
+      {
+        Type type = behaviour.GetType();
+        FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+        return (from f
+               in fields
+               where (f.FieldType.IsSubclassOf(typeof(UnityEngine.Object))
+               && f.GetValue(behaviour).Equals(null))
+               select f).ToArray();
+
+          
+
+        //foreach (var field in fields)
+        //{
+        //  if (field.FieldType.IsSubclassOf(typeof(UnityEngine.Object)))
+        //  {
+        //    Trace.Script($"The field {field.Name}", behaviour);
+        //    var value = field.GetValue(behaviour);
+        //    if (value == null || value.Equals(null))
+        //      Trace.Script("Null!");
+        //  }          
+        //
+        //}
+      }
+
+
 
       /// <summary>
       /// Retrieves the name of this property / field as well as its owning object.
@@ -525,10 +585,43 @@ namespace Stratus
           list.Add(new KeyValuePair<string, Type>(name, type));
         }
         return list;
-      }     
+      }
+
+      /// <summary>
+      /// Uses compiled expressions to instantiate types
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      public static class New<T>
+      {
+        public static readonly Func<T> Instance = Creator();
+
+        static Func<T> Creator()
+        {
+          Type t = typeof(T);
+          if (t == typeof(string))
+            return Expression.Lambda<Func<T>>(Expression.Constant(string.Empty)).Compile();
+
+          if (t.HasDefaultConstructor())
+            return Expression.Lambda<Func<T>>(Expression.New(t)).Compile();
+
+          return () => (T)FormatterServices.GetUninitializedObject(t);
+        }
+      }
 
 
-      
+      public static object Instantiate(Type t)
+      {
+        if (t == typeof(string))
+          return Expression.Lambda<Func<string>>(Expression.Constant(string.Empty)).Compile();
+
+        if (t.HasDefaultConstructor())
+          return Activator.CreateInstance(t);
+          //return Expression.Lambda<Func<object>>(Expression.New(t)).Compile();
+
+        return FormatterServices.GetUninitializedObject(t);
+      }
+
+
 
     }
   }

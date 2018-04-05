@@ -267,6 +267,71 @@ namespace Stratus
 
     }
 
+    /// <summary>
+    /// Dispatches the given event of the specified type onto the object.
+    /// </summary>
+    /// <typeparam name="T">The event class.</typeparam>
+    /// <param name="obj">The object to which to connect to.</param>
+    /// <param name="eventObj">The name of the event to which to listen for.</param>
+    /// <param name="nextFrame">Whether to send this event on the next frame.</param>
+    public static void Dispatch(GameObject obj, Event eventObj, System.Type type, bool nextFrame = false)
+    {
+      var key = type.ToString();
+
+      if (logging.Connect)
+        Trace.Script("'" + key + "' to '" + obj.name + "'");
+
+      // If this a delayed dispatch...
+      if (nextFrame)
+        get.StartCoroutine(DispatchNextFrame(obj, eventObj, type));
+
+      // Check if the object has been registered onto the event system.
+      // If not, it will be.
+      CheckRegistration(obj);
+
+      // If there is no delegate registered to this object, do nothing.
+      if (!HasDelegate(obj, key))
+      {
+        if (logging.Dispatch)
+          Trace.Script("No delegate registered to " + obj.name + " for " + eventObj.ToString());
+        return;
+      }
+
+      // If we are watching events of this type
+      bool watching = false;
+      if (get.eventWatchList.Contains(key))
+        watching = true;
+
+
+      // Invoke the method for every delegate
+      var delegateMap = Events.get.dispatchMap[obj][key];
+      DelegateTypeList delegatesToRemove = null;
+      foreach (var deleg in delegateMap)
+      {
+        // If we are watching events of this type
+        if (watching)
+          Trace.Script("Invoking member function on " + deleg.Target.ToString());
+
+        // Do a lazy delete if it has been nulled out?
+        if (IsNull(deleg.Method) || IsNull(deleg.Target))
+        {
+          if (delegatesToRemove == null) delegatesToRemove = new DelegateTypeList();
+          delegatesToRemove.Add(deleg);
+          continue;
+        }
+
+        deleg.DynamicInvoke(eventObj);
+      }
+
+      // If any delegates were found to be null, remove them (lazy delete)
+      if (delegatesToRemove != null)
+      {
+        foreach (var deleg in delegatesToRemove)
+          delegateMap.Remove(deleg);
+      }
+
+    }
+
     public static bool IsNull(object obj)
     {
       if (obj == null || (obj is UnityEngine.Object & obj.Equals(null)))
@@ -286,8 +351,22 @@ namespace Stratus
       // Wait 1 frame
       yield return 0;
       // Dispatch the event
-      //Trace.Script("Now dispatching!");
       Dispatch<T>(obj, eventObj);
+    }
+
+    /// <summary>
+    /// Dispatches the event on the next frame.
+    /// </summary>
+    /// <typeparam name="T">The event class.</typeparam>
+    /// <param name="obj">The object to which to dispatch to.</param>
+    /// <param name="eventObj">The event object we are sending.</param>
+    /// <returns></returns>
+    public static IEnumerator DispatchNextFrame(GameObject obj, Event eventObj, Type type)
+    {
+      // Wait 1 frame
+      yield return 0;
+      // Dispatch the event
+      Dispatch(obj, eventObj, type);
     }
 
     /// <summary>

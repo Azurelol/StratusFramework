@@ -13,7 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Stratus.Utilities;
 
-namespace Stratus.Editors
+namespace Stratus.Editor
 {
   public class SceneBrowser : EditorWindow
   {
@@ -116,6 +116,7 @@ namespace Stratus.Editors
                 EditorSceneManager.OpenScene(scenePath);
               }
             },
+
             () =>
             {
               var menu = new GenericMenu();
@@ -126,7 +127,10 @@ namespace Stratus.Editors
                 }
                 );
               menu.ShowAsContext();
-            });
+            },
+
+            null,             
+            true);
         }
         EditorGUILayout.EndHorizontal();
       }

@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Stratus
 {
   [CustomEditor(typeof(MemberVisualizer))]
-  public class MemberVisualizerEditor : BaseEditor<MemberVisualizer>
+  public class MemberVisualizerEditor : BehaviourEditor<MemberVisualizer>
   {
     private SerializedProperty renderSettingsList => propertyMap["renderSettingsList"];
 

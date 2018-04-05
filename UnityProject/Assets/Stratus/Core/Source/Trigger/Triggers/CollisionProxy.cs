@@ -11,8 +11,22 @@ namespace Stratus
   [RequireComponent(typeof(Collider))]
   public class CollisionProxy : Proxy
   {
-    //public enum CollisionMode { Trigger, Collision }
-    public enum TriggerType
+    /// <summary>
+    /// A callback consisting of the Collider information
+    /// </summary>
+    [System.Serializable]
+    public class TriggerCallback : UnityEvent<Collider> { }
+
+    /// <summary>
+    /// A callback consisting of the Collision information
+    /// </summary>
+    [System.Serializable]
+    public class CollisionCallback : UnityEvent<Collision> { }
+
+    /// <summary>
+    /// The type of collision message to check for
+    /// </summary>
+    public enum CollisionMessage
     {
       TriggerEnter,
       TriggerExit,
@@ -21,13 +35,33 @@ namespace Stratus
       CollisionExit,
       CollisionStay
     }
+
     public delegate void OnTriggerMessage(Collider collider);
+    public delegate void OnCollisionMessage(Collision collision);
 
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
+    /// <summary>
+    /// 
+    /// </summary>
     [Header("Collision")]
-    public TriggerType type;    
+    [Tooltip("What type of collision message to listen to")]
+    public CollisionMessage type;
+
+    /// <summary>
+    /// Subscribes to collision events on this proxy
+    /// </summary>
+    //[DrawIf(nameof(CollisionProxy.isTrigger), true, ComparisonType.Equals)]
+    [SerializeField]
+    public TriggerCallback triggerCallback = new TriggerCallback();
+
+    /// <summary>
+    /// Subscribes to collision events on this proxy
+    /// </summary>
+    //[DrawIf(nameof(CollisionProxy.isTrigger), true, ComparisonType.NotEqual)]
+    [SerializeField]
+    public CollisionCallback collisionCallback = new CollisionCallback();
 
     //------------------------------------------------------------------------/
     // Properties
@@ -35,56 +69,99 @@ namespace Stratus
     /// <summary>
     /// Subscribes to collision events on this proxy
     /// </summary>
-    public OnTriggerMessage onTrigger { get; private set; }
+    public OnTriggerMessage onTrigger { get; set; }
+    /// <summary>
+    /// Subscribes to collision events on this proxy
+    /// </summary>
+    public OnCollisionMessage onCollision { get; set; }
+    /// <summary>
+    /// Whether this proxy is firing off triggers
+    /// </summary>
+    public bool isTrigger => (type == CollisionMessage.TriggerEnter || type == CollisionMessage.TriggerStay || type == CollisionMessage.TriggerExit);
 
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
     private void OnTriggerEnter(Collider other)
     {
-      OnTrigger(other, TriggerType.TriggerEnter);
+      OnCollision(CollisionMessage.TriggerEnter, other, null);
     }
 
     private void OnTriggerStay(Collider other)
     {
-      OnTrigger(other, TriggerType.TriggerStay);
+      OnCollision(CollisionMessage.TriggerStay, other, null);
     }
     private void OnTriggerExit(Collider other)
     {
-      OnTrigger(other, TriggerType.TriggerExit);
+      OnCollision(CollisionMessage.TriggerExit, other, null);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-      OnTrigger(collision.collider, TriggerType.CollisionEnter);
+      OnCollision(CollisionMessage.CollisionEnter, collision.collider, collision);
     }
 
     private void OnCollisionExit(Collision collision)
     {
-      OnTrigger(collision.collider, TriggerType.CollisionExit);
+      OnCollision(CollisionMessage.CollisionExit, collision.collider, collision);
     }
 
     private void OnCollisionStay(Collision collision)
     {
-      OnTrigger(collision.collider, TriggerType.CollisionStay);
+      OnCollision(CollisionMessage.CollisionStay, collision.collider, collision);
     }
 
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
     /// <summary>
+    /// Constructs a proxy in order to observe another GameObject's trigger messages
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="type"></param>
+    /// <param name="onTrigger"></param>
+    /// <param name="persistent"></param>
+    /// <returns></returns>
+    public static CollisionProxy Construct(Collider target, CollisionMessage type, OnTriggerMessage onTrigger, bool persistent = true)
+    {
+      var proxy = target.gameObject.AddComponent<CollisionProxy>();
+      proxy.type = type;
+      proxy.onTrigger += onTrigger; // AddListener(new UnityAction<Collider>(onCollision));
+      proxy.persistent = persistent;
+      return proxy;
+    }
+
+    /// <summary>
+    /// Constructs a proxy in order to observe another GameObject's trigger messages
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="type"></param>
+    /// <param name="onTrigger"></param>
+    /// <param name="persistent"></param>
+    /// <returns></returns>
+    public static CollisionProxy Construct(Collider target, CollisionMessage type, OnTriggerMessage onTrigger, OnCollisionMessage onCollision, bool persistent = true)
+    {
+      var proxy = target.gameObject.AddComponent<CollisionProxy>();
+      proxy.type = type;
+      proxy.onTrigger += onTrigger; // AddListener(new UnityAction<Collider>(onCollision));
+      proxy.onCollision += onCollision;
+      proxy.persistent = persistent;
+      return proxy;
+    }
+
+    /// <summary>
     /// Constructs a proxy in order to observe another GameObject's collision messages
     /// </summary>
     /// <param name="target"></param>
     /// <param name="type"></param>
-    /// <param name="onCollision"></param>
+    /// <param name="onTrigger"></param>
     /// <param name="persistent"></param>
     /// <returns></returns>
-    public static CollisionProxy Construct(Collider target, TriggerType type, OnTriggerMessage onCollision, bool persistent = true)
+    public static CollisionProxy Construct(Collider target, CollisionMessage type, OnCollisionMessage onCollision, bool persistent = true)
     {
       var proxy = target.gameObject.AddComponent<CollisionProxy>();
       proxy.type = type;
-      proxy.onTrigger += onCollision;
+      proxy.onCollision += onCollision;
       proxy.persistent = persistent;
       return proxy;
     }
@@ -92,19 +169,22 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Procedures
     //------------------------------------------------------------------------/
-    private void OnTrigger(Collider other, TriggerType type)
+    private void OnCollision(CollisionMessage type, Collider collider, Collision collision)
     {
       if (this.type != type)
         return;
-
-      onTrigger?.Invoke(other);
-
-      //if (!persistent)
-      //{
-      //  Destroy(this);
-      //}
+      
+      if (isTrigger)
+      {
+        triggerCallback?.Invoke(collider);
+        onTrigger?.Invoke(collider);
+      }
+      else
+      {
+        collisionCallback?.Invoke(collision);
+        onCollision?.Invoke(collision);
+      }
     }
-
 
 
 

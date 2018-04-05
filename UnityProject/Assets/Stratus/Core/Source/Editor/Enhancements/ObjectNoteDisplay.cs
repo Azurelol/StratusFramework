@@ -33,7 +33,7 @@ namespace Stratus
     protected override void OnInitializeDisplay()
     {
       base.OnInitializeDisplay();
-      var stratusPath = Assets.GetFolderPath("Stratus");
+      var stratusPath = IO.GetFolderPath("Stratus");
       icon = AssetDatabase.LoadAssetAtPath(stratusPath + path + iconName, typeof(Texture2D)) as Texture2D;
     }
 

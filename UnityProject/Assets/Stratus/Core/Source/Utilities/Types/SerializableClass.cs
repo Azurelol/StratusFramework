@@ -11,7 +11,14 @@ namespace Stratus
   [Serializable]
   public abstract class SerializableClass
   {
+    public enum DrawingMethod
+    {
+      Default,
+      SingleLine
+    }
+
     public int fieldCount { get; private set; }
+    protected virtual DrawingMethod drawingMethod { get; } = DrawingMethod.Default;
 
     public SerializableClass()
     {

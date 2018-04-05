@@ -20,6 +20,8 @@ namespace Stratus
         label = EditorGUI.BeginProperty(position, label, typeProp);
         Rect contentPosition = EditorGUI.PrefixLabel(position, label);
         var width = contentPosition.width;
+
+        int indent = EditorGUI.indentLevel;
         EditorGUI.indentLevel = 0;
 
         // 1. Modify the type
@@ -43,10 +45,14 @@ namespace Stratus
         EditorGUI.PropertyField(contentPosition, inputProp, GUIContent.none);
         EditorGUI.EndProperty();
 
+        EditorGUI.indentLevel = indent;
+
         // 3. Save, if updated
         if (GUI.changed)
           property.serializedObject.ApplyModifiedProperties();
         //GUILayout.EndHorizontal();
+
+
       }
 
     }

@@ -14,9 +14,9 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    private Vector2 ScrollPosition;
+    private Vector2 scrollPosition;
     private static string Title = "Event Browser";
-    private static Reflection.ClassList Events;
+    private static Reflection.ClassList events;
 
     //------------------------------------------------------------------------/
     // Messages
@@ -25,13 +25,13 @@ namespace Stratus
     public static void Open()
     {
       EditorWindow.GetWindow(typeof(EventBrowser), false, Title);
-      Events = Reflection.GenerateClassList<Stratus.Event>();
+      events = Reflection.GenerateClassList<Stratus.Event>();
     }
 
     private void OnGUI()
     {
       EditorGUILayout.BeginVertical();
-      this.ScrollPosition = EditorGUILayout.BeginScrollView(this.ScrollPosition, false, false);
+      this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition, false, false);
       ShowEvents();
       EditorGUILayout.EndScrollView();
       EditorGUILayout.EndVertical();
@@ -43,7 +43,7 @@ namespace Stratus
     private void ShowEvents()
     {
       GUILayout.Label("Events", EditorStyles.boldLabel);
-      foreach(var e in Events)
+      foreach(var e in events)
       {
         GUILayout.Label(e.Key);
       }

@@ -18,31 +18,33 @@ namespace Stratus
   public class DrawIfPropertyDrawer : PropertyDrawer
   {
     // The attribute on the property
-    DrawIfAttribute DrawIf;
+    DrawIfAttribute drawIf;
     // Field being compared
-    SerializedProperty ComparedField;
+    SerializedProperty comparedField;
     // Height of the property
-    float PropertyHeight;
+    float propertyHeight;
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-      return PropertyHeight;
+      return propertyHeight;
+      //return property.isExpanded ? EditorGUI.GetPropertyHeight(property) : 0f;
+      ///return EditorGUI.GetPropertyHeight(property);
     }
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
       // Set the global variables
-      DrawIf = attribute as DrawIfAttribute;
+      drawIf = attribute as DrawIfAttribute;
 
       // Whether the condition has been met
       bool conditionMet = false;
 
       // If we are doing a property comparison
-      if (DrawIf.predicate == PredicateMode.PropertyComparison)
+      if (drawIf.predicate == PredicateMode.PropertyComparison)
       {
-        ComparedField = property.serializedObject.FindProperty(DrawIf.comparedPropertyName);
+        comparedField = property.serializedObject.FindProperty(drawIf.comparedPropertyName);
         // Get the value of the compared field
-        object comparedFieldValue = ComparedField.GetValue<object>();
+        object comparedFieldValue = comparedField.GetValue<object>();
         // References to the values as numeric types
         INumeric numericComparedFieldValue = null;
         INumeric numericComparedValue = null;
@@ -51,26 +53,26 @@ namespace Stratus
         try
         {
           numericComparedFieldValue = new INumeric(comparedFieldValue);
-          numericComparedValue = new INumeric(DrawIf.comparedValue);
+          numericComparedValue = new INumeric(drawIf.comparedValue);
         }
         catch (NumericTypeExpectedException)
         {
-          if (DrawIf.comparison != ComparisonType.Equals && DrawIf.comparison != ComparisonType.NotEqual)
+          if (drawIf.comparison != ComparisonType.Equals && drawIf.comparison != ComparisonType.NotEqual)
           {
             Trace.Error("The only comparsion types available to type '" + comparedFieldValue.GetType() + "' are Equals and NotEqual. (On object '" + property.serializedObject.targetObject.name + "')", null, true);
-           return;
+            return;
           }
         }
         // Compare the values to see if the condition has been met
-        switch (DrawIf.comparison)
+        switch (drawIf.comparison)
         {
           case ComparisonType.Equals:
-            if (comparedFieldValue.Equals(DrawIf.comparedValue))
+            if (comparedFieldValue.Equals(drawIf.comparedValue))
               conditionMet = true;
             break;
 
           case ComparisonType.NotEqual:
-            if (!comparedFieldValue.Equals(DrawIf.comparedValue))
+            if (!comparedFieldValue.Equals(drawIf.comparedValue))
               conditionMet = true;
             break;
 
@@ -96,47 +98,65 @@ namespace Stratus
         }
       }
       // Else if we are checking a predicate
-      else if (DrawIf.predicate == PredicateMode.Predicate)
+      else if (drawIf.predicate == PredicateMode.Predicate)
       {
         //var booly = property.serializedObject..GetProperty<bool>(DrawIf.predicateName);
         //SerializedProperty predicateProperty = property.serializedObject.FindProperty(DrawIf.predicateName);
         //if (predicateProperty.propertyType == SerializedPropertyType.Boolean)
         //  conditionMet = predicateProperty.boolValue;
 
-        // Make sure that the right component is present
-        Component component = Selection.activeGameObject.GetComponent(DrawIf.type);
-        if (component == null)
-          throw new System.Exception("The component of type " + DrawIf.type.Name + " is missing from the selected GameObject");
-
-        // We can now safely invoke the method on the component
-        if (DrawIf.isProperty)
-          conditionMet = (bool)DrawIf.predicateProperty.GetValue(component, null);
+        MonoBehaviour mb = property.serializedObject.targetObject as MonoBehaviour;
+        MethodInfo predicateMethod = mb.GetType().GetMethod(drawIf.predicateName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        if (predicateMethod != null)
+        {
+          conditionMet = (bool)predicateMethod.Invoke(mb, null);
+        }
         else
-          conditionMet = (bool)DrawIf.predicateMethod.Invoke(component, null);
+        {
+          PropertyInfo predicateProperty = mb.GetType().GetProperty(drawIf.predicateName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+          if (predicateProperty != null)
+            conditionMet = (bool)predicateProperty.GetValue(mb, null);
+          else
+            throw new System.Exception("The component is missing the predicate" + drawIf.predicateName);
+        }
+
+
+
+        //// Make sure that the right component is present
+        //Component component = Selection.activeGameObject.GetComponent(drawIf.type);
+        //if (component == null)
+        //  throw new System.Exception("The component of type " + drawIf.type.Name + " is missing from the selected GameObject");
+        //
+        //// We can now safely invoke the method on the component
+        //if (drawIf.isProperty)
+        //  conditionMet = (bool)drawIf.predicateProperty.GetValue(component, null);
+        //else
+        //  conditionMet = (bool)drawIf.predicateMethod.Invoke(component, null);
       }
 
       // The height of the property should be defaulted to the default height
-      PropertyHeight = base.GetPropertyHeight(property, label);
+      propertyHeight = EditorGUI.GetPropertyHeight(property);
+      //propertyHeight = base.GetPropertyHeight(property, label);
 
       // If the condition is met, draw the field
       if (conditionMet)
       {
         //EditorGUILayout.PropertyField(property);
-        EditorGUI.PropertyField(position, property);
+        EditorGUI.PropertyField(position, property, true);
       }
       // Otherwise use the default ebhavior
       else
       {
-        if (DrawIf.defaultBehavior == PropertyDrawingType.ReadOnly)
+        if (drawIf.defaultBehavior == PropertyDrawingType.ReadOnly)
         {
           UnityEngine.GUI.enabled = false;
           //EditorGUILayout.PropertyField(property);
-          EditorGUI.PropertyField(position, property);
+          EditorGUI.PropertyField(position, property, true);
           UnityEngine.GUI.enabled = true;
         }
         else
         {
-          PropertyHeight = 0f;
+          propertyHeight = 0f;
         }
       }
     }

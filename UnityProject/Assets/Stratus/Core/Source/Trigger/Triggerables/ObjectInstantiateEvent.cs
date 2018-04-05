@@ -22,17 +22,28 @@ namespace Stratus
     public GameObject prefab;
 
     [Header("Transform")]
-    public Vector3 position = new Vector3();
-    public bool isWorldSpace = false;
+    public PositionField position = new PositionField();
+    public Space space = Space.Self;
+
+    public override string automaticDescription
+    {
+      get
+      {
+        if (prefab)
+        {
+          string value = $"Instantiate {prefab.name} at {position} ({space})";      
+          return value;
+        }
+        return string.Empty;
+      }
+    }
 
     protected override void OnAwake()
     {
-
     }
 
     protected override void OnReset()
     {
-
     }
 
     protected override void OnTrigger()
@@ -58,7 +69,10 @@ namespace Stratus
         Destroy(this.gameObject);
       }
 
-      obj.transform.localPosition = position;
+      if (space == Space.Self)
+        obj.transform.localPosition = position;
+      else
+        obj.transform.position = position;
 
     }
 

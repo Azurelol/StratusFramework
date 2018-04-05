@@ -18,6 +18,9 @@ namespace Stratus
           Scene
         }
 
+        //------------------------------------------------------------------------------------------/
+        // Public Fields
+        //------------------------------------------------------------------------------------------/
         [Header("Story")]
         [Tooltip("The ink story file to play in .json format")]
         public TextAsset storyFile;
@@ -27,6 +30,9 @@ namespace Stratus
         public bool restart = false;
         [Tooltip("Whether this story should be queued, if there's one currently running it will be read after")]
         public bool queue = false;
+        [Tooltip("How long to wait to play the story, if queued")]
+        [DrawIf(nameof(StoryEvent.queue), true, ComparisonType.Equals)]
+        public float queueDelay = 0.0f;
 
         [Tooltip("The target for this event")]
         public Scope scope = Scope.Scene;
@@ -34,8 +40,36 @@ namespace Stratus
         [DrawIf("scope", Scope.Scene, ComparisonType.NotEqual, PropertyDrawingType.DontDraw)]
         [Tooltip("The reader to trigger")]
         public StoryReader reader;
-        private Story.LoadEvent storyEvent => new Story.LoadEvent() { storyFile = this.storyFile, knot = this.knot, queue = this.queue, restart = this.restart };
 
+        //------------------------------------------------------------------------------------------/
+        // Properties
+        //------------------------------------------------------------------------------------------/
+        private Story.LoadEvent storyEvent => new Story.LoadEvent()
+        {
+          storyFile = this.storyFile,
+          knot = this.knot,
+          queue = this.queue,
+          restart = this.restart,
+          queueDelay = this.queueDelay
+        };
+
+        public override string automaticDescription
+        {
+          get
+          {
+            if (storyFile)
+            {
+              string value = $"Load {storyFile.name}";
+              if (queue) value += " (Queued)";
+              return value;
+            }
+            return string.Empty;
+          }
+        }
+
+        //------------------------------------------------------------------------------------------/
+        // Messages
+        //------------------------------------------------------------------------------------------/
         protected override void OnAwake()
         {
         }

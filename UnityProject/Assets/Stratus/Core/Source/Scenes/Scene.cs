@@ -30,6 +30,10 @@ namespace Stratus
     public class LoadedEvent : StatusEvent { }
     public class UnloadedEvent : StatusEvent { }
     public class ReloadEvent : Stratus.Event { }
+
+    /// <summary>
+    /// Callback for scene events
+    /// </summary>
     public delegate void SceneCallback();
 
     //----------------------------------------------------------------------------------/
@@ -309,6 +313,19 @@ namespace Stratus
     {
       get.Poke();
       Stratus.Events.Dispatch<T>(get.gameObject, eventObj);
+    }
+
+    /// <summary>
+    /// Dispatches the given event of the specified type onto this object.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="gameObj">The GameObject to which to connect to.</param>
+    /// <param name="eventObj">The event object. </param>
+    /// <param name="nextFrame">Whether the event should be sent next frame.</param>
+    public static void Dispatch(Stratus.Event eventObj, System.Type type, bool nextFrame = false)
+    {
+      get.Poke();
+      Stratus.Events.Dispatch(get.gameObject, eventObj, type, nextFrame);
     }
 
     /// <summary>

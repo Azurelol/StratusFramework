@@ -7,6 +7,7 @@
 */
 /******************************************************************************/
 using System;
+using UnityEngine.Events;
 
 namespace Stratus
 {
@@ -16,7 +17,7 @@ namespace Stratus
   /// your own custom events.
   /// </summary>
   [Serializable]
-  public class Event
+  public class Event //  : UnityEngine.Object
   {
     /// <summary>
     /// Whether the event is dispatched is being dispatched to a single gamobject or to the whole scene
@@ -27,8 +28,18 @@ namespace Stratus
       Scene
     }
 
+    /// <summary>
+    /// A callback consisting of the Stratus Event received
+    /// </summary>
+    [System.Serializable]
+    public class EventCallback : UnityEvent<Stratus.Event> { }
+
+    /// <summary>
+    /// A delegate for a connect function
+    /// </summary>
+    /// <param name="connectFunc"></param>
     public delegate void ConnectFunction(System.Action<Event> connectFunc);
-    public delegate void EventCallback(Event eventObj);
+    public delegate void EventCallbackFunction(Stratus.Event eventObj);
     public delegate void GenericEventCallback<in T>(T eventObj);
   }
   

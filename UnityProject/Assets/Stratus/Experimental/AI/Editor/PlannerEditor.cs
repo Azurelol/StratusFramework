@@ -7,7 +7,7 @@ namespace Stratus
   namespace AI
   {
     [CustomEditor(typeof(Planner))]
-    public class PlannerEditor : Editor
+    public class PlannerEditor : UnityEditor.Editor
     {
       public override void OnInspectorGUI()
       {

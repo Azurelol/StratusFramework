@@ -65,7 +65,7 @@ namespace Stratus
         case Type.FadeAlpha:
           if (toggle)
             Fade(isFaded ? previousAlpha : 0.0f, duration, ignoreTimeScale);
-          else 
+          else
             Fade(alpha, duration, ignoreTimeScale);
           break;
         case Type.FadeColor:
@@ -84,23 +84,46 @@ namespace Stratus
 
     }
 
+    public override string automaticDescription
+    {
+      get
+      {
+        if (image == null)
+          return string.Empty;
+
+        string description = $"{type} on {image.name}";
+        switch (type)
+        {
+          case Type.FadeAlpha:
+            description += $" to {alpha}";
+            break;
+
+          case Type.FadeColor:
+            description += $" to {color}";
+            break;
+        }
+        description += $" over {duration}s";
+        return description;
+      }
+    }
+
     //--------------------------------------------------------------------------------------------/
     // Methods
     //--------------------------------------------------------------------------------------------/
     public void Fade(float alpha, float duration, bool ignoreTimeScale)
     {
-      if (logging)
+      if (debug)
         Trace.Script("Fading to " + alpha, this);
       previousAlpha = currentAlpha;
       currentAlpha = alpha;
       //image.CrossFadeAlpha(alpha, duration, ignoreTimeScale);
-      this.StartCoroutine(Routines.Lerp(image.color.a, alpha, duration, (float val) => { image.color = image.color.SetAlpha(val); }, Routines.Lerp), "Fade");      
-      
+      this.StartCoroutine(Routines.Lerp(image.color.a, alpha, duration, (float val) => { image.color = image.color.ToAlpha(val); }, Routines.Lerp), "Fade");
+
     }
 
     public void FadeColor(Color color, float duration, bool ignoreTimeScale)
     {
-      if (logging)
+      if (debug)
         Trace.Script("Fading to " + color, this);
       previousColor = currentColor;
       currentColor = color;
@@ -110,8 +133,18 @@ namespace Stratus
 
     public void SetAlpha(float alpha)
     {
-      image.color = image.color.SetAlpha(alpha);
+      image.color = image.color.ToAlpha(alpha);
     }
+
+    //public void FadeIn()
+    //{
+    //  Fade(1f, duration, ignoreTimeScale);
+    //}
+    //
+    //public void FadeOut()
+    //{
+    //  Fade(0f, duration, ignoreTimeScale);
+    //}
 
   }
 

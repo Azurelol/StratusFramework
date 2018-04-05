@@ -9,7 +9,6 @@ namespace Stratus
     private class RoutineActivity
     {
       private static int created;
-
       public int id;
       public MonoBehaviour monoBehaviour;
       public Coroutine coroutine;
@@ -51,15 +50,17 @@ namespace Stratus
         routinesMap[mb].Add(tag, current);
       }
 
-      // Now add/replacce the current routine
+      // Now add/replace the current routine
       if (onFinished != null)
       {
         IEnumerator composedRoutine = ComposeRoutineWithCallback(mb, current, routine, onFinished);
-        current.coroutine = mb.StartCoroutine(composedRoutine);      
+        if (mb.isActiveAndEnabled)
+          current.coroutine = mb.StartCoroutine(composedRoutine);      
       }
       else
       {
-        current.coroutine = mb.StartCoroutine(routine);
+        if (mb.isActiveAndEnabled)
+          current.coroutine = mb.StartCoroutine(routine);
       }
 
       // Start it

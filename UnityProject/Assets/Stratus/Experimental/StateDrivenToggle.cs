@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 namespace Stratus
 {
-  public abstract class StateDrivenToggle : MonoBehaviour
+  public abstract class StateDrivenToggle : StratusBehaviour
   {
     public enum Validation
     {
@@ -105,6 +105,11 @@ namespace Stratus
     /// </summary>
     private static State previousState;
 
+    //private static bool debug
+    //{
+    //  get { return PlayerPrefs.GetInt("de")}
+    //}
+
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
@@ -133,20 +138,6 @@ namespace Stratus
 
     }
 
-    //private void OnValidate()
-    //{
-    //  int numStates  = activeStates.Count;
-    //  if (numStates >= 2)
-    //  {
-    //    State last = activeStates[numStates - 1];
-    //    State beforeLast = activeStates[numStates - 2];
-    //    if (Compare(last, beforeLast))
-    //      activeStates.RemoveAt(numStates - 1);
-    //
-    //  }
-    //
-    //}
-
     //--------------------------------------------------------------------------------------------/
     // Methods
     //--------------------------------------------------------------------------------------------/
@@ -163,8 +154,9 @@ namespace Stratus
         toggle.Apply(currentState);
       foreach (var handler in handlers)
         handler.Inform(currentState);
-      Trace.Script($"State = '{ currentState}'");
       onStateChange?.Invoke(nextState);
+
+      Trace.Script($"State = '{ currentState}'");
     }
 
     /// <summary>

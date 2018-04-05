@@ -13,6 +13,7 @@ namespace Stratus
     // Fields
     //------------------------------------------------------------------------/
     public bool persistent = true;
+    public bool debug = false;
 
   }
 }

@@ -38,8 +38,8 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Menu, Hierarchy
     //------------------------------------------------------------------------/
-    [MenuItem("Stratus/Tools/GameObject Replace Wizard")]
-    private static void Open()
+    [MenuItem("Stratus/Windows/GameObject Replace Wizard")]
+    private static void Open() 
     {
       EditorWindow.GetWindow(typeof(GameObjectReplaceWizard), true, "GameObject Replace Wizard");
     }

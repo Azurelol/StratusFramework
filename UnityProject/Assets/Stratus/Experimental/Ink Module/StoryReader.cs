@@ -25,11 +25,12 @@ namespace Stratus
         [Tooltip("Whether to automatically restart an ended story on load")]
         public bool automaticRestart = false;
         [Tooltip("Whether story events should be queued, for one to play after the other")]
-        public bool queueStories = false;
-        [Tooltip("How long to wait before playing the next queued story")]
-        public float queueDelay = 0f;
+        public bool queueStories = true;
+        //[Tooltip("How long to wait before playing the next queued story")]
+        //[DrawIf(nameof(StoryReader.queueStories), true, ComparisonType.Equals)]
+        //public float queueDelay = 0f;
         [Tooltip("Whether to log to the console")]
-        public bool logging = false;
+        public bool debug = false;
 
         [Header("States")]
         [Tooltip("Whether the state of stories should automatically be saved by default")]
@@ -166,7 +167,7 @@ namespace Stratus
 
           if (previouslyLoaded)
           {
-            if (logging)
+            if (debug)
               Trace.Script($"{storyFile.name} has already been loaded! Using the previous state.");
             newStory = stories[storyFile.name];
             LoadState(newStory);
@@ -174,7 +175,7 @@ namespace Stratus
           // If the story hasn't been loaded yet
           else
           {
-            if (logging)
+            if (debug)
               Trace.Script($"{storyFile.name} has not been loaded yet. Constructing a new state.");
             newStory = ConstructStory(storyFile);
           }
@@ -235,7 +236,7 @@ namespace Stratus
         /// </summary>
         void GoToStart()
         {
-          if (logging)
+          if (debug)
             Trace.Script($"Navigating to the start of the story {story.name}", this);
           story.runtime.state.GoToStart();
         }
@@ -245,7 +246,7 @@ namespace Stratus
         /// </summary>
         void Restart(bool clearState)
         {
-          if (logging)
+          if (debug)
             Trace.Script("Restarting the state for the story '" + story.name + "'", this);
           if (clearState)
             story.runtime.ResetState();
@@ -282,7 +283,8 @@ namespace Stratus
           // requests to be queued...
           if (currentlyReading && queueStories && e.queue)
           {
-            Trace.Script($"Queued up the story {e.storyFile.name}!");
+            if (debug)
+              Trace.Script($"Queued up <i>{e.storyFile.name}</i>");
             storyQueue.Enqueue(e);
           }
           // Otherwise take over the current story
@@ -342,7 +344,7 @@ namespace Stratus
 
         void OnObserveVariableEvent(Story.ObserveVariableEvent e)
         {
-          if (logging)
+          if (debug)
             Trace.Script("Observing " + e.variableName);
           story.runtime.ObserveVariable(e.variableName, e.variableObserver);
         }
@@ -385,7 +387,7 @@ namespace Stratus
         /// </summary>
         public void Save()
         {
-          if (logging)
+          if (debug)
             Trace.Script("Saving...", this);
 
           // Save the current story
@@ -401,7 +403,7 @@ namespace Stratus
         /// </summary>
         public void Clear()
         {
-          if (logging)
+          if (debug)
             Trace.Script("Cleared!", this);
           stories.Clear();
           storySave = new StorySave();
@@ -423,7 +425,7 @@ namespace Stratus
         {
           if (storySave.currentStory == null)
           {
-            if (logging)
+            if (debug)
               Trace.Script("No story to resume from!", this);
             return;
           }
@@ -474,7 +476,7 @@ namespace Stratus
           // Now save it
           StorySave.Save(storySave, saveFileName, saveFolder);
 
-          if (logging)
+          if (debug)
             Trace.Script("Saved!");
         }
 
@@ -487,11 +489,11 @@ namespace Stratus
             // From list to dictionary!
             foreach (var story in storySave.stories)
             {
-              if (logging)
+              if (debug)
                 Trace.Script($"Loaded {story.name}");
               stories.Add(story.name, story);
             }
-            if (logging)
+            if (debug)
               Trace.Script("Loaded!");
           }
         }
@@ -539,7 +541,7 @@ namespace Stratus
 
           story.started = true;
 
-          if (logging)
+          if (debug)
           {
             Trace.Script($"The story {story.name} has started at the knot '{latestKnot}'");
           }
@@ -561,11 +563,7 @@ namespace Stratus
             // Retrieves the latest knot in the story
             GetLatestKnot();
 
-            //if (logging)
-            //{
-            //  GetLatestKnot();
-            //}
-
+            // Get the next line
             UpdateCurrentLine();
           }
           // If we are given a choice
@@ -585,7 +583,7 @@ namespace Stratus
         /// </summary>
         void EndStory()
         {
-          if (logging)
+          if (debug)
             Trace.Script($"The story {story.name} has ended at the knot '{story.latestKnot}'");
 
           // Dispatch the ended event
@@ -608,11 +606,11 @@ namespace Stratus
         {
           var e = storyQueue.Dequeue();
 
-          if (logging)
-            Trace.Script($"Queuing the story {e.storyFile.name} to be played in {queueDelay} seconds");
+          if (debug)
+            Trace.Script($"<i>{e.storyFile.name}</i> to be played in {e.queueDelay} seconds");
 
           var seq = Actions.Sequence(this);
-          Actions.Delay(seq, queueDelay);
+          Actions.Delay(seq, e.queueDelay);
           Actions.Call(seq, () => LoadStory(e.storyFile, e.restart, e.knot));
         }
 
@@ -629,7 +627,7 @@ namespace Stratus
         /// </summary>
         void PresentChoices()
         {
-          if (logging)
+          if (debug)
             Trace.Script("Presenting dialog choices!");
 
           var choicesEvent = new Story.PresentChoicesEvent();
@@ -663,7 +661,7 @@ namespace Stratus
         void JumpToKnot(string knotName)
         {
           story.latestKnot = knotName;
-          if (logging)
+          if (debug)
             Trace.Script("Jumping to the knot '" + knotName + "'", this);
           this.story.runtime.ChoosePathString(knotName + this.stitch);
         }
@@ -677,7 +675,7 @@ namespace Stratus
             return;
 
           this.stitch = "." + stitchName;
-          if (logging)
+          if (debug)
             Trace.Script("Updating stitch to '" + stitch + "'", this);
         }
 
@@ -699,9 +697,19 @@ namespace Stratus
                 return true;
             }
           }
-
-
           return false;
+        }
+
+        /// <summary>
+        /// Saves the variables of the current story
+        /// </summary>
+        public void SaveVariables()
+        {
+          Trace.Script("Variables:", this);
+          foreach(var variable in story.runtime.variablesState)
+          {
+            Trace.Script($"Variable {variable}");
+          }
         }
 
       }
@@ -738,9 +746,9 @@ namespace Stratus
           // Check whether this line has been visited before
           bool visited = CheckIfKnotVisited();
 
-          if (visited && logging)
+          if (visited && debug)
             Trace.Script("This knot has been visited previously!");
-          if (logging)
+          if (debug)
             Trace.Script($"\"{line}\" ");
 
           var updateEvent = new Story.UpdateLineEvent(parser.Parse(line, tags), visited);

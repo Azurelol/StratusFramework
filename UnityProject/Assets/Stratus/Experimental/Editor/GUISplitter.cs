@@ -3,11 +3,11 @@ using UnityEditor;
 using System.Collections.Generic;
 using System;
 
-using Stratus.Editors;
+using Stratus.Editor;
 
 namespace Stratus
 {
-  namespace Editors
+  namespace Editor
   {
     /// <summary>
     /// Handles splitting a given GUI rect into multiple rects that can be

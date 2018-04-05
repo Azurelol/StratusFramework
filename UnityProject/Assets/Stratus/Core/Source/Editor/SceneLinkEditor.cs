@@ -7,39 +7,35 @@ using System;
 
 namespace Stratus
 {
-  [CustomEditor(typeof(SceneLink))]
-  public class SceneLinkEditor : Editor
+  [CustomEditor(typeof(SceneLinkerEvent))]
+  public class SceneLinkerEventEditor : TriggerableEditor<SceneLinkerEvent>
   {
-    SceneLink link;
-    private Vector2 poolScrollPos;
-    //List<SceneField> selected => link.selectedScenes;
-    //SerializedProperty poolProp;
-    //SerializedProperty selectedScenesProp;
+    //private Vector2 poolScrollPos;
 
-    private void OnEnable()
+    protected override void OnTriggerableEditorEnable()
     {
-      link = target as SceneLink;
-      //SerializedObject so = new SerializedObject(link);
-      //poolProp = so.FindProperty("scenePool");
-      //selectedScenesProp = so.FindProperty("selectedScenes");
+      propertyConstraints.Add(propertyMap["selectedScenes"], False);
+      drawGroupRequests.Add(new DrawGroupRequest(SelectScenes, ()=> { return triggerable.scenePool != null; }));
     }
 
-    public override void OnInspectorGUI()
-    {
-      base.OnInspectorGUI();
-      if (link.scenePool == null)
-        return;
-      SelectScenes();
+    //public override void OnInspectorGUI()
+    //{
+    //  base.OnInspectorGUI();
+    //  if (link.scenePool == null)
+    //    return;
+    //  SelectScenes();
+    //
+    //  if (GUI.changed)
+    //  {
+    //    EditorUtility.SetDirty(link);
+    //    AssetDatabase.SaveAssets();
+    //  }
+    //
+    //}
 
-      if (GUI.changed)
-      {
-        EditorUtility.SetDirty(link);
-        AssetDatabase.SaveAssets();
-      }
+    private string GetName(SceneField sceneField) => sceneField.name;
 
-    }
-
-    private void SelectScenes()
+    private void SelectScenes2(Rect rect)
     {
       EditorGUILayout.BeginHorizontal();
       {
@@ -48,15 +44,15 @@ namespace Stratus
         EditorGUILayout.BeginVertical();
         {
           EditorGUILayout.LabelField("Available", EditorStyles.centeredGreyMiniLabel);
-          foreach(var scene in link.scenePool.scenes)
+          foreach (var scene in triggerable.scenePool.scenes)
           {
-            var matchingScene = link.selectedScenes.Find(x => x.name == scene.name);
+            var matchingScene = triggerable.selectedScenes.Find(x => x.name == scene.name);
             if (matchingScene != null)
               continue;
-          
+
             if (GUILayout.Button(scene.name, EditorStyles.miniButton))
             {
-              link.selectedScenes.Add(scene);
+              triggerable.selectedScenes.Add(scene);
             }
           }
         }
@@ -68,21 +64,28 @@ namespace Stratus
         {
           EditorGUILayout.LabelField("Selected", EditorStyles.centeredGreyMiniLabel);
           int indexToRemove = -1;
-          for(int i = 0; i < link.selectedScenes.Count; ++i)
+          for (int i = 0; i < triggerable.selectedScenes.Count; ++i)
           {
-            var scene = link.selectedScenes[i];
+            var scene = triggerable.selectedScenes[i];
             if (GUILayout.Button(scene.name, EditorStyles.miniButton))
             {
               indexToRemove = i;
             }
           }
           if (indexToRemove > -1)
-            link.selectedScenes.RemoveAt(indexToRemove);
+            triggerable.selectedScenes.RemoveAt(indexToRemove);
         }
         EditorGUILayout.EndVertical();
       }
       EditorGUILayout.EndHorizontal();
     }
+
+    private void SelectScenes(Rect rect)
+    {
+      StratusEditorUtility.SelectSubset(triggerable.scenePool.scenes, triggerable.selectedScenes, GetName);      
+    }
+
+
   }
 }
 

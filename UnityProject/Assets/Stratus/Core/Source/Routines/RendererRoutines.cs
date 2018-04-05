@@ -6,6 +6,7 @@
 */
 /******************************************************************************/
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 namespace Stratus
@@ -89,6 +90,19 @@ namespace Stratus
         light.color = Color.Lerp(startColor, color, t);
         light.range = Lerp(startRange, range, t);
         light.intensity = Lerp(startIntensity, intensity, t);
+      };
+
+      yield return Lerp(func, duration, timeScale);
+    }
+
+    public static IEnumerator CrossFadeAlpha(Image image, float alpha, float duration, TimeScale timeScale = TimeScale.Delta)
+    {
+      Color startColor = image.color;
+      Color endColor = image.color.ToAlpha(alpha);
+
+      System.Action<float> func = (float t) =>
+      {
+        image.color = Color.Lerp(startColor, endColor, t);
       };
 
       yield return Lerp(func, duration, timeScale);

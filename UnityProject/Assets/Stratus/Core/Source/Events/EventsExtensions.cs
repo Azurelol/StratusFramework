@@ -74,11 +74,20 @@ public static class EventsExtensions
   /// <param name="nextFrame">Whether the event should be sent next frame.</param>
   public static void Dispatch<T>(this GameObject gameObj, T eventObj, bool nextFrame = false) where T : Stratus.Event
   {
-    //if (delayed)
-    //  gameObj.transform.St
     Stratus.Events.Dispatch<T>(gameObj, eventObj, nextFrame);
   }
-  // ---- // 
+
+  /// <summary>
+  /// Dispatches the given event of the specified type onto this object.
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  /// <param name="gameObj">The GameObject to which to connect to.</param>
+  /// <param name="eventObj">The event object. </param>
+  /// <param name="nextFrame">Whether the event should be sent next frame.</param>
+  public static void Dispatch(this GameObject gameObj, Stratus.Event eventObj, System.Type type, bool nextFrame = false)
+  {
+    Stratus.Events.Dispatch(gameObj, eventObj, type, nextFrame);
+  }
 
   /// <summary>
   /// Dispatches the given event of the specified type to this object and all its children.

@@ -7,7 +7,7 @@ namespace Stratus
   /// <summary>
   /// Base class for MonoBehaviours that use Stratus's custom editors for components
   /// </summary>
-  public class StratusBehaviour : MonoBehaviour
+  public abstract class StratusBehaviour : MonoBehaviour
   {
   }
 

@@ -8,293 +8,95 @@ using System;
 namespace Stratus
 {
   [CustomEditor(typeof(TriggerSystem))]
-  public class TriggerSystemEditor : BaseEditor<TriggerSystem>
+  public partial class TriggerSystemEditor : BehaviourEditor<TriggerSystem>
   {
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    private GUIStyle selectedButtonStyle;
+    //private TriggerSystemEditorGraph graph;
+    //private XNodeEditor.NodeGraphEditor graphEditor;
+    //private TriggerSystemCanvas canvas;
+    private Color selectedColor;
+    private Color connectedColor;
+    private Color disconnectedColor;
     private GUIStyle buttonStyle;
+    private const int descriptionSize = 10;
     private const float connectedButtonWidth = 20f;
     private List<Tuple<Trigger, Trigger>> triggerSwapOperations = new List<Tuple<Trigger, Trigger>>();
     private List<Tuple<Triggerable, Triggerable>> triggerableSwapOperations = new List<Tuple<Triggerable, Triggerable>>();
+    private GUILayoutOption columnWidth;
+    private TypeSelector triggerTypes, triggerableTypes;
 
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    private BaseEditor selectedEditor { get; set; }
+    private StratusEditor selectedEditor { get; set; }
     private string selectedName { get; set; }
     private Triggerable selectedTriggerable { get; set; }
     private Trigger selectedTrigger { get; set; }
     private TriggerBase selected { get; set; }
     private Dictionary<Triggerable, bool> connectedTriggerables { get; set; } = new Dictionary<Triggerable, bool>();
     private Dictionary<Trigger, bool> connectedTriggers { get; set; } = new Dictionary<Trigger, bool>();
-    private List<Trigger> triggers => target.triggers;
-    private List<Triggerable> triggerables => target.triggerables;
+    public Dictionary<Triggerable, TriggerSystem.ConnectionStatus> triggerableConnectivity { get; private set; } = new Dictionary<Triggerable, TriggerSystem.ConnectionStatus>();
+    public List<Trigger> triggers => target.triggers;
+    public List<Triggerable> triggerables => target.triggerables;
+    public Dictionary<TriggerBase, int> connectivityGroups { get; set; } = new Dictionary<TriggerBase, int>();
     private bool showDescriptions => target.showDescriptions;
     private Vector2 scrollPos { get; set; } = Vector2.zero;
     private int maxColumnElements => Mathf.Max(target.triggers.Count, target.triggerables.Count);
     private float buttonHeight { get; set; } = 42f;
-    private float currentColumnHeight => Mathf.Min(maxColumnElements * buttonHeight, 7 * buttonHeight);
-    private TypeSelector triggerTypes, triggerableTypes;
-    private GUILayoutOption addTriggerLabelWidth = GUILayout.Width(100f);
-    private GUILayoutOption columnWidth;
+    private float currentColumnHeight => Mathf.Min(maxColumnElements * buttonHeight, 7 * buttonHeight);    
+    //private bool showMessages { get; set; }    
 
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
     protected override void OnBaseEditorEnable()
     {
-      triggerTypes = new TypeSelector(typeof(Trigger), true, true);
-      triggerTypes.selectionHint = "(Select Trigger)";
-      triggerableTypes = new TypeSelector(typeof(Triggerable), true, true);
-      triggerableTypes.selectionHint = "(Select Triggerable)";
+      //graph = SingletonAsset.LoadOrCreate<TriggerSystemEditorGraph>("Trigger System Graph", "Stratus/Core/Resources", false);
+      //graph.Initialize(this);
+      //XNodeEditor.NodeEditorWindow.OnOpen(graph.GetInstanceID(), 0);
+      ////graphEditor = XNodeEditor.NodeGraphEditor.GetEditor(graph);
+
+      triggerTypes = new TypeSelector(typeof(Trigger), true);
+      triggerableTypes = new TypeSelector(typeof(Triggerable), true);
+
+      selectedColor = StratusGUIStyles.selectedColor;
+      connectedColor = StratusGUIStyles.connectedColor;
+      disconnectedColor = StratusGUIStyles.disconnectedColor;
 
       selected = null;
       selectedTrigger = null;
       selectedTriggerable = null;
       selectedEditor = null;
 
-      drawGroupRequests.Add(new DrawGroupRequest(DrawOptions));
-      drawGroupRequests.Add(new DrawGroupRequest(AddNew));
-      drawGroupRequests.Add(new DrawGroupRequest(DrawConnections, () => { return maxColumnElements != 0; }));
+      //drawGroupRequests.Add(new DrawGroupRequest(DrawOptions));
+      //drawGroupRequests.Add(new DrawGroupRequest(AddNew));
+      drawGroupRequests.Add(new DrawGroupRequest(DrawConnections));
       drawGroupRequests.Add(new DrawGroupRequest(DrawSelected, () => { return selectedEditor != null; }));
 
       // For recompilation
-      if (selectedTrigger || selectedTriggerable)
-        UpdateConnections();
+      //if (selectedTrigger || selectedTriggerable)
+      UpdateConnections();
     }
 
     protected override void OnFirstUpdate()
     {
       buttonStyle = StratusGUIStyles.button;
-      selectedButtonStyle = StratusGUIStyles.blueButton;
     }
 
     public override void OnBaseEditorGUI()
     {
     }
 
-    //------------------------------------------------------------------------/
-    // Methods: Drawing
-    //------------------------------------------------------------------------/
-    private void DrawConnections(Rect rect)
+    protected override void OnBaseEditorValidate()
     {
-      // Draw triggers and triggerables side by side
-      //scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false, GUILayout.Height(currentColumnHeight), GUILayout.ExpandWidth(false));
-      //Trace.Script($"rect = {rect}, currentViewWidth = {EditorGUIUtility.currentViewWidth}");
-      columnWidth = GUILayout.Width(EditorGUIUtility.currentViewWidth * 0.45f);
-      //rect.width = rect.width / 2f;
-      //GUI.Label(rect, "Triggers", StratusGUIStyles.header);
-      //rect.x += rect.width;      
-      //GUI.Label(rect, "Triggerables", StratusGUIStyles.header);
-
-      GUILayout.BeginHorizontal();
-      GUILayout.Label("Triggers", StratusGUIStyles.header);
-      GUILayout.Label("Triggerables", StratusGUIStyles.header);
-      GUILayout.EndHorizontal();
-      
-      GUILayout.BeginHorizontal();
+      GameObject prefab = PrefabUtility.FindPrefabRoot(target.gameObject);
+      if (prefab)
       {
-        GUILayout.BeginVertical();
-        {
-          //EditorGUILayout.LabelField("Triggers", EditorStyles.label);
-          DrawTriggers();
-        }
-        GUILayout.EndVertical();
-        
-
-        GUILayout.BeginVertical();
-        {
-          //EditorGUILayout.LabelField("Triggerables", EditorStyles.la);
-          DrawTriggerables();
-        }
-        GUILayout.EndVertical();
-        
+        Trace.Script($"{target.name} has been changed");        
+        PrefabUtility.RecordPrefabInstancePropertyModifications(target);
       }
-      GUILayout.EndHorizontal();
-      //GUI.EndGroup();
-      //EditorGUILayout.EndScrollView();
-    }
-
-    private void DrawTriggers()
-    {
-      foreach (var trigger in target.triggers)
-        DrawTrigger(trigger);
-
-      // If any swap operations...
-      if (!triggerSwapOperations.Empty())
-      {
-        foreach (var tuple in triggerSwapOperations)
-          triggers.Swap(tuple.Item1, tuple.Item2);
-        triggerSwapOperations.Clear();
-      }
-
-
-    }
-
-    private void DrawTriggerables()
-    {
-
-      foreach (var triggerable in target.triggerables)
-        DrawTriggerable(triggerable);
-
-      // If any swap operations...
-      if (!triggerableSwapOperations.Empty())
-      {
-        foreach (var tuple in triggerableSwapOperations)
-          triggerables.Swap(tuple.Item1, tuple.Item2);
-        triggerableSwapOperations.Clear();
-      }
-    }
-
-    void DrawSelected(Rect rect)
-    {
-      if (selectedEditor == null)
-        return;
-
-      {
-        EditorGUILayout.LabelField(selectedName, EditorStyles.whiteBoldLabel);
-        EditorGUI.indentLevel = 1;
-        selectedEditor.OnInspectorGUI();
-        EditorGUI.indentLevel = 0;
-      }
-    }
-
-    private void DrawOptions(Rect rect)
-    {
-      //EditorGUILayout.LabelField("Options", EditorStyles.boldLabel);
-      DrawSerializedProperty(propertyMap["showDescriptions"], serializedObject);
-    }
-
-    private void DrawConnection(Triggerable triggerable)
-    {
-      if (!selectedTrigger)
-      {
-        //GUILayout.Button(string.Empty, StratusEditorStyles., GUILayout.Width(connectedButtonWidth));
-        return;
-      }
-
-      bool isConnected = connectedTriggerables[triggerable];
-      if (isConnected)
-      {
-        if (GUILayout.Button(string.Empty, StratusGUIStyles.blueCircleButton, GUILayout.Width(connectedButtonWidth)))
-          Disconnect(selectedTrigger, triggerable);
-      }
-      else
-      {
-        if (GUILayout.Button(string.Empty, StratusGUIStyles.greyCircleButton, GUILayout.Width(connectedButtonWidth)))
-          Connect(selectedTrigger, triggerable);
-      }
-    }
-
-    private void DrawTrigger(Trigger trigger)
-    {
-      GUIStyle style = buttonStyle;
-      if (selected)
-      {
-        if (selected == trigger)
-          style = selectedButtonStyle;
-        else if (selectedTriggerable && connectedTriggers.ContainsKey(trigger) && connectedTriggers[trigger])
-          style = StratusGUIStyles.greenButton;
-      }
-
-      Draw(trigger, style, SelectTrigger, RemoveTrigger, SetTriggerContextMenu);
-    }
-
-    private void DrawTriggerable(Triggerable triggerable)
-    {
-      GUIStyle style = buttonStyle;
-      if (selected)
-      {
-        if (selected == triggerable)
-          style = selectedButtonStyle;
-        else if (selectedTrigger && connectedTriggerables.ContainsKey(triggerable) && connectedTriggerables[triggerable])
-          style = StratusGUIStyles.greenButton;
-      }
-
-      Draw(triggerable, style, SelectTriggerable, RemoveTriggerable, SetTriggerableContextMenu);
-    }
-
-    private void Draw<T>(T baseTrigger, GUIStyle style, System.Action<T> selectFunction, System.Action<T> removeFunction, System.Action<T, GenericMenu> contextMenuSetter) where T : TriggerBase
-    {
-      string name = baseTrigger.GetType().Name;
-
-      System.Action onLeftClick = () =>
-      {
-        selectedName = name;
-        selected = baseTrigger;
-        selectFunction(baseTrigger);
-        GUI.FocusControl(string.Empty);
-        UpdateConnections();
-      };
-
-      System.Action onRightClick = () =>
-      {
-        var menu = new GenericMenu();
-        contextMenuSetter(baseTrigger, menu);
-        menu.AddSeparator("");
-          // Enable
-          menu.AddItem(new GUIContent(baseTrigger.enabled ? "Disable" : "Enable"), false, () =>
-            {
-          baseTrigger.enabled = !baseTrigger.enabled;
-        });
-          // Duplicate
-          menu.AddItem(new GUIContent("Duplicate/New"), false, () =>
-            {
-          target.gameObject.DuplicateComponent(baseTrigger, false);
-        });
-        menu.AddItem(new GUIContent("Duplicate/Copy"), false, () =>
-        {
-          target.gameObject.DuplicateComponent(baseTrigger, true);
-          UpdateConnections();
-        });
-          // Remove
-          menu.AddItem(new GUIContent("Remove"), false, () =>
-            {
-          removeFunction(baseTrigger);
-          UpdateConnections();
-        });
-        menu.ShowAsContext();
-      };
-
-      System.Action onDrag = () =>
-      {
-          //Drag(baseTrigger, name);
-        };
-
-      System.Action<object> onDrop = (object other) =>
-      {
-        if (baseTrigger is Trigger && other is Trigger)
-        {
-          triggerSwapOperations.Add(new Tuple<Trigger, Trigger>(baseTrigger as Trigger, other as Trigger));
-        }
-        else if (baseTrigger is Triggerable && other is Triggerable)
-        {
-          triggerableSwapOperations.Add(new Tuple<Triggerable, Triggerable>(baseTrigger as Triggerable, other as Triggerable));
-        }
-      };
-
-      Func<object, bool> onValidateDrag = (object other) =>
-      {
-        if (other is Trigger || other is Triggerable)
-          return true;
-        return false;
-      };
-
-      var button = new GUIObject();
-      button.label = baseTrigger.enabled ? name : $"<color=grey>{name}</color>";
-      button.description = $"<i>{baseTrigger.description}</i>";
-      button.showDescription = showDescriptions;
-      button.descriptionsWithLabel = target.descriptionsWithLabel;
-      button.onLeftClickUp = onLeftClick;
-      button.onRightClickDown = onRightClick;
-      button.onDrag = onDrag;
-      button.onDrop = onDrop;
-      button.dragDataIdentifier = "Stratus Trigger System Button";
-      button.dragData = baseTrigger;
-      button.onValidateDrag = onValidateDrag;
-      button.Draw(style, columnWidth);
     }
 
     private void SetTriggerContextMenu(Trigger trigger, GenericMenu menu)
@@ -334,13 +136,59 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Selection
     //------------------------------------------------------------------------/
+    private Color GetColor(TriggerBase triggerBase, TriggerSystem.ConnectionStatus status)
+    {
+      Color color = Color.white;
+      switch (target.connectionDisplay)
+      {
+        case TriggerSystem.ConnectionDisplay.Selection:
+          {
+            switch (status)
+            {
+              case TriggerSystem.ConnectionStatus.Connected:
+                color = connectedColor;
+                break;
+              case TriggerSystem.ConnectionStatus.Disconnected:
+                //color = Color.white;
+                break;
+              case TriggerSystem.ConnectionStatus.Selected:
+                //color = connectedColor;
+                color = selectedColor;
+                break;
+              case TriggerSystem.ConnectionStatus.Disjoint:
+                color = disconnectedColor;
+                break;
+              default:
+                break;
+            }
+          }
+          break;
+
+        case TriggerSystem.ConnectionDisplay.Grouping:
+          {
+            //int colorIndex = -1;
+            if (status == TriggerSystem.ConnectionStatus.Selected)
+              color = selectedColor;
+            if (connectivityGroups.ContainsKey(triggerBase))
+            {
+              int colorIndex = connectivityGroups[triggerBase];
+              color = StratusGUIStyles.Colors.GetDistinct(colorIndex);
+            }
+
+          }
+          break;
+      }
+
+      return color;
+    }
+
     private void SelectTrigger(Trigger trigger)
     {
       selectedTriggerable = null;
       selectedTrigger = trigger;
 
       // Instantiate the editor for it, disable drawwing base trigger properties
-      selectedEditor = Editor.CreateEditor(trigger) as BaseEditor;
+      selectedEditor = UnityEditor.Editor.CreateEditor(trigger) as StratusEditor;
       selectedEditor.backgroundStyle = EditorStyles.helpBox;
 
       var baseTriggerProperties = selectedEditor.propertiesByType[typeof(Trigger)];
@@ -352,6 +200,9 @@ namespace Stratus
 
         selectedEditor.propertyConstraints.Add(property, False);
       }
+
+
+      //Highlighter.Highlight(nameof(TriggerSystem), trigger.GetType().Name);
     }
 
     private void SelectTriggerable(Triggerable triggerable)
@@ -359,7 +210,7 @@ namespace Stratus
       selectedTrigger = null;
       selectedTriggerable = triggerable;
 
-      selectedEditor = Editor.CreateEditor(triggerable) as BaseEditor;
+      selectedEditor = UnityEditor.Editor.CreateEditor(triggerable) as StratusEditor;
       selectedEditor.backgroundStyle = EditorStyles.helpBox;
     }
 
@@ -376,8 +227,11 @@ namespace Stratus
         Deselect();
         selectedTrigger = null;
       }
-      target.triggers.Remove(trigger);
-      Undo.DestroyObjectImmediate(trigger);
+      endOfFrameRequests.Add(() =>
+      {
+        target.triggers.Remove(trigger);
+        Undo.DestroyObjectImmediate(trigger);
+      });
     }
 
     private void RemoveTriggerable(Triggerable triggerable)
@@ -387,40 +241,11 @@ namespace Stratus
         Deselect();
         selectedTriggerable = null;
       }
-      target.triggerables.Remove(triggerable);
-      Undo.DestroyObjectImmediate(triggerable);
-    }
-
-    private void AddNew(Rect rect)
-    {
-      //GUIStyle buttonStyle = EditorStyles.miniButtonRight;
-      // Select a trigger type
-      EditorGUILayout.BeginHorizontal();
+      endOfFrameRequests.Add(() =>
       {
-        EditorGUILayout.LabelField("Add Trigger", EditorStyles.whiteLabel, addTriggerLabelWidth);
-        bool changed = triggerTypes.GUILayoutPopup();
-        if (changed)
-        {
-          target.gameObject.AddComponent(triggerTypes.selectedClass);
-          triggerTypes.ResetSelection(0);
-        }
-        //if (GUILayout.Button("Add", buttonStyle))
-      }
-      EditorGUILayout.EndHorizontal();
-
-      // Select a triggerable type
-      EditorGUILayout.BeginHorizontal();
-      {
-        EditorGUILayout.LabelField("Add Triggerable", EditorStyles.whiteLabel, addTriggerLabelWidth);
-        bool changed = triggerableTypes.GUILayoutPopup();
-        if (changed)
-        {
-          target.gameObject.AddComponent(triggerableTypes.selectedClass);
-          triggerableTypes.ResetSelection(0);
-        }
-        //if (GUILayout.Button("Add", buttonStyle))
-      }
-      EditorGUILayout.EndHorizontal();
+        target.triggerables.Remove(triggerable);
+        Undo.DestroyObjectImmediate(triggerable);
+      });
     }
 
     //------------------------------------------------------------------------/
@@ -431,8 +256,6 @@ namespace Stratus
       Trace.Script($"Connecting {trigger.GetType().Name} and {triggerable.GetType().Name}");
       trigger.targets.Add(triggerable);
       UpdateConnections();
-      //connectedTriggerables[triggerable] = true;
-      //connectedTriggers[trigger] = true;
     }
 
     private void Disconnect(Trigger trigger, Triggerable triggerable)
@@ -440,19 +263,15 @@ namespace Stratus
       Trace.Script($"Disconnecting {trigger.GetType().Name} and {triggerable.GetType().Name}");
       trigger.targets.Remove(triggerable);
       UpdateConnections();
-      //connectedTriggerables[triggerable] = false;
-      //connectedTriggers[trigger] = false;
     }
 
-    private bool IsConnected(Trigger trigger, Triggerable triggerable)
-    {
-      if (trigger.targets.Contains(triggerable))
-        return true;
-      return false;
-    }
+    private bool IsConnected(Trigger trigger, Triggerable triggerable) => TriggerSystem.IsConnected(trigger, triggerable);
+    private bool IsConnected(Trigger trigger) => TriggerSystem.IsConnected(trigger);
+    private bool IsConnected(Triggerable triggerable) => triggerableConnectivity.ContainsKey(triggerable) && triggerableConnectivity[triggerable] == TriggerSystem.ConnectionStatus.Connected;
 
     private void UpdateConnections()
     {
+      // Clear triggerables
       connectedTriggerables.Clear();
       if (selectedTrigger)
       {
@@ -460,13 +279,65 @@ namespace Stratus
           connectedTriggerables.Add(triggerable, IsConnected(selectedTrigger, triggerable));
       }
 
+      // Clear triggers
       connectedTriggers.Clear();
       if (selectedTriggerable)
       {
         foreach (var trigger in target.triggers)
           connectedTriggers.Add(trigger, IsConnected(trigger, selectedTriggerable));
       }
+
+      // Store connectivity
+      triggerableConnectivity.Clear();
+      foreach (var triggerable in triggerables)
+      {
+        triggerableConnectivity.Add(triggerable, TriggerSystem.ConnectionStatus.Disconnected);
+        foreach (var trigger in triggers)
+        {
+          if (trigger.targets.Contains(triggerable))
+          {
+            triggerableConnectivity[triggerable] = TriggerSystem.ConnectionStatus.Connected;
+            break;
+          }
+        }
+      }
+      GenerateColorGroupings();
     }
+
+    private void GenerateColorGroupings()
+    {
+      connectivityGroups.Clear();
+      int groups = 1;
+      foreach (var trigger in triggers)
+      {
+        int group = groups;
+
+        foreach (var triggerable in trigger.targets)
+        {
+          if (triggerable == null)
+            continue;
+
+          if (connectivityGroups.ContainsKey(triggerable))
+          {
+            group = connectivityGroups[triggerable];
+          }
+          else
+          {
+            connectivityGroups.Add(triggerable, groups);
+          }
+        }
+
+        connectivityGroups.Add(trigger, group);
+        groups++;
+      }
+
+    }
+
+    //private void OpenWindow()
+    //{
+    //  canvas = SingletonAsset.LoadOrCreate<TriggerSystemCanvas>("Trigger System Canvas", "Stratus/Core/Resources", false, NodeEditorFramework.NodeCanvas.Initialize);
+    //  NodeEditorFramework.Standard.NodeEditorWindow.OpenNodeEditor(canvas);
+    //}
 
 
   }

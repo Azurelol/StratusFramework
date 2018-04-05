@@ -20,7 +20,7 @@ namespace Stratus
     /// </summary>
     /// <param name="color">The color whose alpha to change</param>
     /// <param name="alpha">The alpha value to set</param>
-    public static Color SetAlpha(this Color color, float alpha)
+    public static Color ToAlpha(this Color color, float alpha)
     {
       color = new Color(color.r, color.g, color.b, alpha);
       return color;
@@ -107,9 +107,7 @@ namespace Stratus
     {
       Vector3 dir = target - vec;
       return target + (dir * dist);
-    }
-    
-
+    }       
 
     public enum Vector3Component { x, y, z }
 

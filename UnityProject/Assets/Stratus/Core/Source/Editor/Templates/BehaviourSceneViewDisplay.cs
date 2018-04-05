@@ -23,7 +23,7 @@ namespace Stratus
   /// An abstract interface for writing a SceneView display for a MonoBehaviour of a given type
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public abstract class BehaviourSceneViewDisplay<T> : PersistentSceneViewDisplay where T : MonoBehaviour
+  public abstract class BehaviourSceneViewDisplay<T> : SceneViewDisplay where T : MonoBehaviour
   {
     private T[] behaviours;
     protected abstract void OnInspect(T behaviour);
@@ -50,6 +50,16 @@ namespace Stratus
       foreach (var behaviour in behaviours)
         OnInspect(behaviour);
     }
+
+    protected override void OnReset()
+    {      
+    }
+
+    protected override void OnInspect()
+    {
+      
+    }
+
   }
     
 

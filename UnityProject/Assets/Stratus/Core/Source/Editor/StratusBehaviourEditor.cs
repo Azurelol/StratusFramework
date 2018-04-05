@@ -7,9 +7,11 @@ namespace Stratus
 {
   [CanEditMultipleObjects]
   [CustomEditor(typeof(StratusBehaviour), true)]
-  public class StratusBehaviourEditor : BaseEditor<StratusBehaviour>
+  public class StratusBehaviourEditor : BehaviourEditor<StratusBehaviour>
   {
-
+    protected override void OnBaseEditorEnable()
+    {      
+    }
   }
 
 }

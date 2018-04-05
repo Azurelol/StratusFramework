@@ -123,6 +123,7 @@ namespace Stratus
         /// <summary>
         /// Signals that a story should be loaded
         /// </summary>
+        [Serializable]
         public class LoadEvent : Stratus.Event
         {
           /// <summary>
@@ -141,6 +142,10 @@ namespace Stratus
           /// Whether this story should be queued, if there's one currently running it will be read after
           /// </summary>
           public bool queue = false;
+          /// <summary>
+          /// How long to wait to play the story, if queued
+          /// </summary>
+          public float queueDelay = 0.0f;
         }
 
         /// <summary>

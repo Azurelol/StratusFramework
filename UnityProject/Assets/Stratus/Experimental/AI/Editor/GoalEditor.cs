@@ -8,7 +8,7 @@ namespace Stratus
   namespace AI
   {
     [CustomEditor(typeof(Goal))]
-    public class GoalEditor : Editor
+    public class GoalEditor : UnityEditor.Editor
     {
     }
   }

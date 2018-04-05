@@ -1,5 +1,4 @@
-VAR cats = 5
-
+VAR sadLevel = 5
 -> Knot1
 
 === Knot1 ===
@@ -12,8 +11,8 @@ VAR cats = 5
 -> Knot1.Stitch2
 
 = Stitch2
-[Christian] "Okay. This saddens me." # work++  
-~cats = 10
+[Christian] "Okay. This saddens me." {sadLevel} # work++  
+~sadLevel += 10
 [John] "Go! This makes me happy." # john = happy
 [Christian] "Your sadistic reaction increases my stress." # stress += 10
 -> Knot2

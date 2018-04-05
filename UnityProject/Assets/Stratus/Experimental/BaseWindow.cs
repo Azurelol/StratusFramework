@@ -11,7 +11,7 @@ namespace Stratus
   /// <summary>
   /// Base class for all windows
   /// </summary>
-  public abstract class BaseWindow : StratusBehaviour
+  public abstract class BaseWindow : StratusBehaviour, Interfaces.Debuggable
   {
     //--------------------------------------------------------------------------------------------/
     // Declarations
@@ -32,7 +32,7 @@ namespace Stratus
     [Tooltip("The first button to be selected")]
     public Selectable defaultSelected;
     [Tooltip("Whether to print debug output")]
-    public bool log = false;
+    public bool debug = false;
 
     [Header("Transition")]
     [Range(0f, 3f)]
@@ -118,21 +118,43 @@ namespace Stratus
     /// <param name="onFinished"></param>
     public void Transition(bool show, System.Action onFinished = null)
     {
-      if (log)
-        Trace.Script(show);
+      if (debug)
+        Trace.Script(show, this);
+
+      if (!show)
+        eventSystem.SetSelectedGameObject(null);
 
       canvas.blocksRaycasts = show;
       canvas.interactable = show;
       pollingInput = show;
-      if (show)
-        defaultSelected?.Select();
 
       currentSeq?.Cancel();
       currentSeq = Actions.Sequence(this);
+
+
+
+      // Fade the canvas
       Actions.Property(currentSeq, () => canvas.alpha, show ? 1f : 0f, transitionSpeed, Ease.Linear);
       Actions.Call(currentSeq, () => { visible = false; });
+
+      // Optionally, select the default button
+      if (defaultSelected)
+      {
+        //Trace.Script($"Selecting {defaultSelected.name}", this);
+        if (show) 
+          Actions.Call(currentSeq, () => eventSystem.SetSelectedGameObject(defaultSelected.gameObject));
+        //else
+        //  eventSystem.SetSelectedGameObject(null);
+      }
+
+      // Now invoke any callbacks
       if (onFinished != null)
         Actions.Call(currentSeq, () => { onFinished(); });
+    }
+
+    void Interfaces.Debuggable.Toggle(bool toggle)
+    {
+      debug = toggle;
     }
   }
 
@@ -232,7 +254,7 @@ namespace Stratus
     {
       if (pollInput && pollingInput && isCurrent && cancel.isDown)
       {
-        if (log)
+        if (debug)
           Trace.Script("Received input to close window");
         Close();
       }
@@ -262,7 +284,7 @@ namespace Stratus
     {
       if (state != State.Closed || !shouldOpen)
       {
-        if (log)
+        if (debug)
           Trace.Script($"Cannot open this window!, state = {state}");
         return;
       }
@@ -280,7 +302,7 @@ namespace Stratus
     }
 
     //--------------------------------------------------------------------------------------------/
-    // Methods
+    // Methods: Static
     //--------------------------------------------------------------------------------------------/  
     public static void Open(OpenEvent e, bool transition = false)
     {
@@ -308,6 +330,7 @@ namespace Stratus
     {
       var e = new OpenEvent();
       e.parent = parent;
+
       // If there is a transition requested, transition out the parent window before opening the child window
       if (transition && e.parent != null)
       {
@@ -321,6 +344,7 @@ namespace Stratus
         Actions.Delay(seq, e.parent.transitionSpeed);
         Actions.Call(seq, () => Scene.Dispatch<OpenEvent>(e));
       }
+
       // Otherwise the child window right away
       else
       {
@@ -338,16 +362,22 @@ namespace Stratus
       Scene.Dispatch<CloseEvent>(new CloseEvent());
     }
 
+    //--------------------------------------------------------------------------------------------/
+    // Methods: Private
+    //--------------------------------------------------------------------------------------------/  
     public void Open()
     {
-      if (log)
+      if (debug)
         Trace.Script("", this);
       canvas.gameObject.SetActive(true);
       Transition(true, () =>
       {
         //pollingInput = true;
-        if (defaultSelected)
-          eventSystem.SetSelectedGameObject(defaultSelected.gameObject);
+        //if (defaultSelected)
+        //{
+        //  Trace.Script($"Selecting button", this);
+        //  eventSystem.SetSelectedGameObject(defaultSelected.gameObject);
+        //}
         //defaultSelected?.Select();
         OnOpen();
         windows.Push(this);
@@ -358,7 +388,7 @@ namespace Stratus
 
     public void Close()
     {
-      if (log)
+      if (debug)
         Trace.Script("", this);
 
       System.Action close = ()=>{

@@ -4,7 +4,7 @@ using System;
 
 namespace Stratus
 {
-  namespace Editors
+  namespace Editor
   {
     /// <summary>
     /// A connection has two connection points an an action to remove it.

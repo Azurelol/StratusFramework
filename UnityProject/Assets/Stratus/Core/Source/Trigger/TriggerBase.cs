@@ -1,3 +1,4 @@
+using Stratus.Interfaces;
 using UnityEngine;
 
 namespace Stratus
@@ -5,14 +6,20 @@ namespace Stratus
   /// <summary>
   /// Base class for all trigger-related components in the Stratus Trigger framework
   /// </summary>
-  public abstract class TriggerBase : StratusBehaviour
+  public abstract class TriggerBase : StratusBehaviour, Interfaces.Debuggable, Interfaces.Validator
   {
     /// <summary>
     /// Whether this component has specific restart behaviour
     /// </summary>
-    public interface IRestartable
+    public interface Restartable
     {
       void OnRestart();
+    }
+
+    public enum DescriptionMode
+    {
+      Automatic,
+      Manual        
     }
 
     //------------------------------------------------------------------------/
@@ -29,10 +36,22 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    [Tooltip("A short description of what this is for")]
+    /// <summary>
+    /// How descriptions are set
+    /// </summary>
+    [Tooltip("How descriptions are set")]
+    public DescriptionMode descriptionMode = DescriptionMode.Automatic;
+    /// <summary>
+    /// A short description of what this is for
+    /// </summary>
+    [Tooltip("A short description on the purpose of this trigger. " +
+      "If not filled, it will attempt to generate an automatic one.")]
     public string description;
-    protected abstract void OnReset();
-    //protected virtual void OnRestart() {}
+    /// <summary>
+    /// Whether we are printing debug output
+    /// </summary>
+    [Tooltip("Whether we are printing debug output")]
+    public bool debug = false;
 
     //------------------------------------------------------------------------/
     // Properties
@@ -41,6 +60,21 @@ namespace Stratus
     /// Whether this component has triggered
     /// </summary>
     public bool activated { get; protected set; }
+
+    //------------------------------------------------------------------------/
+    // Virtual
+    //------------------------------------------------------------------------/
+    protected abstract void OnReset();
+    /// <summary>
+    /// An automatically generated description of what the trigger does
+    /// </summary>
+    public virtual string automaticDescription => string.Empty;
+    ///// <summary>
+    ///// An automatically generated validation message for this trigger
+    ///// </summary>
+    //public virtual ValidateMessage validation => null;
+
+    public virtual Validation Validate() => null;
 
     //------------------------------------------------------------------------/
     // Messages
@@ -53,17 +87,27 @@ namespace Stratus
       OnReset();
     }
 
+    void Interfaces.Debuggable.Toggle(bool toggle)
+    {
+      debug = toggle;
+    }
+
+    //ValidateMessage Validator.Validate()
+    //{
+    //  return validation;
+    //}
+
     //------------------------------------------------------------------------/
     // Methods: Public
     //------------------------------------------------------------------------/
     /// <summary>
     /// Restarts this trigger to its initial state
     /// </summary>
-    public void Restart()
+    public void Restart(bool enable = true)
     {
       activated = false;
-      enabled = true;
-      var restartable = this as IRestartable;
+      enabled = enable;
+      var restartable = this as Restartable;
       restartable?.OnRestart();
       //OnRestart();
     }
@@ -85,7 +129,20 @@ namespace Stratus
       }
     }
 
+    protected void Error(string msg, Behaviour trigger)
+    {
+      Trace.Error(ComposeLog(msg), trigger);
+    }
 
+    protected void Log(string msg, Behaviour trigger)
+    {
+      Trace.Script(ComposeLog(msg), trigger);
+    }
+
+    protected string ComposeLog(string msg)
+    {
+      return $"<i>{description}</i> : {msg}";
+    }
 
 
   }

@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Stratus
 {
-  namespace Editors
+  namespace Editor
   {
     public abstract partial class Node
     {

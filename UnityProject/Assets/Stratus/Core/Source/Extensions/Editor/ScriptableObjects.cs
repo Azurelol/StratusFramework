@@ -5,10 +5,11 @@ using System.IO;
 using UnityEditor;
 using System;
 using System.Linq;
+using Stratus.Utilities;
 
 namespace Stratus
 {
-  namespace Utilities
+  namespace Editor
   {
     public static partial class Assets
     {
@@ -41,7 +42,7 @@ namespace Stratus
         }
 
         // Mkae sure we are using a relative path
-        var resourceRelativePath = MakeRelative(path);
+        var resourceRelativePath = IO.MakeRelative(path);
         // Remove the file extension
         var fileExtension = Path.GetExtension(path);
         resourceRelativePath = resourceRelativePath.Replace(fileExtension, string.Empty);

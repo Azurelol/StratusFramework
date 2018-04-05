@@ -6,17 +6,19 @@ using UnityEditor;
 namespace Stratus
 {
   [CustomEditor(typeof(Episode))]
-  public class EpisodeEditor : BaseEditor<Episode>
+  public class EpisodeEditor : BehaviourEditor<Episode>
   {
     private Episode.JumpMechanism jumpMechanism => target.mechanism;
 
     protected override void OnBaseEditorEnable()
     {
-      SerializedProperty targetTransformProperty = propertyMap["targetTransform"];
-      propertyConstraints.Add(targetTransformProperty, () => { return jumpMechanism == Episode.JumpMechanism.Translate; });
+      AddConstraint(nameof(Episode.targetTransform), () => jumpMechanism == Episode.JumpMechanism.Translate);
+      AddConstraint(nameof(Episode.onJump), () => jumpMechanism == Episode.JumpMechanism.Callback);
 
-      SerializedProperty onJumpProperty = propertyMap["onJump"];
-      propertyConstraints.Add(onJumpProperty, () => { return jumpMechanism == Episode.JumpMechanism.Callback; });
+      AddConstraint(() => target.debugNavigation, 
+        nameof(Episode.windowAnchor), 
+        nameof(Episode.nextSegmentInput), 
+        nameof(Episode.previousSegmentInput));
     }
   }
 

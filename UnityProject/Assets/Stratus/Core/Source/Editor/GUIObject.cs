@@ -19,6 +19,10 @@ namespace Stratus
     /// </summary>
     public UnityEngine.Event currentEvent => UnityEngine.Event.current;
     /// <summary>
+    /// The current rect used by the object
+    /// </summary>
+    public Rect rect { get; private set; }
+    /// <summary>
     /// The label to be used by this object
     /// </summary>
     public string label { get; set; }
@@ -82,7 +86,14 @@ namespace Stratus
     /// The data to be used when this button is dragged
     /// </summary>
     public Func<object, bool> onValidateDrag { get; set; }
-
+    /// <summary>
+    /// The background color to use
+    /// </summary>
+    public Color backgroundColor { get; set; } // = Color.white;
+    /// <summary>
+    /// Outline color to use
+    /// </summary>
+    public Color outlineColor { get; set; }
     /// <summary>
     /// Whether this button is currently moused over
     /// </summary>
@@ -90,10 +101,12 @@ namespace Stratus
     {
       get
       {
-        Rect buttonRect = GUILayoutUtility.GetLastRect();
-        return buttonRect.Contains(currentEvent.mousePosition);
+        return rect.Contains(currentEvent.mousePosition);
       }
     }
+
+    public bool isSelected { get; set; }
+
     /// <summary>
     /// Whether this button is draggable
     /// </summary>
@@ -106,7 +119,42 @@ namespace Stratus
     /// Whether one of these buttons is currentl being dragged
     /// </summary>
     public static bool isDragging { get; private set; }
+    /// <summary>
+    /// What to do on certain key presses
+    /// </summary>
+    private Dictionary<KeyCode, System.Action> keyMap { get; set; }  // = new Dictionary<KeyCode, System.Action>();
+    /// <summary>
+    /// Whether this object is checking for keys
+    /// </summary>
+    public bool hasKeys => keyMap != null;
 
+    //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
+
+
+    //------------------------------------------------------------------------/
+    // CTOR
+    //------------------------------------------------------------------------/
+    //public GUIObject(string label = null)
+    //{
+    //  this.label = label;
+    //  onValidateDrag = null;
+    //  dragData = null;
+    //  dragDataIdentifier = null;
+    //  onDrag = null;
+    //  onDrop = null;
+    //  onRightClickDown = onRightClickUp = null;
+    //  onLeftClickDown = onLeftClickUp= null;
+    //  onMiddleClickDown = onMiddleClickUp= null;
+    //  showDescription = descriptionsWithLabel = false;
+    //  tooltip = description = string.Empty;
+    //  backgroundColor = Color.white;
+    //}
+
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
     /// <summary>
     /// Draws this button using Unity's GUILayout system
     /// </summary>
@@ -116,97 +164,148 @@ namespace Stratus
     public bool Draw(GUIStyle style = null, params GUILayoutOption[] options)
     {
       GUIContent content = new GUIContent(showDescription ? $"{label}\n{description}" : label, tooltip);
-      GUILayout.Box(content, style, options);
 
-      if (!isMousedOver)
-        return false;
-
-      switch (currentEvent.type)
+      if (backgroundColor != default(Color)) GUI.backgroundColor = backgroundColor;
       {
-        case EventType.MouseDown:          
-          if (isDraggable)
-          {
-            DragAndDrop.PrepareStartDrag();
-            DragAndDrop.objectReferences = new UnityEngine.Object[] { (UnityEngine.Object)dragData };
-            DragAndDrop.SetGenericData(dragDataIdentifier, dragData);
-          }
-          switch (currentEvent.button)
-          {
-            case 0: onLeftClickDown?.Invoke(); break;
-            case 1: onRightClickDown?.Invoke(); break;
-            case 2: onMiddleClickDown?.Invoke(); break;
-          }
-          currentEvent.Use();
-          break;
+        GUILayout.Box(content, style, options);
+        rect = GUILayoutUtility.GetLastRect(); 
+      }
+      if (backgroundColor != default(Color)) GUI.backgroundColor = Color.white;
+      if (outlineColor != default(Color) && isSelected)  StratusGUIStyles.DrawOutline(rect, outlineColor);
 
-        case EventType.MouseUp:
-          switch (currentEvent.button)
-          {
-            case 0: onLeftClickUp?.Invoke(); break;
-            case 1: onRightClickUp?.Invoke(); break;
-            case 2: onMiddleClickUp?.Invoke(); break;
-          }
-          if (isDraggable)
-          {
-            DragAndDrop.PrepareStartDrag();
-            isDragging = false;
-          }
-          currentEvent.Use();
-          break;
+      //Vector2 style .CalcSize(content)
 
-        case EventType.MouseDrag:          
-          // If the drag was started here
-          if (isDraggable)
-          {
-            object existingDragData = DragAndDrop.GetGenericData(dragDataIdentifier);
-            if (existingDragData != null)
-            {
-              DragAndDrop.StartDrag($"Dragging {label}");
-              onDrag?.Invoke();
-              currentEvent.Use();
-              isDragging = true;
-            }
-          }
-          break;
-
-        case EventType.DragUpdated:
-          if (isDraggable)
-          {
-            if (ValidateDragData())
-              DragAndDrop.visualMode = DragAndDropVisualMode.Link;
-            else
-              DragAndDrop.visualMode = DragAndDropVisualMode.Rejected;
-          }          
-          currentEvent.Use();
-          break;
-
-        case EventType.DragPerform:
-          if (isDroppable)
-          {
-            DragAndDrop.AcceptDrag();
-            object receivedDragData = DragAndDrop.GetGenericData(dragDataIdentifier);
-            if (receivedDragData != null)
-            {
-              onDrop(receivedDragData);
-            }
-          }
-          currentEvent.Use();
-          break;
-
-        case EventType.DragExited:
-          if (isDraggable)
-          {
-            isDragging = false;
-            DragAndDrop.PrepareStartDrag();
-          }
-          break;
-
-        case EventType.Repaint:
-
-          break;
+      // Keyboard
+      if (isSelected)
+      {        
+        if (OnKey())
+          return true;
       }
 
-      return true;
+      // Mouse
+      if (isMousedOver)
+      {
+        OnMouse();
+        return true;
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// Handles mouse events
+    /// </summary>
+    private void OnMouse()
+    {
+      if (isMousedOver)
+      {
+        switch (currentEvent.type)
+        {
+          case EventType.MouseDown:
+            if (isDraggable)
+            {
+              DragAndDrop.PrepareStartDrag();
+              DragAndDrop.objectReferences = new UnityEngine.Object[] { (UnityEngine.Object)dragData };
+              DragAndDrop.SetGenericData(dragDataIdentifier, dragData);
+            }
+            switch (currentEvent.button)
+            {
+              case 0: onLeftClickDown?.Invoke(); break;
+              case 1: onRightClickDown?.Invoke(); break;
+              case 2: onMiddleClickDown?.Invoke(); break;
+            }
+            currentEvent.Use();
+            break;
+
+          case EventType.MouseUp:
+            switch (currentEvent.button)
+            {
+              case 0: onLeftClickUp?.Invoke(); break;
+              case 1: onRightClickUp?.Invoke(); break;
+              case 2: onMiddleClickUp?.Invoke(); break;
+            }
+            if (isDraggable)
+            {
+              DragAndDrop.PrepareStartDrag();
+              isDragging = false;
+            }
+            currentEvent.Use();
+            //int control = GUIUtility.GetControlID(FocusType.Keyboard);
+            //GUIUtility.hotControl = control;
+            //Selection.SetActiveObjectWithContext()
+            break;
+
+          case EventType.MouseDrag:
+            // If the drag was started here
+            if (isDraggable)
+            {
+              object existingDragData = DragAndDrop.GetGenericData(dragDataIdentifier);
+              if (existingDragData != null)
+              {
+                DragAndDrop.StartDrag($"Dragging {label}");
+                onDrag?.Invoke();
+                currentEvent.Use();
+                isDragging = true;
+              }
+            }
+            break;
+
+          case EventType.DragUpdated:
+            if (isDraggable)
+            {
+              if (ValidateDragData())
+                DragAndDrop.visualMode = DragAndDropVisualMode.Link;
+              else
+                DragAndDrop.visualMode = DragAndDropVisualMode.Rejected;
+            }
+            currentEvent.Use();
+            break;
+
+          case EventType.DragPerform:
+            if (isDroppable)
+            {
+              DragAndDrop.AcceptDrag();
+              object receivedDragData = DragAndDrop.GetGenericData(dragDataIdentifier);
+              if (receivedDragData != null)
+              {
+                onDrop(receivedDragData);
+              }
+            }
+            currentEvent.Use();
+            break;
+
+          case EventType.DragExited:
+            if (isDraggable)
+            {
+              isDragging = false;
+              DragAndDrop.PrepareStartDrag();
+            }
+            break;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Handles keyboard events
+    /// </summary>
+    private bool OnKey()
+    {
+      if (hasKeys && currentEvent.isKey && currentEvent.type == EventType.KeyDown)
+      {
+        if (keyMap.ContainsKey(currentEvent.keyCode))
+        {
+          keyMap[currentEvent.keyCode].Invoke();
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public void AddKey(KeyCode key, System.Action onKey)
+    {
+      if (keyMap == null)
+        keyMap = new Dictionary<KeyCode, System.Action>();
+      keyMap.Add(key, onKey);
     }
 
     /// <summary>

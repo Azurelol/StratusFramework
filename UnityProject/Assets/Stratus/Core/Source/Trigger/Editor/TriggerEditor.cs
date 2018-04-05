@@ -9,34 +9,55 @@ using System;
 namespace Stratus
 {
   [CustomEditor(typeof(Trigger), true), CanEditMultipleObjects]
-  public class TriggerEditor : BaseEditor<Trigger>
+  public class TriggerEditor : TriggerBaseEditor<Trigger>
   {
-  }
-  
-  [CustomEditor(typeof(Triggerable), true), CanEditMultipleObjects]
-  public class TriggerableEditor : BaseEditor<Triggerable>
-  {
-  }
-
-  [CustomEditor(typeof(SceneEvent))]
-  public class SceneEventEditor : TriggerableEditor
-  {
-    SceneEvent sceneEvent => target as SceneEvent;
-
-    protected override void DrawDeclaredProperties()
+    internal override void OnTriggerBaseEditorEnable()
     {
-      DrawSerializedProperty(declaredProperties.Item2[0], serializedObject);
-      if (sceneEvent.type == SceneEvent.Type.Load || sceneEvent.type == SceneEvent.Type.Unload)
-      {
-        DrawSerializedProperty(declaredProperties.Item2[1], serializedObject);
-      }
-      if (sceneEvent.type == SceneEvent.Type.Load)
-      {
-        DrawSerializedProperty(declaredProperties.Item2[2], serializedObject);
-      }
-
     }
-
   }
+
+  [CustomEditor(typeof(Triggerable), true), CanEditMultipleObjects]
+  public class TriggerableEditor : TriggerBaseEditor<Triggerable>
+  {
+    internal override void OnTriggerBaseEditorEnable()
+    {
+    }
+  }
+
+  [CustomEditor(typeof(Trigger), true), CanEditMultipleObjects]
+  public abstract class TriggerEditor<T> : TriggerEditor where T : Trigger
+  {
+    /// <summary>
+    /// The target cast as the declared trigger type
+    /// </summary>
+    protected T trigger { get; private set; }
+
+    protected abstract void OnTriggerEditorEnable();
+
+    internal override void OnTriggerBaseEditorEnable()
+    {
+      trigger = base.target as T;
+      OnTriggerEditorEnable();
+    }
+  }
+
+  [CustomEditor(typeof(Triggerable), true), CanEditMultipleObjects]
+  public abstract class TriggerableEditor<T> : TriggerableEditor where T : Triggerable
+  {
+    /// <summary>
+    /// The target cast as the declared triggerable type
+    /// </summary>
+    protected T triggerable { get; private set; }
+
+    protected abstract void OnTriggerableEditorEnable();
+
+    internal override void OnTriggerBaseEditorEnable()
+    {
+      triggerable = base.target as T;
+      OnTriggerableEditorEnable();
+    }
+  }
+
+
 
 }
