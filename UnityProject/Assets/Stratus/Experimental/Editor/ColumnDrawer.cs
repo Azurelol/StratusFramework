@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Stratus
 {
-  namespace Editors
+  namespace Editor
   {
     /// <summary>
     /// An utility class that can draw multiple columns inside a given rect.

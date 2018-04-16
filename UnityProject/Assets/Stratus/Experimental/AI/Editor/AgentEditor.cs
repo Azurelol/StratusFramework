@@ -6,7 +6,7 @@ namespace Stratus
   namespace AI
   {
     [CustomEditor(typeof(Agent))]
-    public class AgentEditor : Editor
+    public class AgentEditor : UnityEditor.Editor
     {
       //Agent Agent;
       //

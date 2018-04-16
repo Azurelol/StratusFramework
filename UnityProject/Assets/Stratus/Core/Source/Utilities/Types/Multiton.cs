@@ -18,15 +18,20 @@ namespace Stratus
     /// <summary>
     /// All currently active segments, indexed by their labels
     /// </summary>
-    public static Dictionary<string, Multiton<T>> available { get; private set; } = new Dictionary<string, Multiton<T>>();
+    public static Dictionary<string, T> available { get; private set; } = new Dictionary<string, T>();
+    /// <summary>
+    /// Returns the first episode listed
+    /// </summary>
+    public static T first => availableList.FirstOrNull() as T;
     /// <summary>
     /// All currently active episodes, unordered
     /// </summary>
-    public static List<Multiton<T>> availableList = new List<Multiton<T>>();
+    public static List<T> availableList { get; private set; } = new List<T>();
     /// <summary>
     /// Whether there are available segments
     /// </summary>
     public static bool hasAvailable => availableList.Count > 0;
+
     /// <summary>
     /// Returns the underlying class for this multiton
     /// </summary>
@@ -54,9 +59,9 @@ namespace Stratus
     {
       if (Application.isPlaying && !string.IsNullOrEmpty(label))
       {
-        available.Add(label, this);
+        available.Add(label, this as T);
       }
-      availableList.Add(this);
+      availableList.Add(this as T);
 
       OnMultitonDisable();
     }
@@ -68,7 +73,7 @@ namespace Stratus
         available.Remove(label);
       }
 
-      availableList.Remove(this);
+      availableList.Remove(this as T);
 
       OnMultitonEnable();
     }

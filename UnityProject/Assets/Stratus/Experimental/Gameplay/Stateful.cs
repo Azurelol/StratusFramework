@@ -7,7 +7,7 @@ using Stratus.Dependencies.Ludiq.Reflection;
 namespace Stratus
 {
   /// <summary>
-  /// Mantains state information of this object at runtime, loading them at will
+  /// Mantains state information of this object at runtime, saving and loading them at will
   /// </summary>
   public class Stateful : StratusBehaviour
   {
@@ -40,45 +40,23 @@ namespace Stratus
     public enum EventType
     {
       Save,
-      Load
-    }
+      Load,
+      LoadInitial,
+      LoadLast
+    }    
 
-    public enum LoadEventType
+    public class StateEvent : Stratus.Event
     {
-      Specific,
-      Initial,
-      Last
-    }
-
-    public abstract class StateEvent : Stratus.Event
-    {
-      public string label { get; private set; }
-
-      protected StateEvent(string label)
+      public StateEvent(EventType type, string label)
       {
+        this.type = type;
         this.label = label;
       }
-    }
 
-    /// <summary>
-    /// Saves the state with the given label. If one is present, it will overwrite it
-    /// </summary>
-    public class SaveEvent : StateEvent
-    {
-      public SaveEvent(string label) : base(label)
-      {
-      }
-    }
+      public EventType type { get; private set; }
+      public string label { get; private set; }
 
-    public class LoadEvent : StateEvent
-    {
-      public LoadEvent(string label, LoadEventType type) : base(label)
-      {
-        this.loadEvent = type;
-      }
-
-      public LoadEventType loadEvent { get; private set; }
-
+      public bool usesLabel => type == Stateful.EventType.Save || type == Stateful.EventType.Load;
     }
 
     //------------------------------------------------------------------------/
@@ -122,15 +100,12 @@ namespace Stratus
     //------------------------------------------------------------------------/
     private void Awake()
     {
+      // Optionally, subscribe to scene-wide events
       if (scope == Event.Scope.Scene)
-      {
-        Scene.Connect<SaveEvent>(this.OnSaveEvent);
-        Scene.Connect<LoadEvent>(this.OnLoadEvent);
-      }
+        Scene.Connect<StateEvent>(this.OnStateEvent);      
 
       // Always subscribe to specific requests
-      gameObject.Connect<SaveEvent>(this.OnSaveEvent);
-      gameObject.Connect<LoadEvent>(this.OnLoadEvent);
+      gameObject.Connect<StateEvent>(this.OnStateEvent);
 
       AddCommonRecorders();
     }
@@ -151,26 +126,27 @@ namespace Stratus
       }
     }
 
-    void OnSaveEvent(SaveEvent e)
+    void OnStateEvent(StateEvent e)
     {
-      SaveState(e.label);
-    }
-
-    void OnLoadEvent(LoadEvent e)
-    {
-      switch (e.loadEvent)
+      switch (e.type)
       {
-        case LoadEventType.Specific:
+        case EventType.Save:
+          SaveState(e.label);
+          break;
+        case EventType.Load:
           LoadState(e.label);
           break;
-        case LoadEventType.Initial:
+        case EventType.LoadInitial:
           LoadInitialState();
           break;
-        case LoadEventType.Last:
+        case EventType.LoadLast:
           LoadLastState();
+          break;
+        default:
           break;
       }
     }
+    
 
     //------------------------------------------------------------------------/
     // Methods: Public
@@ -249,7 +225,7 @@ namespace Stratus
       }
 
       if (debug)
-        Trace.Script($"Loaded the state {state.label} with {memberCount} members!");
+        Trace.Script($"Loaded the state {state.label} with {memberCount} members!", this);
 
     }
 
@@ -274,7 +250,7 @@ namespace Stratus
       numberOfStates++;
 
       if (debug)
-        Trace.Script($"Recorded the state {state.label} with {memberCount} members!");
+        Trace.Script($"Recorded the state {state.label} with {memberCount} members!", this);
 
       lastState = state;
 

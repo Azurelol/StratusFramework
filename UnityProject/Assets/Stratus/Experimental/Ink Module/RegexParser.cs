@@ -196,7 +196,7 @@ namespace Stratus
             for (int i = 1; i < m.Groups.Count; ++i)
             {
               Group group = m.Groups[i];
-              groups.Add(names[i], group.Value);
+              groups.Add(names[i], group.Value.Trim());
             }
             return true;
           }
@@ -216,7 +216,7 @@ namespace Stratus
           Match m = r.Match(text);
           if (m.Success)
           {
-            value = m.Value;
+            value = m.Value.Trim();
             return true;
           }
           return false;

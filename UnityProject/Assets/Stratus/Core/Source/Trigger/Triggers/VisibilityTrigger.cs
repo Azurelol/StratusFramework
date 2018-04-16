@@ -15,6 +15,18 @@ namespace Stratus
     [Tooltip("The object's distance from the camera")]
     public float distance = 10f;
 
+    public override string automaticDescription
+    {
+      get
+      {
+        if (visibilityTarget)
+          return $"On {visibilityTarget.name} visible for {duration} at {distance} units";
+        return string.Empty;
+      }
+    }
+
+
+
     protected override void OnAwake()
     {
       VisibilityProxy.Construct(visibilityTarget, OnVisible, duration, distance, false);

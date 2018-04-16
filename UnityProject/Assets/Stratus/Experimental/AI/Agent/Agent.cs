@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Stratus.Utilities;
 using UnityEngine.AI;
 using Stratus.Types;
+using Stratus.Interfaces;
 
 namespace Stratus
 {
@@ -22,7 +23,7 @@ namespace Stratus
     /// which observes through sensors and acts upon an environment using actuators 
     /// and directs its activity towards achieving goals.
     /// </summary>
-    public abstract partial class Agent : StratusBehaviour
+    public abstract partial class Agent : StratusBehaviour, Interfaces.Debuggable
     {
       public enum State
       {
@@ -31,6 +32,12 @@ namespace Stratus
         Engaged,
         Acting,
         Inactive
+      }
+
+      public enum Event
+      {
+        Move,
+        Death
       }
 
       //------------------------------------------------------------------------/
@@ -44,7 +51,7 @@ namespace Stratus
       /// <summary>
       /// Whether we are debugging the agent
       /// </summary>
-      public bool logging = false;
+      public bool debug = false;
 
       //------------------------------------------------------------------------/
       // Properties: Public 
@@ -122,6 +129,8 @@ namespace Stratus
       protected virtual void OnMovementStarted() {}
       protected virtual void OnMovementEnded() {}
 
+      protected virtual void OnPause() { }
+      protected virtual void OnResume() { }
 
       //------------------------------------------------------------------------/
       // Messages
@@ -136,7 +145,9 @@ namespace Stratus
         // Subscribe to events
         this.Subscribe();
 
+        // Inform the agent is up
         OnAgentAwake();
+        Scene.Dispatch<SpawnEvent>(new SpawnEvent() { agent = this });
       }
 
       private void OnDestroy()
@@ -149,7 +160,7 @@ namespace Stratus
       /// </summary>
       void Start()
       {
-        if (this.logging) this.AddLineRenderer();        
+        if (this.debug) this.AddLineRenderer();        
         this.OnStart();
         currentState = State.Idle;
       }
@@ -198,6 +209,11 @@ namespace Stratus
         }
       }
 
+      void Debuggable.Toggle(bool toggle)
+      {
+        debug = toggle;
+      }
+
       //------------------------------------------------------------------------/
       // Events
       //------------------------------------------------------------------------/
@@ -209,7 +225,7 @@ namespace Stratus
         this.gameObject.Connect<Sensor.InteractEvent>(this.OnInteractEvent);
         this.gameObject.Connect<Sensor.DetectionResultEvent>(this.OnInteractScanResultEvent);
         this.gameObject.Connect<DeathEvent>(this.OnDeathEvent);
-        this.gameObject.Connect<MoveToEvent>(this.OnMoveToEvent);
+        this.gameObject.Connect<MoveEvent>(this.OnMoveToEvent);
         this.gameObject.Connect<EngageTargetEvent>(this.OnEngageTargetEvent);
         this.gameObject.Connect<EngagedEvent>(this.OnEngagedEvent);
         this.gameObject.Connect<DisengagedEvent>(this.OnDisengagedEvent);
@@ -226,15 +242,19 @@ namespace Stratus
       void OnDeathEvent(DeathEvent e)
       {
         targetable = false;
-        if (this.logging) Trace.Script("This agent has been killed.", this);
+        if (this.debug) Trace.Script("This agent has been killed.", this);
         this.Stop();
         this.OnDeath();
+
+        // Inform the scene
+        e.agent = this;
+        Scene.Dispatch<DeathEvent>(e);
       }
       void OnInteractEvent(Sensor.InteractEvent e)
       {
         if (this.sensor.closestInteractable)
         {
-          if (this.logging) Trace.Script("Interacting!", this);
+          if (this.debug) Trace.Script("Interacting!", this);
           var interactEvent = new Sensor.InteractEvent();
           interactEvent.sensor = this.sensor;
           this.sensor.closestInteractable.gameObject.Dispatch<Sensor.InteractEvent>(interactEvent);
@@ -246,9 +266,13 @@ namespace Stratus
         this.OnInteractScan(e.hasFoundInteractions);
       }
 
-      void OnMoveToEvent(MoveToEvent e)
+      void OnMoveToEvent(MoveEvent e)
       {
-        MoveTo(e.Point);
+        MoveTo(e.position);
+
+        // Inform the scene
+        e.agent = this;
+        Scene.Dispatch<MoveEvent>(e);
       }
 
       void OnEngageTargetEvent(EngageTargetEvent e)
@@ -266,7 +290,7 @@ namespace Stratus
       void OnEngagedEvent(EngagedEvent e)
       {
         //Trace.Script(e.Agent + " is engaged to me!", this);
-        currentEngagements.Add(e.Agent);
+        currentEngagements.Add(e.agent);
         // This agent has just entered combat
         if (currentEngagements.Count == 1)
           this.OnCombatEnter();
@@ -275,13 +299,13 @@ namespace Stratus
       void OnDisengagedEvent(DisengagedEvent e)
       {
         //Trace.Script(e.Agent + " has disengaged from me!", this);
-        OnDisengaged(e.Agent);
+        OnDisengaged(e.agent);
 
         // This agent is no longer in combat
         if (currentEngagements.Count == 0)
           this.OnCombatExit();
 
-        currentEngagements.Remove(e.Agent);
+        currentEngagements.Remove(e.agent);
       }
 
       void OnDisableEvent(DisableEvent e)
@@ -322,7 +346,7 @@ namespace Stratus
         {
           navigation.SetDestination(transform.localPosition);
 
-          if (this.logging)
+          if (this.debug)
             Trace.Script("Can not move to that position!", this);
         }
       }
@@ -337,7 +361,7 @@ namespace Stratus
       /// <param name="angle"></param>
       public void ApproachTarget(Transform target, float stoppingDistance, float angle = 0f, float speed = 5f, float acceleration = 8f)
       {
-        if (logging)
+        if (debug)
           Trace.Script("Will now approach " + target.name, this);
 
         // Previously enabled was below steering routine?
@@ -358,7 +382,7 @@ namespace Stratus
       /// <param name="target"></param>
       public void Engage(Agent target)
       {
-        if (logging)
+        if (debug)
           Trace.Script("Now engaging " + target.name, this);
 
         if (this.target)
@@ -377,13 +401,15 @@ namespace Stratus
       /// </summary>
       public void Disengage()
       {
-        if (logging)
+        if (debug)
           Trace.Script("Disengaging!", this);
 
         // Inform that we have disengaged from the target
         if (this.target)
+        {
           SignalEngagement<DisengagedEvent>(this.target);
-        this.target = null;
+          this.target = null;
+        }
 
         if (this.navigation.isOnNavMesh)
         {
@@ -400,7 +426,7 @@ namespace Stratus
       /// </summary>
       public void Stop()
       {
-        if (this.logging)
+        if (this.debug)
           Trace.Script("The agent has been stopped.", this);
 
         this.Disengage();
@@ -413,24 +439,28 @@ namespace Stratus
       /// </summary>
       public void Pause()
       {
-        if (logging)
+        if (debug)
           Trace.Script("Paused", this);
         this.active = false;
-        this.navigation.isStopped = true;
-        this.navigation.enabled = false;
-      }
 
+        if (this.navigation.isOnNavMesh)
+          this.navigation.isStopped = true;
+        this.navigation.enabled = false;
+        OnPause();
+      }
 
       /// <summary>
       /// Resumes the AI routines and navigation for this agent
       /// </summary>
       public void Resume()
       {
-        if (logging)
+        if (debug)
           Trace.Script("Resumed", this);
         this.active = true;
         this.navigation.enabled = true;
-        this.navigation.isStopped = false;
+        if (this.navigation.isOnNavMesh)
+          this.navigation.isStopped = false;
+        OnResume();
       }
 
       /// <summary>
@@ -453,18 +483,12 @@ namespace Stratus
       public void SignalEngagement<T>(Agent target) where T : EngagementEvent, new()
       {
         var e = new T();
-        e.Agent = this;
+        e.agent = this;
         target.gameObject.Dispatch<T>(e);
         Scene.Dispatch<T>(e);
       }
 
-      /// <summary>
-      /// Signals that this agent has died
-      /// </summary>
-      protected void SignalDeath()
-      {
-        this.gameObject.Dispatch<DeathEvent>(new DeathEvent(this));
-      }
+
     }
   } 
 }

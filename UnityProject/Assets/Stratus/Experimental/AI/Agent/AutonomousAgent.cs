@@ -100,7 +100,7 @@ namespace Stratus
         if (this == null)
           return;
 
-        if (logging)
+        if (debug)
           Trace.Script("Assessing the next action in " + this.AssessmentTime + " seconds", this);
 
         CancelPreviousAssessment();
@@ -115,7 +115,7 @@ namespace Stratus
       /// <param name="duration"></param>
       public void Interrupt(float duration)
       {
-        if (logging)
+        if (debug)
           Trace.Script("Interrupting this agent for " + duration + " seconds!", this);
         
         interruptSequence = Actions.Sequence(this);
@@ -123,7 +123,7 @@ namespace Stratus
         Actions.Call(interruptSequence, Pause);
         Actions.Call(interruptSequence, OnAssessmentCancelled);
 
-        if (logging)
+        if (debug)
           Actions.Trace(interruptSequence, "Previous assessment cancelled");
 
         Actions.Delay(interruptSequence, duration);

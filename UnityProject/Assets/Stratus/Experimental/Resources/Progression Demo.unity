@@ -303,7 +303,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 211202900}
   m_LocalRotation: {x: 0.7005946, y: -0.021326952, z: 0.020957861, w: 0.7129328}
-  m_LocalPosition: {x: 0.40995598, y: 14.997717, z: -0.23776245}
+  m_LocalPosition: {x: 0.37052536, y: 14.997717, z: -0.24012375}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1268647867}
@@ -405,7 +405,7 @@ Transform:
   m_LocalScale: {x: 20, y: 1, z: 20}
   m_Children: []
   m_Father: {fileID: 884915730}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &304418128
 MeshRenderer:
@@ -421,7 +421,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 76ff537c8e1a84345868e6aeee938ab3, type: 2}
+  - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -613,7 +613,7 @@ MeshRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 76ff537c8e1a84345868e6aeee938ab3, type: 2}
+  - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -671,7 +671,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 884915730}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &412320377
 MeshRenderer:
@@ -737,10 +737,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f250aebd89befa419c257fcf727d219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 1
+  debug: 0
   scope: 1
   recordTransformState: 1
-  memberFields: []
+  memberFields:
+  - _parameterTypes: []
+    _target: {fileID: 412320375}
+    _component: 
+    _name: 
 --- !u!1 &493095599
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,7 +834,8 @@ MonoBehaviour:
   - {fileID: 1573352678}
   - {fileID: 1083991433}
   initialSegment: {fileID: 884915731}
-  enterOnAwake: 1
+  segmentManagement: 0
+  beginOnAwake: 1
   mode: 0
   mechanism: 0
   targetTransform: {fileID: 183453833}
@@ -850,8 +855,9 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: Stratus.Episode+SegmentCallback, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  debug: 1
+  debugDisplay: 0
   debugTextColor: {r: 0.61327714, g: 0.15462801, b: 0.9558824, a: 1}
+  debugNavigation: 1
   windowAnchor: 8
   nextSegmentInput:
     type: 0
@@ -879,90 +885,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &705737237
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 705737240}
-  - component: {fileID: 705737239}
-  - component: {fileID: 705737238}
-  - component: {fileID: 705737242}
-  m_Layer: 0
-  m_Name: Interactive Object
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
---- !u!23 &705737238
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 705737237}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_Materials:
-  - {fileID: 2100000, guid: c7911d981f6f8b048826e29aa176b919, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 1
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!33 &705737239
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 705737237}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &705737240
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 705737237}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -26.09, y: 0.33999968, z: -30.08}
-  m_LocalScale: {x: 2, y: 2, z: 2}
-  m_Children: []
-  m_Father: {fileID: 884915730}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &705737242
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 705737237}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.5, y: 1, z: 1.5}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &752458269
 GameObject:
   m_ObjectHideFlags: 0
@@ -1009,7 +931,7 @@ MeshRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 76ff537c8e1a84345868e6aeee938ab3, type: 2}
+  - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1209,13 +1131,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81709824192a6674384ad5603d0faae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  log: 0
+  debug: 1
   label: Segment 2
   triggerSystem: {fileID: 869686143}
-  toggleTriggers: 1
+  controlTriggers: 1
+  toggleObjects: 1
   restart: 0
   checkpoints:
   - {fileID: 869686144}
+  toggledObjects: []
   onEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -1226,6 +1150,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  episode_: {fileID: 699835963}
 --- !u!114 &869686142
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1237,7 +1162,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d186701bab5eef24f9850777fda6d2bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  descriptionMode: 0
   description: 
+  debug: 0
   targets:
   - {fileID: 0}
   - {fileID: 869686145}
@@ -1247,7 +1174,7 @@ MonoBehaviour:
   persistent: 1
   type: 0
   source: {fileID: 1736814901}
-  collisionTarget:
+  filter:
     type: 1
     gameObject: {fileID: 0}
     tag:
@@ -1266,11 +1193,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc3703225aea54a4294831f4f8274419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDescriptions: 0
+  connectionDisplay: 0
+  outlines: 0
   triggers:
   - {fileID: 869686142}
   triggerables:
   - {fileID: 869686145}
-  showDescriptions: 0
   descriptionsWithLabel: 0
 --- !u!114 &869686144
 MonoBehaviour:
@@ -1294,8 +1223,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01740b91af33f2546acd1d23ff235695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  descriptionMode: 0
   description: 
-  logging: 0
+  debug: 0
   delay: 0
   episode: {fileID: 699835963}
   segment: {fileID: 1573352678}
@@ -1311,7 +1241,6 @@ GameObject:
   m_Component:
   - component: {fileID: 884915730}
   - component: {fileID: 884915731}
-  - component: {fileID: 884915726}
   - component: {fileID: 884915733}
   - component: {fileID: 884915732}
   - component: {fileID: 884915734}
@@ -1322,6 +1251,7 @@ GameObject:
   - component: {fileID: 884915727}
   - component: {fileID: 884915736}
   - component: {fileID: 884915729}
+  - component: {fileID: 884915738}
   m_Layer: 0
   m_Name: Segment 1
   m_TagString: Untagged
@@ -1335,35 +1265,15 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 884915724}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd291f59ce2a5bd4c9d85aefee11bd48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: Beep
-  logging: 0
+  descriptionMode: 1
+  description: Boop!
+  debug: 1
   delay: 0
---- !u!114 &884915726
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 884915724}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d8d657e8aa3b634ea374540446606a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  description: On 1 second elapsed
-  targets:
-  - {fileID: 0}
-  - {fileID: 884915725}
-  instruction: 0
-  scope: 0
-  recursive: 0
-  persistent: 1
-  duration: 1
-  resetOnDisabled: 1
 --- !u!114 &884915727
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1375,8 +1285,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01740b91af33f2546acd1d23ff235695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: Enter Segment 2
-  logging: 0
+  descriptionMode: 0
+  description: Enter Sample Episode.Segment 2.Segment 2
+  debug: 0
   delay: 0
   episode: {fileID: 699835963}
   segment: {fileID: 869686140}
@@ -1394,7 +1305,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d186701bab5eef24f9850777fda6d2bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: 
+  descriptionMode: 0
+  description: On TriggerEnter for Cube C against Layer 'Default'
+  debug: 0
   targets:
   - {fileID: 884915727}
   instruction: 0
@@ -1403,7 +1316,7 @@ MonoBehaviour:
   persistent: 1
   type: 0
   source: {fileID: 1841091262}
-  collisionTarget:
+  filter:
     type: 1
     gameObject: {fileID: 0}
     tag:
@@ -1422,14 +1335,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a486dea1dc782f48a391e1d894806d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: Reset Cube A
-  logging: 0
+  descriptionMode: 0
+  description: Load state 'Boop' on Cube A
+  debug: 0
   delay: 0
   eventScope: 0
   target: {fileID: 412320380}
   eventType: 1
-  load: 2
-  state: 
+  state: Boop
 --- !u!4 &884915730
 Transform:
   m_ObjectHideFlags: 0
@@ -1442,11 +1355,11 @@ Transform:
   m_Children:
   - {fileID: 1106507862}
   - {fileID: 1033639943}
-  - {fileID: 705737240}
   - {fileID: 412320376}
   - {fileID: 1497958158}
   - {fileID: 1841091260}
   - {fileID: 304418127}
+  - {fileID: 1549044533}
   m_Father: {fileID: 699835964}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1461,14 +1374,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81709824192a6674384ad5603d0faae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  log: 0
+  debug: 1
   label: Segment 1
   triggerSystem: {fileID: 884915737}
-  toggleTriggers: 1
+  controlTriggers: 1
+  toggleObjects: 1
   restart: 1
   checkpoints:
   - {fileID: 1106507859}
   - {fileID: 1033639944}
+  toggledObjects: []
   onEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -1479,6 +1394,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  episode_: {fileID: 699835963}
 --- !u!114 &884915732
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1490,12 +1406,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b28a15d7c9d22543a8a8ea7d4203400, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: Translate
-  logging: 0
+  descriptionMode: 0
+  description: Translate Cube A over 3s
+  debug: 0
   delay: 0
   target: {fileID: 412320376}
   eventType: 0
-  duration: 2
+  duration: 3
   ease: 3
   valueType: 1
   value: {x: 0, y: 0, z: 0}
@@ -1515,7 +1432,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d186701bab5eef24f9850777fda6d2bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: On Cube A touched
+  descriptionMode: 0
+  description: On TriggerEnter for Cube A against Layer 'Default'
+  debug: 0
   targets:
   - {fileID: 884915734}
   - {fileID: 0}
@@ -1527,7 +1446,7 @@ MonoBehaviour:
   persistent: 0
   type: 0
   source: {fileID: 412320378}
-  collisionTarget:
+  filter:
     type: 1
     gameObject: {fileID: 412320375}
     tag:
@@ -1546,12 +1465,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b28a15d7c9d22543a8a8ea7d4203400, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: Scale
-  logging: 0
+  descriptionMode: 0
+  description: Scale Cube A over 1.5 seconds
+  debug: 0
   delay: 0
   target: {fileID: 412320376}
   eventType: 3
-  duration: 2
+  duration: 1.5
   ease: 3
   valueType: 1
   value: {x: 0, y: 0, z: 0}
@@ -1571,8 +1491,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b28a15d7c9d22543a8a8ea7d4203400, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: Rotate
-  logging: 0
+  descriptionMode: 0
+  description: Rotate Cube A over 2 seconds
+  debug: 0
   delay: 0
   target: {fileID: 412320376}
   eventType: 1
@@ -1596,7 +1517,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c6954f302ed3894e8474007a6452f64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: On pressed P
+  descriptionMode: 0
+  description: On Key N Up
+  debug: 1
   targets:
   - {fileID: 884915729}
   instruction: 0
@@ -1605,7 +1528,7 @@ MonoBehaviour:
   persistent: 1
   input:
     type: 0
-    key: 112
+    key: 110
     mouseButton: 0
   action: 1
 --- !u!114 &884915737
@@ -1619,11 +1542,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc3703225aea54a4294831f4f8274419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDescriptions: 1
+  connectionDisplay: 0
+  outlines: 0
   triggers:
-  - {fileID: 884915726}
-  - {fileID: 884915733}
+  - {fileID: 884915738}
   - {fileID: 884915728}
   - {fileID: 884915736}
+  - {fileID: 884915733}
   triggerables:
   - {fileID: 884915725}
   - {fileID: 884915732}
@@ -1631,8 +1557,37 @@ MonoBehaviour:
   - {fileID: 884915735}
   - {fileID: 884915727}
   - {fileID: 884915729}
-  showDescriptions: 1
   descriptionsWithLabel: 0
+--- !u!114 &884915738
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 884915724}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d186701bab5eef24f9850777fda6d2bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  descriptionMode: 0
+  description: On TriggerEnter for Cube D against Layer 'Default'
+  debug: 1
+  targets:
+  - {fileID: 884915725}
+  instruction: 0
+  scope: 0
+  recursive: 0
+  persistent: 1
+  type: 0
+  source: {fileID: 1549044535}
+  filter:
+    type: 1
+    gameObject: {fileID: 0}
+    tag:
+      tag: Untagged
+    layer:
+      layer: 0
+    name: 
 --- !u!1 &978192468
 GameObject:
   m_ObjectHideFlags: 0
@@ -1768,8 +1723,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd291f59ce2a5bd4c9d85aefee11bd48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  descriptionMode: 0
   description: Entered segment 4!
-  logging: 0
+  debug: 0
   delay: 0
 --- !u!114 &1083991430
 MonoBehaviour:
@@ -1793,10 +1749,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc3703225aea54a4294831f4f8274419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDescriptions: 0
+  connectionDisplay: 0
+  outlines: 0
   triggers: []
   triggerables:
   - {fileID: 1083991429}
-  showDescriptions: 0
   descriptionsWithLabel: 0
 --- !u!114 &1083991433
 MonoBehaviour:
@@ -1809,13 +1767,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81709824192a6674384ad5603d0faae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  log: 0
+  debug: 1
   label: Segment 4
   triggerSystem: {fileID: 1083991432}
-  toggleTriggers: 1
+  controlTriggers: 1
+  toggleObjects: 1
   restart: 0
   checkpoints:
   - {fileID: 1083991430}
+  toggledObjects: []
   onEntered:
     m_PersistentCalls:
       m_Calls:
@@ -1837,6 +1797,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  episode_: {fileID: 699835963}
 --- !u!1 &1106507858
 GameObject:
   m_ObjectHideFlags: 0
@@ -2101,7 +2062,7 @@ MeshRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 76ff537c8e1a84345868e6aeee938ab3, type: 2}
+  - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2242,7 +2203,7 @@ Transform:
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 884915730}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: -45.557003, z: 0}
 --- !u!23 &1497958159
 MeshRenderer:
@@ -2296,6 +2257,90 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1497958157}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1549044532
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1549044533}
+  - component: {fileID: 1549044536}
+  - component: {fileID: 1549044535}
+  - component: {fileID: 1549044534}
+  m_Layer: 0
+  m_Name: Cube D
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1549044533
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1549044532}
+  m_LocalRotation: {x: -0, y: -0.38717318, z: -0, w: 0.922007}
+  m_LocalPosition: {x: 6.78, y: 1, z: -6.82}
+  m_LocalScale: {x: 1.1838323, y: 1.0670881, z: 2}
+  m_Children: []
+  m_Father: {fileID: 884915730}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: -45.557003, z: 0}
+--- !u!23 &1549044534
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1549044532}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!65 &1549044535
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1549044532}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1549044536
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1549044532}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1573352672
 GameObject:
@@ -2355,8 +2400,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01740b91af33f2546acd1d23ff235695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  descriptionMode: 0
   description: 
-  logging: 0
+  debug: 0
   delay: 0
   episode: {fileID: 699835963}
   segment: {fileID: 1083991433}
@@ -2374,7 +2420,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d186701bab5eef24f9850777fda6d2bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  descriptionMode: 0
   description: 
+  debug: 0
   targets:
   - {fileID: 0}
   - {fileID: 1573352675}
@@ -2384,7 +2432,7 @@ MonoBehaviour:
   persistent: 1
   type: 0
   source: {fileID: 1484496846}
-  collisionTarget:
+  filter:
     type: 1
     gameObject: {fileID: 0}
     tag:
@@ -2403,11 +2451,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc3703225aea54a4294831f4f8274419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDescriptions: 0
+  connectionDisplay: 0
+  outlines: 0
   triggers:
   - {fileID: 1573352676}
   triggerables:
   - {fileID: 1573352675}
-  showDescriptions: 0
   descriptionsWithLabel: 0
 --- !u!114 &1573352678
 MonoBehaviour:
@@ -2420,13 +2470,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81709824192a6674384ad5603d0faae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  log: 0
+  debug: 1
   label: Segment 3
   triggerSystem: {fileID: 1573352677}
-  toggleTriggers: 1
+  controlTriggers: 1
+  toggleObjects: 1
   restart: 0
   checkpoints:
   - {fileID: 1573352674}
+  toggledObjects: []
   onEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -2437,6 +2489,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  episode_: {fileID: 699835963}
 --- !u!1 &1736814898
 GameObject:
   m_ObjectHideFlags: 0
@@ -2550,7 +2603,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 884915730}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1841091261
 MeshRenderer:

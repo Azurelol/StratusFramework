@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Stratus
 {
-  namespace Editors
+  namespace Editor
   {
     /// <summary>
     /// A generic node-based editor
@@ -15,29 +15,8 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Classes
       //------------------------------------------------------------------------/
-      public class Grid
-      {
-        public class Settings
-        {
-          public float Spacing;
-          public float Opacity;
-          public Color Color;
-
-          public Settings(float spacing, float opacity, Color color)
-          {
-            this.Spacing = spacing;
-            this.Opacity = opacity;
-            this.Color = color;
-          }
-        }
-
-      }
-
       public class Settings
       {
-        public Grid.Settings OuterGrid { get; set; }
-        public Grid.Settings InnerGrid { get; set; }
-        public Color Background { get; set; }
         
       }
 
@@ -57,11 +36,6 @@ namespace Stratus
         }
       }
 
-      /// <summary>
-      /// The current zoom level of this editor (10%,100%)
-      /// </summary>
-      public float Zoom { get { return CurrentZoomLevel / 100f; } }
-
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/
@@ -74,6 +48,7 @@ namespace Stratus
       /// The style settings for this editor
       /// </summary>
       private Settings settings { get; set; }
+      public GridDrawer gridDrawer { get; private set; }
       protected ConnectionPoint SelectedInPoint { private set; get; }
       protected ConnectionPoint SelectedOutPoint { private set; get; }
       protected bool IsDragging { private set; get; }
@@ -88,7 +63,7 @@ namespace Stratus
       //------------------------------------------------------------------------/        
       // Drag nodes
       private Vector2 Drag;
-      private Vector2 GridOffset;
+      //private Vector2 GridOffset;
 
       // Select multiple nodes
       private List<DerivedNode> SelectedNodes = new List<DerivedNode>();
@@ -97,8 +72,8 @@ namespace Stratus
 
       private Vector2 NodeSize = new Vector2(250, 100);
 
-      private int CurrentZoomLevel { get; set; }
-      private const int MaximumZoomLevel = 100, MinimumZoomLevel = 10;
+      //private int CurrentZoomLevel { get; set; }
+      //private const int MaximumZoomLevel = 100, MinimumZoomLevel = 10;
 
       private GUIStyle DefaultNodeStyle;
       private GUIStyle SelectedNodeStyle = new GUIStyle();
@@ -124,7 +99,7 @@ namespace Stratus
         this.Window = window;
         this.settings = settings;
         this.LoadStyles();
-        this.CurrentZoomLevel = MaximumZoomLevel;
+        //this.CurrentZoomLevel = MaximumZoomLevel;
       }
 
       //------------------------------------------------------------------------/
@@ -143,9 +118,12 @@ namespace Stratus
         //ViewportCenter = new Vector2(0f, 0f);
 
         //GUILayout.BeginArea(position);
-        StratusGUIStyles.DrawBackgroundColor(position, settings.Background);
-        DrawGrid(position, settings.InnerGrid.Spacing, settings.InnerGrid.Opacity, settings.InnerGrid.Color);
-        DrawGrid(position, settings.OuterGrid.Spacing, settings.OuterGrid.Opacity, settings.OuterGrid.Color);
+        gridDrawer.Draw(position, Drag);
+        //StratusGUIStyles.DrawBackgroundColor(position, settings.Background);
+        //DrawGrid(position, settings.InnerGrid.spacing, settings.InnerGrid.opacity, settings.InnerGrid.color);
+        //DrawGrid(position, settings.OuterGrid.spacing, settings.OuterGrid.opacity, settings.OuterGrid.color);
+
+
         DrawNodes();
         DrawConnections();
         DrawMultiSelection();
@@ -163,7 +141,7 @@ namespace Stratus
           //Trace.Script("Repainting");
         }
 
-        GUILayout.Label("Viewport Center: " + ViewportCenter + " Zoom: " + CurrentZoomLevel + "%" + " Mouse: " + currentEvent.mousePosition);
+        GUILayout.Label("Viewport Center: " + ViewportCenter + " Zoom: " + gridDrawer.zoomLevel + "%" + " Mouse: " + currentEvent.mousePosition);
        //GUILayout.EndArea();
       }
 
@@ -171,7 +149,7 @@ namespace Stratus
       {
         foreach (var node in Nodes)
         {
-          node.Draw(Zoom);
+          node.Draw(gridDrawer.zoom);
         }
       }
 
@@ -214,27 +192,27 @@ namespace Stratus
 
       }
 
-      private void DrawGrid(Rect position, float spacing, float opacity, Color color)
-      {
-        spacing = spacing * ((float)CurrentZoomLevel / 100f);
-        int widthDivs = Mathf.CeilToInt(position.width / spacing);
-        int heightDivs = Mathf.CeilToInt(position.height / spacing);
-        
-        Handles.BeginGUI();
-        Handles.color = new Color(color.r, color.g, color.b, opacity);
-        {
-          GridOffset += Drag * 0.5f;
-          var newOffset = new Vector3(GridOffset.x % spacing, GridOffset.y % spacing, 0);
-          for (var w = 0; w < widthDivs; ++w)
-            Handles.DrawLine(new Vector3(spacing * w, -spacing, 0) + newOffset,
-                             new Vector3(spacing * w, position.height, 0f) + newOffset);
-          for (var h = 0; h < heightDivs; ++h)
-            Handles.DrawLine(new Vector3(-spacing, spacing * h, 0) + newOffset,
-                             new Vector3(position.width, spacing * h, 0f) + newOffset);
-        }
-        Handles.color = Color.white;
-        Handles.EndGUI();
-      }
+      //private void DrawGrid(Rect position, float spacing, float opacity, Color color)
+      //{
+      //  spacing = spacing * ((float)CurrentZoomLevel / 100f);
+      //  int widthDivs = Mathf.CeilToInt(position.width / spacing);
+      //  int heightDivs = Mathf.CeilToInt(position.height / spacing);
+      //  
+      //  Handles.BeginGUI();
+      //  Handles.color = new Color(color.r, color.g, color.b, opacity);
+      //  {
+      //    GridOffset += Drag * 0.5f;
+      //    var newOffset = new Vector3(GridOffset.x % spacing, GridOffset.y % spacing, 0);
+      //    for (var w = 0; w < widthDivs; ++w)
+      //      Handles.DrawLine(new Vector3(spacing * w, -spacing, 0) + newOffset,
+      //                       new Vector3(spacing * w, position.height, 0f) + newOffset);
+      //    for (var h = 0; h < heightDivs; ++h)
+      //      Handles.DrawLine(new Vector3(-spacing, spacing * h, 0) + newOffset,
+      //                       new Vector3(position.width, spacing * h, 0f) + newOffset);
+      //  }
+      //  Handles.color = Color.white;
+      //  Handles.EndGUI();
+      //}
 
       private void DrawMultiSelection()
       {
@@ -304,7 +282,7 @@ namespace Stratus
             break;
 
           case EventType.ScrollWheel:
-            OnZoom(e.delta);
+            gridDrawer.Zoom(e.delta);
             e.Use();
             break;
 
@@ -480,25 +458,6 @@ namespace Stratus
         }
       }
 
-      /// <summary>
-      /// Handles zoom levels for the editor. This affects how the nodes
-      /// and the grid is drawn
-      /// </summary>
-      /// <param name="mouseWheelDelta"></param>
-      void OnZoom(Vector2 mouseWheelDelta)
-      {
-        bool isZoomingIn = mouseWheelDelta.y < 0 ? true : false;
-
-        if (isZoomingIn && CurrentZoomLevel < MaximumZoomLevel)
-        {
-          CurrentZoomLevel += 10;
-        }
-        else if (!isZoomingIn && CurrentZoomLevel > MinimumZoomLevel)
-        {          
-          CurrentZoomLevel -= 10;
-        }
-        
-      }
 
       void AutoArrange()
       {

@@ -10,7 +10,7 @@ using Stratus;
 using System;
 using Stratus.Dependencies.Ludiq.Reflection;
 
-namespace Prototype
+namespace Stratus
 {
   /// <summary>
   /// Simple event that logs a message to the console when triggered.
@@ -38,7 +38,7 @@ namespace Prototype
 
     protected override void OnReset()
     {
-
+      descriptionMode = DescriptionMode.Manual;
     }
 
     protected override void OnTrigger()

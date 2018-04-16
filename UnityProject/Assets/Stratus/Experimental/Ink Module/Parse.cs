@@ -16,15 +16,9 @@ namespace Stratus
       /// </summary>
       public class Parse
       {
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        /// <param name="label"></param>
         public Parse(string label)
         {
           this.label = label;
-          //this.value = value;
-          //this.groups = groups;
         }
 
         /// <summary>
@@ -83,6 +77,25 @@ namespace Stratus
               return match[group];
           }
           throw new System.ArgumentOutOfRangeException($"The key '{group}' was not found among this parse's groups!");                   
+        }
+
+        /// <summary>
+        /// Retrieves all values from a given group in this parse
+        /// </summary>
+        /// <param name="parseCategory"></param>
+        /// <returns></returns>
+        public string[] Find(string group)
+        {
+          List<string> values = new List<string>();
+          foreach (var match in matches)
+          {
+            if (match.ContainsKey(group))
+              values.Add(match[group]);
+          }
+          if (values.NotEmpty())
+            return values.ToArray();
+          else
+            throw new System.ArgumentOutOfRangeException($"The key '{group}' was not found among this parse's groups!");
         }
 
         /// <summary>

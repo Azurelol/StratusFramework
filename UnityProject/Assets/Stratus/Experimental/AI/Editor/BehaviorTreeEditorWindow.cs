@@ -1,7 +1,7 @@
 using UnityEngine;
 using Stratus;
 using UnityEditor;
-using Stratus.Editors;
+using Stratus.Editor;
 using System;
 
 namespace Stratus
@@ -72,33 +72,22 @@ namespace Stratus
       //----------------------------------------------------------------------/
       // Interface
       //----------------------------------------------------------------------/
-      protected override void OnInitialize()
+      protected override void OnMultiColumnEditorEnable(MenuBar menu, GUISplitter columns)
       {
         // Node editor
         var nodeSettings = new BehaviorTreeNodeEditor.Settings();
-        nodeSettings.OuterGrid = new BehaviorTreeNodeEditor.Grid.Settings(100f, 0.4f, Color.gray);
-        nodeSettings.InnerGrid = new BehaviorTreeNodeEditor.Grid.Settings(10f, 0.2f, Color.gray);
-        nodeSettings.Background = new Color(169f / 255f, 169f / 255f, 169f / 255f, 0.5f);
         NodeEditor.Initialize(this, nodeSettings);
 
         // Sidebar
         SideBar = new GUISplitter(this, GUISplitter.OrientationType.Vertical);
         SideBar.Add(0.5f, this.DrawInspector);
         SideBar.Add(0.5f, this.DrawBlackboard);
-      }
 
-      protected override void SetStyles(MenuBar.StyleSettings menuStyle)
-      {
-      }
-
-      protected override void AddColumns(GUISplitter columns)
-      {
+        // Columns
         columns.Add(0.25f, DrawSidebar);
         columns.Add(0.75f, DrawNodes);
-      }
 
-      protected override void AddMenus(MenuBar menu)
-      {
+        // Menu
         var file = menu.Add("File");
         file.AddItem(new GUIContent("New Tree"), false, Dogs);
         file.AddItem(new GUIContent("Open Tree"), false, Dogs);

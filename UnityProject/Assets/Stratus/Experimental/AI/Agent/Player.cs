@@ -74,7 +74,6 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     protected abstract void OnRevive();
     protected abstract void OnPlayerAwake();
-    protected abstract void OnPlayerSubscribe();
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -104,7 +103,6 @@ namespace Stratus
     protected override void OnSubscribe()
     {
       this.gameObject.Connect<ReviveEvent>(this.OnReviveEvent);
-      this.OnPlayerSubscribe();
     }
 
     void OnReviveEvent(ReviveEvent e)

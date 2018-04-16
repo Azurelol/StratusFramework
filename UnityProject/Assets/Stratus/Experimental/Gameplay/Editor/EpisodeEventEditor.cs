@@ -6,14 +6,14 @@ using UnityEditor;
 namespace Stratus
 {
   [CustomEditor(typeof(EpisodeEvent))]
-  public class EpisodeEventEditor : BaseEditor<EpisodeEvent>
+  public class EpisodeEventEditor : TriggerableEditor<EpisodeEvent>
   {
-    private DropdownList<Segment> segments;
-    private DropdownList<Checkpoint> checkpoints;
+    private ObjectDropdownList<Segment> segments;
+    private ObjectDropdownList<Checkpoint> checkpoints;
     private SerializedProperty episodeProperty;
     private SerializedProperty segmentProperty;
 
-    protected override void OnBaseEditorEnable()
+    protected override void OnTriggerableEditorEnable()
     {
       MakeSegmentList();
       episodeProperty = propertyMap["episode"];
@@ -22,9 +22,10 @@ namespace Stratus
       propertyChangeCallbacks.Add(segmentProperty, MakeCheckpointList);
     }
 
-    protected override void DrawDeclaredProperties()
+    protected override bool DrawDeclaredProperties()
     {
-      DrawSerializedProperty(propertyMap["episode"]);
+      bool changed = false;
+      changed |= DrawSerializedProperty(propertyMap["episode"]);
 
       if (segments != null)
       {
@@ -33,7 +34,8 @@ namespace Stratus
         segments.selectedIndex = EditorGUILayout.Popup("Segment", segments.selectedIndex, segments.displayedOptions);
         if (EditorGUI.EndChangeCheck())
         {
-          target.segment = segments.selected;
+          changed = true;
+          triggerable.segment = segments.selected;
           MakeCheckpointList();
         }
       }
@@ -44,37 +46,39 @@ namespace Stratus
         checkpoints.selectedIndex = EditorGUILayout.Popup("Checkpoint", checkpoints.selectedIndex, checkpoints.displayedOptions);
         if (EditorGUI.EndChangeCheck())
         {
-          target.checkpointIndex = checkpoints.selectedIndex;
+          changed = true;
+          triggerable.checkpointIndex = checkpoints.selectedIndex;
         }
       }
 
 
-      DrawSerializedProperty(propertyMap["eventType"]);
-      DrawSerializedProperty(propertyMap["jump"]);
-
+      changed |= DrawSerializedProperty(propertyMap["eventType"]);
+      changed |= DrawSerializedProperty(propertyMap["jump"]);
+      return changed;
     }
 
     private void MakeSegmentList()
     {
       segments = null;
 
-      if (!target.episode)
+      if (!triggerable.episode)
       {
-        target.segment = null;
+        triggerable.segment = null;
         return;
       }
 
-      segments = new DropdownList<Segment>(target.episode.segments, target.segment);
+      segments = new ObjectDropdownList<Segment>(triggerable.episode.segments, triggerable.segment);
       MakeCheckpointList();
     }
 
     private void MakeCheckpointList()
     {
       checkpoints = null;
-      if (!target.segment)
+      if (!triggerable.segment)
         return;
-      checkpoints = new DropdownList<Checkpoint>(target.segment.checkpoints, target.checkpointIndex);
+      checkpoints = new ObjectDropdownList<Checkpoint>(triggerable.segment.checkpoints, triggerable.checkpointIndex);
     }
+
 
   }
 

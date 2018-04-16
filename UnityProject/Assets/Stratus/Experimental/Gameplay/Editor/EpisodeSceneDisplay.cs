@@ -10,18 +10,14 @@ namespace Stratus
   public class EpisodeSceneDisplay : MultitonSceneViewDisplay<Episode>
   {
     private Dictionary<Segment, bool> segmentExpanded;
-    private GUIContent expandButtonContent;
-    private GUIContent minimizeButtonContent;
 
     protected override void OnInitializeMultitonState()
     {
-      expandButtonContent = new GUIContent("+", "Show checkpoints");
-      minimizeButtonContent = new GUIContent("-", "Hide checkpoints");
       segmentExpanded = new Dictionary<Segment, bool>();
 
       foreach (var episode in Episode.availableList)
       {
-        foreach(var segment in episode.get.segments)
+        foreach (var segment in episode.get.segments)
         {
           segmentExpanded[segment] = false;
         }
@@ -43,7 +39,6 @@ namespace Stratus
       {
         GUILayout.BeginVertical(GUI.skin.box);
         {
-          GUILayout.Label(episode.label, EditorStyles.centeredGreyMiniLabel);
           Show(episode.get);
         }
         GUILayout.EndVertical();
@@ -52,48 +47,64 @@ namespace Stratus
 
     private void Show(Episode episode)
     {
+      GUILayout.Label(episode.label, EditorStyles.whiteLargeLabel);
+      //StratusEditorUtility.OnLastControlMouseClick(null, null, () => { Selection.activeGameObject = episode.gameObject; });
+
+      EditorGUILayout.BeginHorizontal();
+      StratusEditorUtility.ModifyProperty(episode, "mode", GUIContent.none);
+      if (GUILayout.Button("Validate", EditorStyles.miniButtonRight))
+      {
+        ValidatorWindow.Open("Episode Validation", Validation.Aggregate(episode));
+      }
+      EditorGUILayout.EndHorizontal();
+
       foreach (var segment in episode.segments)
       {
-        if (segment == null)
-          continue;       
+        if (segment == null || !segmentExpanded.ContainsKey(segment))
+          continue;
 
         // Show the segment
-        GUILayout.BeginHorizontal();
+        GUILayout.BeginHorizontal(EditorStyles.toolbar);
+        //episode.initialSegment == episode ? $"{episode.label} *" : episode.label, EditorStyles.whiteLabel
+        GUIStyle segmentStyle = EditorStyles.label; // segment == (episode.initialSegment) ? EditorStyles.centeredGreyMiniLabel: GUI.skin.label;
+        string label = episode.initialSegment == segment ? $"{segment.label} (Initial)" : segment.label;        
+        segmentExpanded[segment] = EditorGUILayout.Foldout(segmentExpanded[segment], label, false, EditorStyles.foldout);
+
+        //if (EditorGUI.Rect)
+        System.Action onRightClick = () =>
         {
-          GUIStyle segmentStyle = segment == (episode.initialSegment) ? EditorStyles.whiteLabel: GUI.skin.label;
-
-          System.Action onRightClick = () =>
+          var menu = new GenericMenu();
+          menu.AddItem(new GUIContent("Select"), false, () => { Selection.activeGameObject = segment.gameObject; });
+          if (!Application.isPlaying)
           {
-            var menu = new GenericMenu();
-            if (!Application.isPlaying)
-            {
-              menu.AddItem(new GUIContent("Initial"), false, () =>
-              {
-                episode.SetInitialSegment(segment);
-              });
-            }
-            else
-            {
-              menu.AddItem(new GUIContent("Enter"), false, () =>
-              {
-                episode.Enter(segment, true, 0);
-              });
-            }
-            menu.ShowAsContext();
-          };
-
-          System.Action onLeftClick = () =>
+            menu.AddItem(new GUIContent("Set Initial"), false, () => { episode.SetInitialSegment(segment); });
+          }
+          else
           {
-            EditorGUIUtility.PingObject(segment);
-          };
+            menu.AddItem(new GUIContent("Enter"), false, () =>
+            {
+              episode.Enter(segment, true, 0);
+            });
+          }
+          menu.ShowAsContext();
+        };
 
-          var button = new GUIObject();
-          button.label = segment.label;
-          button.onRightClickDown = onRightClick;
-          button.onLeftClickUp = onLeftClick;
-          button.Draw(segmentStyle);          
-        
-        }
+        System.Action onDoubleClick = () =>
+        {
+          Trace.Script("Boop");
+          Selection.activeGameObject = segment.gameObject;
+        };
+
+        StratusEditorUtility.OnLastControlMouseClick(null, onRightClick, onDoubleClick); 
+
+        //var button = new GUIObject();
+        //button.label = segment.label;
+        //button.onRightClickDown = onRightClick;
+        //button.onLeftClickUp = onLeftClick;
+        //button.Draw(segmentStyle);
+
+
+        GUILayout.EndHorizontal();
 
         ShowSegment(episode, segment);
       }
@@ -102,10 +113,10 @@ namespace Stratus
 
     private void ShowSegment(Episode episode, Segment segment)
     {
-      bool expanded = segmentExpanded[segment];
-      if (segment.checkpoints.NotEmpty() && GUILayout.Button(expanded ? minimizeButtonContent : expandButtonContent, EditorStyles.miniButtonRight, GUILayout.Width(20f)))
-        segmentExpanded[segment] = !expanded;
-      GUILayout.EndHorizontal();
+      //expanded = GUILayout.(expanded, ); //, expanded ? minimizeButtonContent : expandButtonContent); 
+      //if (segment.checkpoints.NotEmpty() && GUILayout.Button(expanded ? minimizeButtonContent : expandButtonContent, EditorStyles.toggle))
+      //  segmentExpanded[segment] = !expanded;
+      //GUILayout.EndHorizontal();
 
 
       // Show the checkpoints
@@ -114,12 +125,12 @@ namespace Stratus
         GUILayout.BeginVertical();
         for (int i = 0; i < segment.checkpoints.Count; ++i)
         {
-          if (GUILayout.Button($"{segment.checkpoints[i].name}", EditorStyles.miniButtonRight))
+          if (GUILayout.Button($"{segment.checkpoints[i].name}", EditorStyles.miniButton))
             episode.Enter(segment, true, i);
         }
         GUILayout.EndVertical();
       }
     }
-    
+
   }
 }

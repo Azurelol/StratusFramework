@@ -30,6 +30,8 @@ namespace Stratus
     public LoadSceneMode loadingMode = LoadSceneMode.Additive;
 
 
+    public override string automaticDescription => $"{type} {scene.name}";
+
     protected override void OnAwake()
     {
       

@@ -9,7 +9,7 @@ namespace Stratus
   /// <summary>
   /// Provides an automatic layout 2D Handle GUI besides default access to the SceneView GUI
   /// </summary>
-  public abstract class LayoutSceneViewDisplay : PersistentSceneViewDisplay
+  public abstract class LayoutSceneViewDisplay : SceneViewDisplay
   {
     /// <summary>
     /// A required attribute for configuring the LayoutSceneViewDisplay
@@ -34,18 +34,20 @@ namespace Stratus
     }
 
     //------------------------------------------------------------------------/
-    // Properties
-    //------------------------------------------------------------------------/
-    public string title { get; set; }
-    public Vector2 size { get; set; }
-    public StratusGUI.Anchor anchor { get; set; }
-    public StratusGUI.Dimensions dimensions { get; set; }
-    public Vector2 relativeDimensions { get; set; }
-    private Vector2 scrollPos { get; set; } = Vector2.zero;
-
-    //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
+    public string title;
+    public Vector2 offset;
+    public StratusGUI.Anchor anchor;
+    public StratusGUI.Dimensions dimensions;
+    public Vector2 size;
+    public Vector2 scale;
+    private Vector2 scrollPos = Vector2.zero;
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public Vector2 currentSize { get; private set; }
     private bool hasCalculatedDimensions { get; set; }
 
     //------------------------------------------------------------------------/
@@ -59,22 +61,6 @@ namespace Stratus
     //------------------------------------------------------------------------/
     protected override void OnInitializeDisplay()
     {
-      Type type = GetType();
-      var settings = AttributeUtility.FindAttribute<LayoutViewDisplayAttributeAttribute>(type);
-      if (settings == null)
-      {
-        throw new MissingReferenceException("Missing [LayoutSceneViewDisplay] attribute declaration for the class '" + type.Name + "'");
-      }
-      
-      // Read and set the properties fron the attribute
-      this.title = settings.GetProperty<string>("title");
-      this.size = new Vector2(settings.GetProperty<float>("width"), settings.GetProperty<float>("height"));
-      this.anchor = settings.GetProperty<StratusGUI.Anchor>("anchor");
-      this.dimensions = settings.GetProperty<StratusGUI.Dimensions>("dimensions");
-
-      // If the size is relative...
-      if (this.dimensions == StratusGUI.Dimensions.Relative)
-        relativeDimensions = size;
     }
 
     /// <summary>
@@ -83,24 +69,106 @@ namespace Stratus
     /// <param name="sceneView"></param>
     protected override void OnSceneGUI(SceneView sceneView)
     {      
-      if (!hasCalculatedDimensions && dimensions == StratusGUI.Dimensions.Relative)
-      {
-        size = StratusGUI.FindRelativeDimensions(relativeDimensions, sceneView.position.size);
-        hasCalculatedDimensions = true;
-      }
+      //if (!hasCalculatedDimensions && dimensions == StratusGUI.Dimensions.Relative)
+      //{
+      //  size = StratusGUI.FindRelativeDimensions(scale, sceneView.position.size);
+      //  hasCalculatedDimensions = true;
+      //}
+
+      // What size to use
+      if (dimensions == StratusGUI.Dimensions.Absolute)
+        currentSize = size;
+      else if (dimensions == StratusGUI.Dimensions.Relative)
+        currentSize = StratusGUI.FindRelativeDimensions(scale, sceneView.position.size);
 
       // Draw the default GUI
-      OnGUI(sceneView.position);
+      OnGUI(sceneView.position);      
 
       // Draw the provided layout 2D GUI Block
-      Rect layoutPosition = StratusGUI.CalculateAnchoredPositionOnScreen(this.anchor, this.size, sceneView.position.size);
+      Rect layoutPosition = StratusGUI.CalculateAnchoredPositionOnScreen(anchor, currentSize, sceneView.position.size);
       Handles.BeginGUI();
-      GUILayout.BeginArea(layoutPosition, title, GUI.skin.window);
-      scrollPos = GUILayout.BeginScrollView(scrollPos, false, false);
-      this.OnGUILayout(layoutPosition);
-      GUILayout.EndScrollView();
-      GUILayout.EndArea();
+      {
+        GUILayout.BeginArea(layoutPosition, title, GUI.skin.window);
+        {
+          //GUILayout.Label(layoutPosition, "+");
+          scrollPos = GUILayout.BeginScrollView(scrollPos, false, false);
+          this.OnGUILayout(layoutPosition);
+          GUILayout.EndScrollView();
+        }
+        GUILayout.EndArea();
+        //if (StratusEditorUtility.IsMousedOver(layoutPosition) && !StratusEditorUtility.currentEventUsed)
+        //{
+        //  System.Action onRightClick = () =>
+        //  {
+        //    var menu = new GenericMenu();
+        //    menu.AddItem(new GUIContent("Select"), false, () => { Trace.Script("Boop"); });
+        //  };
+        //  StratusEditorUtility.OnMouseClick(null, onRightClick, null);
+        //  
+        //}
+        //StratusEditorUtility.DisableMouseSelection(layoutPosition);
+      }
       Handles.EndGUI();
+
+      //if (StratusEditorUtility.IsMousedOver(layoutPosition))
+      //{
+      //  int control = GUIUtility.GetControlID(FocusType.Passive);
+      //}
+      //
+      //GUIUtility.hotControl = control;
+      
+
+    }
+
+    //------------------------------------------------------------------------/
+    // Methods: Private
+    //------------------------------------------------------------------------/
+    protected override void OnReset()
+    {
+      Type type = GetType();
+      var settings = AttributeUtility.FindAttribute<LayoutViewDisplayAttributeAttribute>(type);
+      if (settings == null)
+      {
+        throw new MissingReferenceException("Missing [LayoutSceneViewDisplay] attribute declaration for the class '" + type.Name + "'");
+      }
+
+      // Read and set the properties fron the attribute
+      this.title = settings.GetProperty<string>("title");
+      this.size = new Vector2(settings.GetProperty<float>("width"), settings.GetProperty<float>("height"));
+      this.anchor = settings.GetProperty<StratusGUI.Anchor>("anchor");
+      this.dimensions = settings.GetProperty<StratusGUI.Dimensions>("dimensions");      
+
+      // If the size is relative...
+      if (this.dimensions == StratusGUI.Dimensions.Relative)
+        scale = size;
+    }
+
+    protected override void OnInspect()
+    {
+      anchor = (StratusGUI.Anchor)EditorGUILayout.EnumPopup("Anchor", anchor);
+      dimensions = (StratusGUI.Dimensions)EditorGUILayout.EnumPopup("Dimensions", dimensions);
+      switch (dimensions)
+      {
+        case StratusGUI.Dimensions.Relative:
+          EditorGUI.indentLevel++;
+          scale.x = EditorGUILayout.Slider("Horizontal", scale.x, 0f, 1f);
+          scale.y = EditorGUILayout.Slider("Vertical", scale.y, 0f, 1f);
+          EditorGUI.indentLevel--;
+          //scale = EditorGUILayout.Slider("Scale", scale);
+          break;
+        case StratusGUI.Dimensions.Absolute:
+          EditorGUI.indentLevel++;
+          size.x = EditorGUILayout.FloatField("Width", size.x);
+          size.y = EditorGUILayout.FloatField("Height", size.y);
+          EditorGUI.indentLevel--;
+          //size = EditorGUILayout.Vector2Field("Size", size);
+          break;
+      }
+    }
+
+    private void CalculateRelativeDimensions()
+    {
+
     }
 
 

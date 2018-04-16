@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Stratus
 {
-  namespace Editors
+  namespace Editor
   {
     /// <summary>
     /// A configurable menu bar to be used in an editor

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using UnityEditor;
-using Stratus.Editors;
+using Stratus.Editor;
 
 namespace Stratus
 {

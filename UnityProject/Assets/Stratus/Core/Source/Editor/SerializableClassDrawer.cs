@@ -78,7 +78,9 @@ namespace Stratus
       {
         if (isArray)
         {
+          EditorGUI.indentLevel++;
           DrawArray(position, property);
+          EditorGUI.indentLevel--;
         }
         else
         {

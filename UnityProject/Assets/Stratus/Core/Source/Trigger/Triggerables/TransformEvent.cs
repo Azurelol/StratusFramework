@@ -7,7 +7,7 @@ namespace Stratus
   /// <summary>
   /// Provides common operations on a Transform
   /// </summary>
-  public class TransformEvent : Triggerable, TriggerBase.IRestartable
+  public class TransformEvent : Triggerable, TriggerBase.Restartable
   {
     public enum ValueType
     {
@@ -75,6 +75,16 @@ namespace Stratus
     private bool isMirror => valueType == ValueType.Mirror;
     private TransformationType transformationType;
 
+    public override string automaticDescription
+    {
+      get
+      {
+        if (target)
+          return $"{eventType} {target.name} over {duration}s";
+        return string.Empty;
+      }
+    }   
+
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
@@ -107,7 +117,7 @@ namespace Stratus
     {
       currentAction = Actions.Sequence(this);
 
-      if (logging)
+      if (debug)
         Trace.Script($"The {eventType} operation was applied on {target.name}", this);
 
       switch (eventType)

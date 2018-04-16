@@ -24,6 +24,15 @@ namespace Stratus
     //public string segmentLabel;
     //[DrawIf("referenceType", Segment.ReferenceType.Reference, ComparisonType.Equals)]
 
+    public override string automaticDescription
+    {
+      get
+      {
+        if (segment != null)
+          return $"On {eventType} {episode.label}.{segment.label}";
+        return string.Empty;
+      }
+    }
 
     //------------------------------------------------------------------------/
     // Messages
@@ -38,6 +47,8 @@ namespace Stratus
 
     protected override void OnReset()
     {
+      segment = GetComponent<Segment>();
+      episode = segment.episode;
     }    
 
     //------------------------------------------------------------------------/

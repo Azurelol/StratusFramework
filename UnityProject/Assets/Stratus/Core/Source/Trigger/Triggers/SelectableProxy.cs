@@ -3,24 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace Stratus
 {
   public class SelectableProxy : Proxy, IEventSystemHandler, IPointerEnterHandler, 
     IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, ISelectHandler, IDeselectHandler
   {
-    public enum SelectionType { Selected, Highlighted, Pressed }
-    public delegate void SelectionCallback(bool state);
+    /// <summary>
+    /// A callback consisting of the selectable information
+    /// </summary>
+    [System.Serializable]
+    public class SelectionCallback : UnityEvent<bool> { }
 
-    public SelectionCallback onSelect { get; set; }
-    public SelectionCallback onHighlighted { get; set; }
-    public SelectionCallback onPressed { get; set; }
+    public enum SelectionType { Selected, Highlighted, Pressed }
+    public delegate void OnSelectionMessage(bool state);
+
+    public OnSelectionMessage onSelect { get; set; }
+    public OnSelectionMessage onHighlighted { get; set; }
+    public OnSelectionMessage onPressed { get; set; }
     public bool interactable => selectable.IsInteractable();
-    
+
+    //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
     private Selectable selectable;
     
     //------------------------------------------------------------------------/
-    // Fields
+    // Messages
     //------------------------------------------------------------------------/
     void Awake()
     {
@@ -36,8 +46,8 @@ namespace Stratus
 
     public void OnDeselect(BaseEventData data)
     {
-      if (!interactable)
-        return;
+      //if (!interactable)
+      //  return;
       onSelect?.Invoke(false);
     }
     public void OnPointerEnter(PointerEventData eventData)
@@ -79,7 +89,7 @@ namespace Stratus
     /// <param name="onCollision"></param>
     /// <param name="persistent"></param>
     /// <returns></returns>
-    public static SelectableProxy Construct(Selectable target, SelectionType type, SelectionCallback callback, bool persistent = true)
+    public static SelectableProxy Construct(Selectable target, SelectionType type, OnSelectionMessage callback, bool persistent = true)
     {
       var proxy = target.gameObject.GetOrAddComponent<SelectableProxy>();
       proxy.persistent = persistent;
@@ -93,7 +103,22 @@ namespace Stratus
 
       return proxy;
     }
-    
+
+    /// <summary>
+    /// Constructs a proxy in order to observe a given Selectable's selection messages
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="type"></param>
+    /// <param name="onCollision"></param>
+    /// <param name="persistent"></param>
+    /// <returns></returns>
+    public static SelectableProxy Construct(Selectable target, bool persistent = true)
+    {
+      var proxy = target.gameObject.GetOrAddComponent<SelectableProxy>();
+      proxy.persistent = persistent;
+      return proxy;
+    }
+
   }
 
 }

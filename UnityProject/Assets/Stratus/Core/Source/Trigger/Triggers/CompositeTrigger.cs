@@ -10,9 +10,15 @@ namespace Stratus
   /// </summary>
   public class CompositeTrigger : Trigger
   {
+    //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/
     public enum Type { Trigger, Triggerable }
     public enum Criteria { All, Subset }
 
+    //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
     [Header("Composition")]
     [Tooltip("Whether this trigger is observing trigggers or triggerables")]
     public Type type;
@@ -27,11 +33,25 @@ namespace Stratus
 
     private List<MonoBehaviour> current = new List<MonoBehaviour>();
 
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
     /// <summary>
     /// The number of elements set
     /// </summary>
     public int count => type == Type.Trigger ? triggers.Length : triggerables.Length;
 
+    public override string automaticDescription
+    {
+      get
+      {
+        return $"On {type}s ({criteria}) being activated";
+      }
+    }
+
+    //------------------------------------------------------------------------/
+    // Messages
+    //------------------------------------------------------------------------/
     protected override void OnAwake()
     {
       Compose();

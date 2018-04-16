@@ -131,7 +131,7 @@ namespace Stratus
         //}
 
         IEnumerator drawRoutine = null;
-        if (this.logging)
+        if (this.debug)
         {
           drawRoutine = DrawPathRoutine(points, Color.red, Color.yellow);
           StartCoroutine(drawRoutine);
@@ -149,7 +149,7 @@ namespace Stratus
         }
 
         Trace.Script("Finished the path!");
-        if (this.logging)
+        if (this.debug)
         {
           StopCoroutine(drawRoutine);
         }

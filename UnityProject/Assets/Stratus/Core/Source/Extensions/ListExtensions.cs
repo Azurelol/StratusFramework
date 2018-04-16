@@ -142,7 +142,7 @@ namespace Stratus
 
     public static T FirstOrNull<T>(this List<T> list)
     {
-      return list.Empty() ? list[0] : default(T);
+      return list.NotEmpty() ? list[0] : default(T);
     }
 
     public static void Swap<T>(this IList<T> list, int indexA, int indexB)
@@ -172,6 +172,48 @@ namespace Stratus
       string[] names  = new string[list.Count];
       for (int i = 0; i < list.Count; ++i)
         names[i] = list[i].name;
+      return names;
+    }
+
+    /// <summary>
+    /// Returns an array of strings, consisting of the names identified on their name property
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public static string[] Names<T>(this IList<T> list, Func<T, string> nameFunc)
+    {
+      string[] names = new string[list.Count];
+      for (int i = 0; i < list.Count; ++i)
+        names[i] = nameFunc(list[i]);
+      return names;
+    }
+
+    /// <summary>
+    /// Returns an array of strings, consisting of the names identified on their name property
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public static string[] Names<T>(this T[] array) where T : UnityEngine.Object
+    {
+      string[] names = new string[array.Length];
+      for (int i = 0; i < array.Length; ++i)
+        names[i] = array[i].name;
+      return names;
+    }
+
+    /// <summary>
+    /// Returns an array of strings, consisting of the names identified on their name property
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public static string[] Names<T>(this T[] array, Func<T, string> nameFunc)
+    {
+      string[] names = new string[array.Length];
+      for (int i = 0; i < array.Length; ++i)
+        names[i] = nameFunc(array[i]);
       return names;
     }
 
@@ -236,19 +278,7 @@ namespace Stratus
       list.RemoveAll(x => x == null);
     }
 
-    /// <summary>
-    /// Returns an array of strings, consisting of the names identified on their name property
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
-    /// <returns></returns>
-    public static string[] Names<T>(this T[] array) where T : UnityEngine.Object
-    {
-      string[] names = new string[array.Length];
-      for (int i = 0; i < array.Length; ++i)
-        names[i] = array[i].name;
-      return names;
-    }
+
 
     /// <summary>
     /// Returns an array of strings, consisting of the names identified on their name property
@@ -301,6 +331,16 @@ namespace Stratus
       return default(T);
     }
 
+    public static bool AddIfNotNull<T>(this IList<T> list, T item)
+    {
+      if (item != null)
+      {
+        list.Add(item);
+        return true;
+      }
+      return false;
+    }
+
     /// <summary>
     /// Copies this array, inserting the element to the front
     /// </summary>
@@ -308,11 +348,26 @@ namespace Stratus
     /// <param name="array"></param>
     /// <param name="element"></param>
     /// <returns></returns>
-    public static T[] AddFirst<T>(this T[] array, T element)
+    public static T[] AddFront<T>(this T[] array, T element)
     {
       T[] newArray = new T[array.Length + 1];
       newArray[0] = element;
       Array.Copy(array, 0, newArray, 1, array.Length);
+      return newArray;
+    }
+
+    /// <summary>
+    /// Copies this array, inserting the element to the front
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="array"></param>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    public static T[] AddBack<T>(this T[] array, T element)
+    {
+      T[] newArray = new T[array.Length + 1];
+      Array.Copy(array, 0, newArray, 0, array.Length);
+      newArray[newArray.Length - 1] = element;
       return newArray;
     }
 
@@ -328,6 +383,35 @@ namespace Stratus
       Array.Copy(array, 1, newArray, 0, array.Length - 1);
       return newArray;
     }
+
+
+    /// <summary>
+    /// Copies the array, without the first element present
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="array"></param>
+    /// <returns></returns>
+    public static T[] RemoveBack<T>(this T[] array)
+    {
+      T[] newArray = new T[array.Length - 1];
+      Array.Copy(array, 0, newArray, 0, array.Length - 1);
+      return newArray;
+    }
+
+    public static U[] OfType<T, U>(this T[] array) 
+      where T : class 
+      where U : class, T
+    {
+      return array.Select(c => c as U).Where(c => c != null).ToArray();
+    }
+
+    //public static T[] OfType<T>(this T[] array, Type type)
+    //  where T : class
+    //{ 
+    //  return array.Select(c => c as type).Where(c => c != null).ToArray();
+    //}
+
+
 
 
   }

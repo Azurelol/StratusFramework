@@ -15,6 +15,9 @@ namespace Stratus
 {
   public class Checkpoint : StratusBehaviour 
   {
+    //--------------------------------------------------------------------------------------------/
+    // Declarations
+    //--------------------------------------------------------------------------------------------/
     /// <summary>
     /// Signals that a checkpoint hhas been added
     /// </summary>
@@ -24,6 +27,12 @@ namespace Stratus
     /// A map of all currently enabled checkpoints, indexed by their names
     /// </summary>
     public static Dictionary<string, Checkpoint> available { get; private set; } = new Dictionary<string, Checkpoint>();
+
+    //--------------------------------------------------------------------------------------------/
+    // Fields
+    //--------------------------------------------------------------------------------------------/
+    //[Tooltip("An unique identifier for this checkpoint")]
+    public string label => name;
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -37,17 +46,23 @@ namespace Stratus
 
     private void OnEnable()
     {
-      available.Add(name, this);
+      if (available.ContainsKey(label))
+        Trace.Error($"There's an existing checkpoint using the label <i>{label}</i>", this, true);
+      available.Add(label, this);
     }
 
     private void OnDisable()
     {
-      available.Remove(name);
+      available.Remove(label);
     }
 
     private void OnValidate()
     {
       
+    }
+
+    private void Reset()
+    {
     }
 
     //--------------------------------------------------------------------------------------------/

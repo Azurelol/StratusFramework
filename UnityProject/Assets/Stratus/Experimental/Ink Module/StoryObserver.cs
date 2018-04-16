@@ -102,7 +102,7 @@ namespace Stratus
 
         void PrintValue()
         {
-          if (logging)
+          if (debug)
             Trace.Script($"The variable {variable.name} of type {variable.type} has a value of { variable.objectValue}", this);
         }
 

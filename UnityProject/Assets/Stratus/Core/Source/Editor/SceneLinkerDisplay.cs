@@ -14,7 +14,7 @@ namespace Stratus
       private Color displayLinksColor => Color.yellow;
       private Color displayBoundariesColor => Color.gray;
 
-      private SceneLink[] sceneLinks;
+      private SceneLinkerEvent[] sceneLinks;
       private Bounds[] sceneBoundaries;
 
       protected override bool isValid
@@ -27,7 +27,7 @@ namespace Stratus
 
       protected override void OnInitializeSingletonState()
       {
-        this.sceneLinks = Scene.GetComponentsInAllActiveScenes<SceneLink>();
+        this.sceneLinks = Scene.GetComponentsInAllActiveScenes<SceneLinkerEvent>();
         int numScenes = Scene.activeScenes.Length;
         this.sceneBoundaries = new Bounds[numScenes];
         for (int i = 0; i < numScenes; ++i)
@@ -71,8 +71,8 @@ namespace Stratus
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("Scenes:");
-        if (GUILayout.Button("Open All")) instance.OpenAll();
-        if (GUILayout.Button("Close All")) instance.CloseAll();
+        if (GUILayout.Button("Open All")) SceneLinker.OpenAll();
+        if (GUILayout.Button("Close All")) SceneLinker.CloseAll();
         GUILayout.EndHorizontal();
         GUILayout.Space(2.5f);
 
@@ -97,7 +97,7 @@ namespace Stratus
         GUILayout.BeginHorizontal();
         {
           GUILayout.Label($"Links ({sceneLinks.Length})");
-          StratusEditorUtility.Toggle(properties.GetProperty("displayLinks"), "Show");
+          StratusEditorUtility.Toggle(instance, "displayLinks", "Show");
           //instance.displayLinks = GUILayout.Toggle(instance.displayLinks, "Show");
           if (GUILayout.Button("Select"))
           {
@@ -110,8 +110,8 @@ namespace Stratus
         }
         GUILayout.EndHorizontal();
 
-        StratusEditorUtility.Toggle(properties.GetProperty("displayBoundaries"), "Show scene boundaries");
-        StratusEditorUtility.Toggle(properties.GetProperty("loadInitial"), "Load initial scene on play");
+        StratusEditorUtility.Toggle(instance, "displayBoundaries", "Show scene boundaries");
+        StratusEditorUtility.Toggle(instance, "loadInitial", "Load initial scene on play");
 
       }
 

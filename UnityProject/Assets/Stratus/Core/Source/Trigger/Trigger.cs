@@ -52,15 +52,6 @@ namespace Stratus
       }
     }
 
-    ///// <summary>
-    ///// When received by a trigger, enables it
-    ///// </summary>
-    //public class EnableEvent : Stratus.Event
-    //{
-    //  public bool enabled;
-    //  public EnableEvent(bool enabled) { this.enabled = enabled; }
-    //}
-
     /// <summary>
     /// How the trigger is delivered to the target triggerable
     /// </summary>
@@ -146,8 +137,11 @@ namespace Stratus
       if (!enabled)
         return;
 
+      if (debug)
+        Trace.Script($"<i>{description}</i> has been activated!", this);
+
       // Dispatch the trigger event onto a given target if one is provided
-      foreach(var target in targets)
+      foreach (var target in targets)
       {
         if (target == null)
           continue;

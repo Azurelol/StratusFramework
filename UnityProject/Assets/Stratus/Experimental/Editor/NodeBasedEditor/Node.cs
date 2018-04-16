@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Stratus
 {
-  namespace Editors
+  namespace Editor
   {
     /// <summary>
     /// A node will be responsible for drawing itself and processing its own events.

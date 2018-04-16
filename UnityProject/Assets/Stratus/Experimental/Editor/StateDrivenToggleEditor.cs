@@ -6,8 +6,13 @@ using UnityEditor;
 namespace Stratus
 {
   [CustomEditor(typeof(StateDrivenToggle), true)]
-  public class StateDrivenToggleEditor : BaseEditor<StateDrivenToggle>
+  public class StateDrivenToggleEditor : BehaviourEditor<StateDrivenToggle>
   {
+    protected override void OnBaseEditorEnable()
+    {
+      throw new System.NotImplementedException();
+    }
+
     //protected override void Configure()
     //{
     //  SerializedProperty extent = propertyMap["extent"];

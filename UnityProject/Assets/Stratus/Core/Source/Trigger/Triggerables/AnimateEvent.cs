@@ -18,6 +18,8 @@ namespace Stratus
   {
     public Animator Animator;
     public string Animation;
+    public bool isBoolean = false;
+    public bool booleanValue;
 
     protected override void OnAwake()
     {
@@ -31,7 +33,16 @@ namespace Stratus
 
     protected override void OnTrigger()
     {
-      Animator.SetTrigger(this.Animation);
+      if (isBoolean)
+      {
+        Animator.SetBool(this.Animation, this.booleanValue); 
+      }
+      else
+      {
+        Animator.SetTrigger(this.Animation);
+      }
+      
+
     }
   }
 }

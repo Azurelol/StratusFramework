@@ -8,13 +8,13 @@ using System;
 namespace Stratus.Experimental
 {
   [CustomEditor(typeof(StratusPlayerController))]
-  public class StratusPlayerControllerEditor : BaseEditor<StratusPlayerController>
+  public class StratusPlayerControllerEditor : BehaviourEditor<StratusPlayerController>
   {
     private Type[] extensionTypes;
     private string[] extensionTypeNames;
     //private string[] availableExtensionTypeNames;
 
-    private BaseEditor extensionEditor;
+    private StratusEditor extensionEditor;
     private string[] extensionsNames;
     private int extensionIndex = 0;
 
@@ -84,7 +84,7 @@ namespace Stratus.Experimental
 
     private void CreateExtensionEditor()
     {
-      extensionEditor = Editor.CreateEditor(selectedExtension) as BaseEditor;
+      extensionEditor = UnityEditor.Editor.CreateEditor(selectedExtension) as StratusEditor;
       extensionEditor.backgroundStyle = EditorStyles.helpBox;
     }
 

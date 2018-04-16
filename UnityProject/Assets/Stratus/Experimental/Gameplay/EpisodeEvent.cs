@@ -24,14 +24,25 @@ namespace Stratus
     [Tooltip("To what checkpoint within the segment to transport the player to")]
     [DrawIf("eventType", Segment.EventType.Enter, ComparisonType.Equals)]
     public int checkpointIndex;
-    
+
+
+    public override string automaticDescription
+    {
+      get
+      {
+        if (segment != null)
+          return $"{eventType} {episode.label}.{segment.label}.{segment.checkpoints[checkpointIndex].name}";
+        return string.Empty;
+      }
+    }
+
+
     protected override void OnAwake()
     {
     }
 
     protected override void OnReset()
-    {
-      
+    {      
     }
 
     protected override void OnTrigger()
@@ -53,6 +64,16 @@ namespace Stratus
         default:
           break;
       }
+    }
+
+    public override Validation Validate()
+    {
+      if (segment == null)
+      {
+        return new Validation(ComposeLog("There is no segment set!"), Validation.Level.Error, this);
+      }
+
+      return null;
     }
   }
 

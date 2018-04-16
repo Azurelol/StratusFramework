@@ -40,7 +40,7 @@ namespace Stratus
 
     private void PrepareVideo()
     {
-      if (logging)
+      if (debug)
         Trace.Script($"Now playing {clip.name}", this);
 
       // Set the clip

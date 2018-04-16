@@ -18,6 +18,11 @@ namespace Stratus
   public class TimerTrigger : Trigger
   {
     //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public override string automaticDescription => $"On {duration} seconds elapsed";
+
+    //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
     [Header("Timer")]
@@ -28,11 +33,7 @@ namespace Stratus
     public float duration;
     [Tooltip("Reset the current timer if the trigger is disabled")]
     public bool resetOnDisabled = true;
-
-
     private Countdown timer;
-    //private ActionSet timerSequence;
-    //private float timeElapsed;
 
     //------------------------------------------------------------------------/
     // Messages

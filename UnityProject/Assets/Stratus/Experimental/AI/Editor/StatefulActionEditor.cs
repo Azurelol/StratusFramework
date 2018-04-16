@@ -9,7 +9,7 @@ namespace Stratus
   namespace AI
   {
     [CustomEditor(typeof(StatefulAction))]
-    public class StatefulActionEditor: Editor
+    public class StatefulActionEditor: UnityEditor.Editor
     {
       StatefulAction StatefulAction;
 
@@ -17,7 +17,7 @@ namespace Stratus
       //SerializedProperty BlackboardAsset;
       SerializedProperty Type;
 
-      private Editor ActionEditor;
+      private UnityEditor.Editor ActionEditor;
       SerializedProperty Preconditions;
       SerializedProperty Effects;
       SerializedProperty Cost;
@@ -61,7 +61,7 @@ namespace Stratus
 
         // If an action has been set, show it
         if (StatefulAction.Action && !ActionEditor)
-          ActionEditor = Editor.CreateEditor(StatefulAction.Action);
+          ActionEditor = UnityEditor.Editor.CreateEditor(StatefulAction.Action);
         ActionEditor.DrawDefaultInspector();
 
       }

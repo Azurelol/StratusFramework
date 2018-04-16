@@ -7,7 +7,7 @@ using UnityEditor;
 namespace Stratus
 {
   [CustomEditor(typeof(CompositeTrigger))]
-  public class CompositeTriggerEditor : BaseEditor<CompositeTrigger>
+  public class CompositeTriggerEditor : TriggerEditor<CompositeTrigger>
   {
     //CompositeTrigger composite => target as CompositeTrigger;
     //
@@ -17,34 +17,37 @@ namespace Stratus
     //private SerializedProperty triggersProp => declaredProperties.Item2[3];
     //private SerializedProperty triggerablesProp => declaredProperties.Item2[4];
 
-    protected override void OnBaseEditorEnable()
+    protected override void OnTriggerEditorEnable()
     {
-      propertyConstraints.Add(propertyMap["triggers"], () => target.type == CompositeTrigger.Type.Trigger);
-      propertyConstraints.Add(propertyMap["triggerables"], () => target.type == CompositeTrigger.Type.Triggerable);
+      //compositeTrigger= (CompositeTrigger)target.
+      propertyConstraints.Add(propertyMap["triggers"], () => trigger.type == CompositeTrigger.Type.Trigger);
+      propertyConstraints.Add(propertyMap["triggerables"], () => trigger.type == CompositeTrigger.Type.Triggerable);
       //propertyGroupDrawOverrides.Add(typeof(CompositeTrigger), DrawCompositeTriggerProperties);
 
-    } 
-    
-    //protected override void DrawDeclaredProperties()
-    //{
-    //  DrawSerializedProperty(typeProp, serializedObject);
-    //  DrawSerializedProperty(criteriaProp, serializedObject);
-    //
-    //  if (composite.criteria == CompositeTrigger.Criteria.Subset)
-    //    composite.needed = EditorGUILayout.IntSlider(composite.needed, 1, composite.count);
-    //  //  //DrawSerializedProperty(neededProp, serializedObject);
-    //  
-    //  if (composite.type == CompositeTrigger.Type.Trigger)
-    //  {
-    //    DrawSerializedProperty(triggersProp, serializedObject);      
-    //  }
-    //  else if (composite.type == CompositeTrigger.Type.Triggerable)
-    //  {
-    //
-    //    DrawSerializedProperty(triggerablesProp, serializedObject);      
-    //  }
-    //
-    //}
+    }
+
+    protected override bool DrawDeclaredProperties()
+    {
+      bool changed = false;
+
+      EditorGUI.BeginChangeCheck();
+      DrawSerializedProperty(nameof(CompositeTrigger.type));
+      DrawSerializedProperty(nameof(CompositeTrigger.criteria));
+
+      if (trigger.criteria == CompositeTrigger.Criteria.Subset)
+        trigger.needed = EditorGUILayout.IntSlider(trigger.needed, 1, trigger.count);
+
+      if (trigger.type == CompositeTrigger.Type.Trigger)
+      {
+        DrawSerializedProperty(nameof(CompositeTrigger.triggers));
+      }
+      else if (trigger.type == CompositeTrigger.Type.Triggerable)
+      {
+        DrawSerializedProperty(nameof(CompositeTrigger.triggerables));
+      }
+      changed = EditorGUI.EndChangeCheck();
+      return changed;
+    }
 
   }
 

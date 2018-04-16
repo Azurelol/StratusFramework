@@ -3,7 +3,7 @@ using System;
 
 namespace Stratus
 {
-  namespace Editors
+  namespace Editor
   {
     /// <summary>
     /// Our node editor has nodes, it should also be able to connect them. In order

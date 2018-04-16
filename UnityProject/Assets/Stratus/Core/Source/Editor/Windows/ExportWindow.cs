@@ -21,9 +21,9 @@ namespace Stratus
 
     private static void Export(string path, string packageName)
     {
-      var location = Assets.GetFolderPath(path);
+      var location = IO.GetFolderPath(path);
       AssetDatabase.ExportPackage(location, $"{packageName}.unitypackage",
-        ExportPackageOptions.Recurse | ExportPackageOptions.Default |
+        ExportPackageOptions.Recurse | ExportPackageOptions.Default | ExportPackageOptions.IncludeDependencies |
         ExportPackageOptions.Interactive);
       Trace.Script($"Exported {packageName}");
     }

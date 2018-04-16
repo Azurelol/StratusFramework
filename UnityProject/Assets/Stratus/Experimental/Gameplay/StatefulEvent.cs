@@ -6,22 +6,38 @@ namespace Stratus
 {
   public class StatefulEvent : Triggerable
   {
+    [Tooltip("The scope for this event")]
     public Event.Scope eventScope = Event.Scope.GameObject;
+
+    [Tooltip("The stateful object")]
     [DrawIf("eventScope", Event.Scope.GameObject, ComparisonType.Equals)]
     public Stateful target;
 
+    [Tooltip("The event type")]
     public Stateful.EventType eventType;
     [Tooltip("The label for the given state")]
 
-    [DrawIf("eventType", Stateful.EventType.Load, ComparisonType.Equals)]
-    public Stateful.LoadEventType load;
-
-    [DrawIf(typeof(StatefulEvent), nameof(usesLabel))]
+    [DrawIf(nameof(usesLabel))]
     public string state;
 
-    public bool usesLabel => eventType == Stateful.EventType.Save ||
-        (eventType == Stateful.EventType.Load 
-        && load == Stateful.LoadEventType.Specific);
+    public bool usesLabel => eventType == Stateful.EventType.Save || eventType == Stateful.EventType.Load;
+
+    public override string automaticDescription
+    {
+      get
+      {
+        if (target)
+        {
+          string value = $"{eventType}";
+          if (usesLabel)
+            value += $" state '{state}'";
+          value += $" on {target.name}";
+
+          return value;
+        }
+        return string.Empty;
+      }
+    }
 
     protected override void OnAwake()
     {      
@@ -36,34 +52,14 @@ namespace Stratus
       switch (eventScope)
       {
         case Event.Scope.GameObject:
-          if (eventType == Stateful.EventType.Save)
-            target.gameObject.Dispatch<Stateful.SaveEvent>(new Stateful.SaveEvent(state));
-          else if (eventType == Stateful.EventType.Load)
-            target.gameObject.Dispatch<Stateful.LoadEvent>(new Stateful.LoadEvent(state, load));
+          target.gameObject.Dispatch<Stateful.StateEvent>(new Stateful.StateEvent(eventType, state));
           break;
 
         case Event.Scope.Scene:
-          if (eventType == Stateful.EventType.Save)
-            Scene.Dispatch<Stateful.SaveEvent>(new Stateful.SaveEvent(state));
-          else if (eventType == Stateful.EventType.Load)
-            Scene.Dispatch<Stateful.LoadEvent>(new Stateful.LoadEvent(state, load));
+          Scene.Dispatch<Stateful.StateEvent>(new Stateful.StateEvent(eventType, state));
           break;
       }
 
-    }
-
-    //public static bool UsesLabel(object statefulEvent)
-    //{
-    //  return statefulEvent.eventType == Stateful.EventType.Save || 
-    //    (statefulEvent.eventType == Stateful.EventType.Load
-    //    && statefulEvent.load == Stateful.LoadEventType.Specific);
-    //}
-
-    public bool UsesLabel()
-    {
-      return eventType == Stateful.EventType.Save ||
-        (eventType == Stateful.EventType.Load 
-        && load == Stateful.LoadEventType.Specific);
     }
   }
 

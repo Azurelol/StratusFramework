@@ -4,6 +4,7 @@ using UnityEngine;
 using Stratus;
 using UnityEngine.Events;
 using UnityEngine.AI;
+using Stratus.Interfaces;
 
 //    Features:
 //start locations for the player at the beginning of every segment
@@ -20,7 +21,7 @@ namespace Stratus
   /// </summary>
   [ExecuteInEditMode]
   [DisallowMultipleComponent]
-  public class Segment : StratusBehaviour
+  public class Segment : StratusBehaviour, Debuggable, ValidatorAggregator
   {
     //------------------------------------------------------------------------/
     // Declarations
@@ -57,6 +58,8 @@ namespace Stratus
     /// </summary>
     public class EnteredEvent : BaseSegmentEvent
     {
+      public bool restarted = false;
+
       public EnteredEvent(Segment segment)
       {
         this.segment = segment;
@@ -71,25 +74,29 @@ namespace Stratus
       public ExitedEvent(Segment segment)
       {
         this.segment = segment;
-      }      
+      }
     }
 
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
     [Tooltip("Whether to log debug output")]
-    public bool log;
+    public bool debug = false;
     [Tooltip("The string identifier for this segment")]
     public string label;
     [Tooltip("The trigger system used by this segment")]
     public TriggerSystem triggerSystem;
-    [Tooltip("Whether the triggers on the trigger system are toggled whenever this segment is entered/exited")]
-    public bool toggleTriggers = true;
+    [Tooltip("Whether the triggers on the trigger system are controlled by this segment")]
+    public bool controlTriggers = true;
+    [Tooltip("Whether selected objects are toggled by this segment")]
+    public bool toggleObjects = false;
     [Tooltip("Whether to load the initial state of the objects in this segment, when entered")]
-    public bool restart = false;    
+    public bool restart = false;
 
     [Tooltip("The list of checkpoints within this segment")]
     public List<Stratus.Checkpoint> checkpoints = new List<Stratus.Checkpoint>();
+    [Tooltip("Objects to be toggled on and off by this segment")]
+    public List<GameObject> toggledObjects = new List<GameObject>();
 
     /// <summary>
     /// Any methods to invoke when enabled
@@ -97,11 +104,20 @@ namespace Stratus
     [Space]
     [Tooltip("Any methods to invoke when entered")]
     public UnityEvent onEntered = new UnityEvent();
+    ///// <summary>
+    ///// Any methods to invoke when restarted
+    ///// </summary>
+    //[Space]
+    //[Tooltip("Any methods to invoke when entered")]
+    //public UnityEvent onRestarted = new UnityEvent();
     /// <summary>
     /// Any methods to invoke when disabled
     /// </summary>
     [Tooltip("Any methods to invoke when exited")]
     public UnityEvent onExited = new UnityEvent();
+
+    [SerializeField]
+    private Episode episode_;
 
     //------------------------------------------------------------------------/
     // Properties
@@ -142,7 +158,7 @@ namespace Stratus
     /// <summary>
     /// The episode this segment belongs to
     /// </summary>
-    public Episode episode { get; set; }
+    public Episode episode { get { return episode_; } internal set { episode_ = value; } }
     /// <summary>
     /// The list of stateful objects in this segment
     /// </summary>
@@ -186,6 +202,9 @@ namespace Stratus
 
     private void OnDestroy()
     {
+      // If an episode has susbcribed
+      episode?.segments.Remove(this);
+
       available.Remove(label);
       availableList.Remove(this);
     }
@@ -194,6 +213,16 @@ namespace Stratus
     {
       triggerSystem = GetComponent<TriggerSystem>();
       checkpoints.AddRange(GetComponentsInChildren<Checkpoint>());
+    }
+
+    void Debuggable.Toggle(bool toggle)
+    {
+      debug = toggle;
+    }
+
+    Validation[] ValidatorAggregator.Validate()
+    {
+      return Validation.Aggregate(triggerSystem);
     }
 
     //------------------------------------------------------------------------/
@@ -224,31 +253,69 @@ namespace Stratus
     /// <param name="toggle"></param>
     public void Toggle(bool toggle)
     {
-      if (triggerSystem != null && toggleTriggers)
-        triggerSystem.Toggle(toggle);
+      ToggleTriggers(toggle);
+      ToggleObjects(toggle);
+    }
+
+    /// <summary>
+    /// Suspends the behaviors in this system
+    /// </summary>
+    /// <param name="suspend"></param>
+    private void ToggleTriggers(bool toggle)
+    {
+      if (triggerSystem != null && controlTriggers)
+        triggerSystem.ToggleRuntime(toggle);
+    }
+
+    /// <summary>
+    /// Toggles the objects on/off
+    /// </summary>
+    /// <param name="toggle"></param>
+    private void ToggleObjects(bool toggle)
+    {
+      if (!toggleObjects)
+        return;
+
+      foreach (var go in toggledObjects)
+      {
+        if (go)
+          go.SetActive(toggle);
+      }
     }
 
     /// <summary>
     /// Enters this segment
     /// </summary>
-    public void Enter()
+    public void Enter(bool suspend = false)
     {
+      // We will announce that this segment has been entered in a moment...
+      EnteredEvent e = new EnteredEvent(this);
+
+      // If the segment is currently active, let's do a restart instead
+      // This will set everything back to the initial state at this segment
+      if (state == State.Entered && restart)
+      {
+        Restart();
+        e.restarted = true;
+      }
+
       // Inform the previous segment its been exited
       if (current != null && current != this)
         current.Exit();
 
-      Scene.Dispatch<EnteredEvent>(new EnteredEvent(this));
-      current = this;
-      if (onEntered != null) onEntered.Invoke();
-      Toggle(true);
-
-      if (state != State.Inactive && restart)
-        Restart();
-
-      state = State.Entered;
-
-      if (log)
+      if (debug)
         Trace.Script($"Entering", this);
+
+      // Invoke the optional callbacks
+      if (onEntered != null) onEntered.Invoke();      
+
+      // If not suspended, toggle this segment
+      Toggle(!suspend);
+
+      // This is now the current segment
+      Scene.Dispatch<EnteredEvent>(e);
+      state = State.Entered;
+      current = this;
     }
 
     /// <summary>
@@ -261,21 +328,31 @@ namespace Stratus
       Toggle(false);
       state = State.Exited;
 
-      if (log)
+      if (debug)
         Trace.Script($"Exiting", this);
     }
 
     /// <summary>
-    /// Restarts the state of this segment: its trigger system
+    /// Restarts to the initial state of this segment, as if recently entered
     /// </summary>
     public void Restart()
     {
-      triggerSystem.Restart();
+      if (debug)
+        Trace.Script($"Restarting", this);
+
+      // Invoke optional restarted callbacks
+      //if (onRestarted != null) onRestarted.Invoke();
+
+      if (controlTriggers)
+        triggerSystem.Restart();
+
+      // If not suspended, toggle this segment
+      //Toggle(!suspend);
+
       foreach (var stateful in statefulObjects)
-      {        
-        stateful.LoadInitialState();
-      }
-      state = State.Inactive;
+        stateful.LoadInitialState();      
+
+      //state = State.Inactive;
     }
 
     /// <summary>
@@ -284,7 +361,7 @@ namespace Stratus
     /// <param name="obj"></param>
     public void TranslateToCheckpoint(Transform target, int index)
     {
-      if (checkpoints.Count - 1 < index  || checkpoints[index] == null)
+      if (checkpoints.Count - 1 < index || checkpoints[index] == null)
       {
         Trace.Error($"No checkpoint available at index {index}", this);
         return;
@@ -313,6 +390,7 @@ namespace Stratus
     {
 
     }
+
 
   }
 }

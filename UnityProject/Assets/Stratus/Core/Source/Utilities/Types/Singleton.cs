@@ -22,10 +22,18 @@ namespace Stratus
     /// Whether the class should only be instantiated during playmode
     /// </summary>
     public bool isPlayOnly { get; set; } = true;
-
-    private string name { get; set; }
-    private bool instantiate { get; set; }
-    private bool persistent { get; set; }
+    /// <summary>
+    /// If instantiated, the name of the GameObject that will contain the singleton
+    /// </summary>
+    public string name { get; set; }
+    /// <summary>
+    /// Whether to instantiate an instance of the class if one is not found present at runtime
+    /// </summary>
+    public bool instantiate { get; set; }
+    /// <summary>
+    /// Whether the instance is persistent across scene loading
+    /// </summary>
+    public bool persistent { get; set; }
 
     /// <param name="name">The name of the GameObject where the singleton will be placed</param>
     /// <param name="persistent">Whether the instance is persistent across scene loading</param>
@@ -35,6 +43,10 @@ namespace Stratus
       this.name = name;
       this.persistent = persistent;
       this.instantiate = instantiate;
+    }
+
+    public SingletonAttribute()
+    {
     }
 
   }

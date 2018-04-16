@@ -21,43 +21,42 @@ namespace Stratus
       /// </summary>
       public abstract class StatusEvent : Stratus.Event
       {
-        public Agent Agent;
+        public Agent agent { get; internal set; }
       }
+
       /// <summary>
       /// Signals that the agent has spawned
       /// </summary>
       public class SpawnEvent : StatusEvent
       {
-        public SpawnEvent(Agent agent) { Agent = agent; }
       }
+
       /// <summary>
       /// Signals that the agent has died
       /// </summary>
       public class DeathEvent : StatusEvent
       {
-        public DeathEvent(Agent agent) { Agent = agent; }
       }
 
       /// <summary>
       /// Base class for all engagement events
       /// </summary>
-      public abstract class EngagementEvent : Stratus.Event
+      public abstract class EngagementEvent : StatusEvent
       {
-        public Agent Agent;
       }
+
       /// <summary>
       /// Signals the the agent has engaged the target
       /// </summary>
       public class EngagedEvent : EngagementEvent
       {
-        //public EngagedEvent(Agent agent) { Agent = agent; }
       }
+
       /// <summary>
       /// Signals that the agent has disengaged from the target
       /// </summary>
       public class DisengagedEvent : EngagementEvent
       {
-        //public DisengagedEvent(Agent agent) { Agent = agent; }
       }
 
       /// <summary>
@@ -99,12 +98,12 @@ namespace Stratus
       /// <summary>
       /// Signals the agent to move to a specified position
       /// </summary>
-      public class MoveToEvent : Stratus.Event
+      public class MoveEvent : StatusEvent
       {
-        public Vector3 Point;
-        public MoveToEvent(Vector3 point)
+        public Vector3 position;
+        public MoveEvent(Vector3 point)
         {
-          Point = point;
+          position = point;
         }
       }
 

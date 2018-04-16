@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Stratus.AI
 {
   [CustomEditor(typeof(Sensor), true)]
-  public class SensorEditor : BaseEditor<Sensor>
+  public class SensorEditor : BehaviourEditor<Sensor>
   {
     protected override void OnBaseEditorEnable()
     {

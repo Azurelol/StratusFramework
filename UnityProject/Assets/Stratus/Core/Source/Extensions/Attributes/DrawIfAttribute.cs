@@ -57,10 +57,10 @@ namespace Stratus
     public ComparisonType comparison { get; private set; }
     public PropertyDrawingType defaultBehavior { get; private set; }
     public string predicateName { get; private set; }
-    public Type type { get; private set; }    
-    public MethodInfo predicateMethod { get; private set; }
-    public PropertyInfo predicateProperty { get; private set; }
-    public bool isProperty { get; private set; }
+    //public Type type { get; private set; }    
+    //public MethodInfo predicateMethod { get; private set; }
+    //public PropertyInfo predicateProperty { get; private set; }
+    //public bool isProperty { get; private set; }
 
     /// <summary>
     /// Only draws the field if the condition is met
@@ -85,22 +85,23 @@ namespace Stratus
     /// <param name="comparedValue">The value the property is being compared to</param>
     /// <param name="comparison">The predicate to use</param>
     /// <param name="default">What should happen if the condition is not met</param>
-    public DrawIfAttribute(Type type, string predicateFunctionName, PropertyDrawingType defaultBehavior = PropertyDrawingType.DontDraw)
+    public DrawIfAttribute(string predicateFunctionName, PropertyDrawingType defaultBehavior = PropertyDrawingType.DontDraw)
     {
       this.predicate = PredicateMode.Predicate;
-      this.type = type;
       this.predicateName = predicateFunctionName;
-      
-      this.predicateMethod = type.GetMethod(predicateName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-      if (this.predicateMethod != null)
-        isProperty = false;
-      
-      this.predicateProperty = type.GetProperty(predicateName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetProperty);
-      if (this.predicateProperty != null)
-        isProperty = true;      
 
-      if (predicateMethod == null && predicateProperty == null)
-        throw new System.Exception($"The predicate method or property {predicateName} is missing!");
+      //this.type = type;
+      //
+      //this.predicateMethod = type.GetMethod(predicateName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+      //if (this.predicateMethod != null)
+      //  isProperty = false;
+      //
+      //this.predicateProperty = type.GetProperty(predicateName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetProperty);
+      //if (this.predicateProperty != null)
+      //  isProperty = true;      
+      //
+      //if (predicateMethod == null && predicateProperty == null)
+      //  throw new System.Exception($"The predicate method or property {predicateName} is missing!");
 
       this.defaultBehavior = defaultBehavior;
     }

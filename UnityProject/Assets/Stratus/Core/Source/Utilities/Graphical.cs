@@ -58,9 +58,9 @@ namespace Stratus
       {
         var color = new Color();
         // In case the string is formated 0xFFFFFF
-        hex.Replace("0x", "");
+        hex = hex.Replace("0x", "");
         // In case the string is formated #FFFFFF
-        hex.Replace("#", "");
+        hex = hex.Replace("#", "");
         // Assume fully visible unless specified in hex
         color.r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
         color.g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber) / 255f;

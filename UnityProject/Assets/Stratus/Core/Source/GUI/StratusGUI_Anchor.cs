@@ -125,7 +125,7 @@ namespace Stratus
           break;
         case Anchor.Right:
           x = screenWidth - width - padding;
-          y = 0f;
+          y = screenHeight / 2 - ((height / 2) - padding);
           break;
         case Anchor.Bottom:
           x = screenWidth / 2 - (width / 2);
