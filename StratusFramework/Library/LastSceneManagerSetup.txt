@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/Stratus/Experimental/Analytics/Resources/Stratus Analytics Demo.unity
+  isLoaded: 1
+  isActive: 1

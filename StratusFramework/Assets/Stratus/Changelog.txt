@@ -1,0 +1,41 @@
+3/2/2018 - ....
+
+AgentEvent implemented, a triggerable for Agent events within Stratus AI.
+PositionField implemented, providing a simple way to use transform or vector3 for setting positions in editor.
+Episode: Begin,End methods added. (Begin will enter the first segment and mark the episode as the current). Fixed a few validation bugs on awake.
+StratusEditorUtility: Fixed some property modification issues.
+CollisionTrigger: Fixed a bug preventing activation.
+Agent: Added OnPause/OnResume virtuals
+TriggerBase: Now has the debug field, so triggers share a common field with triggerables.
+Segment: The EnteredEvent is now sent after all triggers have been set, so now the likely use case of EpisodeEvent is supported (putting the EpisodeEvent within the Episode itself)
+ListExtensions: FirstOrNull for arrays fixed.
+Triggerable and Triggers now support automatic descriptions! Whenever the description field is empty, and a provided override, it will automatically populate the description field! Added automatic descriptions to all the existing ones.
+BaseEditor: Added a callback for whenever any property has been modified in the target being inspected (useful for doing Validating behaviour!)
+Stateful: Redesigned the enums, collapsing all event types into one enum for simplicity.
+Trace: Clicking on the console stack trace will now properly open the calling function's file! 
+PersistentSceneViewDisplay -> SceneViewDisplay.
+SceneViewDisplay: They now support saving/loading their current settings (!!!). This is a precursor to supporting docking and dragging these windows within the scene view window.
+CollisionTrigger: Updated validation to show description of emitter.
+StratusEditorUtlity: ModifyProperty now returns boolean depending if a change was applied.
+TriggerSystem: Dragging a triggerable and trigger onto each other will connect them. Added tooltips onto components. Added new another way to display connections : grouping. It will group components based on connectivity and give each group an unique color. Added custom validation checks to the system.
+EventTrigger/EventProxy/DispatchEvent: A trigger, proxy and triggerable that allow for listening to and dispatching ANY Stratus.Event. DispatchEvent also allows setting the values of the event object in the editor at runtime (WIP).
+SerializedSystemObject: Provides a simple to use interface for serializig System.Object types, since Unity serialziation is built around UnityEngine.Object. Implements FieldInfoDrawer. Supports all basic types atm, except UnityEngine.Object.
+EnableEvent: Now supports Behaviours, not just GameObjects.
+Interfaces.DebugToggle: Figured out a good design for interfaces with easy global access! The first of them is DebugToggle, which allows users to have a single control point for all debug behaviours on their components!
+StratusGUIStyles: Added static color arrays for when you REALLY need to use a lot of distinct colors. Custom textures are now easily loaded and mapped! (Allows me to use icons throughout my components!)
+GenericMenuExtensions: Added extensions for easy modification of serializedproperties that can be sensibly changed with a context menu (bools, enums).
+TypeSelector: Fixed a rather silly bug that led to the first displayed option to be removed.
+HelpboxAttribute: Allows an easy way to set persistent Helpbox messages above fields.
+OnValueChangedAttribute: Allows the setting of a provided callback function when a specific field is changed in the inspector.
+DispatchEvent: Now uses a list of targets (rather than just one).
+BaseEditor renamed to StratusEditor: There was a surprising amount of BaseEditor files out there among libraries. Refactored, adding specific subclasses for custom editors for Behaviours and ScriptableObjects.
+TriggerBase: The automatic description is now updated automatically when editor is enabled (handles a lot of the hassle cases).
+Stateful: Added an initial state configuration: Immediate, OnDelay, OnEvent, OnCallbackFinished.
+AnimateEvent -> AnimatorEvent: Added the remaining parameter types (can't always assume trigger!)
+ScreenOverlay: A singleton built for easy screen-space transitions.
+
+
+
+
+
+
