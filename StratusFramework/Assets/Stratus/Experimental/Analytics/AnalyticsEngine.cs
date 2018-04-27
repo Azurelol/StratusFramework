@@ -11,7 +11,7 @@ namespace Stratus.Analytics
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    public List<AnalyticsCollector> collectors = new List<AnalyticsCollector>();
+    private List<AnalyticsCollector> collectors = new List<AnalyticsCollector>();
 
     //------------------------------------------------------------------------/
     // Messages
@@ -38,6 +38,8 @@ namespace Stratus.Analytics
     {
       get.collectors.Remove(collector);
     }
+
+    //public static void Submit(Analy)
 
     //------------------------------------------------------------------------/
     // Methods: Static

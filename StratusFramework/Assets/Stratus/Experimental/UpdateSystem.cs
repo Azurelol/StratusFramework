@@ -87,9 +87,15 @@ namespace Stratus
 
     }
 
+    //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
     private Dictionary<float, FrequencyUpdateBatch> update = new Dictionary<float, FrequencyUpdateBatch>();
     private Dictionary<float, FrequencyUpdateBatch> fixedUpdate = new Dictionary<float, FrequencyUpdateBatch>();
 
+    //------------------------------------------------------------------------/
+    // Messages
+    //------------------------------------------------------------------------/
     protected override void OnAwake()
     {
     }
@@ -110,6 +116,9 @@ namespace Stratus
       }
     }
 
+    //------------------------------------------------------------------------/
+    // Static Methods
+    //------------------------------------------------------------------------/
     /// <summary>
     /// Subscribes a method to be invoked with the given frequency on the given timescale
     /// </summary>
@@ -119,18 +128,19 @@ namespace Stratus
     /// <param name="timeScale"></param>
     public static void Add(float frequency, System.Action action, MonoBehaviour behaviour, TimeScale timeScale = TimeScale.Delta)
     {
-      Dictionary<float, FrequencyUpdateBatch> selected = null;
-
-      switch (timeScale)
-      {
-        case TimeScale.Delta: selected = get.update; break;
-        case TimeScale.FixedDelta: selected = get.fixedUpdate;  break;
-      }
-
-      if (!selected.ContainsKey(frequency))
-        selected.Add(frequency, new FrequencyUpdateBatch(frequency));
-
-      selected[frequency].Add(action, behaviour);
+      get.AddAction(frequency, action, behaviour, timeScale);
+      //Dictionary<float, FrequencyUpdateBatch> selected = null;
+      //
+      //switch (timeScale)
+      //{
+      //  case TimeScale.Delta: selected = update; break;
+      //  case TimeScale.FixedDelta: selected = fixedUpdate;  break;
+      //}
+      //
+      //if (!selected.ContainsKey(frequency))
+      //  selected.Add(frequency, new FrequencyUpdateBatch(frequency));
+      //
+      //selected[frequency].Add(action, behaviour);
     }
 
     /// <summary>
@@ -142,19 +152,56 @@ namespace Stratus
     /// <param name="timeScale"></param>
     public static void Remove(MonoBehaviour behaviour, TimeScale timeScale = TimeScale.Delta)
     {
+      get.RemoveBehaviour(behaviour, timeScale);
+      //Dictionary<float, FrequencyUpdateBatch> selected = null;
+      //
+      //switch (timeScale)
+      //{
+      //  case TimeScale.Delta: selected = update; break;
+      //  case TimeScale.FixedDelta: selected = fixedUpdate; break;
+      //}
+      //
+      //foreach(var kp in selected)
+      //{
+      //  kp.Value.Remove(behaviour);
+      //}
+    }
+
+    //------------------------------------------------------------------------/
+    // Private Methods
+    //------------------------------------------------------------------------/
+    private void RemoveBehaviour(MonoBehaviour behaviour, TimeScale timeScale = TimeScale.Delta)
+    {
       Dictionary<float, FrequencyUpdateBatch> selected = null;
 
       switch (timeScale)
       {
-        case TimeScale.Delta: selected = get.update; break;
-        case TimeScale.FixedDelta: selected = get.fixedUpdate; break;
+        case TimeScale.Delta: selected = update; break;
+        case TimeScale.FixedDelta: selected = fixedUpdate; break;
       }
 
-      foreach(var kp in selected)
+      foreach (var kp in selected)
       {
         kp.Value.Remove(behaviour);
       }
     }
+
+    public void AddAction(float frequency, System.Action action, MonoBehaviour behaviour, TimeScale timeScale = TimeScale.Delta)
+    {
+      Dictionary<float, FrequencyUpdateBatch> selected = null;
+
+      switch (timeScale)
+      {
+        case TimeScale.Delta: selected = update; break;
+        case TimeScale.FixedDelta: selected = fixedUpdate; break;
+      }
+
+      if (!selected.ContainsKey(frequency))
+        selected.Add(frequency, new FrequencyUpdateBatch(frequency));
+
+      selected[frequency].Add(action, behaviour);
+    }
+
 
 
 

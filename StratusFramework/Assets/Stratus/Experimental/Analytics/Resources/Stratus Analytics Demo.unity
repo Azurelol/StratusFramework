@@ -1491,8 +1491,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1116735865}
-  m_LocalRotation: {x: 0.3826835, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: -8, y: 15, z: -48}
+  m_LocalRotation: {x: 0.7005946, y: -0.021326952, z: 0.020957861, w: 0.7129328}
+  m_LocalPosition: {x: -7.590044, y: 19.997717, z: -38.237762}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2656,6 +2656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d5d964a83341dd4aaa8904f5bc57059, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug: 0
   target:
     analysis: 0
     label: Player Position
@@ -2665,7 +2666,15 @@ MonoBehaviour:
       _target: {fileID: 1927910978}
       _component: Transform
       _name: localPosition
-  pollFrequency: 1
+    timeStamp: 0
+  condition: 0
+  eventScope: 0
+  eventType:
+    _classRef: 
+  onTimer: 2
+  onMessage: 1
+  onLifecycleEvent: 0
+  onEventTriggerType: 0
 --- !u!4 &1859258042
 Transform:
   m_ObjectHideFlags: 0
@@ -2690,7 +2699,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0617f1f96e64a6840a5721de383d2900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectors: []
 --- !u!1 &1869509224
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,39 +3,56 @@ using System.Collections.Generic;
 using UnityEngine;
 using Stratus.Dependencies.Ludiq.Reflection;
 using System;
+using Stratus.Dependencies.TypeReferences;
 
 namespace Stratus.Analytics
 {
+
+  public enum DataType
+  {
+    Member,
+    Event
+  }
+
+  public enum Condition
+  {
+    Timer,
+    Nessage,
+    Event
+  }
+
+  public enum MessageType
+  {
+    LifecycleEvent,
+    EventTriggerType
+  }
+
+  public enum Analysis
+  {
+    Statistical,
+    Spatial
+  }
+
+  public enum SpatialAnalysis
+  {
+    Heatmap
+  }
+
+  public enum StatisticalAnalysis
+  {
+    Histogram
+  }
+
   /// <summary>
   /// Retrieves the current value of a given member among a GameObject's components
   /// </summary>
   [Serializable]
-  public class AnalyticsDataProvider
+  public class AnalyticsPayload
   {
     //------------------------------------------------------------------------/
     // Declarations
     //------------------------------------------------------------------------/   
-    public enum DataType
-    {
-      Member,
-      Event
-    }
 
-    public enum Analysis
-    {
-      Statistical,
-      Spatial
-    }
-
-    public enum SpatialAnalysis
-    {
-      Heatmap
-    }
-
-    public enum StatisticalAnalysis
-    {
-      Histogram
-    }
 
     //------------------------------------------------------------------------/
     // Fields
@@ -47,8 +64,12 @@ namespace Stratus.Analytics
     [Tooltip("An optional description of this data")]
     public string description;
     [Tooltip("The member that will be inspected")]
-    [Filter(Methods = false, Properties = true, NonPublic = true, ReadOnly = true, Static = true, Inherited = true, Fields = true)]
+    [Filter(typeof(Vector2), typeof(Vector3), typeof(int), typeof(float), typeof(bool),
+      Methods = false, Properties = true, NonPublic = true, ReadOnly = true, 
+      Static = true, Inherited = true, Fields = true)]
     public UnityMember member;
+
+    public float timeStamp;
 
     //------------------------------------------------------------------------/
     // Properties
