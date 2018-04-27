@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Stratus.Dependencies.TypeReferences;
 using UnityEngine.Analytics;
+using Stratus.Dependencies.Ludiq.Reflection;
 using UnityEngine.EventSystems;
 
 namespace Stratus.Analytics
@@ -11,15 +12,21 @@ namespace Stratus.Analytics
   public class AnalyticsCollector : StratusBehaviour
   {
     //------------------------------------------------------------------------/
-    // Declaratioins
+    // Declarations
     //------------------------------------------------------------------------/
 
 
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    public bool debug;
-    public AnalyticsPayload target;
+    [Tooltip("What schema is being used")]
+    public AnalyticsSchema schema;
+
+    [Tooltip("The member that will be inspected")]
+    [Filter(typeof(Vector2), typeof(Vector3), typeof(int), typeof(float), typeof(bool),
+            Methods = false, Properties = true, NonPublic = true, ReadOnly = true,
+            Static = true, Inherited = true, Fields = true)]
+    public UnityMember member;
 
     // Conditions: When the data should be collected
     [Header("Condition")]
@@ -43,12 +50,20 @@ namespace Stratus.Analytics
     //public bool useRules;
     //[Tooltip("The maximum amount of times ")]
     //public int repetitions = 0;
+    [HideInInspector]
+    [SerializeField]
+    public Analysis.Attribute attribute;
 
+    private bool debug;
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
     public UnityEngine.EventSystems.EventTrigger eventTrigger { get; private set; }
     public EventProxy eventProxy { get; private set; }
+    public GameObject targetGameObject { get; set; }
+    public Transform targetTransform { get; set; }
+    public object latestValue { get; set; }
+    public bool hasValue => latestValue != null;
 
     //------------------------------------------------------------------------/
     // Messages
@@ -56,7 +71,7 @@ namespace Stratus.Analytics
     private void Awake()
     {
       //if (Application.isPlaying)
-      
+
       switch (condition)
       {
         case Condition.Timer:
@@ -86,7 +101,7 @@ namespace Stratus.Analytics
 
     private void OnDestroy()
     {
-      
+
       switch (condition)
       {
         case Condition.Timer:
@@ -128,9 +143,26 @@ namespace Stratus.Analytics
     /// </summary>
     public void Submit()
     {
-      if (target.hasValue)
+      if (!Collect())
+        return;
 
-      Trace.Script("Collecting!", this);
+      Trace.Script($"Submitting {latestValue}", this);
+      AnalyticsEngine.Submit(new AnalyticsPayload(attribute, latestValue, Time.realtimeSinceStartup));
+      //if (target.hasValue)
+
+    }
+
+    /// <summary>
+    /// Records the current value of the given member
+    /// </summary>
+    /// <returns></returns>
+    public bool Collect()
+    {
+      if (!member.isAssigned)
+        return false;
+
+      latestValue = member.Get();
+      return true;
     }
 
   }

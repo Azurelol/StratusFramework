@@ -2656,25 +2656,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d5d964a83341dd4aaa8904f5bc57059, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 0
-  target:
-    analysis: 0
-    label: Player Position
-    description: The player's current position
-    member:
-      _parameterTypes: []
-      _target: {fileID: 1927910978}
-      _component: Transform
-      _name: localPosition
-    timeStamp: 0
+  schema: {fileID: 11400000, guid: 8d856967aa4bfa14e8412def688e6430, type: 2}
+  member:
+    _parameterTypes: []
+    _target: {fileID: 1927910978}
+    _component: Transform
+    _name: localPosition
   condition: 0
   eventScope: 0
   eventType:
-    _classRef: 
-  onTimer: 2
+    _classRef: Stratus.Player`1+EnterCombatEvent, Assembly-CSharp
+  onTimer: 1
   onMessage: 1
   onLifecycleEvent: 0
   onEventTriggerType: 0
+  attribute:
+    label: Player Health
+    type: 1
+    description: 
 --- !u!4 &1859258042
 Transform:
   m_ObjectHideFlags: 0

@@ -6,5 +6,6 @@ namespace Stratus
 {
   public abstract class StratusScriptable : ScriptableObject
   {
+    
   } 
 }

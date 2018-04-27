@@ -39,6 +39,11 @@ namespace Stratus.Analytics
       get.collectors.Remove(collector);
     }
 
+    public static void Submit(AnalyticsPayload payload)
+    {
+
+    }
+
     //public static void Submit(Analy)
 
     //------------------------------------------------------------------------/
