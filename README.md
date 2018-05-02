@@ -15,10 +15,9 @@ These *Trigger* events are received by additional family of components called *E
 - **Extensions**: A few extension methods which I found missing from the main classes we regularly interface with in Unity, such as GameObject and Monobehaviour.
 
 ---
-## Examples:
+## Features:
 
-I have provided sample scripts to display the functionality in the samples folder. To test them just add them to a component in Unity and read the console's output to inspect the sequence of calls.
-Some snippets of the code within:
+Here are some of the main features within the framework. I have provided sample scripts to display the functionality in the samples folder. To test them just add them to a component in Unity and read the console's output to inspect the sequence of calls. Some snippets of the code within:
 
 #### Events
 
@@ -83,11 +82,15 @@ Some snippets of the code within:
 
 ```
 
-#### Triggers
+#### Trigger System
 
-An example of using a generic *EventTrigger* component alongside a custom *EventDispatcher* in order to drive behavior. In this case initiating combat when the player collides with this enemy!
+The Trigger System was designed to compose gameplay events by linking triggers and actions in a generic way, by roughly classifying them inside two component families:
 
-![](TriggerExample.png)
+Triggers: Components which react to specific events which change the state of the game, such as collisions, timers, input, etc. For example a CollisionTrigger will react to the collisions event of a target object, and will in turn activate a given triggerable (or many).
+Triggerables: Components that when triggered, change the state of the world in some way. For example the TransformEvent will affect the transform of an object, such as providing translation, rotation or scaling.
+
+
+![](TriggerSystemEditorV3.png)
 
 ---
 ## Download
