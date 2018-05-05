@@ -42,7 +42,7 @@ namespace Stratus
     /// <summary>
     /// Whether the scene (and thus the editor) is currently being edited
     /// </summary>
-    public static bool isEditMode => EditorBridge.isEditMode;
+    public static bool isEditMode => Application.isEditor && !Application.isPlaying;
 
     /// <summary>    
     /// The currently active scene is the scene which will be used as the target for new GameObjects instantiated by scripts.

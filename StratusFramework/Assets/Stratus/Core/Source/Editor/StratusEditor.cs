@@ -410,6 +410,27 @@ namespace Stratus
       ReorderableListGUI.ListField(property);
     }
 
+    /// <summary>
+    /// Draws the given array type using a reorderable list drawer
+    /// </summary>
+    /// <param name="property"></param>
+    /// <param name="label"></param>
+    public static void DrawReorderableList<T>(List<T> list, string label, ReorderableListControl.ItemDrawer<T> drawItem)
+    {
+      ReorderableListGUI.Title(label);
+      ReorderableListGUI.ListField(list, drawItem);
+    }
+
+    /// <summary>
+    /// Draws the given array type using a reorderable list drawer
+    /// </summary>
+    /// <param name="property"></param>
+    /// <param name="label"></param>
+    public static void DrawReorderableList<T>(List<T> list, ReorderableListControl.ItemDrawer<T> drawItem)
+    {
+      ReorderableListGUI.ListField(list, drawItem);
+    }
+
     public static ReorderableList GetListWithFoldout(SerializedObject serializedObject, SerializedProperty property, bool draggable, bool displayHeader, bool displayAddButton, bool displayRemoveButton)
     {
       var list = new ReorderableList(serializedObject, property, draggable, displayHeader, displayAddButton, displayRemoveButton);

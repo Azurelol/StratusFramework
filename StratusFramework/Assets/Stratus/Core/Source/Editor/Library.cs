@@ -23,8 +23,6 @@ namespace Stratus
       eventTypeNames = Reflection.GetSubclassNames<Stratus.Event>(false);
     }
 
-
-
   }
 
 }

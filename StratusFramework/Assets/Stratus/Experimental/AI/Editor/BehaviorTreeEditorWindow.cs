@@ -157,13 +157,13 @@ namespace Stratus
         }
 
         // Show globals
-        foreach (var key in Blackboard.Globals)
+        foreach (var key in Blackboard.globals)
         {
           GUILayout.Label(key.Key);
         }
 
         // Show locals
-        foreach (var key in Blackboard.Globals)
+        foreach (var key in Blackboard.globals)
         {
           GUILayout.Label(key.Key);
         }

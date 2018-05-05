@@ -13,7 +13,7 @@ namespace Stratus
       public bool showFPS;
     }
 
-    private static Settings settings => Preferences.members.overlaySettings;
+    //private static Settings settings => Preferences.members.overlaySettings;
     private static OverlayWindow window { get; set; }
     private enum Mode { Play, Edit };
     private static Mode currentMode { get; set; }

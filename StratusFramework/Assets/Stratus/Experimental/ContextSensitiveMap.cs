@@ -14,7 +14,7 @@ namespace Stratus
       Keyboard
     }
 
-    public class Element<T> : SerializableClass
+    public class Element<T> : StratusSerializable
     {
       public string label;
       public T gamepad;

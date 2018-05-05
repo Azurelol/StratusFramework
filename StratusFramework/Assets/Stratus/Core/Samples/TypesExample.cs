@@ -9,13 +9,15 @@ namespace Stratus
     /// <summary>
     /// A simple component showcasing the most useful types provided by the Stratus library
     /// </summary>
-    public class TypesExample : MonoBehaviour
+    public class TypesExample : StratusBehaviour
     {
-      [Header("Useful Editor Types")]
+      [Header("Stratus Field Types")]
       public InputAxisField inputAxis = new InputAxisField();
       public InputField inputField = new InputField();
       public SceneField scene = new SceneField();
       public TagField tagField = new TagField();
+      public FloatRange floatRange = new FloatRange();
+      public IntegerRange intRange = new IntegerRange();
 
       [InvokeMethodButton(typeof(TypesExample), "TryLayer")]
       public LayerField layer = new LayerField(); 

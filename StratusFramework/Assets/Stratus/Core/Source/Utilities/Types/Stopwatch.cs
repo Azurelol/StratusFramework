@@ -4,8 +4,6 @@ using System;
 
 namespace Stratus
 {
-  namespace Utilities
-  {
     /// <summary>
     /// Counts up to the specified amount of time, starting from 0.0f.
     /// </summary>
@@ -59,5 +57,5 @@ namespace Stratus
         return false;
       }
     }
-  }
+  
 }

@@ -30,11 +30,6 @@ namespace Stratus
     /// </summary>
     [SerializeField]
     public Internal.TagColors tagColors = new Internal.TagColors();
-    
-    /// <summary>
-    /// Settings for the overlay window
-    /// </summary>
-    public OverlayWindow.Settings overlaySettings = new OverlayWindow.Settings();
 
     //------------------------------------------------------------------------/
     // Methods

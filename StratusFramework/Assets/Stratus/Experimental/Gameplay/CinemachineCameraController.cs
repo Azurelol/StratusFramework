@@ -9,7 +9,7 @@ namespace Stratus.Experimental
   public class CinemachineCameraController : StratusPlayerControllerExtension
   {
     [Serializable]
-    public class CameraPreset : SerializableClass
+    public class CameraPreset : StratusSerializable
     {
       public CinemachineVirtualCamera camera;
       public StratusPlayerController.MovementOffset offset;

@@ -83,6 +83,17 @@ namespace Stratus
           throw new KeyNotFoundException("The key '" + key + "' was not found!");
         }
 
+        public object GetValue(string key)
+        {
+          // Look for the key in the list
+          var symbol = Symbols.Find(x => x.Key == key);
+          if (symbol != null)
+            return symbol.Value.Get();
+
+          throw new KeyNotFoundException("The key '" + key + "' was not found!");
+        }
+        
+
         public void SetValue<T>(string key, T value)
         {
           // Look for the key in the list

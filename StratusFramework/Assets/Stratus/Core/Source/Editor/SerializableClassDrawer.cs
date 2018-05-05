@@ -8,7 +8,7 @@ using Stratus.Utilities;
 
 namespace Stratus
 {
-  [CustomPropertyDrawer(typeof(SerializableClass), true)]
+  [CustomPropertyDrawer(typeof(StratusSerializable), true)]
   public class SerializableClassDrawer : PropertyDrawer
   {
     //------------------------------------------------------------------------/

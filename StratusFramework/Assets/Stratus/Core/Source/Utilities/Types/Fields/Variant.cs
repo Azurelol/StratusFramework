@@ -143,7 +143,7 @@ namespace Stratus
           return (T)Convert.ChangeType(Vector3, typeof(T));
 
         throw new ArgumentException("The provided type '" + type.Name + "' is not the correct type for this value (" + Type.ToString() + ")");
-      }      
+      }
 
       public object Get(Type type)
       {
@@ -160,6 +160,49 @@ namespace Stratus
 
         throw new ArgumentException("The provided type '" + type.Name + "' is not the correct type for this value (" + Type.ToString() + ")");
       }
+
+      public object Get()
+      {
+        object value = null;
+        switch (Type)
+        {
+          case Types.Integer:
+            value = Integer;
+            break;
+          case Types.Boolean:
+            value = Boolean;
+            break;
+          case Types.Float:
+            value = Float;
+            break;
+          case Types.String:
+            value = String;
+            break;
+          case Types.Vector3:
+            value = Vector3;
+            break;
+        }
+        return value;
+      }
+
+      public void Set(object value)
+      {
+        var type = value.GetType();
+
+        if (type == typeof(int) && Type == Types.Integer)
+          Integer = (int)value;
+        else if (type == typeof(float) && Type == Types.Float)
+          Float = (float)value;
+        else if (type == typeof(string) && Type == Types.String)
+          String = value as string;
+        else if (type == typeof(bool) && Type == Types.Boolean)
+          Boolean = (bool)value;
+        else if (type == typeof(Vector3) && Type == Types.Vector3)
+          Vector3 = (Vector3)value;
+
+        throw new ArgumentException("The provided type '" + type.Name + "' is not the correct type for this value (" + Type.ToString() + ")");
+      }
+
 
       public void Set<T>(T value)
       {

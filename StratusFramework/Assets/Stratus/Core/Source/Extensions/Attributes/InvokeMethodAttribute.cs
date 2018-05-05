@@ -44,8 +44,8 @@ namespace Stratus
     /// <param name="order"></param>
     public InvokeMethodButtonAttribute(Type type, string methodName, int order = 1)
     {
-      if (type.BaseType != typeof(MonoBehaviour))
-        throw new Exception("The provided type (" + type.Name + ") is not a MonoBehaviour!");      
+      //if (!type.IsAssignableFrom(typeof(MonoBehaviour)))
+      //  throw new Exception("The provided type (" + type.Name + ") is not a MonoBehaviour!");      
 
       this.type = type;      
       this.methodName = methodName;

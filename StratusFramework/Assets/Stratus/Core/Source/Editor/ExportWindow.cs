@@ -25,7 +25,7 @@ namespace Stratus
       AssetDatabase.ExportPackage(location, $"{packageName}.unitypackage",
         ExportPackageOptions.Recurse | ExportPackageOptions.Default |
         ExportPackageOptions.Interactive);
-      Trace.Script($"Exported {packageName} to {path}");
+      Trace.Script($"Exported {packageName} to {location}");
     }
   }
 

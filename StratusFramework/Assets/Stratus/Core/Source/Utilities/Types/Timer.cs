@@ -12,7 +12,6 @@ using System;
 
 namespace Stratus
 {
-
   /// <summary>
   /// The base class for all timers
   /// </summary>
