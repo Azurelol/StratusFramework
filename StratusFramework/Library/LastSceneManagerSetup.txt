@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/Stratus/Core/Resources/Scenes/Stratus Examples Scene.unity
-  isLoaded: 1
-  isActive: 1

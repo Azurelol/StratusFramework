@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   ActionsRegistration.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@date   5/25/2016
-*/
-/******************************************************************************/
 using UnityEngine;
 
 namespace Stratus
@@ -16,25 +8,29 @@ namespace Stratus
   /// It is only destroyed at the moment the GameObject is being destroyed.
   /// </summary>
   [DisallowMultipleComponent]
+  [ExecuteInEditMode]
   public class ActionsRegistration : MonoBehaviour
   {
     private GameObject owner { get; set; }
-    
-    void Start()
+
+    private void Awake()
     {
-      // This component is only used for runtime book-keeping
-      this.owner = this.gameObject;
-      this.hideFlags = HideFlags.HideAndDontSave;
-    }
-    
-    void OnDestroy()
-    {
-      // When this GameObject dies, it gets deregistered from the actions system.
-      if (this.enabled)
-        ActionSpace.Unsubscribe(this.owner);
+      this.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
+
+      if (Application.isPlaying)
+      {
+        this.owner = this.gameObject;
+        ActionSpace.Subscribe(this.owner);
+      }
     }
 
-    //public static ActionsRegistration Construct(ActionsOwner )
+    void OnDestroy()
+    {
+      if (Application.isPlaying)
+      {
+        ActionSpace.Unsubscribe(this.owner);
+      }
+    }
 
   }
 

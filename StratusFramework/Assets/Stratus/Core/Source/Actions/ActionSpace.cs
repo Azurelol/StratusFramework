@@ -6,7 +6,7 @@
 @date   5/25/2016
 */
 /******************************************************************************/
-//#define STRATUS_ACTIONSPACE_NEW
+#define STRATUS_ACTIONSPACE_NEW
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;

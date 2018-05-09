@@ -18,19 +18,25 @@ namespace Stratus
   /// It is only destroyed at the moment the GameObject is being destroyed.
   /// </summary>
   [DisallowMultipleComponent]
+  [ExecuteInEditMode]
   public class EventsRegistration : MonoBehaviour
-  {    
-    void Start()
-    {      
-      // This component is only used for runtime book-keeping
-      this.hideFlags = HideFlags.HideAndDontSave;
+  {
+    private void Awake()
+    {
+      this.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
+      if (Application.isPlaying && !Events.IsConnected(this.gameObject))
+      {
+        Events.Connect(this.gameObject);
+      }
     }
-    
-   void OnDestroy()
-   {
-      // Unsubscribe this GameObject (removing all delegates attached to its components)
-      Events.Disconnect(this.gameObject);
-   }    
+
+    void OnDestroy()
+    {
+      if (Application.isPlaying)
+      {
+        Events.Disconnect(this.gameObject);
+      }
+    }
 
   }
 }
