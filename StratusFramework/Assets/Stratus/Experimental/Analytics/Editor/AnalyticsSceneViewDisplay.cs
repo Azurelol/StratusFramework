@@ -8,7 +8,7 @@ namespace Stratus.Analytics
   [LayoutViewDisplayAttribute("Stratus Analytics", 225f, 200f, StratusGUI.Anchor.BottomLeft, StratusGUI.Dimensions.Absolute)]
   public class AnalyticsSceneViewDisplay : SingletonSceneViewDisplay<AnalyticsEngine>
   {
-    AnimationCurve curve = new AnimationCurve();
+    //AnimationCurve curve = new AnimationCurve();
 
     protected override void OnGUI(Rect position)
     {

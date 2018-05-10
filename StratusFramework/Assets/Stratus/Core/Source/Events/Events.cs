@@ -17,12 +17,9 @@ using System;
 namespace Stratus
 {
   // By type
-  //using DelegatePair = Tuple<bool, >
   using DelegateTypeList = List<Delegate>;
   using DelegateMap = Dictionary<string, List<Delegate>>;
   using DispatchMap = Dictionary<GameObject, Dictionary<string, List<Delegate>>>;
-  //using DelegateConnectMap = Dictionary<>
-  //using 
 
   /// <summary>
   /// The class which manages the overlying Stratus event system.
@@ -32,10 +29,10 @@ namespace Stratus
   {
     public class LoggingSetup
     {
-      public bool Construction = false;
-      public bool Register = false;
-      public bool Connect = true;
-      public bool Dispatch = false;
+      public bool construction = false;
+      public bool register = false;
+      public bool connect = true;
+      public bool dispatch = false;
     }
 
     //------------------------------------------------------------------------/
@@ -68,8 +65,6 @@ namespace Stratus
     /// </summary>
     protected override void OnAwake()
     {
-      //DontDestroyOnLoad(this);
-      //gameObjectDelegateMap = new DelegateMap();
     }
 
     /// <summary>
@@ -510,7 +505,7 @@ namespace Stratus
       // Remove this GameObject from the event dispatch map
       if (Events.get.dispatchMap.ContainsKey(obj))
       {
-        if (logging.Register)
+        if (logging.register)
           Trace.Script(obj.name + " has been disconnected from the event system");
         Events.get.dispatchMap.Remove(obj);
       }

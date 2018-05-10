@@ -54,7 +54,7 @@ namespace Stratus.Analytics
     [SerializeField]
     public Analysis.Attribute attribute;
 
-    private bool debug;
+    private bool debug = false;
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/

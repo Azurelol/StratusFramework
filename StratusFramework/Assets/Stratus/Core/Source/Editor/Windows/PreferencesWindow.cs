@@ -133,10 +133,10 @@ namespace Stratus
     {
       //GUILayout.Label("Events", HeaderStyle);
       GUILayout.Label("Tracing", EditorStyles.boldLabel);
-      Events.logging.Connect = EditorGUILayout.Toggle("Connect", Events.logging.Connect);
-      Events.logging.Dispatch = EditorGUILayout.Toggle("Dispatch", Events.logging.Dispatch);
-      Events.logging.Construction = EditorGUILayout.Toggle("Construction", Events.logging.Construction);
-      Events.logging.Register = EditorGUILayout.Toggle("Register", Events.logging.Register);
+      Events.logging.connect = EditorGUILayout.Toggle("Connect", Events.logging.connect);
+      Events.logging.dispatch = EditorGUILayout.Toggle("Dispatch", Events.logging.dispatch);
+      Events.logging.construction = EditorGUILayout.Toggle("Construction", Events.logging.construction);
+      Events.logging.register = EditorGUILayout.Toggle("Register", Events.logging.register);
     }
 
     static void ModifyTrace()
@@ -170,10 +170,10 @@ namespace Stratus
       //Trace.Script("GameObject color = " + Trace.GameObjectColor.ToHex());
       EditorPrefs.SetString("Stratus_Trace_TimestampColor", Trace.timeStampColor.ToHex());
       // Events
-      EditorPrefs.SetBool("Stratus_Events_Connect", Events.logging.Connect);
-      EditorPrefs.SetBool("Stratus_Events_Dispatch", Events.logging.Dispatch);
-      EditorPrefs.SetBool("Stratus_Events_Construction", Events.logging.Construction);
-      EditorPrefs.SetBool("Stratus_Events_Register", Events.logging.Register);
+      EditorPrefs.SetBool("Stratus_Events_Connect", Events.logging.connect);
+      EditorPrefs.SetBool("Stratus_Events_Dispatch", Events.logging.dispatch);
+      EditorPrefs.SetBool("Stratus_Events_Construction", Events.logging.construction);
+      EditorPrefs.SetBool("Stratus_Events_Register", Events.logging.register);
     }
 
     /// <summary>
@@ -190,10 +190,10 @@ namespace Stratus
       Trace.gameObjectColor = Utilities.Graphical.HexToColor(EditorPrefs.GetString("Stratus_Trace_GameObjectColor", Color.blue.ToHex()));
       Trace.timeStampColor = Utilities.Graphical.HexToColor(EditorPrefs.GetString("Stratus_Trace_TimestampColor", Color.green.ToHex()));
       // Events
-      Events.logging.Connect = EditorPrefs.GetBool("Stratus_Events_Connect", false);
-      Events.logging.Dispatch = EditorPrefs.GetBool("Stratus_Events_Dispatch", false);
-      Events.logging.Construction = EditorPrefs.GetBool("Stratus_Events_Construction", false);
-      Events.logging.Register = EditorPrefs.GetBool("Stratus_Events_Register", false);
+      Events.logging.connect = EditorPrefs.GetBool("Stratus_Events_Connect", false);
+      Events.logging.dispatch = EditorPrefs.GetBool("Stratus_Events_Dispatch", false);
+      Events.logging.construction = EditorPrefs.GetBool("Stratus_Events_Construction", false);
+      Events.logging.register = EditorPrefs.GetBool("Stratus_Events_Register", false);
     }    
     
 

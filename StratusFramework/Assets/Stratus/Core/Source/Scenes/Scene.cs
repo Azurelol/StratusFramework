@@ -25,6 +25,9 @@ namespace Stratus
   [Singleton("Stratus Scene Events", true, true)]
   public class Scene : Singleton<Scene>
   {
+    //----------------------------------------------------------------------------------/
+    // Declarations
+    //----------------------------------------------------------------------------------/
     public abstract class StatusEvent : Stratus.Event { public string name; }
     public class ChangedEvent : StatusEvent { }
     public class LoadedEvent : StatusEvent { }
@@ -79,16 +82,7 @@ namespace Stratus
     /// <summary>
     /// The current progress into loading the next scene, on a (0,1) range
     /// </summary>
-    public static float loadingProgress
-    {
-      get; private set;
-      //get
-      //{
-      //  if (get.loadingOperation == null)
-      //    return 0.0f;
-      //  return get.loadingOperation.progress;
-      //}
-    }
+    public static float loadingProgress  { get; private set;  }
 
     /// <summary>
     /// A provided callback for when the scene has changed. Add your methods here to be
