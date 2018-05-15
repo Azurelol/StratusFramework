@@ -10,8 +10,8 @@ namespace Stratus
     {
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
       {
-        var keyProperty = property.FindPropertyRelative("Key");
-        var typeProperty = property.FindPropertyRelative("Type");
+        var keyProperty = property.FindPropertyRelative(nameof(Symbol.Reference.key));
+        var typeProperty = property.FindPropertyRelative(nameof(Symbol.Reference.type));
 
         label = EditorGUI.BeginProperty(position, label, property);
         {

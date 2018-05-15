@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Stratus
 {
+  /// <summary>
+  /// Field that allows custom methods to be set for an inspector window and run
+  /// </summary>
   [Serializable]
   public class RuntimeMethodField
   {

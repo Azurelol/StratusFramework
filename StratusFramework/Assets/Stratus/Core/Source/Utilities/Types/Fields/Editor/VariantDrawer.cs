@@ -15,7 +15,7 @@ namespace Stratus
 
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
       {
-        var typeProperty = property.FindPropertyRelative("Type");
+        var typeProperty = property.FindPropertyRelative("type");
         var type = (Variant.Types)typeProperty.enumValueIndex;
 
         label = EditorGUI.BeginProperty(position, label, property);
@@ -27,9 +27,31 @@ namespace Stratus
         contentPosition.width = width * 0.30f;
         EditorGUI.PropertyField(contentPosition, typeProperty, GUIContent.none);
         contentPosition.x += contentPosition.width + 4f;
+
         // Value
         contentPosition.width = width * 0.70f;
-        EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative(type.ToString()), GUIContent.none);
+        string valueName = string.Empty;
+        switch (type)
+        {
+          case Variant.Types.Integer:
+            valueName = "integerValue";
+            break;
+          case Variant.Types.Boolean:
+            valueName = "booleanValue";
+            break;
+          case Variant.Types.Float:
+            valueName = "floatValue";
+            break;
+          case Variant.Types.String:
+            valueName = "stringValue";
+            break;
+          case Variant.Types.Vector3:
+            valueName = "vector3Value";
+            break;
+          default:
+            break;
+        }
+        EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative(valueName), GUIContent.none);
         
         EditorGUI.EndProperty();
 

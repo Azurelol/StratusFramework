@@ -17,9 +17,8 @@ namespace Stratus
 
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
       {
-
-        var valueProperty = property.FindPropertyRelative("Value");
-        var typeProperty = valueProperty.FindPropertyRelative("Type");
+        var valueProperty = property.FindPropertyRelative(nameof(Symbol.value));
+        var typeProperty = valueProperty.FindPropertyRelative("type");
         var type = (Variant.Types)typeProperty.enumValueIndex;
         
         label = EditorGUI.BeginProperty(position, label, property);
@@ -31,7 +30,7 @@ namespace Stratus
           EditorGUI.indentLevel = 0;
           // Key
           contentPosition.width = width * 0.40f;
-          EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative("Key"), GUIContent.none);
+          EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative(nameof(Symbol.key)), GUIContent.none);
           contentPosition.x += contentPosition.width + 4f;
           // Value
           contentPosition.width = width * 0.60f;
@@ -42,7 +41,7 @@ namespace Stratus
           EditorGUI.LabelField(position, label);
           //EditorGUI.indentLevel = 1;
           position.y += EditorGUIUtility.singleLineHeight;
-          EditorGUI.PropertyField(position, property.FindPropertyRelative("Key"));
+          EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(Symbol.key)));
           position.y += EditorGUIUtility.singleLineHeight;
           EditorGUI.PropertyField(position, valueProperty);
 

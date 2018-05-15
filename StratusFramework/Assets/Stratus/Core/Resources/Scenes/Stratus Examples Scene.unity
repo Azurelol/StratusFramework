@@ -1174,9 +1174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3ad46943daea584882f896b1c3777e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blackboard: {fileID: 11400000, guid: b9fcc10724c72464b824eced0bd5ca7f, type: 2}
-  keyName: Cats
-  keyType: 0
+  blackboard: {fileID: 11400000, guid: d28f8a35646d8014b9aad8cdfacbba18, type: 2}
+  key: Cars
 --- !u!4 &1301396974
 Transform:
   m_ObjectHideFlags: 0

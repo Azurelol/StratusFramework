@@ -44,13 +44,13 @@ namespace Stratus
       /// <param name="symbol"></param>
       public void Apply(Symbol symbol)
       {
-        var existingSymbol = Find(symbol.Key);
+        var existingSymbol = Find(symbol.key);
         if (existingSymbol != null)
-          existingSymbol.Value = symbol.Value;
+          existingSymbol.value = symbol.value;
         else
         {
           // Make a copy of that other symbol
-          Symbols.Add(new Symbol(symbol));
+          symbols.Add(new Symbol(symbol));
         }
       }
 
@@ -64,9 +64,9 @@ namespace Stratus
       {
         var existingSymbol = Find(key);
         if (existingSymbol != null)
-          existingSymbol.Value.Set(value);
+          existingSymbol.value.Set(value);
         else
-          Symbols.Add(Symbol.Make(key, value));
+          symbols.Add(Symbol.Construct(key, value));
       }
 
       /// <summary>
@@ -77,14 +77,14 @@ namespace Stratus
       /// <returns></returns>
       public bool Satisfies(WorldState other)
       {
-        foreach (var symbol in other.Symbols)
+        foreach (var symbol in other.symbols)
         {
           // Look for a matching symbol
-          var matchingSymbol = Find(symbol.Key);
+          var matchingSymbol = Find(symbol.key);
           if (matchingSymbol != null)
           {
             // If the symbols were not equal...
-            if (!matchingSymbol.Value.Compare(symbol.Value))
+            if (!matchingSymbol.value.Compare(symbol.value))
             {
               //Trace.Script(Symbols[symbol.Key].Print() + " is not equal to " + symbol.Value.Print());
               return false;
@@ -109,11 +109,11 @@ namespace Stratus
       /// <returns></returns>
       public bool Contains(Symbol symbol)
       {
-        var existingSymbol = Find(symbol.Key);
+        var existingSymbol = Find(symbol.key);
         // Look for a matching symbol
         if (existingSymbol != null)
         {
-          if (existingSymbol.Value.Compare(symbol.Value))
+          if (existingSymbol.value.Compare(symbol.value))
             return true;
         }
         return false;
@@ -126,7 +126,7 @@ namespace Stratus
       /// <param name="other"></param>
       public void Merge(WorldState other)
       {
-        foreach (var otherSymbol in other.Symbols)
+        foreach (var otherSymbol in other.symbols)
         {
           Apply(otherSymbol);
         }

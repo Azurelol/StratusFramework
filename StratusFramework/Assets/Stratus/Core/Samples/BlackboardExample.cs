@@ -10,23 +10,19 @@ namespace Stratus
     public class BlackboardExample : StratusBehaviour
     {
       public Blackboard blackboard;
-      public string keyName;
+      public string key;
+      public Blackboard.Selector selector = new Blackboard.Selector();
       public RuntimeMethodField runtimeMethod;
 
       private void Awake()
       {
-        //blackboard = blackboard.Instantiate();        
-        //blackboard = ScriptableObject.Instantiate(blackboard);
         runtimeMethod = new RuntimeMethodField(GetValue);
-        //Trace.Script("Boop");
       }
 
       void GetValue()
       {
-        object value = blackboard.GetLocalValue(this, keyName);
-        Trace.Script($"The value of {keyName} is {value}", this);
-        //int variantValue = blackboard.locals.GetValue<int>(keyName);
-        //var variantValue = blackboard.GetLocals(this).Get
+        object value = blackboard.GetLocal(gameObject, key);
+        Trace.Script($"The value of {key} is {value}", this);
       }
     } 
   } 

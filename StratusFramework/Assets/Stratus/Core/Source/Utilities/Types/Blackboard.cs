@@ -19,10 +19,28 @@ namespace Stratus
   [CreateAssetMenu(fileName = "Blackboard", menuName = "Stratus/Blackboard")]
   public class Blackboard : StratusScriptable
   {
-    public struct BlackboardKey
+    //----------------------------------------------------------------------/
+    // Declarations
+    //----------------------------------------------------------------------/
+    /// <summary>
+    /// The scope of a table on a given blackboard
+    /// </summary>
+    public enum Scope
     {
-      public MonoBehaviour monoBehaviour;
+      Local,
+      Global
+    }
+
+    /// <summary>
+    /// A field that allows the selection of a given blackboard and specific keys within it
+    /// from an inspector window
+    /// </summary>
+    [Serializable]
+    public class Selector
+    {
       public Blackboard blackboard;
+      public Scope scope;
+      public string key;
     }
 
     //----------------------------------------------------------------------/
@@ -37,9 +55,9 @@ namespace Stratus
     /// </summary>
     private static Dictionary<Blackboard, Symbol.Table> instancedGlobals = new Dictionary<Blackboard, Symbol.Table>();
     /// <summary>
-    /// Runtime instantiated locals for a given blackboard, where we use a monobehaviour as the key
+    /// Runtime instantiated locals (symbol tables) for a given blackboard, where we use a gameobject as the key
     /// </summary>
-    private static Dictionary<Tuple<MonoBehaviour, Blackboard>, Symbol.Table> instancedLocals = new Dictionary<Tuple<MonoBehaviour, Blackboard>, Symbol.Table>();
+    private static Dictionary<Blackboard, Dictionary<GameObject, Symbol.Table>> instancedLocals = new Dictionary<Blackboard, Dictionary<GameObject, Symbol.Table>>();
 
     //----------------------------------------------------------------------/
     // Fields
@@ -78,31 +96,34 @@ namespace Stratus
     /// </summary>
     /// <param name="local"></param>
     /// <returns></returns>
-    public Symbol.Table GetLocals(MonoBehaviour local)
+    public Symbol.Table GetLocals(GameObject owner)
     {
-      Tuple<MonoBehaviour, Blackboard> blackboardKey = new Tuple<MonoBehaviour, Blackboard>(local, this);
-      if (!instancedLocals.ContainsKey(blackboardKey))
-        instancedLocals.Add(blackboardKey, new Symbol.Table(this.locals));
-      return instancedLocals[blackboardKey];
+      if (!instancedLocals.ContainsKey(this))
+        instancedLocals.Add(this, new Dictionary<GameObject, Symbol.Table>());
+
+      if (!instancedLocals[this].ContainsKey(owner))
+        instancedLocals[this].Add(owner, new Symbol.Table(this.locals));
+
+      return instancedLocals[this][owner];
     }
 
     /// <summary>
     /// Gets the value of a local symbol
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="local"></param>
+    /// <param name="owner"></param>
     /// <param name="key"></param>
     /// <returns></returns>
-    public T GetLocalValue<T>(MonoBehaviour local, string key) => GetLocals(local).GetValue<T>(key);
+    public T GetLocal<T>(GameObject owner, string key) => GetLocals(owner).GetValue<T>(key);
 
     /// <summary>
     /// Gets the value of a local symbol
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="local"></param>
+    /// <param name="owner"></param>
     /// <param name="key"></param>
     /// <returns></returns>
-    public object GetLocalValue(MonoBehaviour local, string key) => GetLocals(local).GetValue(key);
+    public object GetLocal(GameObject owner, string key) => GetLocals(owner).GetValue(key);
 
     /// <summary>
     /// Gets the value of a global symbol
@@ -110,7 +131,7 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <returns></returns>
-    public T GetGlobalValue<T>(string key) => GetGlobals().GetValue<T>(key);
+    public T GetGlobal<T>(string key) => GetGlobals().GetValue<T>(key);
 
     /// <summary>
     /// Gets the value of a global symbol
@@ -118,7 +139,7 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <returns></returns>
-    public object GetGlobalValue(string key) => GetGlobals().GetValue(key);
+    public object GetGlobal(string key) => GetGlobals().GetValue(key);
 
     /// <summary>
     /// Sets the value of a local symbol
@@ -126,7 +147,7 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetLocalValue<T>(MonoBehaviour local, string key, T value) => GetLocals(local).SetValue<T>(key, value);
+    public void SetLocal<T>(GameObject owner, string key, T value) => GetLocals(owner).SetValue<T>(key, value);
 
     /// <summary>
     /// Sets the value of a local symbol
@@ -134,7 +155,7 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetLocalValue(MonoBehaviour local, string key, object value) => GetLocals(local).SetValue(key, value);
+    public void SetLocal(GameObject owner, string key, object value) => GetLocals(owner).SetValue(key, value);
 
     /// <summary>
     /// Sets the value of a global symbol
@@ -142,7 +163,7 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetGlobalValue<T>(string key, T value) => GetGlobals().SetValue<T>(key, value);
+    public void SetGlobal<T>(string key, T value) => GetGlobals().SetValue<T>(key, value);
 
     /// <summary>
     /// Sets the value of a global symbol
@@ -150,7 +171,7 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetGlobalValue(string key, object value) => GetGlobals().SetValue(key, value);
+    public void SetGlobal(string key, object value) => GetGlobals().SetValue(key, value);
 
     /// <summary>
     /// Returns an instance of this blackboard asset, making a copy of its locals

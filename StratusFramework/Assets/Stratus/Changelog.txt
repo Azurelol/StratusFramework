@@ -1,4 +1,6 @@
-3/2/2018 - ....
+Stratus Framework Changelog
+
+v1.0
 
 AgentEvent implemented, a triggerable for Agent events within Stratus AI.
 PositionField implemented, providing a simple way to use transform or vector3 for setting positions in editor.

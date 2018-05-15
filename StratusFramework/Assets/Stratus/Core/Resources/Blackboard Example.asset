@@ -12,22 +12,14 @@ MonoBehaviour:
   m_Name: Blackboard Example
   m_EditorClassIdentifier: 
   globals:
-    Symbols:
-    - Key: Cats
-      Value:
-        Type: 0
-        Integer: 3
-        Float: 0
-        Boolean: 0
-        Vector3: {x: 0, y: 0, z: 0}
-        String: 
+    Symbols: []
   locals:
     Symbols:
-    - Key: 
-      Value:
-        Type: 0
-        Integer: 0
-        Float: 0
-        Boolean: 0
-        Vector3: {x: 0, y: 0, z: 0}
-        String: 
+    - key: Cars
+      value:
+        type: 0
+        integerValue: 3
+        floatValue: 0
+        booleanValue: 0
+        vector3Value: {x: 0, y: 0, z: 0}
+        stringValue: 

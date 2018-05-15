@@ -182,7 +182,7 @@ namespace Stratus
         if (planner.Tracing) Trace.Script("Adding " + cheapestNode.Action.Description + " to the path");
 
         // If this action has no more preconditions left to fulfill
-        if (cheapestNode.Action.Preconditions.IsEmpty)
+        if (cheapestNode.Action.Preconditions.isEmpty)
         {
           //Trace.Script("No preconditions left!");
           solutionFound = true;

@@ -1,6 +1,4 @@
-Stratus is a C# gameplay scripting framework for facilitating the composition of gameplay code for the Unity Engine. 
-Its major tenet is to provide useful features with an easy to use interface while removing of as much boilerplate code 
-from your scripts as possible.
+Stratus is a C# gameplay scripting framework for facilitating the composition of gameplay code for the Unity Engine. Its major guiding principle is to provide useful features to development teams while reducing or removing the use of as much boilerplate code or actions from your workflow as possible.
 
 MIT License
 

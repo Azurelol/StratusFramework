@@ -15,39 +15,41 @@ namespace Stratus
     //[Serializable, StructLayout(LayoutKind.Explicit)]
     [Serializable]
     public struct Variant
-    {      
+    {
+      //--------------------------------------------------------------------/
+      // Declarations
+      //--------------------------------------------------------------------/
       public enum Types
       {
         Integer, Boolean, Float, String, Vector3
       }
-
 
       //--------------------------------------------------------------------/
       // Fields
       //--------------------------------------------------------------------/
       //[FieldOffset(0), SerializeField]
       [SerializeField]
-      private Types Type;
+      private Types type;
 
       //[FieldOffset(4), SerializeField]
       [SerializeField]
-      private int Integer;
+      private int integerValue;
 
       //[FieldOffset(4), SerializeField]
       [SerializeField]
-      private float Float;
+      private float floatValue;
 
       //[FieldOffset(4), SerializeField]
       [SerializeField]
-      private bool Boolean;
+      private bool booleanValue;
 
       //[FieldOffset(4), SerializeField]
       [SerializeField]
-      private Vector3 Vector3;
+      private Vector3 vector3Value;
 
       //[FieldOffset(16), SerializeField]
       [SerializeField]
-      private string String;
+      private string stringValue;
 
 
       //--------------------------------------------------------------------/
@@ -56,49 +58,52 @@ namespace Stratus
       /// <summary>
       /// Retrieves the current type of this Variant
       /// </summary>
-      public Types CurrentType { get { return Type; } }
-
+      public Types currentType { get { return type; } }
 
       //--------------------------------------------------------------------/
       // Constructors
       //--------------------------------------------------------------------/
       public Variant(int value) : this()
       {
-        Type = Types.Integer;
-        this.Integer = value;
+        type = Types.Integer;
+        this.integerValue = value;
       }
 
       public Variant(float value) : this()
       {
-        Type = Types.Float;
-        this.Float = value;
+        type = Types.Float;
+        this.floatValue = value;
       }
 
       public Variant(bool value) : this()
       {
-        Type = Types.Boolean;
-        this.Boolean = value;
+        type = Types.Boolean;
+        this.booleanValue = value;
       }
 
       public Variant(string value) : this()
       {
-        Type = Types.String;
-        this.String = value;
+        type = Types.String;
+        this.stringValue = value;
       }
 
       public Variant(Vector3 value) : this()
       {
-        Type = Types.Vector3;
-        this.Vector3 = value;
+        type = Types.Vector3;
+        this.vector3Value = value;
       }
 
       public Variant(Variant variant) : this()
       {
-        Type = variant.Type;
-        var getFunc = typeof(Variant).GetMethod("Get").MakeGenericMethod(Type.Convert());
-        this.Set(getFunc.Invoke(null, new object[] { variant }));
+        type = variant.type;
+        this.Set(variant.Get());
+        //var getFunc = typeof(Variant).GetMethod("Get").MakeGenericMethod(Type.Convert());
+        //this.Set(getFunc.Invoke(null, new object[] { variant }));
       }
 
+      //--------------------------------------------------------------------/
+      // Static Methods
+      //--------------------------------------------------------------------/
       /// <summary>
       /// Constructs a variant based from a given value. It only accepts supported types,
       /// which are found in the Types enum.
@@ -124,149 +129,318 @@ namespace Stratus
         throw new Exception("Unsupported type being used (" + type.Name + ")");
       }
 
-      //--------------------------------------------------------------------/
-      // Accessors
-      //--------------------------------------------------------------------/
-      public T Get<T>()
-      {
-        var type = typeof(T);
+      //public static bool IsInteger(Type type) => (type == typeof(int) && this.type == Types.Integer)
 
-        if (type == typeof(int) && Type == Types.Integer)
-          return (T)Convert.ChangeType(Integer, typeof(T));
-        else if (type == typeof(float) && Type == Types.Float)
-          return (T)Convert.ChangeType(Float, typeof(T));
-        else if (type == typeof(bool) && Type == Types.Boolean)
-          return (T)Convert.ChangeType(Boolean, typeof(T));
-        else if (type == typeof(string) && Type == Types.String)
-          return (T)Convert.ChangeType(String, typeof(T));
-        else if (type == typeof(Vector3) && Type == Types.Vector3)
-          return (T)Convert.ChangeType(Vector3, typeof(T));
+      //--------------------------------------------------------------------/
+      // Methods: Accessors - Generic
+      //--------------------------------------------------------------------/
+      /// <summary>
+      /// Gets the current value of this variant
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <returns></returns>
+      public T Get<T>() 
+      {        
+        var givenType = typeof(T);
+        if (!Match(givenType))
+          throw new ArgumentException("The provided type '" + givenType.Name + "' is not the correct type for this value (" + this.type.ToString() + ")");
 
-        throw new ArgumentException("The provided type '" + type.Name + "' is not the correct type for this value (" + Type.ToString() + ")");
+        object value = null;
+        switch (this.type)
+        {
+          case Types.Integer:
+            value = integerValue;
+            break;
+          case Types.Boolean:
+            value = booleanValue;
+            break;
+          case Types.Float:
+            value = floatValue;
+            break;
+          case Types.String:
+            value = stringValue;
+            break;
+          case Types.Vector3:
+            value = vector3Value;
+            break;
+        }
+        
+        return (T)Convert.ChangeType(integerValue, typeof(T));
+
+        //if (givenType == typeof(int) && this.type == Types.Integer)
+        //  return (T)Convert.ChangeType(integerValue, typeof(T));
+        //else if (givenType == typeof(float) && this.type == Types.Float)
+        //  return (T)Convert.ChangeType(floatValue, typeof(T));
+        //else if (givenType == typeof(bool) && this.type == Types.Boolean)
+        //  return (T)Convert.ChangeType(booleanValue, typeof(T));
+        //else if (givenType == typeof(string) && this.type == Types.String)
+        //  return (T)Convert.ChangeType(stringValue, typeof(T));
+        //else if (givenType == typeof(Vector3) && this.type == Types.Vector3)
+        //  return (T)Convert.ChangeType(vector3Value, typeof(T));
       }
 
-      public object Get(Type type)
-      {
-        if (type == typeof(int) && Type == Types.Integer)
-          return Convert.ChangeType(Integer, typeof(int));
-        else if (type == typeof(float) && Type == Types.Float)
-          return (float)Convert.ChangeType(Float, typeof(float));
-        else if (type == typeof(bool) && Type == Types.Boolean)
-          return Convert.ChangeType(Boolean, typeof(bool));
-        else if (type == typeof(string) && Type == Types.String)
-          return Convert.ChangeType(String, typeof(string));
-        else if (type == typeof(Vector3) && Type == Types.Vector3)
-          return Convert.ChangeType(Vector3, typeof(Vector3));
+      ///// <summary>
+      ///// Gets the current value of this variant
+      ///// </summary>
+      ///// <typeparam name="T"></typeparam>
+      ///// <returns></returns>
+      //public object Get(Type type)
+      //{
+      //  if (type == typeof(int) && this.type == Types.Integer)
+      //    return Convert.ChangeType(integerValue, typeof(int));
+      //  else if (type == typeof(float) && this.type == Types.Float)
+      //    return (float)Convert.ChangeType(floatValue, typeof(float));
+      //  else if (type == typeof(bool) && this.type == Types.Boolean)
+      //    return Convert.ChangeType(booleanValue, typeof(bool));
+      //  else if (type == typeof(string) && this.type == Types.String)
+      //    return Convert.ChangeType(stringValue, typeof(string));
+      //  else if (type == typeof(Vector3) && this.type == Types.Vector3)
+      //    return Convert.ChangeType(vector3Value, typeof(Vector3));
+      //
+      //  throw new ArgumentException("The provided type '" + type.Name + "' is not the correct type for this value (" + this.type.ToString() + ")");
+      //}
 
-        throw new ArgumentException("The provided type '" + type.Name + "' is not the correct type for this value (" + Type.ToString() + ")");
-      }
-
+      /// <summary>
+      /// Gets the current value of this variant
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <returns></returns>
       public object Get()
       {
         object value = null;
-        switch (Type)
+        switch (type)
         {
           case Types.Integer:
-            value = Integer;
+            value = integerValue;
             break;
           case Types.Boolean:
-            value = Boolean;
+            value = booleanValue;
             break;
           case Types.Float:
-            value = Float;
+            value = floatValue;
             break;
           case Types.String:
-            value = String;
+            value = stringValue;
             break;
           case Types.Vector3:
-            value = Vector3;
+            value = vector3Value;
             break;
         }
         return value;
       }
 
+      /// <summary>
+      /// Sets the current value of this variant, by deducing the given value type
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <returns></returns>
       public void Set(object value)
       {
-        var type = value.GetType();
+        var givenType = value.GetType();
+        if (!Match(givenType))
+          throw new ArgumentException("The provided type '" + givenType.Name + "' is not the correct type for this value (" + this.type.ToString() + ")");
 
-        if (type == typeof(int) && Type == Types.Integer)
-          Integer = (int)value;
-        else if (type == typeof(float) && Type == Types.Float)
-          Float = (float)value;
-        else if (type == typeof(string) && Type == Types.String)
-          String = value as string;
-        else if (type == typeof(bool) && Type == Types.Boolean)
-          Boolean = (bool)value;
-        else if (type == typeof(Vector3) && Type == Types.Vector3)
-          Vector3 = (Vector3)value;
+        switch (type)
+        {
+          case Types.Integer:
+            integerValue = (int)value;
+            break;
+          case Types.Boolean:
+            booleanValue = (bool)value;
+            break;
+          case Types.Float:
+            floatValue = (float)value;
+            break;
+          case Types.String:
+            stringValue = value as string;
+            break;
+          case Types.Vector3:
+            vector3Value = (Vector3)value;
+            break;
+        }
 
-        throw new ArgumentException("The provided type '" + type.Name + "' is not the correct type for this value (" + Type.ToString() + ")");
+        //if ((givenType == typeof(int) || givenType == typeof(Int32)) && this.type == Types.Integer)
+        //  integerValue = (int)value;
+        //else if (givenType == typeof(float) && this.type == Types.Float)
+        //  floatValue = (float)value;
+        //else if (givenType == typeof(string) && this.type == Types.String)
+        //  stringValue = value as string;
+        //else if (givenType == typeof(bool) && this.type == Types.Boolean)
+        //  booleanValue = (bool)value;
+        //else if (givenType == typeof(Vector3) && this.type == Types.Vector3)
+        //  vector3Value = (Vector3)value;
+
+        //throw new ArgumentException("The provided type '" + givenType.Name + "' is not the correct type for this value (" + this.type.ToString() + ")");
       }
 
-
-      public void Set<T>(T value)
+      //--------------------------------------------------------------------/
+      // Methods: Accessors - Specific
+      //--------------------------------------------------------------------/
+      public void SetInteger(int value)
       {
-        var type = typeof(T);
-
-        if (type == typeof(int) && Type == Types.Integer)
-          Integer = (int)(object)value;
-        else if (type == typeof(float) && Type == Types.Float)
-          Float = (float)(object)value;
-        else if (type == typeof(string) && Type == Types.String)
-          String = value as string;
-        else if (type == typeof(bool) && Type == Types.Boolean)
-          Boolean = (bool)(object)value;
-        else if (type == typeof(Vector3) && Type == Types.Vector3)
-          Vector3 = (Vector3)(object)value;
-
-        throw new ArgumentException("The provided type '" + type.Name + "' is not the correct type for this value (" + Type.ToString() + ")");
+        if (type != Types.Integer)
+          throw new ArgumentException("This variant has not been set as an integer type");
+        integerValue = value;
       }
-      
+
+      public int GetInteger()
+      {
+        if (type != Types.Integer)
+          throw new ArgumentException("This variant has not been set as an integer type");
+        return integerValue;
+      }
+
+      public void SetFloat(float value)
+      {
+        if (type != Types.Float)
+          throw new ArgumentException("This variant has not been set as a float type");
+        floatValue = value;
+      }
+
+      public float GetFloat()
+      {
+        if (type != Types.Integer)
+          throw new ArgumentException("This variant has not been set as a float type");
+        return floatValue;
+      }
+
+      public void SetString(string value)
+      {
+        if (type != Types.String)
+          throw new ArgumentException("This variant has not been set as a string type");
+        stringValue = value;
+      }
+
+      public string GetString()
+      {
+        if (type != Types.String)
+          throw new ArgumentException("This variant has not been set as a string type");
+        return stringValue;
+      }
+
+      public void SetBool(bool value)
+      {
+        if (type != Types.Boolean)
+          throw new ArgumentException("This variant has not been set as a boolean type");
+        booleanValue = value;
+      }
+
+      public bool GetBool()
+      {
+        if (type != Types.Boolean)
+          throw new ArgumentException("This variant has not been set as a boolean type");
+        return booleanValue;
+      }
+
+
+      public void SetVector3(Vector3 value)
+      {
+        if (type != Types.Vector3)
+          throw new ArgumentException("This variant has not been set as a Vector3 type");
+        vector3Value = value;
+      }
+
+      public Vector3 GetVector3()
+      {
+        if (type != Types.Vector3)
+          throw new ArgumentException("This variant has not been set as a Vector3 type");
+        return vector3Value;
+      }
+
+
+      ///// <summary>
+      ///// Sets the current value of this variant
+      ///// </summary>
+      ///// <typeparam name="T"></typeparam>
+      ///// <returns></returns>
+      //public void Set<T>(T value)
+      //{
+      //  var givenType = typeof(T);
+      //  if (!Match(givenType))
+      //    throw new ArgumentException("The provided type '" + givenType.Name + "' is not the correct type for this value (" + this.type.ToString() + ")");        
+      //
+      //  if ((givenType == typeof(int) || givenType == typeof(Int32)) && this.type == Types.Integer)
+      //    integerValue = (int)(object)value;
+      //  else if (givenType == typeof(float) && this.type == Types.Float)
+      //    floatValue = (float)(object)value;
+      //  else if (givenType == typeof(string) && this.type == Types.String)
+      //    stringValue = value as string;
+      //  else if (givenType == typeof(bool) && this.type == Types.Boolean)
+      //    booleanValue = (bool)(object)value;
+      //  else if (givenType == typeof(Vector3) && this.type == Types.Vector3)
+      //    vector3Value = (Vector3)(object)value;
+      //
+      //  throw new ArgumentException("The provided type '" + givenType.Name + "' is not the correct type for this value (" + this.type.ToString() + ")");
+      //}
+
+      //--------------------------------------------------------------------/
+      // Methods: Helper
+      //--------------------------------------------------------------------/
+      /// <summary>
+      /// Prints the current value of this variant
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <returns></returns>
       public override string ToString()
       {
         var builder = new StringBuilder();
-        switch (this.Type)
+        switch (this.type)
         {
           case Types.Integer:
-            builder.Append(Integer.ToString());
+            builder.Append(integerValue.ToString());
             break;
           case Types.Float:
-            builder.Append(Float.ToString());
+            builder.Append(floatValue.ToString());
             break;
           case Types.Boolean:
-            builder.Append(Boolean.ToString());
+            builder.Append(booleanValue.ToString());
             break;
           case Types.String:
-            builder.Append(String);
+            builder.Append(stringValue);
             break;
           case Types.Vector3:
-            builder.Append(Vector3.ToString());
+            builder.Append(vector3Value.ToString());
             break;
         }
 
         return builder.ToString();
       }
 
+      /// <summary>
+      /// Compares the value of this variant with another
+      /// </summary>
+      /// <param name="other"></param>
+      /// <returns></returns>
       public bool Compare(Variant other)
       {
-        if (this.Type != other.Type)
+        if (this.type != other.type)
           throw new Exception("Mismatching variants are being compared!");
 
-        switch (other.Type)
+        switch (other.type)
         {
           case Types.Boolean:
-            return this.Boolean == other.Boolean;
+            return this.booleanValue == other.booleanValue;
           case Types.Integer:
-            return this.Integer == other.Integer;
+            return this.integerValue == other.integerValue;
           case Types.Float:
-            return this.Float == other.Float;
+            return this.floatValue == other.floatValue;
           case Types.String:
-            return this.String == other.String;
+            return this.stringValue == other.stringValue;
           case Types.Vector3:
-            return this.Vector3 == other.Vector3;
+            return this.vector3Value == other.vector3Value;
         }
 
         throw new Exception("Wrong type?");
+      }
+
+      /// <summary>
+      /// Checks whether the given type matches that of the variant
+      /// </summary>
+      /// <param name="type"></param>
+      /// <returns></returns>
+      private bool Match(Type type)
+      {
+        return type == this.type.Convert();          
       }
        
     }

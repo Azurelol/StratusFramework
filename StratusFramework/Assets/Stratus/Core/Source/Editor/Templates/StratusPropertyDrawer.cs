@@ -12,6 +12,16 @@ namespace Stratus
   public abstract class StratusPropertyDrawer : PropertyDrawer
   {
     //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/
+    public enum Lines
+    {
+      Single,
+      Double,
+      Dynamic
+    }
+
+    //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
     /// <summary>
@@ -163,6 +173,18 @@ namespace Stratus
       SerializedProperty enumProperty = property.FindPropertyRelative(enumPropertyName);
       T value = (T)(object)enumProperty.enumValueIndex;
       return value;
+    }
+
+    public static void DrawPropertiesInSingleLine(Rect position, SerializedProperty[] children)
+    {
+      int n = children.Length;
+      position.width /= n;
+      for (int p = 0; p < n; ++p)
+      {
+        SerializedProperty property = children[n];
+        EditorGUI.PropertyField(position, property, GUIContent.none);
+        position.x += position.width;
+      }
     }
 
     public static IEnumerable<SerializedProperty> GetChildren(SerializedProperty property)

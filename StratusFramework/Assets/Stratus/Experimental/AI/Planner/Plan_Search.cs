@@ -284,7 +284,7 @@ namespace Stratus
         {
           // If there's no preconditions left or if the current world state already satisfies the precondition...
           //bool alreadySatisfied = DestinationNode.State.Satisfies(node.State);
-          if (node.State.IsEmpty || DestinationNode.State.Satisfies(node.State))
+          if (node.State.isEmpty || DestinationNode.State.Satisfies(node.State))
           {
             if (Tracing) Trace.Script("No preconditions left to fulfill for node: " + node.Description);
             return true;

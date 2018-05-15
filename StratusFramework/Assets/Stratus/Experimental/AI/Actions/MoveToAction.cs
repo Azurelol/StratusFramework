@@ -21,7 +21,7 @@ namespace Stratus
       {
         get
         {
-          return Agent.blackboard.locals.GetValue<Vector3>(Symbol.Key);
+          return Agent.blackboard.locals.GetValue<Vector3>(Symbol.key);
         }
       }
 
