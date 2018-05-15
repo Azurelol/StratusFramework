@@ -1174,8 +1174,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3ad46943daea584882f896b1c3777e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blackboard: {fileID: 11400000, guid: d28f8a35646d8014b9aad8cdfacbba18, type: 2}
+  blackboard: {fileID: 11400000, guid: 82922c7ae942bd44ca64bf5d4f9bcfb0, type: 2}
+  scope: 0
   key: Cars
+  selector:
+    blackboard: {fileID: 11400000, guid: 82922c7ae942bd44ca64bf5d4f9bcfb0, type: 2}
+    scope: 0
+    key: Spiders
 --- !u!4 &1301396974
 Transform:
   m_ObjectHideFlags: 0

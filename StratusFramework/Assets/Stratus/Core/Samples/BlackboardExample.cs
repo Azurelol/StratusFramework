@@ -9,21 +9,68 @@ namespace Stratus
   {
     public class BlackboardExample : StratusBehaviour
     {
+      [Header("Default")]
       public Blackboard blackboard;
+      public Blackboard.Scope scope;
       public string key;
+
+      [Header("Selector")]
       public Blackboard.Selector selector = new Blackboard.Selector();
       public RuntimeMethodField runtimeMethod;
 
       private void Awake()
       {
-        runtimeMethod = new RuntimeMethodField(GetValue);
+        runtimeMethod = new RuntimeMethodField(GetValue, GetValueWithSelector);
       }
-
-      void GetValue()
+      
+      // Examples -----------------------------------------------------------
+      //--------------------------------------------------------------------/
+      // Retrieving Values
+      //--------------------------------------------------------------------/
+      private void GetValue()
       {
-        object value = blackboard.GetLocal(gameObject, key);
+        object value = null;
+        switch (scope)
+        {
+          case Blackboard.Scope.Local:
+            value = blackboard.GetLocal(gameObject, key);
+            break;
+          case Blackboard.Scope.Global:
+            value = blackboard.GetGlobal(key);
+            break;
+          default:
+            break;
+        }
         Trace.Script($"The value of {key} is {value}", this);
       }
-    } 
+
+      private void GetValueWithSelector()
+      {
+        object value = selector.Get(gameObject);
+        Trace.Script($"The value of {selector.key} is {value}", this);
+      }
+
+      //--------------------------------------------------------------------/
+      // Setting Values
+      //--------------------------------------------------------------------/
+      private void SetValue()
+      {
+        // Example of how such a value would be set...
+        int intValue = 5;
+        // ... to the table for local symbols in the blackboard, instantiated for
+        // each GameObject on access
+        blackboard.SetLocal(gameObject, key, intValue);
+        // ... to the table for global symbols in the blackboard
+        blackboard.SetGlobal(key, intValue);
+      }
+
+      private void SetValueWithSelector()
+      {
+        // Example of how such a value would be set using a selector
+        int intValue = 5;
+        selector.Set(gameObject, intValue);
+      }
+
+    }
   } 
 }

@@ -12,10 +12,42 @@ MonoBehaviour:
   m_Name: Blackboard Example
   m_EditorClassIdentifier: 
   globals:
-    Symbols: []
+    symbols:
+    - key: Cats
+      value:
+        type: 0
+        integerValue: 3
+        floatValue: 0
+        booleanValue: 0
+        vector3Value: {x: 0, y: 0, z: 0}
+        stringValue: 
+    - key: Mice
+      value:
+        type: 1
+        integerValue: 0
+        floatValue: 0
+        booleanValue: 0
+        vector3Value: {x: 0, y: 0, z: 0}
+        stringValue: 
   locals:
-    Symbols:
-    - key: Cars
+    symbols:
+    - key: Dogs
+      value:
+        type: 0
+        integerValue: 4
+        floatValue: 0
+        booleanValue: 0
+        vector3Value: {x: 0, y: 0, z: 0}
+        stringValue: 
+    - key: Birds
+      value:
+        type: 0
+        integerValue: 6
+        floatValue: 0
+        booleanValue: 0
+        vector3Value: {x: 0, y: 0, z: 0}
+        stringValue: 
+    - key: Spiders
       value:
         type: 0
         integerValue: 3

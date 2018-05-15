@@ -31,6 +31,11 @@ namespace Stratus
       /// </summary>
       public Variant.Types type { get { return value.currentType; } }
 
+      /// <summary>
+      /// Information about the symbol
+      /// </summary>
+      public string annotation => $"{key} ({value.currentType})";
+
       //--------------------------------------------------------------------/
       // Constructors
       //--------------------------------------------------------------------/

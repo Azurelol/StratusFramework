@@ -12,7 +12,7 @@ namespace Stratus
     {
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
       {
-        var symbols = property.FindPropertyRelative("Symbols");
+        var symbols = property.FindPropertyRelative("symbols");
         ReorderableListGUI.Title(label);
         ReorderableListGUI.ListField(symbols);        
       }

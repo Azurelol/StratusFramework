@@ -258,6 +258,18 @@ namespace Stratus
     }
 
     /// <summary>
+    /// Finds the index of the given element in the array
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="array"></param>
+    /// <param name="match"></param>
+    /// <returns></returns>
+    public static int FindIndex<T>(this T[] array, T value)
+    {
+      return Array.FindIndex(array, x => x.Equals(value));
+    }
+
+    /// <summary>
     /// Adds all elements not already present into the given list
     /// </summary>
     /// <typeparam name="T"></typeparam>

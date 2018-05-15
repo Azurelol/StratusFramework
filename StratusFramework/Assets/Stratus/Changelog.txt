@@ -1,6 +1,17 @@
 Stratus Framework Changelog
 
-v1.0
+v1.0-alpha.2
+---
+
+Features:
+- Blackboard Selector: Allows the selection of a key inside one of the tables in a blackboard.
+
+Updates:
+- Blackboard: Major refactor and API update to improve user experience and performance.
+- Variant, Symbol, Symbol.Table: API updated.
+
+v1.0-alpha.1
+---
 
 AgentEvent implemented, a triggerable for Agent events within Stratus AI.
 PositionField implemented, providing a simple way to use transform or vector3 for setting positions in editor.

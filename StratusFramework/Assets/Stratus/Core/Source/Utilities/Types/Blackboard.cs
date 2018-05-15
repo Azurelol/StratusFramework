@@ -41,6 +41,50 @@ namespace Stratus
       public Blackboard blackboard;
       public Scope scope;
       public string key;
+
+      /// <summary>
+      /// Sets the value of the symbol with the selected key
+      /// </summary>
+      /// <param name="owner"></param>
+      /// <param name="value"></param>
+      public void Set(GameObject owner, object value)
+      {
+        if (blackboard == null)
+          throw new NullReferenceException($"No blackboard has been set!");
+
+        switch (scope)
+        {
+          case Scope.Local:
+            blackboard.SetLocal(owner, key, value);
+            break;
+          case Scope.Global:
+            blackboard.SetGlobal(key, value);
+            break;
+        }
+      }
+
+      /// <summary>
+      /// Gets the value of the symbol with the selected key
+      /// </summary>
+      /// <param name="owner"></param>
+      /// <param name="value"></param>
+      public object Get(GameObject owner)
+      {
+        if (blackboard == null)
+          throw new NullReferenceException($"No blackboard has been set!");
+
+        object value = null;
+        switch (scope)
+        {
+          case Scope.Local:
+            value = blackboard.GetLocal(owner, key);
+            break;
+          case Scope.Global:
+            value = blackboard.GetGlobal(key);
+            break;
+        }
+        return value;
+      }
     }
 
     //----------------------------------------------------------------------/
