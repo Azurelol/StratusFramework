@@ -27,7 +27,7 @@ namespace Stratus
     /// a value.
     /// </summary>
     [Serializable]
-    public class WorldState : Symbol.Table
+    public class WorldState : SymbolTable
     {
       /// <summary>
       /// Modifies a single symbol of the WorldState

@@ -407,7 +407,8 @@ namespace Stratus.Types
     /// <returns></returns>
     private bool Match(Type type)
     {
-      return type == this.type.Convert();
+      VariantType givenVariantType = VariantUtilities.Convert(type);
+      return givenVariantType == this.type;
     }
 
   }

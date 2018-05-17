@@ -7,7 +7,7 @@ namespace Stratus
 {
   namespace Types
   {
-    [CustomPropertyDrawer(typeof(Symbol.Table), true)]
+    [CustomPropertyDrawer(typeof(SymbolTable), true)]
     public class SymbolTableDrawer : PropertyDrawer
     {
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

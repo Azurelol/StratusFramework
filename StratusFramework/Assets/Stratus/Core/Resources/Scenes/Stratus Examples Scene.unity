@@ -1176,11 +1176,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blackboard: {fileID: 11400000, guid: 82922c7ae942bd44ca64bf5d4f9bcfb0, type: 2}
   scope: 0
-  key: Cars
+  key: Dogs
   selector:
     blackboard: {fileID: 11400000, guid: 82922c7ae942bd44ca64bf5d4f9bcfb0, type: 2}
-    scope: 0
-    key: Birds
+    scope: 1
+    key: Cats
 --- !u!4 &1301396974
 Transform:
   m_ObjectHideFlags: 0

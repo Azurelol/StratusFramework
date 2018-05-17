@@ -12,15 +12,18 @@ namespace Stratus
       [Header("Default")]
       public Blackboard blackboard;
       public Blackboard.Scope scope;
-      public string key;
+      public string key = "Dogs";
 
       [Header("Selector")]
       public Blackboard.Selector selector = new Blackboard.Selector();
       public RuntimeMethodField runtimeMethod;
+            
 
       private void Awake()
       {
-        runtimeMethod = new RuntimeMethodField(GetValue, GetValueWithSelector);
+        runtimeMethod = new RuntimeMethodField(GetValue, GetValueWithSelector, SetValue);
+        blackboard.onLocalSymbolChanged += OnLocalSymbolChanged;
+        blackboard.onGlobalSymbolChanged += OnGlobalSymbolChanged;
       }
       
       // Examples -----------------------------------------------------------
@@ -61,7 +64,7 @@ namespace Stratus
         // each GameObject on access
         blackboard.SetLocal(gameObject, key, intValue);
         // ... to the table for global symbols in the blackboard
-        blackboard.SetGlobal(key, intValue);
+//        blackboard.SetGlobal(key, intValue);
       }
 
       private void SetValueWithSelector()
@@ -69,6 +72,19 @@ namespace Stratus
         // Example of how such a value would be set using a selector
         int intValue = 5;
         selector.Set(gameObject, intValue);
+      }
+
+      //--------------------------------------------------------------------/
+      // Callbacks
+      //--------------------------------------------------------------------/
+      private void OnLocalSymbolChanged(GameObject gameObject, Symbol symbol)
+      {
+        Trace.Script($"The value on local symbol {symbol.key} on the GameObject {gameObject} was changed", this);
+      }
+
+      private void OnGlobalSymbolChanged(Symbol symbol)
+      {
+        Trace.Script($"The value on global symbol {symbol} was changed!", this);
       }
 
     }

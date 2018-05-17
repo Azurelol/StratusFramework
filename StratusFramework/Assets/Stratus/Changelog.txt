@@ -5,6 +5,7 @@ v1.0-alpha.2
 
 Features:
 - Blackboard Selector: Allows the selection of a key inside one of the tables in a blackboard.
+- Blackboard: Added callbacks onto the blackboard to notify subscribers when the values of symbols in the table are changed.
 
 Updates:
 - Blackboard: Major refactor and API update to improve user experience and performance.

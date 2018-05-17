@@ -87,8 +87,17 @@ namespace Stratus
       }
     }
 
+    public delegate void OnGlobalSymbolChanged(Symbol symbol);
+    public delegate void OnLocalSymbolChanged(GameObject gameObject, Symbol symbol);
+
     //----------------------------------------------------------------------/
-    // Properties
+    // Properties:
+    //----------------------------------------------------------------------/
+    public OnLocalSymbolChanged onLocalSymbolChanged { get; set; }
+    public OnGlobalSymbolChanged onGlobalSymbolChanged { get; set; }
+
+    //----------------------------------------------------------------------/
+    // Properties: Static
     //----------------------------------------------------------------------/
     /// <summary>
     /// Identifier for this particular blackboard at runtime
@@ -97,11 +106,11 @@ namespace Stratus
     /// <summary>
     /// Runtime instantiated globals for a given blackboard
     /// </summary>
-    private static Dictionary<Blackboard, Symbol.Table> instancedGlobals = new Dictionary<Blackboard, Symbol.Table>();
+    private static Dictionary<Blackboard, SymbolTable> instancedGlobals = new Dictionary<Blackboard, SymbolTable>();
     /// <summary>
     /// Runtime instantiated locals (symbol tables) for a given blackboard, where we use a gameobject as the key
     /// </summary>
-    private static Dictionary<Blackboard, Dictionary<GameObject, Symbol.Table>> instancedLocals = new Dictionary<Blackboard, Dictionary<GameObject, Symbol.Table>>();
+    private static Dictionary<Blackboard, Dictionary<GameObject, SymbolTable>> instancedLocals = new Dictionary<Blackboard, Dictionary<GameObject, SymbolTable>>();
 
     //----------------------------------------------------------------------/
     // Fields
@@ -109,17 +118,24 @@ namespace Stratus
     /// <summary>
     /// Symbols which are available to all agents using this blackboard
     /// </summary>
-    public Symbol.Table globals = new Symbol.Table();
+    public SymbolTable globals = new SymbolTable();
     /// <summary>
     /// Symbols specific for each agent of this blackboard
     /// </summary>
-    public Symbol.Table locals = new Symbol.Table();
+    public SymbolTable locals = new SymbolTable();
     /// <summary>
     /// A map of all blackboard instances. This is used to share globals among instances of 
     /// specific blackboards.
     /// </summary>
     private static Dictionary<int, Blackboard> instances = new Dictionary<int, Blackboard>();
 
+    //----------------------------------------------------------------------/
+    // Messages
+    //----------------------------------------------------------------------/    
+    private void OnValidate()
+    {
+      
+    }
 
     //----------------------------------------------------------------------/
     // Methods
@@ -128,10 +144,10 @@ namespace Stratus
     /// Returns all the global symbols for this blackboard at runtime
     /// </summary>
     /// <returns></returns>
-    public Symbol.Table GetGlobals()
+    public SymbolTable GetGlobals()
     {
       if (!instancedGlobals.ContainsKey(this))
-        instancedGlobals.Add(this, new Symbol.Table(this.globals));
+        instancedGlobals.Add(this, new SymbolTable(this.globals));
       return instancedGlobals[this];
     }
 
@@ -140,16 +156,18 @@ namespace Stratus
     /// </summary>
     /// <param name="local"></param>
     /// <returns></returns>
-    public Symbol.Table GetLocals(GameObject owner)
+    public SymbolTable GetLocals(GameObject owner)
     {
       if (!instancedLocals.ContainsKey(this))
-        instancedLocals.Add(this, new Dictionary<GameObject, Symbol.Table>());
+        instancedLocals.Add(this, new Dictionary<GameObject, SymbolTable>());
 
       if (!instancedLocals[this].ContainsKey(owner))
-        instancedLocals[this].Add(owner, new Symbol.Table(this.locals));
+        instancedLocals[this].Add(owner, new SymbolTable(this.locals));
 
       return instancedLocals[this][owner];
     }
+
+    // Get
 
     /// <summary>
     /// Gets the value of a local symbol
@@ -191,7 +209,13 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetLocal<T>(GameObject owner, string key, T value) => GetLocals(owner).SetValue<T>(key, value);
+    public void SetLocal<T>(GameObject owner, string key, T value)
+    {
+      Symbol symbol = GetLocals(owner).Find(key);
+      symbol.SetValue(value);
+      onLocalSymbolChanged(owner, symbol);
+      //GetLocals(owner).SetValue<T>(key, value);
+    }
 
     /// <summary>
     /// Sets the value of a local symbol
@@ -199,7 +223,13 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetLocal(GameObject owner, string key, object value) => GetLocals(owner).SetValue(key, value);
+    public void SetLocal(GameObject owner, string key, object value)
+    {
+      Symbol symbol = GetLocals(owner).Find(key);
+      symbol.SetValue(value);
+      onLocalSymbolChanged(owner, symbol);
+      //GetLocals(owner).SetValue(key, value);
+    }
 
     /// <summary>
     /// Sets the value of a global symbol
@@ -207,7 +237,14 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetGlobal<T>(string key, T value) => GetGlobals().SetValue<T>(key, value);
+    public void SetGlobal<T>(string key, T value)
+    {
+      Symbol symbol = GetGlobals().Find(key);
+      symbol.SetValue(value);
+      onGlobalSymbolChanged(symbol);
+
+      //GetGlobals().SetValue<T>(key, value);
+    }
 
     /// <summary>
     /// Sets the value of a global symbol
@@ -215,7 +252,59 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetGlobal(string key, object value) => GetGlobals().SetValue(key, value);
+    public void SetGlobal(string key, object value)
+    {
+      Symbol symbol = GetGlobals().Find(key);
+      symbol.SetValue(value);
+      onGlobalSymbolChanged(symbol);
+      //GetGlobals().SetValue(key, value);
+    }
+
+    //----------------------------------------------------------------------/
+    // Methods
+    //----------------------------------------------------------------------/    
+    /// <summary>
+    /// Gets the value of a symbol from the table
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="scope"></param>
+    /// <param name="table"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    private T Get<T>(Scope scope, SymbolTable table, string key)
+    {
+      try
+      {
+        T value = table.GetValue<T>(key);
+        return value;
+      }
+      catch (KeyNotFoundException e)
+      {
+        throw new KeyNotFoundException($"{name} : {e.Message}");
+      }
+    }
+
+
+    /// <summary>
+    /// Gets the value of a symbol from the table
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="scope"></param>
+    /// <param name="table"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    private void Set<T>(Scope scope, SymbolTable table, string key, T value)
+    {
+      try
+      {
+        table.SetValue(key, value);
+      }
+      catch (KeyNotFoundException e)
+      {
+        throw new KeyNotFoundException($"{name} : {e.Message}");
+      }
+    }
+
 
     /// <summary>
     /// Returns an instance of this blackboard asset, making a copy of its locals
@@ -236,7 +325,7 @@ namespace Stratus
       // and using a reference to the shared one
       var blackboard = ScriptableObject.CreateInstance<Blackboard>();
       blackboard.globals = instances[id].globals;
-      blackboard.locals = new Symbol.Table(this.locals);
+      blackboard.locals = new SymbolTable(this.locals);
       return blackboard;
     }
 

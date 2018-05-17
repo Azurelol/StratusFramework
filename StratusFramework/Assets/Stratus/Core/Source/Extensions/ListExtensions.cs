@@ -290,7 +290,44 @@ namespace Stratus
       list.RemoveAll(x => x == null);
     }
 
+    /// <summary>
+    /// Checks whether this list has elements with duplicate keys, given a function
+    /// that extracts the key for each element
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static bool HasDuplicateKeys<T>(this List<T> list, Func<T, string> keyFunction)
+    {
+      Dictionary<string, T> keyValuePairs = new Dictionary<string, T>();
+      foreach(T element in list)
+      {
+        string key = keyFunction(element);
+        if (keyValuePairs.ContainsKey(key))
+          return true;
+      }
+      return false;
+    }
 
+    /// <summary>
+    /// Returns the first element in this list that has a duplicate
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static T FindFirstDuplicate<T>(this List<T> list, Func<T, string> keyFunction)
+    {
+      Dictionary<string, T> keyValuePairs = new Dictionary<string, T>();
+      foreach (T element in list)
+      {
+        string key = keyFunction(element);
+        if (keyValuePairs.ContainsKey(key))
+          return element;
+      }
+      return default(T);
+    }
 
     /// <summary>
     /// Returns an array of strings, consisting of the names identified on their name property
