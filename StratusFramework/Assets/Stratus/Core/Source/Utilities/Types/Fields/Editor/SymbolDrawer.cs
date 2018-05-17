@@ -19,7 +19,7 @@ namespace Stratus
       {
         var valueProperty = property.FindPropertyRelative(nameof(Symbol.value));
         var typeProperty = valueProperty.FindPropertyRelative("type");
-        var type = (Variant.Types)typeProperty.enumValueIndex;
+        var type = (Variant.VariantType)typeProperty.enumValueIndex;
         
         label = EditorGUI.BeginProperty(position, label, property);
 

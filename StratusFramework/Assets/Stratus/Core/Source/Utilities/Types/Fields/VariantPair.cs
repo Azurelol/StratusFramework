@@ -29,7 +29,7 @@ namespace Stratus
       /// <summary>
       /// The current type for this variant pair
       /// </summary>
-      public Variant.Types type { get { return value.currentType; } }
+      public Variant.VariantType type { get { return value.currentType; } }
 
       /// <summary>
       /// Information about the symbol

@@ -1180,7 +1180,7 @@ MonoBehaviour:
   selector:
     blackboard: {fileID: 11400000, guid: 82922c7ae942bd44ca64bf5d4f9bcfb0, type: 2}
     scope: 0
-    key: Spiders
+    key: Birds
 --- !u!4 &1301396974
 Transform:
   m_ObjectHideFlags: 0

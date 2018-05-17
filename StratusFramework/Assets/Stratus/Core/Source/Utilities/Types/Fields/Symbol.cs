@@ -56,7 +56,7 @@ namespace Stratus.Types
     public class Reference
     {
       public string key;
-      public Variant.Types type;
+      public Variant.VariantType type;
     }
 
     /// <summary>

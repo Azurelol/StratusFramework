@@ -16,7 +16,7 @@ namespace Stratus
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
       {
         var typeProperty = property.FindPropertyRelative("type");
-        var type = (Variant.Types)typeProperty.enumValueIndex;
+        var type = (Variant.VariantType)typeProperty.enumValueIndex;
 
         label = EditorGUI.BeginProperty(position, label, property);
         Rect contentPosition = EditorGUI.PrefixLabel(position, label);
@@ -33,19 +33,19 @@ namespace Stratus
         string valueName = string.Empty;
         switch (type)
         {
-          case Variant.Types.Integer:
+          case Variant.VariantType.Integer:
             valueName = "integerValue";
             break;
-          case Variant.Types.Boolean:
+          case Variant.VariantType.Boolean:
             valueName = "booleanValue";
             break;
-          case Variant.Types.Float:
+          case Variant.VariantType.Float:
             valueName = "floatValue";
             break;
-          case Variant.Types.String:
+          case Variant.VariantType.String:
             valueName = "stringValue";
             break;
-          case Variant.Types.Vector3:
+          case Variant.VariantType.Vector3:
             valueName = "vector3Value";
             break;
           default:
