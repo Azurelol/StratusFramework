@@ -40,9 +40,9 @@ namespace Stratus.Experimental
     //--------------------------------------------------------------------------------------------/
     public MovementOffset movementOffset { get; set; } = MovementOffset.PlayerForward;
     public StratusPlayerControllerExtension[] extensions => extensionsField.ToArray();
+    public bool hasExtensions => extensionsField.Count > 0;
     public NavMeshAgent navigation { get; private set; }
     public new Rigidbody rigidbody { get; private set; }
-    public bool hasExtensions => extensionsField.Count > 0;
     public Func<Vector3> calculateDirectionFunction { get; private set; }
 
     //--------------------------------------------------------------------------------------------/

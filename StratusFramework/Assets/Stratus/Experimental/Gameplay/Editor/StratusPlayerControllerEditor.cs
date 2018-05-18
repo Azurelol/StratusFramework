@@ -12,8 +12,6 @@ namespace Stratus.Experimental
   {
     private Type[] extensionTypes;
     private string[] extensionTypeNames;
-    //private string[] availableExtensionTypeNames;
-
     private StratusEditor extensionEditor;
     private string[] extensionsNames;
     private int extensionIndex = 0;

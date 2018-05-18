@@ -336,10 +336,8 @@ namespace Stratus
     /// <param name="array">The given array</param>
     /// <param name="filter">An array of names to omit</param>
     /// <returns></returns>
-    public static string[] TypeNames<T>(this T[] array, string[] filter = null) where T : UnityEngine.Object
+    public static string[] TypeNames<T>(this T[] array, string[] filter = null)
     {
-      //List<string> names = new List<string>();
-      //Dictionary<string, >
       string[] names = new string[array.Length];
       for (int i = 0; i < array.Length; ++i)
       {
@@ -348,6 +346,7 @@ namespace Stratus
       }
       return names;
     }
+
 
     /// <summary>
     /// Filters the left array with the contents of the right one. It will return a new
