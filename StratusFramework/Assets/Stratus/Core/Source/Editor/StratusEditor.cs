@@ -7,13 +7,14 @@ using System;
 using Rotorz.ReorderableList;
 using UnityEditorInternal;
 using Stratus.Interfaces;
+using System.Linq;
 
 namespace Stratus
 {
   /// <summary>
   /// Base editor for all Stratus components.
   /// </summary>
-  public abstract class StratusEditor : UnityEditor.Editor
+  public abstract partial class StratusEditor : UnityEditor.Editor
   {
     //------------------------------------------------------------------------/
     // Declarations
@@ -40,8 +41,6 @@ namespace Stratus
       public bool isValid => onValidate != null ? onValidate() : true;
     }
 
-
-
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
@@ -61,6 +60,14 @@ namespace Stratus
     /// A map of all available properties by name
     /// </summary>
     public Dictionary<string, SerializedProperty> propertyMap { get; set; } = new Dictionary<string, SerializedProperty>();
+    /// <summary>
+    /// The custom attributes for this property
+    /// </summary>
+    public Dictionary<SerializedProperty, Attribute[]> propertyAttributes { get; private set; } = new Dictionary<SerializedProperty, Attribute[]>();
+    /// <summary>
+    /// The custom attributes for this property
+    /// </summary>
+    public Dictionary<SerializedProperty, Dictionary<Type, Attribute>> propertyAttributesMap { get; private set; } = new Dictionary<SerializedProperty, Dictionary<Type, Attribute>>();
     /// <summary>
     /// The set of properties of the most-derived class
     /// </summary>
@@ -135,6 +142,8 @@ namespace Stratus
     /// </summary>
     protected abstract Type baseType { get; }
 
+
+
     //------------------------------------------------------------------------/
     // Virtual Methods
     //------------------------------------------------------------------------/
@@ -196,7 +205,7 @@ namespace Stratus
       // Invoke the very first time
       if (!doneFirstUpdate)
         DoFirstUpdate();
-      
+
       // Now fulfill any custom requests at the end of inspection
       ProcessEndOfFrameRequests();
 
@@ -275,14 +284,14 @@ namespace Stratus
         EditorGUILayout.HelpBox(message.message, message.type.Convert());
         if (message.hasContext)
         {
-          StratusEditorUtility.OnMouseClick(GUILayoutUtility.GetLastRect(), null, () => 
+          StratusEditorUtility.OnMouseClick(GUILayoutUtility.GetLastRect(), null, () =>
           {
             var menu = new GenericMenu();
 
             if (message.onSelect != null)
-              menu.AddItem(new GUIContent("Select"), false, ()=> { message.onSelect(); } );
+              menu.AddItem(new GUIContent("Select"), false, () => { message.onSelect(); });
             if (message.onValidate == null)
-              menu.AddItem(new GUIContent("Remove"), false, ()=> RemoveMessage(message));
+              menu.AddItem(new GUIContent("Remove"), false, () => RemoveMessage(message));
 
             menu.ShowAsContext();
           });
@@ -355,7 +364,17 @@ namespace Stratus
           DrawReorderableList(property, property.displayName);
         // Use normal drawers
         else
-          EditorGUILayout.PropertyField(property, true);
+        {
+          // If there's any custom attributes
+          if (propertyAttributes[property].Length > 0)
+          {
+            DrawDefaultPropertyAttributes(property);
+          }
+          else
+          {
+            EditorGUILayout.PropertyField(property, true);
+          }
+        }
       }
 
       // If property was changed, save
@@ -505,6 +524,9 @@ namespace Stratus
       return propertiesChanged;
     }
 
+    /// <summary>
+    /// Adds all SerializedProperties to be inspected
+    /// </summary>
     internal void AddProperties()
     {
       // For every type, starting from the most derived up to the base, get its serialized properties      
@@ -513,20 +535,30 @@ namespace Stratus
       while (currentType != baseType)
       {
         //Trace.Script($"Adding properties for {currentType.Name}");
-
         // Add the properties onto the map
-        var properties = GetSerializedProperties(serializedObject, currentType);
-        foreach (var prop in properties)
-        {
-          // Check the attributes for this proeprty
-          //prop.
-          //Trace.Script($"- {prop.name}");
+        SerializedProperty[] properties = GetSerializedProperties(serializedObject, currentType);
+        //FieldInfo[] objectFields = target.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-          propertyMap.Add(prop.name, prop);
-          if (prop.isArray && prop.propertyType != SerializedPropertyType.String)
+        foreach (var property in properties)
+        {
+          // Record this property
+          propertyMap.Add(property.name, property);
+
+          // Record the attributes for this property
+          Attribute[] attributes = property.GetFieldAttributes();
+          propertyAttributes.Add(property, attributes);
+          propertyAttributesMap.Add(property, new Dictionary<Type, Attribute>());
+          foreach (var attr in attributes)
           {
-            ReorderableList list = GetListWithFoldout(serializedObject, prop, true, true, true, true);
-            reorderableLists.Add(prop, list);
+            propertyAttributesMap[property].Add(attr.GetType(), attr);
+            //Trace.Script($"{property.displayName} has the attribute '{attr.GetType().Name}'");
+          }
+          
+          // Check whether this property is an array
+          if (property.isArray && property.propertyType != SerializedPropertyType.String)
+          {
+            ReorderableList list = GetListWithFoldout(serializedObject, property, true, true, true, true);
+            reorderableLists.Add(property, list);
           }
         }
 
@@ -534,6 +566,7 @@ namespace Stratus
         propertiesByType.Add(currentType, properties);
         propertyGroups.Add(new Tuple<Type, SerializedProperty[]>(currentType, properties));
 
+        // Move on to the parent type (if any)
         currentType = currentType.BaseType;
       }
 
@@ -571,6 +604,14 @@ namespace Stratus
       return false;
     }
 
+    protected void DrawEditor(UnityEditor.Editor editor, string header, int headerSize = 12)
+    {
+      EditorGUILayout.LabelField($"<size={headerSize}>{header}</size>", StratusGUIStyles.header);
+      EditorGUI.indentLevel = 1;
+      editor.OnInspectorGUI();
+      EditorGUI.indentLevel = 0;
+    }
+
     /// <summary>
     /// Always returns true
     /// </summary>
@@ -581,17 +622,7 @@ namespace Stratus
     /// Always returns false
     /// </summary>
     protected bool False() => false;
-
-    /// <summary>
-    /// Checks whether the mouse was over the last GUI control
-    /// </summary>
-    /// <returns></returns>
-    protected bool IsMouseOverLastControl()
-    {
-      Rect buttonRect = GUILayoutUtility.GetLastRect();
-      return buttonRect.Contains(currentEvent.mousePosition);
-    }
-
+    
     /// <summary>
     /// Adds a new section to the editor
     /// </summary>
@@ -610,6 +641,16 @@ namespace Stratus
     protected void AddConstraint(string propertyName, System.Func<bool> constraint)
     {
       propertyConstraints.Add(propertyMap[propertyName], constraint);
+    }
+
+    /// <summary>
+    /// Adds a constraint that decides whether a given property is drawn
+    /// </summary>
+    /// <param name="propertyName"></param>
+    /// <param name="constraint"></param>
+    protected void AddConstraint(SerializedProperty property, System.Func<bool> constraint)
+    {
+      propertyConstraints.Add(property, constraint);
     }
 
     /// <summary>

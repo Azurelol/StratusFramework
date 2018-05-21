@@ -13,35 +13,45 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     // Fields
     //--------------------------------------------------------------------------------------------/    
+    private static Type extensibleBehaviourType { get; } = typeof(ExtensibleBehaviour);
     private Type[] extensionTypes;
     private string[] extensionTypeNames;
     private StratusEditor extensionEditor;
     private string[] extensionsNames;
     private int extensionIndex = 0;
     private SerializedProperty extensionsProperty;
+    private HideFlags extensionFlags = HideFlags.HideInInspector;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/    
-    public ExtensibleBehaviour.Extension selectedExtension => target.hasExtensions ? target.extensions[extensionIndex] : null;
+    public ExtensionBehaviour selectedExtension => target.hasExtensions ? target.extensions[extensionIndex] : null;
+    public string selectedExtensionName => extensionsNames[extensionIndex];
 
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/    
     protected override void OnStratusEditorEnable()
     {
-      extensionTypes = Reflection.GetSubclass<ExtensibleBehaviour.Extension>();
-      extensionTypeNames = Reflection.GetSubclassNames<ExtensibleBehaviour.Extension>();
+      
       extensionsProperty = serializedObject.FindProperty("extensionsField");
+      GetMatchingExtensionTypes();
       RefreshExtensions();
-      drawGroupRequests.Add(new DrawGroupRequest(SelectExtension, () => { return target.hasExtensions; }));
-      drawGroupRequests.Add(new DrawGroupRequest(DrawExtension, () => { return target.hasExtensions; }));
+      drawGroupRequests.Add(new DrawGroupRequest(DrawExtensions, () => { return target.hasExtensions; }));
       drawGroupRequests.Add(new DrawGroupRequest(AddExtension));
+      //drawGroupRequests.Add(new DrawGroupRequest(DrawExtension, () => { return target.hasExtensions; }));
     }
 
     //--------------------------------------------------------------------------------------------/
     // Methods
     //--------------------------------------------------------------------------------------------/    
+    private void DrawExtensions(Rect rect)
+    {
+      SelectExtension(rect);
+      if (target.hasExtensions)
+        DrawExtension(rect);
+    }
+
     private void SelectExtension(Rect rect)
     {
       EditorGUILayout.BeginHorizontal();
@@ -65,17 +75,17 @@ namespace Stratus
 
     private void CreateExtensionEditor()
     {
-      //extensionEditor = UnityEditor.Editor.CreateEditor(selectedExtension) as StratusEditor;
-      //extensionEditor.backgroundStyle = EditorStyles.helpBox;
+      extensionEditor = UnityEditor.Editor.CreateEditor(selectedExtension) as StratusEditor;
+      extensionEditor.backgroundStyle = EditorStyles.helpBox;
     }
 
     private void DrawExtension(Rect rect)
     {
+      DrawEditor(extensionEditor, selectedExtensionName);
       // Now draw the selected extension
-      EditorGUI.indentLevel = 1;
-      EditorGUILayout.PropertyField(extensionsProperty.GetArrayElementAtIndex(extensionIndex));
+      //EditorGUI.indentLevel = 1;
       //extensionEditor.OnInspectorGUI();
-      EditorGUI.indentLevel = 0;
+      //EditorGUI.indentLevel = 0;
     }
 
     private void RefreshExtensions()
@@ -84,11 +94,9 @@ namespace Stratus
         return;
 
       extensionsNames = target.extensions.TypeNames();
-
-      //availableExtensionTypeNames = extensionTypeNames.Filter(extensionsNames);
+      foreach (var extension in target.extensions)
+        extension.hideFlags = extensionFlags;
     }
-
-
 
     private void AddExtension(Rect rect)
     {
@@ -99,26 +107,46 @@ namespace Stratus
         Type extensionType = extensionTypes[index];
         //ExtensibleBehaviour.Extension extension = target.gameObject.GetOrAddComponent(extensionType);
         //ExtensibleBehaviour.Extension extension = UnityEngine.Object.Instantiate(extensionType);
-        ExtensibleBehaviour.Extension extension = (ExtensibleBehaviour.Extension)Utilities.Reflection.Instantiate(extensionType);
+        //ExtensionBehaviour extension = (ExtensionBehaviour)Utilities.Reflection.Instantiate(extensionType);
+        //target.Add(extension);
+        ExtensionBehaviour extension = target.gameObject.GetOrAddComponent(extensionType) as ExtensionBehaviour;
         target.Add(extension);
+        extension.hideFlags = extensionFlags;
+        Trace.Script($"Adding {extensionType.Name}");
         Undo.RecordObject(target, extensionType.Name);
         serializedObject.ApplyModifiedProperties();
         RefreshExtensions();
       }
     }
 
-    private void RemoveExtension(ExtensibleBehaviour.Extension extension)
+    private void RemoveExtension(ExtensionBehaviour extension)
     {
       endOfFrameRequests.Add(() =>
       {
         extensionEditor = null;
         extensionIndex = 0;
         target.Remove(extension);
-        //Undo.DestroyObjectImmediate(extension);
+        Undo.DestroyObjectImmediate(extension);
         Undo.RecordObject(target, extension.GetType().Name);
         serializedObject.ApplyModifiedProperties();
         RefreshExtensions();
       });
+    }
+
+    private void GetMatchingExtensionTypes()
+    {
+      List<Type> matchingTypes = new List<Type>();
+
+      var allExtensionTypes  = Reflection.GetSubclass<ExtensionBehaviour>();
+      foreach(var type in allExtensionTypes)
+      {
+        CustomExtension attribute = type.GetAttribute<CustomExtension>();
+        if (attribute != null && attribute.extensibleType.IsSubclassOf(extensibleBehaviourType))
+          matchingTypes.Add(type);
+      }
+
+      extensionTypes = matchingTypes.ToArray();
+      extensionTypeNames = matchingTypes.Names(x => x.Name);
     }
 
   }

@@ -6,6 +6,67 @@ using System;
 namespace Stratus
 {
   /// <summary>
+  /// A generic behaviour that has extensions that can be added or removed to it
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  public abstract class ExtensibleBehaviour : StratusBehaviour, IExtensible
+  {
+    //--------------------------------------------------------------------------------------------/
+    // Fields
+    //--------------------------------------------------------------------------------------------/
+    [SerializeField]
+    private List<ExtensionBehaviour> extensionsField = new List<ExtensionBehaviour>();
+
+    //--------------------------------------------------------------------------------------------/
+    // Properties
+    //--------------------------------------------------------------------------------------------/
+    public ExtensionBehaviour[] extensions  => extensionsField.ToArray();
+    public bool hasExtensions => extensionsField.Count > 0;
+
+    //--------------------------------------------------------------------------------------------/
+    // Virtual
+    //--------------------------------------------------------------------------------------------/
+    protected abstract void OnAwake();
+    protected abstract void OnStart();
+
+    //--------------------------------------------------------------------------------------------/
+    // Messages
+    //--------------------------------------------------------------------------------------------/
+    private void Awake()
+    {
+      foreach (ExtensionBehaviour extension in extensionsField)
+      {
+        extension.OnAwake();
+      }
+
+      OnAwake();
+    }
+
+    private void Start()
+    {
+      foreach (ExtensionBehaviour extension in extensionsField)
+        extension.OnStart();
+
+      OnStart();
+    }
+
+    //--------------------------------------------------------------------------------------------/
+    // Methods
+    //--------------------------------------------------------------------------------------------/
+    public void Add(ExtensionBehaviour extension)
+    {
+      extension.extensibleField = this;
+      extensionsField.Add(extension);
+    }    
+
+    public void Remove(ExtensionBehaviour extension)
+    {
+      extensionsField.Remove(extension);
+    }
+
+  }
+
+  /// <summary>
   /// Tells the Editor which extensible class this extension is for
   /// </summary>
   public class CustomExtension : Attribute
@@ -20,73 +81,24 @@ namespace Stratus
   }
 
   /// <summary>
-  /// A generic behaviour that has extensions that can be added or removed to it
+  /// A behaviour that acts as an extension to extensible behaviour (one that
+  /// derives from ExtensibleBehaviour). Make sure to use the 'CustomExtension' attribute in order
+  /// to specify which extensible behaviour this extension is for.
   /// </summary>
-  /// <typeparam name="T"></typeparam>
-  public abstract class ExtensibleBehaviour : StratusBehaviour
+  [RequireComponent(typeof(IExtensible), typeof(ExtensibleBehaviour))]
+  public abstract class ExtensionBehaviour : StratusBehaviour
   {
-    //--------------------------------------------------------------------------------------------/
-    // Declarations
-    //--------------------------------------------------------------------------------------------/    
-    [Serializable]
-    public abstract class Extension : System.Object
-    { 
-      [SerializeField]
-      private ExtensibleBehaviour master;
-      public abstract void OnAwake();
-      public abstract void OnStart();
-    }
-
-    //--------------------------------------------------------------------------------------------/
-    // Fields
-    //--------------------------------------------------------------------------------------------/
+    [HideInInspector]
     [SerializeField]
-    public List<Extension> extensionsField = new List<Extension>();
-
-    //--------------------------------------------------------------------------------------------/
-    // Properties
-    //--------------------------------------------------------------------------------------------/
-    public Extension[] extensions  => extensionsField.ToArray();
-    public bool hasExtensions => extensionsField.Count > 0;
-
-    //--------------------------------------------------------------------------------------------/
-    // Virtual
-    //--------------------------------------------------------------------------------------------/
-    protected abstract void OnAwake();
-    protected abstract void OnStart();
-
-    //--------------------------------------------------------------------------------------------/
-    // Messages
-    //--------------------------------------------------------------------------------------------/
-    private void Awake()
-    {
-      foreach (Extension extension in extensionsField)
-        extension.OnAwake();
-
-      OnAwake();
-    }
-
-    private void Start()
-    {
-      foreach (Extension extension in extensionsField)
-        extension.OnStart();
-
-      OnStart();
-    }
-
-    //--------------------------------------------------------------------------------------------/
-    // Methods
-    //--------------------------------------------------------------------------------------------/
-    public void Add(Extension extension)
-    {
-      extensionsField.Add(extension);
-    }    
-
-    public void Remove(Extension extension)
-    {
-      extensionsField.Remove(extension);
-    }
-
+    internal ExtensibleBehaviour extensibleField;
+    public ExtensibleBehaviour extensible => extensibleField;
+    public abstract void OnAwake();
+    public abstract void OnStart();
   }
+
+  /// <summary>
+  /// Interface type used to validate all extensible behaviours
+  /// </summary>
+  public interface IExtensible { }
 
 }

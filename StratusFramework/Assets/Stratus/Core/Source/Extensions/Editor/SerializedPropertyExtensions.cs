@@ -105,7 +105,42 @@ namespace Stratus
     {
       return obj.FindPropertyRelative(PropertyName(exp));
     }
-    
+
+    /// <summary>
+    /// Retrieves the FieldInfo for the field behind this serialized property
+    /// </summary>
+    /// <param name="property"></param>
+    /// <returns></returns>
+    public static FieldInfo GetFieldInfo(this SerializedProperty property)
+    {
+      Type objectType = property.serializedObject.targetObject.GetType();
+      return objectType.GetField(property.name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance);
+    }
+
+    /// <summary>
+    /// Retrieves the Type of the field behind this serialized property
+    /// </summary>
+    /// <param name="property"></param>
+    /// <returns></returns>
+    public static Type GetFieldType(this SerializedProperty property)
+    {
+      Type objectType = property.serializedObject.targetObject.GetType();
+      Type type = objectType.GetField(property.name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance).FieldType;
+      return type;
+    }
+
+    /// <summary>
+    /// Retrieves all the Attributes for the field behind this serialized property
+    /// </summary>
+    /// <param name="property"></param>
+    /// <returns></returns>
+    public static Attribute[] GetFieldAttributes(this SerializedProperty property)
+    {
+      FieldInfo fi = property.GetFieldInfo();
+      Attribute[] attributes = fi.GetCustomAttributes<Attribute>().ToArray();
+      return attributes;
+    }
+
 
 
   }

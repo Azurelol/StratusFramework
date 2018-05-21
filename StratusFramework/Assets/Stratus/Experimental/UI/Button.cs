@@ -39,7 +39,8 @@ namespace Stratus
       [HideInInspector] public Image Image;
       public ButtonStyle Style = new ButtonStyle();
       [Tooltip("What sound to play when the button is pressed")]
-      public AudioClip Sound = new AudioClip();
+      public AudioClip Sound;
+
       /// <summary>
       /// What sprite to use for this button
       /// </summary>
