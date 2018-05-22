@@ -65,9 +65,9 @@ namespace Stratus
         //GUILayout.Label(Variable.Value);        
         //GUILayout.EndVertical();
         if (Behaviour != null)
-          GUILayout.Label(Behaviour.gameObject.name + "." + Behaviour.GetType().Name + "." + Description + ":  " + Variable.value.ToString());
+          UnityEngine.GUILayout.Label(Behaviour.gameObject.name + "." + Behaviour.GetType().Name + "." + Description + ":  " + Variable.value.ToString());
         else
-          GUILayout.Label(Description + ": " + Variable.value.ToString());
+          UnityEngine.GUILayout.Label(Description + ": " + Variable.value.ToString());
 
       }
     }
@@ -92,9 +92,9 @@ namespace Stratus
 
       void DrawColumn(string title, string content)
       {
-        GUILayout.BeginVertical();
-        GUILayout.Label(title);
-        GUILayout.EndVertical();
+        UnityEngine.GUILayout.BeginVertical();
+        UnityEngine.GUILayout.Label(title);
+        UnityEngine.GUILayout.EndVertical();
       }
 
     }

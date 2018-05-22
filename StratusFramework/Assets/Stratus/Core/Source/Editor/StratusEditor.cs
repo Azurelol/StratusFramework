@@ -365,15 +365,17 @@ namespace Stratus
         // Use normal drawers
         else
         {
+          bool overridden = false;
+          
           // If there's any custom attributes
-          if (propertyAttributes[property].Length > 0)
-          {
-            DrawDefaultPropertyAttributes(property);
-          }
-          else
-          {
+          //if (propertyAttributes[property].Length > 0)
+          //{
+          //  DrawDefaultPropertyAttributes(property);
+          //}
+
+          if (!overridden)
             EditorGUILayout.PropertyField(property, true);
-          }
+          
         }
       }
 

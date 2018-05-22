@@ -65,6 +65,7 @@ namespace Stratus
 
       protected override void OnStoryEnded()
       {
+        OnChoiceSelected();
         display = false;
       }
 

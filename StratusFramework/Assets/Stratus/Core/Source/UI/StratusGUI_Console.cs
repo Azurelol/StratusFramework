@@ -59,10 +59,10 @@ namespace Stratus
       /// </summary>
       protected override void OnDrawWindow()
       {
-        GUILayout.BeginVertical();        
+        UnityEngine.GUILayout.BeginVertical();        
         foreach (var message in Buffer)
           Print(message);
-        GUILayout.EndVertical();
+        UnityEngine.GUILayout.EndVertical();
       }
 
       /// <summary>
@@ -70,7 +70,7 @@ namespace Stratus
       /// </summary>
       void Print(string message)
       {
-        GUILayout.Label(message, GUI.skin.label);
+        UnityEngine.GUILayout.Label(message, GUI.skin.label);
       }
 
       /// <summary>

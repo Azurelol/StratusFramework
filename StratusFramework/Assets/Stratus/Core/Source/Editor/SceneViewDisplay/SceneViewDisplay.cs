@@ -96,7 +96,7 @@ namespace Stratus
       #if UNITY_EDITOR
       LoadGlobal();
       ConstructAllDisplays();
-      EditorApplication.hierarchyWindowChanged += OnHierarchyWindowChanged;
+      EditorApplication.hierarchyChanged += OnHierarchyWindowChanged;
       EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
       #endif
     }

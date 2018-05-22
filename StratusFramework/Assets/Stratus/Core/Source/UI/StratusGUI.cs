@@ -31,6 +31,13 @@ namespace Stratus
       public Console Console;
     }
 
+    public struct DrawRequest
+    {
+
+    }
+
+    public delegate void OnGUILayout(Rect rect);
+
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
@@ -73,6 +80,11 @@ namespace Stratus
     /// </summary>
     private FPSCounter fpsCounter = new FPSCounter();
 
+    /// <summary>
+    /// Draw requests
+    /// </summary>
+    private List<OnGUILayout> drawRequests = new List<OnGUILayout>();
+
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
@@ -93,7 +105,7 @@ namespace Stratus
     }
 
     //------------------------------------------------------------------------/
-    // Methods: Public
+    // Methods: Static
     //------------------------------------------------------------------------/
     /// <summary>
     /// Keeps watch of a given property/field
@@ -140,7 +152,38 @@ namespace Stratus
       var button = new Button<T>(description, onButtonDown);
       get.Windows.Buttons.Add(button);
     }
-    
+
+    public static void GUILayoutArea(Anchor anchor, Vector2 size, System.Action<Rect> onGUI)
+    {      
+      Rect rect = StratusGUI.CalculateAnchoredPositionOnScreen(anchor, size);
+      UnityEngine.GUILayout.BeginArea(rect);      
+      onGUI(rect);
+      UnityEngine.GUILayout.EndArea();
+    }
+
+    public static void GUILayoutArea(Anchor anchor, Vector2 size, GUIContent content, System.Action<Rect> onGUI)
+    {
+      Rect rect = StratusGUI.CalculateAnchoredPositionOnScreen(anchor, size);
+      UnityEngine.GUILayout.BeginArea(rect, content);
+      onGUI(rect);
+      UnityEngine.GUILayout.EndArea();
+    }
+
+    public static void GUILayoutArea(Anchor anchor, Vector2 size, GUIContent content, GUIStyle style, System.Action<Rect> onGUI)
+    {
+      Rect rect = StratusGUI.CalculateAnchoredPositionOnScreen(anchor, size);
+      UnityEngine.GUILayout.BeginArea(rect, content, style);
+      onGUI(rect);
+      UnityEngine.GUILayout.EndArea();
+    }
+
+    public static void GUILayoutArea(Anchor anchor, Vector2 size, GUIStyle style, System.Action<Rect> onGUI)
+    {
+      Rect rect = StratusGUI.CalculateAnchoredPositionOnScreen(anchor, size);
+      UnityEngine.GUILayout.BeginArea(rect, style);
+      onGUI(rect);
+      UnityEngine.GUILayout.EndArea();
+    }
 
     /// <summary>
     /// Shows the overlay
@@ -190,6 +233,8 @@ namespace Stratus
       // Draw all custom windows
       foreach (var window in CustomWindows)
         window.Value.Draw();
+
+      // Draw all custom content
 
       // Show FPS
       if (showFPS) DisplayFPS();

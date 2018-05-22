@@ -1101,6 +1101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   extensibleField: {fileID: 1280419498}
   useful: 1
+  usefulFloat: 5
 --- !u!114 &1280419498
 MonoBehaviour:
   m_ObjectHideFlags: 0

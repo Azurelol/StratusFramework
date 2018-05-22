@@ -332,14 +332,6 @@ namespace Stratus
       }
 
     }
-
-    //private void OpenWindow()
-    //{
-    //  canvas = SingletonAsset.LoadOrCreate<TriggerSystemCanvas>("Trigger System Canvas", "Stratus/Core/Resources", false, NodeEditorFramework.NodeCanvas.Initialize);
-    //  NodeEditorFramework.Standard.NodeEditorWindow.OpenNodeEditor(canvas);
-    //}
-
-
   }
 
 }

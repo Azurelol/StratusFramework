@@ -10,14 +10,15 @@ namespace Stratus.Examples
   {
     public bool useful = true;
 
-    public override void OnAwake()
+    protected override void OnExtensibleAwake()
     {
       Trace.Script("Usefulness awoken");
     }
 
-    public override void OnStart()
+    protected override void OnExtensibleStart()
     {
       Trace.Script("Usefulness started");
     }
+
   }
 }

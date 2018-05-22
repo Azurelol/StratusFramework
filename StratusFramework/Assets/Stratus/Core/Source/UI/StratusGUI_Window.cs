@@ -75,7 +75,7 @@ namespace Stratus
       public AbstractWindow(string title, Vector2 relativeDimensions, Color color, Anchor position = Anchor.TopLeft) : base(title)
       {
         anchor = position;
-        dimensions = FindRelativeDimensions(relativeDimensions, screenSize);
+        dimensions = CalculateRelativeDimensions(relativeDimensions, screenSize);
       }
 
       /// <summary>
@@ -87,9 +87,9 @@ namespace Stratus
           return;
 
         var screenSize = new Vector2(Screen.width, Screen.height);
-        GUILayout.BeginArea(CalculateAnchoredPositionOnScreen(anchor, dimensions, screenSize), name, GUI.skin.window);
+        UnityEngine.GUILayout.BeginArea(CalculateAnchoredPositionOnScreen(anchor, dimensions, screenSize), name, GUI.skin.window);
         OnDrawWindow();
-        GUILayout.EndArea();
+        UnityEngine.GUILayout.EndArea();
       }
 
     }
@@ -152,9 +152,9 @@ namespace Stratus
       protected override void OnDrawWindow()
       {
         //GUILayout.BeginVertical();
-        ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);//, GUILayout.Width(Dimensions.x), GUILayout.Height(Dimensions.y));
+        ScrollPosition = UnityEngine.GUILayout.BeginScrollView(ScrollPosition);//, GUILayout.Width(Dimensions.x), GUILayout.Height(Dimensions.y));
         DrawElements();
-        GUILayout.EndScrollView();
+        UnityEngine.GUILayout.EndScrollView();
         //GUILayout.EndVertical();
       }
 

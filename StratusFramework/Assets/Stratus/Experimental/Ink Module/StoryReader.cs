@@ -16,23 +16,51 @@ namespace Stratus.Modules.InkModule
     // Public Fields
     //------------------------------------------------------------------------------------------/
     [Header("Options")]
+    /// <summary>
+    /// Whether this reader will react to scene-wide story events
+    /// </summary>
     [Tooltip("Whether this reader will react to scene-wide story events")]
     public bool listeningToScene = false;
+    /// <summary>
+    /// Whether to automatically restart an ended story on load
+    /// </summary>
     [Tooltip("Whether to automatically restart an ended story on load")]
     public bool automaticRestart = false;
+    /// <summary>
+    /// Whether story events should be queued, for one to play after the other
+    /// </summary>
     [Tooltip("Whether story events should be queued, for one to play after the other")]
     public bool queueStories = true;
-    //[Tooltip("How long to wait before playing the next queued story")]
-    //[DrawIf(nameof(StoryReader.queueStories), true, ComparisonType.Equals)]
-    //public float queueDelay = 0f;
-    [Tooltip("Whether to log to the console")]
+
+    [Header("Debug")]        
+    /// <summary>
+    /// Whether to log to the console
+    /// </summary>
+    [Tooltip("Whether to log to the console")]    
     public bool debug = false;
+    /// <summary>
+    /// The color used for debug output
+    /// </summary>    
+    [DrawIf(nameof(StoryReader.debug), true, ComparisonType.Equals)]
+    public Color debugTextColor = Color.white;
+    /// <summary>
+    /// What area of the screen to use to draw the debug content
+    /// </summary>
+    [DrawIf(nameof(StoryReader.debug), true, ComparisonType.Equals)]
+    public StratusGUI.Anchor debugArea = StratusGUI.Anchor.TopRight;
 
     [Header("States")]
     [Tooltip("Whether the state of stories should automatically be saved by default")]
     public bool saveStates = true;
+    /// <summary>
+    /// Whether to save story data when exiting playmode
+    /// </summary>
     [Tooltip("Whether to save story data when exiting playmode")]
     public bool saveOnExit = false;
+    /// <summary>
+    /// Whether state information should be cleared on a restart. If a story has been ended 
+    /// and you try to load it again, you likely want this checked.
+    /// </summary>
     [Tooltip("Whether state information should be cleared on a restart. If a story has been ended " +
             "and you try to load it again, you likely want this checked.")]
     public bool clearStateOnRestart = true;
@@ -48,6 +76,7 @@ namespace Stratus.Modules.InkModule
     /// The queue of stories to be played
     /// </summary>
     private Queue<Story.LoadEvent> storyQueue = new Queue<Story.LoadEvent>();
+
 
     //------------------------------------------------------------------------------------------/
     // Properties
@@ -87,6 +116,11 @@ namespace Stratus.Modules.InkModule
     /// The name of the latest stitch
     /// </summary>
     public string latestStitch { get; private set; }
+    /// <summary>
+    /// String representation of the location where teh story currently is
+    /// </summary>
+    private string currentPath => story.runtime.state.currentPathString;
+
     //------------------------------------------------------------------------------------------/
     // Virtual Functions
     //------------------------------------------------------------------------------------------/
@@ -97,23 +131,22 @@ namespace Stratus.Modules.InkModule
     //------------------------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------------------------/
-    /// <summary>
-    /// Subscribe to common events
-    /// </summary>
     private void Awake()
     {
       Subscribe();
       OnAwake();
       Load(stories);
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
     private void OnDestroy()
     {
       if (saveOnExit)
         Save();
+    }
+
+    private void OnGUI()
+    {
+      if (debug)
+        DrawDebug();
     }
 
     //------------------------------------------------------------------------------------------/
@@ -699,6 +732,24 @@ namespace Stratus.Modules.InkModule
       foreach (var variable in story.runtime.variablesState)
       {
         Trace.Script($"Variable {variable}");
+      }
+    }
+
+    private void DrawDebug()
+    {
+      if (currentlyReading)
+      {
+        string content = $"Story: {story.name}";
+        content += $"\nCurrent Text: {story.runtime.currentText}";
+        if (currentPath != null)
+          content += $"Current Path: {currentPath}";
+
+
+        GUIContent msg = StratusGUI.Content(content, 9, debugTextColor);
+        StratusGUI.GUILayoutArea(debugArea, StratusGUI.quarterScreen, (Rect rect) =>
+        {
+          GUILayout.Label(msg, StratusGUIStyles.skin.label);
+        });
       }
     }
 

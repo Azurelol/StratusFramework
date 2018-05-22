@@ -14,7 +14,7 @@ namespace Stratus
     private static Type hideInInspectorType { get; } = typeof(HideInInspector);
     private static Dictionary<Type, System.Func<Attribute, SerializedProperty, bool>> attributeFunctions { get; } = new Dictionary<Type, Func<Attribute, SerializedProperty, bool>>()
     {
-      //{ typeof(HideInInspector), OnHideInInspector },
+      { typeof(RangeAttribute), OnRangeAttribute},
     };
 
     //------------------------------------------------------------------------/
@@ -61,12 +61,20 @@ namespace Stratus
     protected T GetAttribute<T>(SerializedProperty property, Type type) where T : Attribute
     {
       return (T)(propertyAttributesMap[property].ContainsKey(type) ? propertyAttributesMap[property][type] : null);
-      //return 
     }
 
     //------------------------------------------------------------------------/
     // Methods: Unity Attributes
     //------------------------------------------------------------------------/
+    private static bool OnRangeAttribute(Attribute attribute, SerializedProperty property)
+    {
+      RangeAttribute range = attribute as RangeAttribute;
+      if (property.propertyType == SerializedPropertyType.Integer)
+        EditorGUILayout.IntSlider(property, (int)range.min, (int)range.max);
+      else if (property.propertyType == SerializedPropertyType.Float)
+        EditorGUILayout.Slider(property, range.min, range.max);
+      return true;
+    }
     //private static bool OnHideInInspector(Attribute attribute, SerializedProperty property) => true;
 
   }

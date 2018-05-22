@@ -6,7 +6,8 @@ using System;
 
 namespace Stratus.Experimental
 {
-  public class CinemachineCameraController : StratusPlayerControllerExtension
+  [CustomExtension(typeof(StratusPlayerController))]
+  public class CinemachineCameraController : ExtensionBehaviour<StratusPlayerController>
   {
     [Serializable]
     public class CameraPreset : StratusSerializable
@@ -22,11 +23,16 @@ namespace Stratus.Experimental
     public bool hasCameras => cameras.NotEmpty();
     private ArrayNavigator<CameraPreset> cameraNavigation;
 
-    protected override void OnAwake()
+    protected override void OnExtensibleAwake()
     {
       cameraNavigation = new ArrayNavigator<CameraPreset>(cameras.ToArray(), true);
       cameraNavigation.onIndexChanged = ChangeCamera;
       ChangeCamera(cameras[0]);
+    }
+
+    protected override void OnExtensibleStart()
+    {
+      
     }
 
     private void Update()
@@ -37,11 +43,13 @@ namespace Stratus.Experimental
 
     private void ChangeCamera(CameraPreset preset)
     {
-      Trace.Script($"Swwitching to {preset.camera.name}");
+      if (extensible.debug)
+        Trace.Script($"Switching to {preset.camera.name}");
+
       cameraNavigation.previous.camera.Priority = 10;
       preset.camera.Priority = 15;
       currentCamera = preset;
-      playerController.movementOffset = preset.offset;
+      extensible.movementOffset = preset.offset;
     }
 
   }

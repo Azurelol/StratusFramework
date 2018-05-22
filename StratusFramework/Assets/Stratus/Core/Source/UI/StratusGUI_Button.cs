@@ -31,7 +31,7 @@ namespace Stratus
 
       protected override void OnDraw()
       {
-        if (GUILayout.Button(name, GUI.skin.button))
+        if (UnityEngine.GUILayout.Button(name, GUI.skin.button))
           OnButtonDown.DynamicInvoke();
           //Callback();
       }
@@ -50,7 +50,7 @@ namespace Stratus
 
       protected override void OnDraw()
       {
-        if (GUILayout.Button(name, GUI.skin.button))
+        if (UnityEngine.GUILayout.Button(name, GUI.skin.button))
           OnButtonDown.DynamicInvoke();
       }
     }

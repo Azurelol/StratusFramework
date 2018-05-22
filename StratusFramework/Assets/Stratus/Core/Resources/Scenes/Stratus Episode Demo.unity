@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 8
+  serializedVersion: 9
   m_Fog: 1
   m_FogColor: {r: 0.4, g: 0.42352942, b: 0.44313726, a: 0.6039216}
   m_FogMode: 2
@@ -39,6 +39,7 @@ RenderSettings:
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1455665285}
   m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -54,11 +55,10 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
-    serializedVersion: 9
+    serializedVersion: 10
     m_Resolution: 2
     m_BakeResolution: 5
-    m_TextureWidth: 1024
-    m_TextureHeight: 1024
+    m_AtlasSize: 1024
     m_AO: 0
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
@@ -182,6 +182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80e5ad6c5e2cb5742a13736783cf10ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  extensionsField:
+  - {fileID: 183453840}
   debug: 0
   movementX:
     axis: Horizontal
@@ -189,8 +191,6 @@ MonoBehaviour:
     axis: Vertical
   camera: {fileID: 770947310}
   pollInput: 1
-  extensionsField:
-  - {fileID: 183453840}
 --- !u!23 &183453836
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -204,6 +204,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -271,14 +272,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb27bd4a2d695a84cafbdf96b482e00c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  extensibleField: {fileID: 183453835}
   cameras:
-  - camera: {fileID: 493095600}
-    offset: 1
   - camera: {fileID: 211202902}
     offset: 0
+  - camera: {fileID: 493095600}
+    offset: 1
   changeCamera:
     type: 0
-    key: 99
+    key: 0
     mouseButton: 0
 --- !u!1 &211202900
 GameObject:
@@ -328,6 +330,7 @@ MonoBehaviour:
   m_Priority: 10
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 183453833}
+  m_PositionBlending: 0
   m_Lens:
     FieldOfView: 40
     OrthographicSize: 10
@@ -420,6 +423,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
@@ -511,12 +515,12 @@ MonoBehaviour:
   m_YawDamping: 0
   m_RollDamping: 0
   m_Heading:
-    m_HeadingDefinition: 2
+    m_Definition: 2
     m_VelocityFilterStrength: 4
-    m_HeadingBias: 0
+    m_Bias: 0
   m_RecenterToTargetHeading:
     m_enabled: 1
-    m_RecenterWaitTime: 1
+    m_WaitTime: 1
     m_RecenteringTime: 2
     m_LegacyHeadingDefinition: -1
     m_LegacyVelocityFilterStrength: -1
@@ -527,7 +531,10 @@ MonoBehaviour:
     m_DecelTime: 1
     m_InputAxisName: 
     m_InputAxisValue: 0
-    m_InvertAxis: 0
+    m_InvertInput: 0
+    m_MinValue: -180
+    m_MaxValue: 180
+    m_Wrap: 1
   m_LegacyRadius: 3.4028235e+38
   m_LegacyHeightOffset: 3.4028235e+38
   m_LegacyHeadingBias: 3.4028235e+38
@@ -546,6 +553,7 @@ MonoBehaviour:
   m_TrackedObjectOffset: {x: 0, y: 0, z: 0}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 10
+  m_LookaheadIgnoreY: 0
   m_HorizontalDamping: 0.5
   m_VerticalDamping: 0.5
   m_ScreenX: 0.5
@@ -612,6 +620,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
@@ -686,6 +695,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 4ba35d62c31e7a14a8e932fdfee05faa, type: 2}
   m_StaticBatchInfo:
@@ -786,6 +796,7 @@ MonoBehaviour:
   m_Priority: 10
   m_LookAt: {fileID: 183453833}
   m_Follow: {fileID: 183453833}
+  m_PositionBlending: 0
   m_Lens:
     FieldOfView: 40
     OrthographicSize: 10
@@ -923,6 +934,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: c7911d981f6f8b048826e29aa176b919, type: 2}
   m_StaticBatchInfo:
@@ -1020,6 +1032,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -1105,6 +1118,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
@@ -1235,16 +1249,22 @@ MonoBehaviour:
   m_DefaultBlend:
     m_Style: 1
     m_Time: 2
+    m_CustomCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
   m_CustomBlends: {fileID: 0}
   m_CameraCutEvent:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: Cinemachine.CinemachineBrain+BrainEvent, Assembly-CSharp, Version=0.0.0.0,
+    m_TypeName: Cinemachine.CinemachineBrain+BrainEvent, Cinemachine, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: Cinemachine.CinemachineBrain+VcamEvent, Assembly-CSharp, Version=0.0.0.0,
+    m_TypeName: Cinemachine.CinemachineBrain+VcamEvent, Cinemachine, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!4 &861171807
 Transform:
@@ -2093,6 +2113,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 10
+  m_LookaheadIgnoreY: 0
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
@@ -2239,6 +2260,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
@@ -2312,6 +2334,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 4ba35d62c31e7a14a8e932fdfee05faa, type: 2}
   m_StaticBatchInfo:
@@ -2396,6 +2419,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
@@ -2480,6 +2504,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: c6a023a8448f7c34a93f2401b465df4f, type: 2}
   m_StaticBatchInfo:
@@ -2712,6 +2737,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 4ba35d62c31e7a14a8e932fdfee05faa, type: 2}
   m_StaticBatchInfo:
@@ -2796,6 +2822,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 4ba35d62c31e7a14a8e932fdfee05faa, type: 2}
   m_StaticBatchInfo:
@@ -2908,6 +2935,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 4ba35d62c31e7a14a8e932fdfee05faa, type: 2}
   m_StaticBatchInfo:

@@ -5,6 +5,7 @@ using Stratus;
 using UnityEngine.Events;
 using UnityEngine.AI;
 using Stratus.Interfaces;
+using System;
 
 namespace Stratus
 {
@@ -418,10 +419,10 @@ namespace Stratus
     {
       GUIContent msg = new GUIContent($"<color=#{debugTextColorHex}>{label}.{currentSegment.label}</color>");
       Vector2 size = StratusGUIStyles.header.CalcSize(msg);
-      Rect rect = StratusGUI.CalculateAnchoredPositionOnScreen(windowAnchor, size);
-      GUILayout.BeginArea(rect);
-      GUILayout.Label(msg, StratusGUIStyles.header);
-      GUILayout.EndArea();
+      StratusGUI.GUILayoutArea(windowAnchor, size, (Rect rect) =>
+      {
+        GUILayout.Label(msg, StratusGUIStyles.header);
+      });
     }
 
   }

@@ -79,7 +79,7 @@ namespace Stratus
       if (dimensions == StratusGUI.Dimensions.Absolute)
         currentSize = size;
       else if (dimensions == StratusGUI.Dimensions.Relative)
-        currentSize = StratusGUI.FindRelativeDimensions(scale, sceneView.position.size);
+        currentSize = StratusGUI.CalculateRelativeDimensions(scale, sceneView.position.size);
 
       // Draw the default GUI
       OnGUI(sceneView.position);      

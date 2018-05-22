@@ -19,7 +19,7 @@ namespace Stratus
     static SelectByMouseScroll()
     {
       HierarchyUpdate();
-      EditorApplication.hierarchyWindowChanged += HierarchyUpdate;
+      EditorApplication.hierarchyChanged += HierarchyUpdate;
       SceneView.onSceneGUIDelegate += HighlightUpdate;
     }
 

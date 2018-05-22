@@ -11,7 +11,7 @@ namespace Stratus.Experimental
   /// </summary>
   [RequireComponent(typeof(Collider))]
   [RequireComponent(typeof(NavMeshAgent))]
-  public class StratusPlayerController : StratusBehaviour
+  public class StratusPlayerController : ExtensibleBehaviour
   {
     //--------------------------------------------------------------------------------------------/
     // Declarations
@@ -25,6 +25,7 @@ namespace Stratus.Experimental
     //--------------------------------------------------------------------------------------------/
     // Fields
     //--------------------------------------------------------------------------------------------/
+    [Tooltip("Whether to print debug output")]
     public bool debug = false;
     [Header("Input")]
     public InputAxisField movementX = new InputAxisField();
@@ -32,15 +33,11 @@ namespace Stratus.Experimental
     [Tooltip("The camera used to orient this movement by")]
     public new Camera camera;
     public bool pollInput = true;
-    [SerializeField]
-    private List<StratusPlayerControllerExtension> extensionsField = new List<StratusPlayerControllerExtension>();
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
     public MovementOffset movementOffset { get; set; } = MovementOffset.PlayerForward;
-    public StratusPlayerControllerExtension[] extensions => extensionsField.ToArray();
-    public bool hasExtensions => extensionsField.Count > 0;
     public NavMeshAgent navigation { get; private set; }
     public new Rigidbody rigidbody { get; private set; }
     public Func<Vector3> calculateDirectionFunction { get; private set; }
@@ -48,11 +45,16 @@ namespace Stratus.Experimental
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
-    private void Awake()
+    protected override void OnAwake()
     {
       rigidbody = GetComponent<Rigidbody>();
       navigation = GetComponent<NavMeshAgent>();
-      navigation.Warp(transform.position);      
+      navigation.Warp(transform.position);
+    }
+
+    protected override void OnStart()
+    {
+      
     }
 
     void Update()
@@ -74,16 +76,6 @@ namespace Stratus.Experimental
     //--------------------------------------------------------------------------------------------/
     // Methods
     //--------------------------------------------------------------------------------------------/
-    public void Add(StratusPlayerControllerExtension extension)
-    {
-      extensionsField.Add(extension);
-    }
-
-    public void Remove(StratusPlayerControllerExtension extension)
-    {
-      extensionsField.Remove(extension);
-    }    
-
     public Vector3 CalculateDirection(Vector2 axis, MovementOffset offset)
     {
       Vector3 dir = Vector3.zero;

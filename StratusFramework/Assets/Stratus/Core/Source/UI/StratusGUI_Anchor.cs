@@ -14,7 +14,7 @@ namespace Stratus
   public partial class StratusGUI
   {
     //------------------------------------------------------------------------/
-    // Enumerations
+    // Declarations
     //------------------------------------------------------------------------/
     /// <summary>
     /// Where should the window be anchored to
@@ -47,15 +47,25 @@ namespace Stratus
       Absolute
     }
 
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public static Vector2 half { get; } = new Vector2(0.5f, 0.5f);
+    public static Vector2 quarter { get; } = new Vector2(0.25f, 0.25f);
+    public static Vector2 quarterScreen => CalculateRelativeDimensions(quarter, screenSize);
+
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
     /// <summary>
-    /// Finds the dimensions relative to screen space, from a given percentage (0 to 1).
+    /// Calculate the dimensions relative to screen space, from a given percentage (0 to 1).
     /// So for example if you wanted to cover 10% of the screen's width and 20% of its height,
     /// you would pass in (0.1f, 0,2f)
     /// </summary>
     /// <param name="widthRatio">The relative width of the screen as a percentage (from 0 to 1)</param>
     /// <param name="heightRatio">The relative height of the screen as a percentage (from 0 to 1)</param>
     /// <returns></returns>
-    public static Vector2 FindRelativeDimensions(Vector2 sizeRatio, Vector2 screenSize)
+    public static Vector2 CalculateRelativeDimensions(Vector2 sizeRatio, Vector2 screenSize)
     {
       if (sizeRatio.x < 0f || sizeRatio .x > 1f || sizeRatio .y < 0f || sizeRatio.y > 1f)
         throw new ArgumentOutOfRangeException("Expected a value between 0 and 1!");

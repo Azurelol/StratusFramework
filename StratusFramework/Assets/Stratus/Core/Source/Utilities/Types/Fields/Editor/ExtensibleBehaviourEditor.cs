@@ -19,8 +19,9 @@ namespace Stratus
     private StratusEditor extensionEditor;
     private string[] extensionsNames;
     private int extensionIndex = 0;
-    private SerializedProperty extensionsProperty;
+    //private SerializedProperty extensionsProperty;
     private HideFlags extensionFlags = HideFlags.HideInInspector;
+    private Type extensibleType;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -33,8 +34,8 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/    
     protected override void OnStratusEditorEnable()
     {
-      
-      extensionsProperty = serializedObject.FindProperty("extensionsField");
+      extensibleType = target.GetType();
+      //extensionsProperty = serializedObject.FindProperty("extensionsField");
       GetMatchingExtensionTypes();
       RefreshExtensions();
       drawGroupRequests.Add(new DrawGroupRequest(DrawExtensions, () => { return target.hasExtensions; }));
@@ -141,7 +142,7 @@ namespace Stratus
       foreach(var type in allExtensionTypes)
       {
         CustomExtension attribute = type.GetAttribute<CustomExtension>();
-        if (attribute != null && attribute.extensibleType.IsSubclassOf(extensibleBehaviourType))
+        if (attribute != null && attribute.extensibleType == extensibleType)
           matchingTypes.Add(type);
       }
 
