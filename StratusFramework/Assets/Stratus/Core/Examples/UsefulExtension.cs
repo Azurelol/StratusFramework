@@ -6,19 +6,20 @@ using System;
 namespace Stratus.Examples
 {
   [CustomExtension(typeof(SampleExtensibleBehaviour))]
-  public class UsefulExtension : ExtensionBehaviour
+  public class UsefulExtension : StratusBehaviour, IExtensionBehaviour
   {
     public bool useful = true;
 
-    protected override void OnExtensibleAwake()
+    //public SampleExtensibleBehaviour extensible { get; set; }
+
+    public void OnExtensibleAwake(ExtensibleBehaviour extensible)
     {
-      Trace.Script("Usefulness awoken");
+      //this.extensible = (SampleExtensibleBehaviour)extensible;
     }
 
-    protected override void OnExtensibleStart()
+    public void OnExtensibleStart()
     {
-      Trace.Script("Usefulness started");
+      
     }
-
   }
 }

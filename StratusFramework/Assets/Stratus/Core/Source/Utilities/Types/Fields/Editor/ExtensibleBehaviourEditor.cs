@@ -19,14 +19,14 @@ namespace Stratus
     private StratusEditor extensionEditor;
     private string[] extensionsNames;
     private int extensionIndex = 0;
-    //private SerializedProperty extensionsProperty;
     private HideFlags extensionFlags = HideFlags.HideInInspector;
-    private Type extensibleType;
+    private Type extensibleType, extensionType;    
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/    
-    public ExtensionBehaviour selectedExtension => target.hasExtensions ? (ExtensionBehaviour)target.extensions[extensionIndex] : null;
+    public IExtensionBehaviour selectedExtension => target.hasExtensions ? target.extensions[extensionIndex] : null;
+    //public MonoBehaviour selectedExtensionAsMonoBehaviour => selectedExtension as MonoBehaviour;
     public string selectedExtensionName => extensionsNames[extensionIndex];
 
     //--------------------------------------------------------------------------------------------/
@@ -35,12 +35,11 @@ namespace Stratus
     protected override void OnStratusEditorEnable()
     {
       extensibleType = target.GetType();
-      //extensionsProperty = serializedObject.FindProperty("extensionsField");
+      extensionType = typeof(IExtensionBehaviour);
       GetMatchingExtensionTypes();
       RefreshExtensions();
       drawGroupRequests.Add(new DrawGroupRequest(DrawExtensions, () => { return target.hasExtensions; }));
       drawGroupRequests.Add(new DrawGroupRequest(AddExtension));
-      //drawGroupRequests.Add(new DrawGroupRequest(DrawExtension, () => { return target.hasExtensions; }));
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -60,7 +59,7 @@ namespace Stratus
         EditorGUILayout.LabelField("Extensions", EditorStyles.whiteLargeLabel);
         bool changed = StratusEditorUtility.CheckControlChange(() =>
         {
-          extensionIndex = EditorGUILayout.Popup(extensionIndex, extensionTypeNames);
+          extensionIndex = EditorGUILayout.Popup(extensionIndex, extensionsNames);
           if (GUILayout.Button("Remove", EditorStyles.miniButtonRight))
             RemoveExtension(selectedExtension);
         });
@@ -76,7 +75,7 @@ namespace Stratus
 
     private void CreateExtensionEditor()
     {
-      extensionEditor = UnityEditor.Editor.CreateEditor(selectedExtension) as StratusEditor;
+      extensionEditor = UnityEditor.Editor.CreateEditor((MonoBehaviour)selectedExtension) as StratusEditor;
       extensionEditor.backgroundStyle = EditorStyles.helpBox;
     }
 
@@ -96,7 +95,7 @@ namespace Stratus
 
       extensionsNames = target.extensions.TypeNames();
       foreach (var extension in target.extensions)
-        extension.hideFlags = extensionFlags;
+        (extension as MonoBehaviour).hideFlags = extensionFlags;
     }
 
     private void AddExtension(Rect rect)
@@ -106,13 +105,18 @@ namespace Stratus
       if (index > -1)
       {
         Type extensionType = extensionTypes[index];
+        if (HasExtension(extensionType))
+        {
+          Debug.LogWarning($"{target} already has the extension {extensionType.Name}");
+          return;
+        }
         //ExtensibleBehaviour.Extension extension = target.gameObject.GetOrAddComponent(extensionType);
         //ExtensibleBehaviour.Extension extension = UnityEngine.Object.Instantiate(extensionType);
         //ExtensionBehaviour extension = (ExtensionBehaviour)Utilities.Reflection.Instantiate(extensionType);
         //target.Add(extension);
-        ExtensionBehaviour extension = target.gameObject.GetOrAddComponent(extensionType) as ExtensionBehaviour;
+        IExtensionBehaviour extension = target.gameObject.AddComponent(extensionType) as IExtensionBehaviour;
         target.Add(extension);
-        extension.hideFlags = extensionFlags;
+        (selectedExtension as MonoBehaviour).hideFlags = extensionFlags;
         Trace.Script($"Adding {extensionType.Name}");
         Undo.RecordObject(target, extensionType.Name);
         serializedObject.ApplyModifiedProperties();
@@ -120,26 +124,36 @@ namespace Stratus
       }
     }
 
-    private void RemoveExtension(ExtensionBehaviour extension)
+    private void RemoveExtension(IExtensionBehaviour extension)
     {
       endOfFrameRequests.Add(() =>
       {
         extensionEditor = null;
         extensionIndex = 0;
         target.Remove(extension);
-        Undo.DestroyObjectImmediate(extension);
+        Undo.DestroyObjectImmediate((extension as MonoBehaviour));
         Undo.RecordObject(target, extension.GetType().Name);
         serializedObject.ApplyModifiedProperties();
         RefreshExtensions();
       });
     }
 
+    private bool HasExtension(Type type)
+    {
+      return target.extensions.FindFirst((IExtensionBehaviour e) => e.GetType() == type) != null;
+    }
+
     private void GetMatchingExtensionTypes()
     {
       List<Type> matchingTypes = new List<Type>();
 
-      var allExtensionTypes  = Reflection.GetSubclass<ExtensionBehaviour>();
-      foreach(var type in allExtensionTypes)
+      //IEnumerable<Type> imp = System.ASse
+
+      //var allExtensionTypes  = Reflection.Get<ExtensionBehaviour>();
+      //var types = Reflection.GetSubclass<Component>(true);
+      //var stypes = Reflection.GetSubclass<StratusBehaviour>(true);
+      var allExtensionTypes = Reflection.GetInterfacesExhaustive(typeof(MonoBehaviour), extensionType);
+      foreach (var type in allExtensionTypes)
       {
         CustomExtension attribute = type.GetAttribute<CustomExtension>();
         if (attribute != null && attribute.extensibleType == extensibleType)

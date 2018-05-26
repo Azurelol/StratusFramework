@@ -10,6 +10,7 @@ namespace Stratus.Experimental
   /// A simple, modular player controller
   /// </summary>
   [RequireComponent(typeof(Collider))]
+  [RequireComponent(typeof(Rigidbody))]
   [RequireComponent(typeof(NavMeshAgent))]
   public class StratusPlayerController : ExtensibleBehaviour
   {
@@ -33,7 +34,6 @@ namespace Stratus.Experimental
     public InputAxisField movementY = new InputAxisField();
     [Tooltip("The camera used to orient this movement by")]
     public new Camera camera;
-    public bool pollInput = true;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -72,6 +72,11 @@ namespace Stratus.Experimental
       Vector2 axis = new Vector2(movementX.value, movementY.value);
       Vector3 dir = CalculateDirection(axis, movementOffset);
       rigidbody.velocity = dir * navigation.speed;
+      //switch (switch_on)
+      //{
+      //  default:
+      //}
+      //transform.forward = dir;
     }
 
     //--------------------------------------------------------------------------------------------/

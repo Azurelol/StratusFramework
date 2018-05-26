@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace Stratus
 {
@@ -20,8 +22,8 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
-    public MonoBehaviour[] extensions => extensionsField.ToArray();
-    private Dictionary<Type, ExtensionBehaviour> extensionsMap { get; set; } = new Dictionary<Type, ExtensionBehaviour>();
+    public IExtensionBehaviour[] extensions => (from MonoBehaviour e in extensionsField select (e as IExtensionBehaviour)).ToArray();
+    private Dictionary<Type, IExtensionBehaviour> extensionsMap { get; set; } = new Dictionary<Type, IExtensionBehaviour>();
     private static Dictionary<IExtensionBehaviour, ExtensibleBehaviour> extensionOwnershipMap { get; set; } = new Dictionary<IExtensionBehaviour, ExtensibleBehaviour>();
     public bool hasExtensions => extensionsField.Count > 0;
 
@@ -36,11 +38,10 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     private void Awake()
     {
-      foreach (ExtensionBehaviour extension in extensionsField)
+      foreach (var extension in extensions)
       {
-        //extensionOwnershipMap[]
         extensionsMap.Add(extension.GetType(), extension);
-        extension.OnAwake();
+        extension.OnExtensibleAwake(this);
       }
 
       OnAwake();
@@ -48,8 +49,8 @@ namespace Stratus
 
     private void Start()
     {
-      foreach (ExtensionBehaviour extension in extensionsField)
-        extension.OnStart();
+      foreach (var extension in extensions)
+        extension.OnExtensibleStart();
 
       OnStart();
     }
@@ -61,10 +62,10 @@ namespace Stratus
     /// Adds the extension to this behaviour
     /// </summary>
     /// <param name="extension"></param>
-    public void Add(ExtensionBehaviour extension)
+    public void Add(IExtensionBehaviour extension)
     {
-      extension.extensibleField = this;
-      extensionsField.Add(extension);
+      //extension.extensibleField = this;
+      extensionsField.Add((MonoBehaviour)extension);
       extensionsMap.Add(extension.GetType(), extension);
     }
 
@@ -72,9 +73,9 @@ namespace Stratus
     /// Removes the extension from this behaviour
     /// </summary>
     /// <param name="extension"></param>
-    public void Remove(ExtensionBehaviour extension)
+    public void Remove(IExtensionBehaviour extension)
     {
-      extensionsField.Remove(extension);
+      extensionsField.Remove((MonoBehaviour)extension);
       extensionsMap.Remove(extension.GetType());
     }
 
@@ -83,13 +84,20 @@ namespace Stratus
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public T GetExtension<T>() where T : ExtensionBehaviour
+    public T GetExtension<T>() where T : IExtensionBehaviour
     {
       Type type = typeof(T);
       if (!extensionsMap.ContainsKey(type))
         Trace.Error($"The extension of type {type} is not present!", this);
-      return extensionsMap[type] as T;
+      return (T)extensionsMap[type];
     }
+
+    /// <summary>
+    /// Retrieves the extension of the given type, if its present
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public bool HasExtension(Type type) => extensionsMap.ContainsKey(type);
 
     /// <summary>
     /// Retrieves the extensible that the extension is for
@@ -118,50 +126,50 @@ namespace Stratus
 
   }
 
-  /// <summary>
-  /// A behaviour that acts as an extension to extensible behaviour (one that
-  /// derives from ExtensibleBehaviour). Make sure to use the 'CustomExtension' attribute in order
-  /// to specify which extensible behaviour this extension is for.
-  /// </summary>
-  [RequireComponent(typeof(IExtensible), typeof(ExtensibleBehaviour))]
-  public abstract class ExtensionBehaviour : StratusBehaviour
-  {
-    [HideInInspector]
-    [SerializeField]
-    internal ExtensibleBehaviour extensibleField;
-    internal virtual void OnAwake() => OnExtensibleAwake();
-    internal void OnStart() => OnExtensibleStart();
-    protected abstract void OnExtensibleAwake();
-    protected abstract void OnExtensibleStart();
-  }
-
-  /// <summary>
-  /// A behaviour that acts as an extension to extensible behaviour (one that
-  /// derives from ExtensibleBehaviour). Make sure to use the 'CustomExtension' attribute in order
-  /// to specify which extensible behaviour this extension is for.
-  /// </summary>
-  public abstract class ExtensionBehaviour<T> : ExtensionBehaviour where T : ExtensibleBehaviour
-  {
-    /// <summary>
-    /// The extensible component this extension is for
-    /// </summary>
-    public T extensible { private set; get; }
-    internal override void OnAwake()
-    {
-      extensible = extensibleField as T;
-      base.OnAwake();
-    }
-  }
+  ///// <summary>
+  ///// A behaviour that acts as an extension to extensible behaviour (one that
+  ///// derives from ExtensibleBehaviour). Make sure to use the 'CustomExtension' attribute in order
+  ///// to specify which extensible behaviour this extension is for.
+  ///// </summary>
+  //[RequireComponent(typeof(IExtensible), typeof(ExtensibleBehaviour))]
+  //public abstract class ExtensionBehaviour : StratusBehaviour
+  //{
+  //  [HideInInspector]
+  //  [SerializeField]
+  //  internal ExtensibleBehaviour extensibleField;
+  //  internal virtual void OnAwake() => OnExtensibleAwake();
+  //  internal void OnStart() => OnExtensibleStart();
+  //  protected abstract void OnExtensibleAwake();
+  //  protected abstract void OnExtensibleStart();
+  //}
+  //
+  ///// <summary>
+  ///// A behaviour that acts as an extension to extensible behaviour (one that
+  ///// derives from ExtensibleBehaviour). Make sure to use the 'CustomExtension' attribute in order
+  ///// to specify which extensible behaviour this extension is for.
+  ///// </summary>
+  //public abstract class ExtensionBehaviour<T> : ExtensionBehaviour where T : ExtensibleBehaviour
+  //{
+  //  /// <summary>
+  //  /// The extensible component this extension is for
+  //  /// </summary>
+  //  public T extensible { private set; get; }
+  //  internal override void OnAwake()
+  //  {
+  //    extensible = extensibleField as T;
+  //    base.OnAwake();
+  //  }
+  //}
 
   /// <summary>
   /// Interface type used to validate all extensible behaviours
   /// </summary>
   public interface IExtensible { }
 
-  /// <summary>
-  /// Interface type used to validate all extensible behaviours
-  /// </summary>
-  public interface IExtensibleBehaviour { }
+  ///// <summary>
+  ///// Interface type used to validate all extensible behaviours
+  ///// </summary>
+  //public interface IExtensibleBehaviour { }
 
   /// <summary>
   /// Interface type a behaviours that is an extension of another

@@ -23,10 +23,19 @@ namespace Stratus
     public static partial class Reflection
     {
       //----------------------------------------------------------------------/
+      // Declarations
+      //----------------------------------------------------------------------/
+      //private class InterfaceImplementation
+      //{
+      //  public Type baseType;
+      //  public Type interfaceType;
+      //}
+
+      //----------------------------------------------------------------------/
       // Properties
       //----------------------------------------------------------------------/
       private static Assembly[] _allAssemblies;
-      public static Assembly[] AllAssemblies
+      public static Assembly[] allAssemblies
       {
         get
         {
@@ -38,6 +47,9 @@ namespace Stratus
           return _allAssemblies;
         }
       }
+
+      private static Dictionary<Type, Type[]> subclasses { get; set; } = new Dictionary<Type, Type[]>();
+      private static Dictionary<Type, Dictionary<Type, Type[]>> interfacesImplementations { get; set; } = new Dictionary<Type, Dictionary<Type, Type[]>>();
 
       //----------------------------------------------------------------------/
       // Methods
@@ -152,7 +164,7 @@ namespace Stratus
 
         // If a field couldn't be found. Throw an exception about it.
         throw new PropertyNotFoundException("Couldn't find a property with the name of '" + name + "' inside of the object '" + obj.GetType().Name + "'");
-      }      
+      }
 
       /// <summary>
       /// Sets a field or a property inside of an object by name.
@@ -229,7 +241,7 @@ namespace Stratus
         // If a field couldn't be found. Throw an exception about it.
         throw new PropertyNotFoundException("Couldn't find a property with the name of '" + name + "' inside of the object '" + obj.GetType().Name + "'");
       }
-      
+
       /// <summary>
       /// Gets all the properties and fields in obj of type T.
       /// </summary>
@@ -392,7 +404,7 @@ namespace Stratus
           yield return properties[i].GetValue(obj, null);
         }
       }
-      
+
       /// <summary>
       /// Get the name of all classes derived from the given one
       /// </summary>
@@ -442,10 +454,32 @@ namespace Stratus
       /// <returns></returns>
       public static Type[] GetSubclass(Type baseType, bool includeAbstract = false)
       {
-        if (includeAbstract)
-          return (from Type type in Assembly.GetAssembly(baseType).GetTypes() where type.IsSubclassOf(baseType) select type).ToArray();
+        if (!subclasses.ContainsKey(baseType))
+        {
+          List<Type> types = new List<Type>();
+          foreach (var assembly in allAssemblies)
+          {
+            var assemblyTypes = (from Type t
+                            in assembly.GetTypes()
+                                 where t.IsSubclassOf(baseType)
+                                 select t).ToArray();
+            types.AddRange(assemblyTypes);
+          }
+          subclasses.Add(baseType, types.ToArray());
 
-        return (from Type type in Assembly.GetAssembly(baseType).GetTypes() where type.IsSubclassOf(baseType) && !type.IsAbstract select type).ToArray();
+        }
+
+        if (includeAbstract)
+        {
+          return (from Type type
+                  in subclasses[baseType]
+                  where !type.IsAbstract
+                  select type).ToArray();
+        }
+
+        return subclasses[baseType];
+
+        //return (from Type type in Assembly.GetAssembly(baseType).GetTypes() where type.IsSubclassOf(baseType) && !type.IsAbstract select type).ToArray();
       }
 
       /// <summary>
@@ -457,16 +491,46 @@ namespace Stratus
       public static Type[] GetInterfaces(Type baseType, Type interfaceType, bool includeAbstract = false)
       {
         if (includeAbstract)
-          return (from Type type 
+          return (from Type type
                   in Assembly.GetAssembly(baseType).GetTypes()
                   where baseType.IsAssignableFrom(interfaceType)
                   select type).ToArray();
 
-        return (from Type type 
+        return (from Type type
                 in Assembly.GetAssembly(baseType).GetTypes()
                 where baseType.IsAssignableFrom(interfaceType) && !type.IsAbstract
                 select type).ToArray();
       }
+
+
+      /// <summary>
+      /// Get an array of types of all the classes derived from the given one
+      /// </summary>
+      /// <typeparam name="ClassType"></typeparam>
+      /// <param name="includeAbstract"></param>
+      /// <returns></returns>
+      public static Type[] GetInterfacesExhaustive(Type baseType, Type interfaceType, bool includeAbstract = false)
+      {
+        // First, map into the selected interface type
+        if (!interfacesImplementations.ContainsKey(interfaceType))
+        {
+          interfacesImplementations.Add(interfaceType, new Dictionary<Type, Type[]>());          
+        }
+        
+        // Now for a selected interface type, find all implementations that derive from the base type
+        if (!interfacesImplementations[interfaceType].ContainsKey(baseType))
+        {
+          Type[] implementedTypes = (from Type t
+                                     in GetSubclass(baseType)
+                                     where t.IsSubclassOf(baseType) && t.GetInterfaces().Contains((interfaceType))
+                                     select t).ToArray();
+          interfacesImplementations[interfaceType].Add(baseType, implementedTypes);
+        }
+
+        return interfacesImplementations[interfaceType][baseType];
+      }
+
+
 
       /// <summary>
       /// Gets the loadable types for a given assembly
@@ -492,11 +556,11 @@ namespace Stratus
         FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
         return (from f
                in fields
-               where (f.FieldType.IsSubclassOf(typeof(UnityEngine.Object))
-               && f.GetValue(behaviour).Equals(null))
-               select f).ToArray();
+                where (f.FieldType.IsSubclassOf(typeof(UnityEngine.Object))
+                && f.GetValue(behaviour).Equals(null))
+                select f).ToArray();
 
-          
+
 
         //foreach (var field in fields)
         //{
@@ -616,7 +680,7 @@ namespace Stratus
 
         if (t.HasDefaultConstructor())
           return Activator.CreateInstance(t);
-          //return Expression.Lambda<Func<object>>(Expression.New(t)).Compile();
+        //return Expression.Lambda<Func<object>>(Expression.New(t)).Compile();
 
         return FormatterServices.GetUninitializedObject(t);
       }

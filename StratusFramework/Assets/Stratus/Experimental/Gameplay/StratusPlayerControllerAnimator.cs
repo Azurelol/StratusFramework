@@ -5,22 +5,20 @@ using UnityEngine;
 namespace Stratus.Experimental
 {
   [CustomExtension(typeof(StratusPlayerController))]
-  public class StratusPlayerControllerAnimator : ExtensionBehaviour<StratusPlayerController>
+  public class StratusPlayerControllerAnimator : CharacterAnimator, IExtensionBehaviour<StratusPlayerController>
   {
-    protected override void OnExtensibleAwake()
+    public StratusPlayerController extensible { get; set; }
+
+    public void OnExtensibleAwake(ExtensibleBehaviour extensible)
     {
-      
+      this.extensible = (StratusPlayerController)extensible;
     }
 
-    protected override void OnExtensibleStart()
+    public void OnExtensibleStart()
     {
-      
     }
 
-    private void Update()
-    {
-      
-    }
+
 
   }
 
