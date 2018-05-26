@@ -544,6 +544,9 @@ namespace Stratus
         foreach (var property in properties)
         {
           // Record this property
+          if (property == null)
+            Debug.LogError($"A property was found to not be serialized properly while inspecting {target.name}");
+
           propertyMap.Add(property.name, property);
 
           // Record the attributes for this property

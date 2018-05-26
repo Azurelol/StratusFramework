@@ -38,21 +38,23 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     private void Awake()
     {
+      OnAwake();
+
       foreach (var extension in extensions)
       {
         extensionsMap.Add(extension.GetType(), extension);
         extension.OnExtensibleAwake(this);
       }
 
-      OnAwake();
     }
 
     private void Start()
     {
+      OnStart();
+
       foreach (var extension in extensions)
         extension.OnExtensibleStart();
 
-      OnStart();
     }
 
     //--------------------------------------------------------------------------------------------/

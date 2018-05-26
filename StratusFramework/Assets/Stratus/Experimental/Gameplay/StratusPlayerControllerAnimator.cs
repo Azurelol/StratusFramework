@@ -12,11 +12,19 @@ namespace Stratus.Experimental
     public void OnExtensibleAwake(ExtensibleBehaviour extensible)
     {
       this.extensible = (StratusPlayerController)extensible;
-    }
+      onUpdate += FaceDirection;
+      }
 
     public void OnExtensibleStart()
     {
+
     }
+
+    private void FaceDirection()
+    {
+      FaceDirection(extensible.heading, extensible.rotationSpeed);
+    }
+
 
 
 

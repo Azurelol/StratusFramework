@@ -20,9 +20,9 @@ namespace Stratus.Experimental
     public enum MovementOffset
     {
       PlayerForward,
-      CameraForward
+      CameraUp
     }
-    
+
 
     //--------------------------------------------------------------------------------------------/
     // Fields
@@ -35,19 +35,27 @@ namespace Stratus.Experimental
     [Tooltip("The camera used to orient this movement by")]
     public new Camera camera;
 
+    [Header("Movement")]
+    public float movementThreshold = 0.2f;
+    public float rotationSpeed = 1f;
+    public bool faceDirection = true;
+
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
     public MovementOffset movementOffset { get; set; } = MovementOffset.PlayerForward;
     public NavMeshAgent navigation { get; private set; }
     public new Rigidbody rigidbody { get; private set; }
-    public Func<Vector3> calculateDirectionFunction { get; private set; }    
+    public Func<Vector3> calculateDirectionFunction { get; private set; }
+    public bool isMoving => Math.Abs(rigidbody.velocity.x) > movementThreshold || Math.Abs(rigidbody.velocity.z) > movementThreshold;
+    public Vector3 heading { get; private set; }
 
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
     protected override void OnAwake()
     {
+      heading = transform.forward;
       rigidbody = GetComponent<Rigidbody>();
       navigation = GetComponent<NavMeshAgent>();
       navigation.Warp(transform.position);
@@ -55,13 +63,16 @@ namespace Stratus.Experimental
 
     protected override void OnStart()
     {
-      
+
     }
 
     void Update()
     {
       if (!movementX.isNeutral || !movementY.isNeutral)
         Move();
+
+      //if (faceDirection)
+      //  transform.forward = Vector3.Lerp(transform.forward, heading, Time.deltaTime * 2f);
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -71,12 +82,9 @@ namespace Stratus.Experimental
     {
       Vector2 axis = new Vector2(movementX.value, movementY.value);
       Vector3 dir = CalculateDirection(axis, movementOffset);
+      heading = dir;
+      //Trace.Script($"Heading = {heading}");
       rigidbody.velocity = dir * navigation.speed;
-      //switch (switch_on)
-      //{
-      //  default:
-      //}
-      //transform.forward = dir;
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -90,8 +98,8 @@ namespace Stratus.Experimental
         case MovementOffset.PlayerForward:
           dir = new Vector3(axis.x, 0f, axis.y);
           break;
-        case MovementOffset.CameraForward:
-          dir = (axis.y * camera.transform.forward) + (axis.x * camera.transform.right);
+        case MovementOffset.CameraUp:
+          dir = (axis.y * camera.transform.up) + (axis.x * camera.transform.right);
           dir.y = 0f;
           break;
         default:

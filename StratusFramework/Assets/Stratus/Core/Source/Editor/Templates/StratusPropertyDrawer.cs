@@ -100,9 +100,9 @@ namespace Stratus
       {
         if (isArray)
         {
-          EditorGUI.indentLevel++;
+          //EditorGUI.indentLevel++;
           DrawArray(position, property);
-          EditorGUI.indentLevel--;
+          //EditorGUI.indentLevel--;
         }
         else
         {
@@ -175,13 +175,19 @@ namespace Stratus
       return value;
     }
 
+    public T GetEnumValue<T>(SerializedProperty enumProperty)
+    {
+      T value = (T)(object)enumProperty.enumValueIndex;
+      return value;
+    }
+
     public static void DrawPropertiesInSingleLine(Rect position, SerializedProperty[] children)
     {
       int n = children.Length;
       position.width /= n;
       for (int p = 0; p < n; ++p)
       {
-        SerializedProperty property = children[n];
+        SerializedProperty property = children[p];
         EditorGUI.PropertyField(position, property, GUIContent.none);
         position.x += position.width;
       }
