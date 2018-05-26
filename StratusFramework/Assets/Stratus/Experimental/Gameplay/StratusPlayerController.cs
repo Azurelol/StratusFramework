@@ -21,6 +21,7 @@ namespace Stratus.Experimental
       PlayerForward,
       CameraForward
     }
+    
 
     //--------------------------------------------------------------------------------------------/
     // Fields
@@ -40,7 +41,7 @@ namespace Stratus.Experimental
     public MovementOffset movementOffset { get; set; } = MovementOffset.PlayerForward;
     public NavMeshAgent navigation { get; private set; }
     public new Rigidbody rigidbody { get; private set; }
-    public Func<Vector3> calculateDirectionFunction { get; private set; }
+    public Func<Vector3> calculateDirectionFunction { get; private set; }    
 
     //--------------------------------------------------------------------------------------------/
     // Messages

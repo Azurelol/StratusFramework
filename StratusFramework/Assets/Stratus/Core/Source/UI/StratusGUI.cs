@@ -31,10 +31,9 @@ namespace Stratus
       public Console Console;
     }
 
-    public struct DrawRequest
-    {
-
-    }
+    //public struct DrawRequest
+    //{
+    //}
 
     public delegate void OnGUILayout(Rect rect);
 
@@ -80,10 +79,10 @@ namespace Stratus
     /// </summary>
     private FPSCounter fpsCounter = new FPSCounter();
 
-    /// <summary>
-    /// Draw requests
-    /// </summary>
-    private List<OnGUILayout> drawRequests = new List<OnGUILayout>();
+    ///// <summary>
+    ///// Draw requests
+    ///// </summary>
+    //private List<OnGUILayout> drawRequests = new List<OnGUILayout>();
 
     //------------------------------------------------------------------------/
     // Messages

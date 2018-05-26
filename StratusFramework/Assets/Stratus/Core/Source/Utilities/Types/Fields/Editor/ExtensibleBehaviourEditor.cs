@@ -26,7 +26,7 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/    
-    public ExtensionBehaviour selectedExtension => target.hasExtensions ? target.extensions[extensionIndex] : null;
+    public ExtensionBehaviour selectedExtension => target.hasExtensions ? (ExtensionBehaviour)target.extensions[extensionIndex] : null;
     public string selectedExtensionName => extensionsNames[extensionIndex];
 
     //--------------------------------------------------------------------------------------------/

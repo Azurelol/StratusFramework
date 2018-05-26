@@ -14,6 +14,8 @@ namespace Stratus
     public static string rootPath => Utilities.IO.GetFolderPath(rootFolder);
     public static string resourcesFolder => rootPath + "/Resources";
     public static string guiPath => resourcesFolder + $"/{guiFolder}";
+
+
   }
 
 }

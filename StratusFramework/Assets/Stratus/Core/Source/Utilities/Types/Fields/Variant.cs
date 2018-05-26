@@ -164,7 +164,7 @@ namespace Stratus.Types
           break;
       }
 
-      return (T)Convert.ChangeType(integerValue, typeof(T));
+      return (T)Convert.ChangeType(value, typeof(T));
     }
 
     /// <summary>

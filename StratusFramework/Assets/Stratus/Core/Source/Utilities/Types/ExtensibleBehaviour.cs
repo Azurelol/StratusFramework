@@ -15,13 +15,14 @@ namespace Stratus
     // Fields
     //--------------------------------------------------------------------------------------------/
     [SerializeField]
-    private List<ExtensionBehaviour> extensionsField = new List<ExtensionBehaviour>();
+    private List<MonoBehaviour> extensionsField = new List<MonoBehaviour>();
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
-    public ExtensionBehaviour[] extensions => extensionsField.ToArray();
+    public MonoBehaviour[] extensions => extensionsField.ToArray();
     private Dictionary<Type, ExtensionBehaviour> extensionsMap { get; set; } = new Dictionary<Type, ExtensionBehaviour>();
+    private static Dictionary<IExtensionBehaviour, ExtensibleBehaviour> extensionOwnershipMap { get; set; } = new Dictionary<IExtensionBehaviour, ExtensibleBehaviour>();
     public bool hasExtensions => extensionsField.Count > 0;
 
     //--------------------------------------------------------------------------------------------/
@@ -37,6 +38,7 @@ namespace Stratus
     {
       foreach (ExtensionBehaviour extension in extensionsField)
       {
+        //extensionOwnershipMap[]
         extensionsMap.Add(extension.GetType(), extension);
         extension.OnAwake();
       }
@@ -87,6 +89,17 @@ namespace Stratus
       if (!extensionsMap.ContainsKey(type))
         Trace.Error($"The extension of type {type} is not present!", this);
       return extensionsMap[type] as T;
+    }
+
+    /// <summary>
+    /// Retrieves the extensible that the extension is for
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="extension"></param>
+    /// <returns></returns>
+    public static T GetExtensible<T>(IExtensionBehaviour extension) where T : ExtensibleBehaviour
+    {
+      return extensionOwnershipMap[extension] as T;
     }
     
   }
@@ -144,5 +157,31 @@ namespace Stratus
   /// Interface type used to validate all extensible behaviours
   /// </summary>
   public interface IExtensible { }
+
+  /// <summary>
+  /// Interface type used to validate all extensible behaviours
+  /// </summary>
+  public interface IExtensibleBehaviour { }
+
+  /// <summary>
+  /// Interface type a behaviours that is an extension of another
+  /// </summary>
+  public interface IExtensionBehaviour
+  {
+    void OnExtensibleAwake(ExtensibleBehaviour extensible);
+    void OnExtensibleStart();
+  }
+
+  /// <summary>
+  /// Interface type used to validate all extensible behaviours
+  /// </summary>
+  public interface IExtensionBehaviour<T> : IExtensionBehaviour where T : ExtensibleBehaviour
+  {
+    /// <summary>
+    /// The extensible component this extension is for
+    /// </summary>
+    T extensible { set; get; }
+  }
+
 
 }
