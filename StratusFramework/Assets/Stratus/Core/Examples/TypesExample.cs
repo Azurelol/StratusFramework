@@ -12,7 +12,6 @@ namespace Stratus
     public class TypesExample : StratusBehaviour
     {
       [Header("Stratus Field Types")]
-      public InputAxisField inputAxis = new InputAxisField();
       public InputField inputField = new InputField();
       public SceneField scene = new SceneField();
       public TagField tagField = new TagField();
@@ -24,10 +23,10 @@ namespace Stratus
 
       void TryReadingInput()
       {
-        var value = Input.GetAxis(inputAxis);
-        if (inputAxis.isPositive) {}
-        if (inputAxis.isNegative) {}
-        if (inputAxis.isNeutral) {}
+        var value = inputField.value;
+        if (inputField.isPositive) {}
+        if (inputField.isNegative) {}
+        if (inputField.isNeutral) {}
         Trace.Script(value);        
       }
 

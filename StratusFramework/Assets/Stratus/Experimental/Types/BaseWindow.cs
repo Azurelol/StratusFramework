@@ -46,7 +46,7 @@ namespace Stratus
     [Header("Input")]
     [Tooltip("Whether input is being polled for this window")]
     public bool pollInput = false;
-    public InputAxisField cancel = new InputAxisField();
+    public InputField cancel = new InputField();
 
     protected ActionSet currentSeq;
 

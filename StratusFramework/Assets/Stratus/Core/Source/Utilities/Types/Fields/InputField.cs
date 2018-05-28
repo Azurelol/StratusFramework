@@ -76,6 +76,9 @@ namespace Stratus
       this.type = Type.Axis;
     }
 
+    //public static implicit operator string(InputField inputAxisField) { return inputAxisField.axis; }
+
+
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/

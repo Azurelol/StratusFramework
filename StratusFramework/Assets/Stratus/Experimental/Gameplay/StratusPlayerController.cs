@@ -71,8 +71,8 @@ namespace Stratus.Experimental
       if (!movementX.isNeutral || !movementY.isNeutral)
         Move();
 
-      //if (faceDirection)
-      //  transform.forward = Vector3.Lerp(transform.forward, heading, Time.deltaTime * 2f);
+      if (faceDirection)
+        transform.forward = Vector3.Lerp(transform.forward, heading, Time.deltaTime * 2f);
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -96,7 +96,8 @@ namespace Stratus.Experimental
       switch (offset)
       {
         case MovementOffset.PlayerForward:
-          dir = new Vector3(axis.x, 0f, axis.y);
+          dir.x = axis.x;
+          dir.z = axis.y;
           break;
         case MovementOffset.CameraUp:
           dir = (axis.y * camera.transform.up) + (axis.x * camera.transform.right);
