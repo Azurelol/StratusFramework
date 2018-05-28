@@ -27,7 +27,7 @@ namespace Stratus
     public static implicit operator string(InputAxisField inputAxisField) { return inputAxisField.axis; }
 
     //------------------------------------------------------------------------/
-    // Methods
+    // Properties
     //------------------------------------------------------------------------/
     /// <summary>
     /// set axis

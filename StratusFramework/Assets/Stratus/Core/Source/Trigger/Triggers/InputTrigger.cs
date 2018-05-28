@@ -40,7 +40,7 @@ namespace Stratus
           triggered = input.isUp;
           break;
         case InputField.Action.Held:
-          triggered = input.isHeld;
+          triggered = input.isPressed;
           break;
       }
 

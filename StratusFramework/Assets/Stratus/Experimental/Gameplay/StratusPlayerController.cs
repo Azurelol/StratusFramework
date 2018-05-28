@@ -30,8 +30,8 @@ namespace Stratus.Experimental
     [Tooltip("Whether to print debug output")]
     public bool debug = false;
     [Header("Input")]
-    public InputAxisField movementX = new InputAxisField();
-    public InputAxisField movementY = new InputAxisField();
+    public InputField movementX = new InputField();
+    public InputField movementY = new InputField();
     [Tooltip("The camera used to orient this movement by")]
     public new Camera camera;
 

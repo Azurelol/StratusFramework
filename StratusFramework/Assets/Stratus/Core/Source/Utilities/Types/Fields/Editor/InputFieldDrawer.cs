@@ -15,8 +15,8 @@ namespace Stratus
       {
         SerializedProperty typeProp = property.FindPropertyRelative("type");
         var type = (InputField.Type)typeProp.enumValueIndex;
-        
-        
+
+
         label = EditorGUI.BeginProperty(position, label, typeProp);
         Rect contentPosition = EditorGUI.PrefixLabel(position, label);
         var width = contentPosition.width;
@@ -27,22 +27,26 @@ namespace Stratus
         // 1. Modify the type
         contentPosition.width = width * typeWidth;
         EditorGUI.PropertyField(contentPosition, typeProp, GUIContent.none);
-        
+
         // 2. Modify the input depending on the type
         contentPosition.x += contentPosition.width + 4f;
-        contentPosition.width = width * inputValueWidth;
-        SerializedProperty inputProp = null;
+        contentPosition.width = width * inputValueWidth;        
         switch (type)
         {
           case InputField.Type.Key:
-            inputProp = property.FindPropertyRelative("key");            
+            EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative("key"), GUIContent.none);
             break;
           case InputField.Type.MouseButton:
-            inputProp = property.FindPropertyRelative("mouseButton");            
+            EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative("mouseButton"), GUIContent.none);
+            break;
+          case InputField.Type.Axis:
+            SerializedProperty axis = property.FindPropertyRelative("axis");
+            int index = InputManagerUtility.GetIndex(axis.stringValue);
+            index = EditorGUI.Popup(contentPosition, label.text, index, InputManagerUtility.axesNames);
+            axis.stringValue = index >= 0 ? InputManagerUtility.axesNames[index] : "";
             break;
         }
 
-        EditorGUI.PropertyField(contentPosition, inputProp, GUIContent.none);
         EditorGUI.EndProperty();
 
         EditorGUI.indentLevel = indent;
