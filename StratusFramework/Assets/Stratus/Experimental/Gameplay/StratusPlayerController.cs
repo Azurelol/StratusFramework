@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System;
 
-namespace Stratus.Experimental
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// A simple, modular player controller
@@ -20,9 +20,18 @@ namespace Stratus.Experimental
     public enum MovementOffset
     {
       PlayerForward,
+      CameraForward,
       CameraUp
     }
 
+    public enum Action
+    {
+      Move,
+      Sprint,
+      Jump
+    }
+
+    public class JumpEvent : Stratus.Event {}
 
     //--------------------------------------------------------------------------------------------/
     // Fields
@@ -32,23 +41,32 @@ namespace Stratus.Experimental
     [Header("Input")]
     public InputField movementX = new InputField();
     public InputField movementY = new InputField();
+    public InputField sprint = new InputField();
+    public InputField jump = new InputField();
     [Tooltip("The camera used to orient this movement by")]
     public new Camera camera;
 
-    [Header("Movement")]
+    [Header("Movement")]    
     public float movementThreshold = 0.2f;
+    public float sprintMuiltiplier = 2f;
     public float rotationSpeed = 1f;
     public bool faceDirection = true;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
-    public MovementOffset movementOffset { get; set; } = MovementOffset.PlayerForward;
     public NavMeshAgent navigation { get; private set; }
     public new Rigidbody rigidbody { get; private set; }
+
+    public MovementOffset movementOffset { get; set; } = MovementOffset.PlayerForward;
     public Func<Vector3> calculateDirectionFunction { get; private set; }
-    public bool isMoving => Math.Abs(rigidbody.velocity.x) > movementThreshold || Math.Abs(rigidbody.velocity.z) > movementThreshold;
+    public bool moving => Math.Abs(rigidbody.velocity.x) > movementThreshold || Math.Abs(rigidbody.velocity.z) > movementThreshold;
+    public bool sprinting { get; private set; }
+    public bool jumping { get; private set; }
     public Vector3 heading { get; private set; }
+    public Vector3 velocity => rigidbody.velocity;
+    public float currentSpeed => sprinting ? navigation.speed * sprintMuiltiplier : navigation.speed;
+    public float speedRatio => currentSpeed / navigation.speed;
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -68,8 +86,26 @@ namespace Stratus.Experimental
 
     void Update()
     {
+      if (jump.isDown && !jumping)
+      {
+        Jump();
+      }
+      else if (jumping)
+      {
+        OnJump();
+      }
+
+
       if (!movementX.isNeutral || !movementY.isNeutral)
+      {
         Move();
+
+        if (moving && sprint.isPressed)
+          sprinting = true;
+        else if (sprint.isUp)
+          sprinting = false;      
+      }
+
 
       if (faceDirection)
         transform.forward = Vector3.Lerp(transform.forward, heading, Time.deltaTime * 2f);
@@ -83,8 +119,20 @@ namespace Stratus.Experimental
       Vector2 axis = new Vector2(movementX.value, movementY.value);
       Vector3 dir = CalculateDirection(axis, movementOffset);
       heading = dir;
-      //Trace.Script($"Heading = {heading}");
-      rigidbody.velocity = dir * navigation.speed;
+      rigidbody.velocity = dir * currentSpeed; 
+    }
+
+    private void Jump()
+    {
+      rigidbody.AddRelativeForce(Vector3.up * navigation.speed);
+      jumping = true;
+      gameObject.Dispatch<JumpEvent>(Event.Cache<JumpEvent>());
+    }
+
+    private void OnJump()
+    {
+      if (velocity.y == 0.0f)
+        jumping = false;
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -99,11 +147,15 @@ namespace Stratus.Experimental
           dir.x = axis.x;
           dir.z = axis.y;
           break;
+
         case MovementOffset.CameraUp:
           dir = (axis.y * camera.transform.up) + (axis.x * camera.transform.right);
           dir.y = 0f;
           break;
-        default:
+
+        case MovementOffset.CameraForward:
+          dir = (axis.y * camera.transform.forward) + (axis.x * camera.transform.right);
+          dir.y = 0f;
           break;
       }
       return dir;

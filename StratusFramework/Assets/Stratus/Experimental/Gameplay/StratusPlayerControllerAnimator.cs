@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Stratus.Gameplay;
 
-namespace Stratus.Experimental
+namespace Stratus.Gameplay
 {
   [CustomExtension(typeof(StratusPlayerController))]
   public class StratusPlayerControllerAnimator : CharacterAnimator, IExtensionBehaviour<StratusPlayerController>
@@ -13,7 +14,7 @@ namespace Stratus.Experimental
     {
       this.extensible = (StratusPlayerController)extensible;
       onUpdate += FaceDirection;
-      }
+    }
 
     public void OnExtensibleStart()
     {

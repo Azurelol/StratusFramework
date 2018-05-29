@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.Animations;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomPropertyDrawer(typeof(CharacterAnimator.AnimatorParameterHook))]
   public class AnimatorParametertHookDrawer : StratusPropertyDrawer

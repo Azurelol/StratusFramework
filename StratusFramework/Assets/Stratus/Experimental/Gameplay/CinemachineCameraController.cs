@@ -4,7 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using System;
 
-namespace Stratus.Experimental
+namespace Stratus.Gameplay
 {
   [CustomExtension(typeof(StratusPlayerController))]
   public class CinemachineCameraController : StratusBehaviour, IExtensionBehaviour<StratusPlayerController>

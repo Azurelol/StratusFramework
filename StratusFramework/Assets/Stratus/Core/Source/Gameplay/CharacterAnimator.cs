@@ -7,7 +7,7 @@ using Stratus.Dependencies.Ludiq.Reflection;
 using UnityEngine.Animations;
 using UnityEngine.Events;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// A component for generically managing animations in a character
@@ -213,6 +213,7 @@ namespace Stratus
     /// </summary>
     public virtual bool debug { get; }
     protected OnUpdate onUpdate { get; set; }
+    private Dictionary<Type, string> animatorEventTriggers = new Dictionary<Type, string>();
 
     //--------------------------------------------------------------------------------------------/
     // Virtual
@@ -259,6 +260,15 @@ namespace Stratus
     void OnSetIntegerEvent(SetIntegerEvent e) => SetInteger(e.name, e.value);
     void OnSetBoolEvent(SetBoolEvent e) => SetBoolean(e.name, e.value);
     void OnSetTriggerEvent(SetTriggerEvent e) => SetTrigger(e.name);
+    void OnEvent(Stratus.Event e)
+    {
+      Type eventType = e.GetType();
+      if (!animatorEventTriggers.ContainsKey(eventType))
+        return;
+
+      string parameter = animatorEventTriggers[eventType];
+      SetTrigger(parameter);
+    }
 
     //--------------------------------------------------------------------------------------------/
     // Methods
@@ -330,7 +340,7 @@ namespace Stratus
     }
 
     //--------------------------------------------------------------------------------------------/
-    // MethodsL Private
+    // Methods: Private
     //--------------------------------------------------------------------------------------------/
     protected void Lookat(Transform target, float trackingSpeed)
     {
@@ -347,7 +357,9 @@ namespace Stratus
     {
       foreach(var hook in animatorTriggers)
       {
-
+        animatorEventTriggers.Add(hook.onEvent, hook.parameterName);
+        gameObject.Connect(OnEvent, hook.onEvent);
+        
       }
 
       foreach (var hook in animatorParameters)
@@ -364,6 +376,9 @@ namespace Stratus
           parameter.Update(this);
       }
     }
+
+
+
 
 
 
