@@ -530,7 +530,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameras: []
   changeCamera:
-    type: 0
+    _type: 0
     key: 0
     mouseButton: 0
     axis: 
@@ -547,7 +547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameras: []
   changeCamera:
-    type: 0
+    _type: 0
     key: 0
     mouseButton: 0
     axis: 
@@ -582,22 +582,22 @@ MonoBehaviour:
   - {fileID: 826323336}
   debug: 0
   movementX:
-    type: 2
+    _type: 2
     key: 51
     mouseButton: 0
     axis: Horizontal
   movementY:
-    type: 2
+    _type: 2
     key: 0
     mouseButton: 0
     axis: Vertical
   sprint:
-    type: 0
+    _type: 0
     key: 304
     mouseButton: 0
     axis: 
   jump:
-    type: 0
+    _type: 0
     key: 32
     mouseButton: 0
     axis: 
@@ -621,7 +621,7 @@ MonoBehaviour:
   rootTransform: {fileID: 794166947}
   animatorTriggers:
   - onEvent:
-      _classRef: Stratus.Gameplay.StratusPlayerController+JumpEvent, Assembly-CSharp
+      _classRef: Stratus.Gameplay.CharacterMovement+JumpEvent, Assembly-CSharp
     parameterType: 9
     parameterName: Jump
     boolValue: 0
@@ -657,8 +657,8 @@ MonoBehaviour:
   - camera: {fileID: 890605770}
     offset: 1
   changeCamera:
-    type: 0
-    key: 99
+    _type: 0
+    key: 9
     mouseButton: 0
     axis: 
 --- !u!1 &890605768

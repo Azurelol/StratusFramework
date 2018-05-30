@@ -5,14 +5,14 @@ using Stratus.Gameplay;
 
 namespace Stratus.Gameplay
 {
-  [CustomExtension(typeof(StratusPlayerController))]
-  public class StratusPlayerControllerAnimator : CharacterAnimator, IExtensionBehaviour<StratusPlayerController>
+  [CustomExtension(typeof(StratusCharacterController))]
+  public class CharacterControllerAnimator : CharacterAnimator, IExtensionBehaviour<StratusCharacterController>
   {
-    public StratusPlayerController extensible { get; set; }
+    public StratusCharacterController extensible { get; set; }
 
     public void OnExtensibleAwake(ExtensibleBehaviour extensible)
     {
-      this.extensible = (StratusPlayerController)extensible;
+      this.extensible = (StratusCharacterController)extensible;
       onUpdate += FaceDirection;
     }
 

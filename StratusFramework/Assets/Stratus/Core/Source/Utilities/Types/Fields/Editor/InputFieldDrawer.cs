@@ -13,7 +13,7 @@ namespace Stratus
 
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
       {
-        SerializedProperty typeProp = property.FindPropertyRelative("type");
+        SerializedProperty typeProp = property.FindPropertyRelative("_type");
         var type = (InputField.Type)typeProp.enumValueIndex;
 
 

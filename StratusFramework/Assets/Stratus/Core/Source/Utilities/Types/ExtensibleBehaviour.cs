@@ -43,7 +43,7 @@ namespace Stratus
       foreach (var extension in extensions)
       {
         extensionsMap.Add(extension.GetType(), extension);
-        extension.OnExtensibleAwake(this);
+        extension.OnExtensibleAwake(this);        
       }
 
     }
@@ -190,8 +190,15 @@ namespace Stratus
     /// <summary>
     /// The extensible component this extension is for
     /// </summary>
-    T extensible { set; get; }
+    T extensible { set; get; }    
   }
 
+  public static class ExtensibleExtensions
+  {
+    //public static void SetExtensible(this IExtensionBehaviour extension, ExtensibleBehaviour extensible) where T: ExtensibleBehaviour
+    //{
+    //  extension.set
+    //}
+  }
 
 }

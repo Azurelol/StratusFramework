@@ -12,7 +12,7 @@ namespace Stratus.Gameplay
   [RequireComponent(typeof(Collider))]
   [RequireComponent(typeof(Rigidbody))]
   [RequireComponent(typeof(NavMeshAgent))]
-  public class StratusPlayerController : ExtensibleBehaviour
+  public class StratusCharacterController : ExtensibleBehaviour
   {
     //--------------------------------------------------------------------------------------------/
     // Declarations
@@ -24,6 +24,12 @@ namespace Stratus.Gameplay
       CameraUp
     }
 
+    public enum InputAxis
+    {
+      Horizontal,
+      Vertical
+    }
+
     public enum Action
     {
       Move,
@@ -31,7 +37,14 @@ namespace Stratus.Gameplay
       Jump
     }
 
-    public class JumpEvent : Stratus.Event {}
+    public class MovementPreset
+    {
+      public VectorAxis horizontalAxisInput;
+      public VectorAxis verticalAxisInput;
+      public MovementOffset offset;
+    }
+
+    public class JumpEvent : Stratus.Event { }
 
     //--------------------------------------------------------------------------------------------/
     // Fields
@@ -81,7 +94,7 @@ namespace Stratus.Gameplay
 
     protected override void OnStart()
     {
-
+      
     }
 
     void Update()

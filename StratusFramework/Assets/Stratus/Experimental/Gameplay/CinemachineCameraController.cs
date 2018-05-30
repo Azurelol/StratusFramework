@@ -6,14 +6,14 @@ using System;
 
 namespace Stratus.Gameplay
 {
-  [CustomExtension(typeof(StratusPlayerController))]
-  public class CinemachineCameraController : StratusBehaviour, IExtensionBehaviour<StratusPlayerController>
+  [CustomExtension(typeof(StratusCharacterController))]
+  public class CinemachineCameraController : StratusBehaviour, IExtensionBehaviour<StratusCharacterController>
   {
     [Serializable]
     public class CameraPreset : StratusSerializable
     {
       public CinemachineVirtualCamera camera;
-      public StratusPlayerController.MovementOffset offset;
+      public StratusCharacterController.MovementOffset offset;
     }
 
     public List<CameraPreset> cameras = new List<CameraPreset>();
@@ -21,13 +21,13 @@ namespace Stratus.Gameplay
 
     public CameraPreset currentCamera { get; private set; }
     public bool hasCameras => cameras.NotEmpty();
-    public StratusPlayerController extensible { get; set; }
+    public StratusCharacterController extensible { get; set; }
 
     private ArrayNavigator<CameraPreset> cameraNavigation;
 
     void IExtensionBehaviour.OnExtensibleAwake(ExtensibleBehaviour extensible)
     {
-      this.extensible = (StratusPlayerController)extensible;
+      this.extensible = (StratusCharacterController)extensible;
       cameraNavigation = new ArrayNavigator<CameraPreset>(cameras.ToArray(), true);
       cameraNavigation.onIndexChanged = ChangeCamera;
       ChangeCamera(cameras[0]);

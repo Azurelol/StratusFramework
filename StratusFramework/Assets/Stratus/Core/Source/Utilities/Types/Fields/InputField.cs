@@ -1,6 +1,7 @@
 ﻿
 using UnityEngine;
 using System;
+using UnityEngine.Serialization;
 
 namespace Stratus
 {
@@ -27,21 +28,29 @@ namespace Stratus
     /// </summary>
     public enum Action { Down, Up, Held }
     /// <summary>
+    /// How the given input axis is treated, as an axis (-1 to 1) or as a button
+    /// </summary>
+    public enum AxisTyoe
+    {
+      Axis,
+      Button
+    }
+    /// <summary>
     /// The current state of the axis input
     /// </summary>
-    public enum AxisState
+    public enum ButtonState
     {
-      Pressed,
       Down,
       Up,
-      None
+      Pressed,
     }
 
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
     [SerializeField]
-    private Type type = Type.Key;
+    [FormerlySerializedAs("type")]
+    private Type _type = Type.Key;
     [SerializeField]
     private KeyCode key;
     [SerializeField]
@@ -50,6 +59,11 @@ namespace Stratus
     [SerializeField]
     private string axis;
     #pragma warning restore 414
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public Type type => _type;
 
     //------------------------------------------------------------------------/
     // Methods
@@ -61,19 +75,19 @@ namespace Stratus
     public InputField(KeyCode key)
     {
       this.key = key;
-      this.type = Type.Key;
+      this._type = Type.Key;
     }
 
     public InputField(MouseButton button)
     {
       this.mouseButton = button;
-      this.type = Type.MouseButton;
+      this._type = Type.MouseButton;
     }
 
     public InputField(string axis)
     {
       this.axis = axis;
-      this.type = Type.Axis;
+      this._type = Type.Axis;
     }
 
     //public static implicit operator string(InputField inputAxisField) { return inputAxisField.axis; }
@@ -89,7 +103,7 @@ namespace Stratus
     {
       get
       {
-        switch (type)
+        switch (_type)
         {
           case Type.Key:
             return Input.GetKeyDown(key);
@@ -110,7 +124,7 @@ namespace Stratus
     {
       get
       {
-        switch (type)
+        switch (_type)
         {
           case Type.Key:
             return Input.GetKey(key);
@@ -131,7 +145,7 @@ namespace Stratus
     {
       get
       {
-        switch (type)
+        switch (_type)
         {
           case Type.Key:
             return Input.GetKeyUp(key);
@@ -173,7 +187,7 @@ namespace Stratus
     public override string ToString()
     {
       string value = null;
-      switch (type)
+      switch (_type)
       {
         case Type.Key:
           value = $"Key {key}";
