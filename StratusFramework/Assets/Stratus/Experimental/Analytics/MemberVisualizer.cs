@@ -196,23 +196,11 @@ namespace Stratus
 
     private void Awake()
     {
-      // Create the custom text style used by this visualizer
-      textStyle = new GUIStyle();
-      textStyle.richText = true;
-      // Set the poll timer
-      pollTimer = new Stopwatch(pollFrequency);
-      pollTimer.resetOnFinished = true;
-      pollTimer.SetCallback(OnPoll);
-      // Create separate draw lists for different visualization modes
-      CreateDrawLists();
-      // Build the map used for custom rendering settings per object
-      renderSettingsMap = new Dictionary<GameObject, MemberVisualizationRenderSettings>();
-      foreach (var rs in renderSettingsList)
-        renderSettingsMap.Add(rs.gameObject, rs);
-      // For all members to be visualized in the game view...
-      ConstructGameVisualizations();
-      // Poll the member values initially
-      OnPoll();
+      Initialize();
+    }
+
+    private void Start()
+    {      
     }
 
     private void Update()
@@ -242,7 +230,7 @@ namespace Stratus
     }
 
     private void OnDisable()
-    {      
+    {
       instances.Remove(this);
       sceneGUIDrawLists.Remove(this);
       sceneGUIDrawCount -= sceneGUIDrawList.Count;
@@ -254,6 +242,27 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
+    private void Initialize()
+    {
+      // Create the custom text style used by this visualizer
+      textStyle = new GUIStyle();
+      textStyle.richText = true;
+      // Set the poll timer
+      pollTimer = new Stopwatch(pollFrequency);
+      pollTimer.resetOnFinished = true;
+      pollTimer.SetCallback(OnPoll);
+      // Create separate draw lists for different visualization modes
+      CreateDrawLists();
+      // Build the map used for custom rendering settings per object
+      renderSettingsMap = new Dictionary<GameObject, MemberVisualizationRenderSettings>();
+      foreach (var rs in renderSettingsList)
+        renderSettingsMap.Add(rs.gameObject, rs);
+      // For all members to be visualized in the game view...
+      ConstructGameVisualizations();
+      // Poll the member values initially
+      OnPoll();
+    }
+
     private void DrawSceneVisualization()
     {
 #if UNITY_EDITOR

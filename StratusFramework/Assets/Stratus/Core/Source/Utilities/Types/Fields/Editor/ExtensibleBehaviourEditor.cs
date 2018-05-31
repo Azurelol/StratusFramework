@@ -20,7 +20,8 @@ namespace Stratus
     private string[] extensionsNames;
     private int extensionIndex = 0;
     private HideFlags extensionFlags = HideFlags.HideInInspector;
-    private Type extensibleType, extensionType;    
+    private Type extensibleType, extensionType;
+    private SerializedProperty selectedExtensionIndexProperty;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -34,12 +35,15 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/    
     protected override void OnStratusEditorEnable()
     {
+      //target.selectedExtension = (MonoBehaviour)selectedExtension;
+      selectedExtensionIndexProperty = propertyMap["_selectedExtensionIndex"];
+      extensionIndex = selectedExtensionIndexProperty.intValue;
       extensibleType = target.GetType();
       extensionType = typeof(IExtensionBehaviour);
       GetMatchingExtensionTypes();
       RefreshExtensions();
       drawGroupRequests.Add(new DrawGroupRequest(DrawExtensions, () => { return target.hasExtensions; }));
-      drawGroupRequests.Add(new DrawGroupRequest(AddExtension));
+      //drawGroupRequests.Add(new DrawGroupRequest(AddExtension));
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -50,13 +54,15 @@ namespace Stratus
       SelectExtension(rect);
       if (target.hasExtensions)
         DrawExtension(rect);
+      AddExtension(rect);
     }
 
     private void SelectExtension(Rect rect)
     {
+      EditorGUILayout.LabelField("Extensions", StratusGUIStyles.header);
+      EditorGUILayout.Separator();
       EditorGUILayout.BeginHorizontal();
       {
-        EditorGUILayout.LabelField("Extensions", EditorStyles.whiteLargeLabel);
         bool changed = StratusEditorUtility.CheckControlChange(() =>
         {
           extensionIndex = EditorGUILayout.Popup(extensionIndex, extensionsNames);
@@ -74,7 +80,10 @@ namespace Stratus
     }
 
     private void CreateExtensionEditor()
-    {
+    {     
+      selectedExtensionIndexProperty.intValue = extensionIndex;
+      selectedExtensionIndexProperty.serializedObject.ApplyModifiedProperties();
+
       extensionEditor = UnityEditor.Editor.CreateEditor((MonoBehaviour)selectedExtension) as StratusEditor;
       extensionEditor.backgroundStyle = EditorStyles.helpBox;
     }

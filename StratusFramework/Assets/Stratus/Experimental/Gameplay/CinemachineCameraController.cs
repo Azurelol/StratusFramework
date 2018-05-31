@@ -9,6 +9,9 @@ namespace Stratus.Gameplay
   [CustomExtension(typeof(StratusCharacterController))]
   public class CinemachineCameraController : StratusBehaviour, IExtensionBehaviour<StratusCharacterController>
   {
+    //--------------------------------------------------------------------------------------------/
+    // Declarations
+    //--------------------------------------------------------------------------------------------/
     [Serializable]
     public class CameraPreset : StratusSerializable
     {
@@ -16,9 +19,15 @@ namespace Stratus.Gameplay
       public StratusCharacterController.MovementOffset offset;
     }
 
+    //--------------------------------------------------------------------------------------------/
+    // Fields
+    //--------------------------------------------------------------------------------------------/
     public List<CameraPreset> cameras = new List<CameraPreset>();
     public InputField changeCamera = new InputField();
 
+    //--------------------------------------------------------------------------------------------/
+    // Properties
+    //--------------------------------------------------------------------------------------------/
     public CameraPreset currentCamera { get; private set; }
     public bool hasCameras => cameras.NotEmpty();
     public StratusCharacterController extensible { get; set; }
@@ -37,11 +46,10 @@ namespace Stratus.Gameplay
     {
       
     }
-
-    private void Update()
+    
+    public void NextCamera()
     {
-      if (changeCamera.isDown)
-        cameraNavigation.Navigate(ArrayNavigatorBase.Direction.Right);
+      cameraNavigation.Navigate(ArrayNavigatorBase.Direction.Right);
     }
 
     private void ChangeCamera(CameraPreset preset)
@@ -52,7 +60,7 @@ namespace Stratus.Gameplay
       cameraNavigation.previous.camera.Priority = 10;
       preset.camera.Priority = 15;
       currentCamera = preset;
-      extensible.movementOffset = preset.offset;
+      //extensible.movementOffset = preset.offset;
     }
 
 

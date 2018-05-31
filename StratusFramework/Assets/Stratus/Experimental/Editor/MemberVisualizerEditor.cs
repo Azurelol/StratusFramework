@@ -12,7 +12,7 @@ namespace Stratus
 
     protected override void OnStratusEditorEnable()
     {
-      propertyConstraints.Add(renderSettingsList, False);
+      //propertyConstraints.Add(renderSettingsList, False);
       drawGroupRequests.Add(new DrawGroupRequest(DrawRenderingSettings));
     }    
 

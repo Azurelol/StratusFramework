@@ -18,6 +18,9 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     [SerializeField]
     private List<MonoBehaviour> extensionsField = new List<MonoBehaviour>();
+    //[SerializeField]
+    [HideInInspector]
+    public int _selectedExtensionIndex;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -26,6 +29,7 @@ namespace Stratus
     private Dictionary<Type, IExtensionBehaviour> extensionsMap { get; set; } = new Dictionary<Type, IExtensionBehaviour>();
     private static Dictionary<IExtensionBehaviour, ExtensibleBehaviour> extensionOwnershipMap { get; set; } = new Dictionary<IExtensionBehaviour, ExtensibleBehaviour>();
     public bool hasExtensions => extensionsField.Count > 0;
+    //public int selectedExtensionIndex { get { return _selectedExtension; } set { _selectedExtension = value; } }
 
     //--------------------------------------------------------------------------------------------/
     // Virtual

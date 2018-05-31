@@ -8,6 +8,7 @@ using Rotorz.ReorderableList;
 using UnityEditorInternal;
 using Stratus.Interfaces;
 using System.Linq;
+using UnityEngine.Serialization;
 
 namespace Stratus
 {
@@ -326,20 +327,43 @@ namespace Stratus
     /// <returns></returns>
     public static SerializedProperty[] GetSerializedProperties(SerializedObject serializedObject, Type type)
     {
-      FieldInfo[] propInfo = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-      SerializedProperty[] properties = new SerializedProperty[propInfo.Length];
+      FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+      List<SerializedProperty> properties = new List<SerializedProperty>();
 
-      for (int a = 0; a < properties.Length; a++)
+      for (int i = 0; i < fields.Length; i++)
       {
-        properties[a] = serializedObject.FindProperty(propInfo[a].Name);
-
-        if (properties[a] == null)
+        FieldInfo field = fields[i];
+        if (field != null && (field.Attributes != FieldAttributes.NotSerialized))
         {
-          //Trace.Script("Could not find property: " + propInfo[a].Name);
+          //Trace.Script($"- {field.Name}");
+          SerializedProperty property = serializedObject.FindProperty(field.Name);
+          properties.Add(property);
         }
       }
 
-      return properties;
+      return properties.ToArray(); ;
+    }
+
+    public static SerializedProperty[] GetSerializedProperties(SerializedObject serializedObject)
+    {
+      List<SerializedProperty> properties = new List<SerializedProperty>();
+      //Trace.Script($"Properties for {serializedObject.targetObject.GetType().Name}");
+      SerializedProperty iter = serializedObject.GetIterator();
+      if (iter != null)
+      {
+        // THe first property is m_Script
+        iter.NextVisible(true);
+        //properties.Add(iter);
+        //Trace.Script($"- {iter.name}");
+
+        while (iter.NextVisible(false))
+        {
+          properties.Add(iter);
+          //Trace.Script($"- {iter.name}");
+        }
+      }
+      iter.Reset();
+      return properties.ToArray();
     }
 
     /// <summary>
@@ -366,7 +390,7 @@ namespace Stratus
         else
         {
           bool overridden = false;
-          
+
           // If there's any custom attributes
           //if (propertyAttributes[property].Length > 0)
           //{
@@ -375,7 +399,7 @@ namespace Stratus
 
           if (!overridden)
             EditorGUILayout.PropertyField(property, true);
-          
+
         }
       }
 
@@ -531,6 +555,14 @@ namespace Stratus
     /// </summary>
     internal void AddProperties()
     {
+      // Add all properties to the map
+      //SerializedProperty[] allProperties = GetSerializedProperties(serializedObject);
+      //foreach (var property in allProperties)
+      //{
+      //  if (!propertyMap.ContainsKey(property.name))
+      //    propertyMap.Add(property.name, property);
+      //}
+
       // For every type, starting from the most derived up to the base, get its serialized properties      
       Type declaredType = target.GetType();
       Type currentType = declaredType;
@@ -558,7 +590,8 @@ namespace Stratus
             propertyAttributesMap[property].Add(attr.GetType(), attr);
             //Trace.Script($"{property.displayName} has the attribute '{attr.GetType().Name}'");
           }
-          
+          OnPropertyAttributesAdded(property);
+
           // Check whether this property is an array
           if (property.isArray && property.propertyType != SerializedPropertyType.String)
           {
@@ -627,7 +660,7 @@ namespace Stratus
     /// Always returns false
     /// </summary>
     protected bool False() => false;
-    
+
     /// <summary>
     /// Adds a new section to the editor
     /// </summary>
