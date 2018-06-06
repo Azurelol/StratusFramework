@@ -28,12 +28,16 @@ namespace Stratus.Gameplay
       SideView
     }
 
+    public enum InputMode
+    {
+      Controller,
+      Mouse
+    }
+
     [Serializable]
     public class CameraPreset : StratusSerializable
     {
       public CinemachineVirtualCameraBase camera;
-      //public VectorAxis horizontal;
-      //public VectorAxis vertical;
       public CameraMode mode;
     }
 
@@ -41,6 +45,7 @@ namespace Stratus.Gameplay
     // Fields
     //--------------------------------------------------------------------------------------------/
     public new Camera camera;
+    public InputMode mode = InputMode.Controller;
     [Header("Movement")]
     public InputField horizontal = new InputField();
     public InputField vertical = new InputField();
@@ -63,7 +68,7 @@ namespace Stratus.Gameplay
     public StratusCharacterController extensible { get; set; }
     public CharacterControllerMovement movement { get; set; }
     public Vector2 axis => new Vector2(horizontal.value, vertical.value);
-    public CameraPreset currentPreset { get; private set; }
+    public CameraPreset cameraPreset { get; private set; }
     public bool hasCameras => cameras.NotEmpty();
 
     //--------------------------------------------------------------------------------------------/
@@ -92,45 +97,62 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     private void PollInput()
     {
-      if (jump.isDown && !movement.jumping) 
-        movement.gameObject.Dispatch<CharacterMovement.JumpEvent>(jumpEvent);
-
-      if (!horizontal.isNeutral || !vertical.isNeutral)
+      switch (mode)
       {
-        moveEvent.sprint = sprint.isPressed;
-        moveEvent.direction = CalculateDirection(axis, currentPreset);
-        //moveEvent.adjustFacing = 
-        movement.gameObject.Dispatch<CharacterMovement.MoveEvent>(moveEvent);
+        case InputMode.Controller:
+          PollController();
+          break;
+        case InputMode.Mouse:
+          PollMouse();
+          break;
       }
 
       if (changeCamera.isDown)
         NextCamera();
     }
 
-    public Vector3 CalculateDirection(Vector2 axis, MovementOffset offset)
+    private void PollController()
     {
-      Vector3 dir = Vector3.zero;
-      switch (offset)
+      if (jump.isDown && !movement.jumping)
+        movement.gameObject.Dispatch<CharacterMovement.JumpEvent>(jumpEvent);
+
+      if (!horizontal.isNeutral || !vertical.isNeutral)
       {
-        case MovementOffset.PlayerForward:
-          dir.x = axis.x;
-          dir.z = axis.y;
-          break;
-
-        case MovementOffset.CameraUp:
-          dir = (axis.y * camera.transform.up) + (axis.x * camera.transform.right);
-          dir.y = 0f;
-          break;
-
-        case MovementOffset.CameraForward:
-          dir = (axis.y * camera.transform.forward) + (axis.x * camera.transform.right);
-          dir.y = 0f;
-          break;
+        moveEvent.sprint = sprint.isPressed;
+        moveEvent.direction = CalculateDirection(axis, camera, cameraPreset);
+        movement.gameObject.Dispatch<CharacterMovement.MoveEvent>(moveEvent);
       }
-      return dir;
     }
 
-    public Vector3 CalculateDirection(Vector2 axis, CameraPreset preset)
+    private void PollMouse()
+    {
+
+    }
+
+    //public Vector3 CalculateDirection(Vector2 axis, MovementOffset offset)
+    //{
+    //  Vector3 dir = Vector3.zero;
+    //  switch (offset)
+    //  {
+    //    case MovementOffset.PlayerForward:
+    //      dir.x = axis.x;
+    //      dir.z = axis.y;
+    //      break;
+    //
+    //    case MovementOffset.CameraUp:
+    //      dir = (axis.y * camera.transform.up) + (axis.x * camera.transform.right);
+    //      dir.y = 0f;
+    //      break;
+    //
+    //    case MovementOffset.CameraForward:
+    //      dir = (axis.y * camera.transform.forward) + (axis.x * camera.transform.right);
+    //      dir.y = 0f;
+    //      break;
+    //  }
+    //  return dir;
+    //}
+
+    public static Vector3 CalculateDirection(Vector2 axis, Camera camera, CameraPreset preset)
     {
       Vector3 dir = Vector3.zero;
       switch (preset.mode)
@@ -167,7 +189,7 @@ namespace Stratus.Gameplay
 
       cameraNavigation.previous.camera.Priority = 10;
       preset.camera.Priority = 15;
-      currentPreset = preset;
+      cameraPreset = preset;
     }
 
 

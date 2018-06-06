@@ -29,7 +29,13 @@ namespace Stratus.Gameplay
     public enum LocomotionMode
     {
       Velocity,
-      Force
+      Force,
+      CharacterController
+    }
+
+    public struct Settings
+    {
+
     }
 
     //public abstract class Action {}
@@ -55,8 +61,9 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Fields
     //--------------------------------------------------------------------------------------------/
-    [Header("Settings")]
+    [Tooltip("How locomotion for this character is handled")]
     public LocomotionMode locomotion = LocomotionMode.Velocity;
+    [Header("Settings")]
     [Tooltip("The maximum speed at which the character will move")]
     public float speed = 10f;
     [Tooltip("How fast the character achieves the desired speed")]
@@ -64,7 +71,11 @@ namespace Stratus.Gameplay
     public float movementThreshold = 0.2f;
     public float sprintMuiltiplier = 2f;
     public float rotationSpeed = 1f;
+    [Range(0f, 360f)]
+    public float rotationThreshold = 180f;
     public bool faceDirection = true;
+
+    private Countdown inertiaTimer;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -73,13 +84,16 @@ namespace Stratus.Gameplay
     public new Rigidbody rigidbody { get; private set; }
 
     public Vector3 heading { get; private set; }
-    public bool moving => Math.Abs(rigidbody.velocity.x) > movementThreshold || Math.Abs(rigidbody.velocity.z) > movementThreshold;
+    public bool moving { get; private set; } 
     public bool sprinting { get; private set; }
     public bool jumping { get; private set; }
     public bool grounded { get; private set; }
     public Vector3 velocity => rigidbody.velocity;
     public float maximumSpeed => sprinting ? speed * sprintMuiltiplier : speed;
     public float speedRatio => maximumSpeed / speed;
+    public float currentSpeed => rigidbody.velocity.magnitude;
+    private CharacterController characterController { get; set; }
+    private Vector3 lastPosition { get; set; }
     //public float acceleration { get; set; }
 
     //--------------------------------------------------------------------------------------------/
@@ -87,30 +101,32 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     private void Awake()
     {
+      inertiaTimer = new Countdown(0.1f);
       rigidbody = GetComponent<Rigidbody>();
       navigation = GetComponent<NavMeshAgent>();
+
+      if (locomotion == LocomotionMode.CharacterController)
+        characterController = gameObject.AddComponent<CharacterController>();
+
       Subscribe();
     }
 
     private void Update()
     {
-      //if (moving)
-      //  OnMove();
+      inertiaTimer.Update(Time.deltaTime);
+
+      if (moving && currentSpeed <= movementThreshold)
+        rigidbody.velocity = Vector3.zero;
 
       if (jumping)
         OnJump();
-
-
 
       // Decelerate somehow..
     }
 
     private void FixedUpdate()
     {
-      if (faceDirection)
-      {
-        transform.forward = Vector3.Lerp(transform.forward, heading, Time.fixedDeltaTime * rotationSpeed);
-      }
+       moving = locomotion == LocomotionMode.CharacterController ? IsMovingWithPosition() : IsMovingWithVelocity();
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -138,23 +154,39 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Methods: Movement
     //--------------------------------------------------------------------------------------------/
-    protected void Move(Vector3 dir)
+    protected void Move(Vector3 direction)
     {
-      heading = dir;
+      heading = direction;
+
+      if (faceDirection)
+      {
+        transform.forward = Vector3.Lerp(transform.forward, heading, Time.fixedDeltaTime * rotationSpeed);
+      }
+
+      // Don't move while the heading is greater than 180 degrees?
+      Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
+      float headingDifference = Mathf.Abs(rotation.eulerAngles.y - transform.eulerAngles.y);
+      //Trace.Script($"Heading difference = {headingDifference}", this);
+      if (headingDifference >= rotationThreshold)
+        return;
 
       switch (locomotion)
       {
         case LocomotionMode.Velocity:
-          MoveWithVelocity(dir);
+          MoveWithVelocity(direction);
           break;
 
         case LocomotionMode.Force:
-          MoveWithForce(dir);
+          MoveWithForce(direction);
+          break;
+
+        case LocomotionMode.CharacterController:
+          MoveWithCharacterController(direction);
           break;
       }
 
-      
-      
+      OnMove();
+
       // If the difference in rotation is less than 180
       //Vector3 
 
@@ -164,9 +196,9 @@ namespace Stratus.Gameplay
     }
 
     private void OnMove()
-    {      
-      //Trace.Script("Applying velocity");
-      rigidbody.velocity = heading * acceleration;
+    {
+      //moving = true;
+      inertiaTimer.Reset();
     }
 
     protected void Jump()
@@ -198,6 +230,12 @@ namespace Stratus.Gameplay
       rigidbody.AddForce(dir * acceleration * Time.deltaTime, ForceMode.VelocityChange);
     }
 
+    protected virtual void MoveWithCharacterController(Vector3 dir)
+    {
+      dir.y -= Physics.gravity.y;
+      characterController.Move(dir * acceleration * Time.deltaTime);
+    }
+
     protected virtual void RotateToTarget(Vector3 target)
     {
       Quaternion rot = Quaternion.LookRotation(target - transform.position);
@@ -205,6 +243,9 @@ namespace Stratus.Gameplay
       //targetRotation = Quaternion.Euler(newPos);
       transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(newPos), rotationSpeed * Time.deltaTime);
     }
+
+    private bool IsMovingWithVelocity() => Math.Abs(rigidbody.velocity.x) > movementThreshold || Math.Abs(rigidbody.velocity.z) > movementThreshold;
+    private bool IsMovingWithPosition() => Vector3.Distance(lastPosition, transform.position) <= movementThreshold;
 
   }
 

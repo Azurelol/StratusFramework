@@ -84,7 +84,7 @@ namespace Stratus
       {
         if (!member.isAssigned)
           return;
-
+        
         latestValue = member.Get();
         if (hasValue)
         {
