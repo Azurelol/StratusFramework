@@ -24,7 +24,7 @@ namespace Stratus.Editor
     private static string Title = "Scene Browser";
 
     [SerializeField]
-    public static List<SceneAsset> BookmarkedScenes { get { return Preferences.members.bookmarkedScenes; } }
+    public static List<SceneAsset> BookmarkedScenes { get { return Preferences.instance.bookmarkedScenes; } }
     private static GUIStyle RemoveButtonStyle
     {
       get

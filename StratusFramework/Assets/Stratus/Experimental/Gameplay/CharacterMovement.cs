@@ -26,6 +26,12 @@ namespace Stratus.Gameplay
       Jump
     }
 
+    public enum LocomotionMode
+    {
+      Velocity,
+      Force
+    }
+
     //public abstract class Action {}
     //public abstract class ActionEvent<T> : Stratus.Event where T : Action {}
 
@@ -50,7 +56,11 @@ namespace Stratus.Gameplay
     // Fields
     //--------------------------------------------------------------------------------------------/
     [Header("Settings")]
-    public float movementSpeed = 10f;
+    public LocomotionMode locomotion = LocomotionMode.Velocity;
+    [Tooltip("The maximum speed at which the character will move")]
+    public float speed = 10f;
+    [Tooltip("How fast the character achieves the desired speed")]
+    public float acceleration = 10f;
     public float movementThreshold = 0.2f;
     public float sprintMuiltiplier = 2f;
     public float rotationSpeed = 1f;
@@ -68,9 +78,9 @@ namespace Stratus.Gameplay
     public bool jumping { get; private set; }
     public bool grounded { get; private set; }
     public Vector3 velocity => rigidbody.velocity;
-    public float currentSpeed => sprinting ? movementSpeed * sprintMuiltiplier : movementSpeed;
-    public float speedRatio => currentSpeed / movementSpeed;
-    public float acceleration { get; set; }
+    public float maximumSpeed => sprinting ? speed * sprintMuiltiplier : speed;
+    public float speedRatio => maximumSpeed / speed;
+    //public float acceleration { get; set; }
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -84,8 +94,8 @@ namespace Stratus.Gameplay
 
     private void Update()
     {
-      if (moving)
-        OnMove();
+      //if (moving)
+      //  OnMove();
 
       if (jumping)
         OnJump();
@@ -131,13 +141,31 @@ namespace Stratus.Gameplay
     protected void Move(Vector3 dir)
     {
       heading = dir;
-      acceleration += (currentSpeed * Time.deltaTime);
-      acceleration = Mathf.Min(acceleration, movementSpeed);
-      OnMove();
+
+      switch (locomotion)
+      {
+        case LocomotionMode.Velocity:
+          MoveWithVelocity(dir);
+          break;
+
+        case LocomotionMode.Force:
+          MoveWithForce(dir);
+          break;
+      }
+
+      
+      
+      // If the difference in rotation is less than 180
+      //Vector3 
+
+      //acceleration += (currentSpeed * Time.deltaTime);
+      //acceleration = Mathf.Min(acceleration, movementSpeed);
+      //OnMove();
     }
 
     private void OnMove()
-    {      //Trace.Script("Applying velocity");
+    {      
+      //Trace.Script("Applying velocity");
       rigidbody.velocity = heading * acceleration;
     }
 
@@ -157,6 +185,26 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Methods: Utility
     //--------------------------------------------------------------------------------------------/
+    protected virtual void MoveWithVelocity(Vector3 dir)
+    {
+      Vector3 newVelocity = dir * maximumSpeed; 
+      float t = rigidbody.velocity.magnitude / maximumSpeed;
+      rigidbody.velocity = Vector3.Lerp(rigidbody.velocity, newVelocity, t);
+    }
+
+    protected virtual void MoveWithForce(Vector3 dir)
+    {
+      //rigidbody.AddForce(dir * maximumSpeed, ForceMode.Force);
+      rigidbody.AddForce(dir * acceleration * Time.deltaTime, ForceMode.VelocityChange);
+    }
+
+    protected virtual void RotateToTarget(Vector3 target)
+    {
+      Quaternion rot = Quaternion.LookRotation(target - transform.position);
+      var newPos = new Vector3(transform.eulerAngles.x, rot.eulerAngles.y, transform.eulerAngles.z);
+      //targetRotation = Quaternion.Euler(newPos);
+      transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(newPos), rotationSpeed * Time.deltaTime);
+    }
 
   }
 

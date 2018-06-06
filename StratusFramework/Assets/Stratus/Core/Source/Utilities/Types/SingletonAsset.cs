@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using Stratus.Utilities;
-using Stratus.Editor;
+//using Stratus.Editor;
 
 namespace Stratus
 {
@@ -90,19 +90,24 @@ namespace Stratus
     /// <summary>
     /// The singular instance to the asset, after it has been loaded from memory
     /// </summary>
-    protected static T instance { get; set; }
+    private static T _instance { get; set; }
+    
+    /// <summary>
+    /// Whether this singleton has been instantiated
+    /// </summary>
+    public static bool instantiated => _instance != null;
 
     /// <summary>
-    /// Access the data of this object.
+    /// Access the instance of this object.
     /// </summary>
-    public static T members
+    public static T instance
     {
       get
       {
-        if (instance == null)
-          instance = LoadOrCreate();
+        if (_instance == null)
+          _instance = LoadOrCreate();
         
-        return instance;
+        return _instance;
       }
     }
 
@@ -153,15 +158,15 @@ namespace Stratus
       var fullPath = folderPath + "/" + name + ".asset";
 
       // Now create the proper instance
-      instance = Assets.LoadOrCreateScriptableObject<T>(fullPath);
+      _instance = Assets.LoadOrCreateScriptableObject<T>(fullPath);
 
       // Also create the serialized object      
-      serializedObject_ = new SerializedObject(instance);
+      serializedObject_ = new SerializedObject(_instance);
 
       if (hidden)
-        instance.hideFlags = HideFlags.HideInHierarchy;
+        _instance.hideFlags = HideFlags.HideInHierarchy;
 
-      return instance;
+      return _instance;
     }
 
 
@@ -172,7 +177,7 @@ namespace Stratus
     /// </summary>
     public static void Save()
     {
-      EditorUtility.SetDirty(instance);
+      EditorUtility.SetDirty(_instance);
       AssetDatabase.SaveAssets();
     }
     
@@ -181,7 +186,7 @@ namespace Stratus
     /// </summary>
     public void Inspect()
     {
-      var inspector = UnityEditor.Editor.CreateEditor(members);
+      var inspector = UnityEditor.Editor.CreateEditor(instance);
       inspector.DrawDefaultInspector();
       
       if (GUI.changed)

@@ -26,7 +26,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    private static Internal.TagColors tagColors { get { return Preferences.members.tagColors; } }
+    private static Internal.TagColors tagColors { get { return Preferences.instance.tagColors; } }
     private static float tagColorPrefixWidth { get; } = 15f;
 
     //------------------------------------------------------------------------/

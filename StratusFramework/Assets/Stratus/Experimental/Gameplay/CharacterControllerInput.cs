@@ -152,7 +152,7 @@ namespace Stratus.Gameplay
           dir.x = axis.x;
           break;
       }
-      return dir;
+      return dir.normalized;
     }
 
     public void NextCamera()
