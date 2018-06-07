@@ -11,20 +11,20 @@ namespace Stratus
   [Serializable]
   public abstract class StratusSerializable
   {
-    public enum DrawingMethod
-    {
-      Default,
-      SingleLine
-    }
-
-    public int fieldCount { get; private set; }
-    protected virtual DrawingMethod drawingMethod { get; } = DrawingMethod.Default;
-
-    public StratusSerializable()
-    {
-      Type declaredType = GetType().DeclaringType;
-      fieldCount = declaredType.GetFields().Length;
-    }
+    //public enum DrawingMethod
+    //{
+    //  Default,
+    //  SingleLine
+    //}
+    //
+    //public int fieldCount { get; private set; }
+    //protected virtual DrawingMethod drawingMethod { get; } = DrawingMethod.Default;
+    //
+    //public StratusSerializable()
+    //{
+    //  Type declaredType = GetType().DeclaringType;
+    //  fieldCount = declaredType.GetFields().Length;
+    //}
 
   }
 

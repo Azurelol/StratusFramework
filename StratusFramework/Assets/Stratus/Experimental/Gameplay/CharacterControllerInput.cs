@@ -24,6 +24,7 @@ namespace Stratus.Gameplay
     {
       Free,
       FreeStrafe,
+
       TopDown,
       SideView
     }
@@ -32,6 +33,12 @@ namespace Stratus.Gameplay
     {
       Controller,
       Mouse
+    }
+
+    public enum MouseMovement
+    {
+      Direction,
+      Position
     }
 
     [Serializable]
@@ -46,18 +53,28 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     public new Camera camera;
     public InputMode mode = InputMode.Controller;
-    [Header("Movement")]
-    public InputField horizontal = new InputField();
-    public InputField vertical = new InputField();
-    public InputField sprint = new InputField();
-    public InputField jump = new InputField();
+
+    [Header("Default")]    
+    // Controller    
+    public InputField horizontal = new InputField();    
+    public InputField vertical = new InputField();    
+    public InputField sprint = new InputField();    
+    public InputField jump = new InputField();    
+    // Mouse    
+    public MouseMovement mouseMovement = MouseMovement.Direction;    
+    public InputField moveButton = new InputField(InputField.MouseButton.Right);
+
+    [Header("Custom")]
+    public List<InputAction> additional = new List<InputAction>();
+
     [Header("Camera")]
     public InputField cameraHorizontal = new InputField();
     public InputField cameraVertical = new InputField();
-    public InputField changeCamera = new InputField();    
+    public InputField changeCamera = new InputField();
     public List<CameraPreset> cameras = new List<CameraPreset>();
-    
+
     private static CharacterMovement.MoveEvent moveEvent = new CharacterMovement.MoveEvent();
+    private static CharacterMovement.MoveToEvent moveToEvent = new CharacterMovement.MoveToEvent();
     private static CharacterMovement.JumpEvent jumpEvent = new CharacterMovement.JumpEvent();
     private ArrayNavigator<CameraPreset> cameraNavigation;
 
@@ -107,6 +124,9 @@ namespace Stratus.Gameplay
           break;
       }
 
+      foreach (var input in additional)
+        input.Update();
+
       if (changeCamera.isDown)
         NextCamera();
     }
@@ -126,7 +146,25 @@ namespace Stratus.Gameplay
 
     private void PollMouse()
     {
+      switch (mouseMovement)
+      {
+        case MouseMovement.Direction:
+          if (moveButton.isPressed)
+          {
+            moveEvent.sprint = sprint.isPressed;
+            moveEvent.direction = CalculateMouseDirection(camera);
+            movement.gameObject.Dispatch<CharacterMovement.MoveEvent>(moveEvent);
+          }
+          break;
 
+        case MouseMovement.Position:
+          if (moveButton.isDown)
+          {
+            moveToEvent.position = CalculateMousePosition(camera);
+            movement.gameObject.Dispatch<CharacterMovement.MoveToEvent>(moveToEvent);
+          }
+          break;
+      }
     }
 
     //public Vector3 CalculateDirection(Vector2 axis, MovementOffset offset)
@@ -175,6 +213,19 @@ namespace Stratus.Gameplay
           break;
       }
       return dir.normalized;
+    }
+
+    protected Vector3 CalculateMouseDirection(Camera camera)
+    {
+      Vector3 mousePosition = CalculateMousePosition(camera);
+      Vector3 direction = mousePosition - transform.position;
+      direction.y = 0;
+      return direction.normalized;
+    }
+
+    public static Vector3 CalculateMousePosition(Camera camera)
+    {
+      return camera.MouseCastGetPosition();
     }
 
     public void NextCamera()

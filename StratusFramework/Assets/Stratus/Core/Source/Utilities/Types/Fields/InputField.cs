@@ -22,7 +22,7 @@ namespace Stratus
     /// <summary>
     /// The mouse button
     /// </summary>
-    public enum MouseButton { Left, Middle, Right }
+    public enum MouseButton { Left, Right, Middle }
     /// <summary>
     /// What action is being checked for
     /// </summary>
@@ -30,7 +30,7 @@ namespace Stratus
     /// <summary>
     /// How the given input axis is treated, as an axis (-1 to 1) or as a button
     /// </summary>
-    public enum AxisTyoe
+    public enum AxisType
     {
       Axis,
       Button
@@ -38,7 +38,7 @@ namespace Stratus
     /// <summary>
     /// The current state of the axis input
     /// </summary>
-    public enum ButtonState
+    public enum State
     {
       Down,
       Up,

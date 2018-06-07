@@ -17,6 +17,7 @@ MonoBehaviour:
   - {fileID: 102900000, guid: c23e35b1c73eec04eb2d5435bcf0dd54, type: 3}
   - {fileID: 102900000, guid: dd30c6a7a95b1894185852b10a50b85f, type: 3}
   - {fileID: 102900000, guid: 5311940562bbf064bb0a552d62d82096, type: 3}
+  - {fileID: 102900000, guid: a4622354d12c1684ab3356cb85037ace, type: 3}
   tagColors:
     enabled: 1
     coloredTags:

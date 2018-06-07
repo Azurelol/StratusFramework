@@ -66,7 +66,7 @@ namespace Stratus
     /// <summary>
     /// An input event represents a request to perform a specific action
     /// </summary>
-    public class InputEvent : Stratus.Event { public InputField.ButtonState state; }
+    public class InputEvent : Stratus.Event { public InputField.State state; }
     /// <summary>
     /// If an input has been accepted, and is legal, represents the beginning of an action
     /// </summary>

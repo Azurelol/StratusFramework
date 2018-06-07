@@ -32,6 +32,12 @@ namespace Stratus
       }
     }
 
+    public static void AddIfMissing<T, U>(this Dictionary<T, U> dictionary, T key, U value)
+    {
+      if (!dictionary.ContainsKey(key))
+        dictionary.Add(key, value);
+    }
+
 
 
   }

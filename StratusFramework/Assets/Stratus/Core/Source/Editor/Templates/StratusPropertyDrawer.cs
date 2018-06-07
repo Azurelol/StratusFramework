@@ -47,7 +47,15 @@ namespace Stratus
     /// <summary>
     /// Whether this property has multiple values
     /// </summary>
-    public bool hasMultipleFields { get; private set; }
+    public bool hasMultipleFields { get; private set; }   
+    /// <summary>
+    /// The current height for this property
+    /// </summary>
+    public float propertyHeight { get; protected set; }
+    /// <summary>
+    /// The parent property in an array
+    /// </summary>
+    protected SerializedProperty parent{ get; private set; }
 
     //------------------------------------------------------------------------/
     // Messages
@@ -94,6 +102,8 @@ namespace Stratus
     {
       //isArray = property.name != fieldInfo.Name;
       isArray = property.isArray;
+      propertyHeight = 0f;
+      
 
       position.height = EditorGUIUtility.singleLineHeight;
       label = EditorGUI.BeginProperty(position, label, property);
@@ -139,7 +149,9 @@ namespace Stratus
     //------------------------------------------------------------------------/
     private void DrawArray(Rect position, SerializedProperty property)
     {
-      for(int e = 0; e < property.arraySize; ++e)
+      parent = property;
+
+      for (int e = 0; e < property.arraySize; ++e)
       {
         SerializedProperty arrayElement = property.GetArrayElementAtIndex(e);
         DrawProperty(position, arrayElement);
@@ -166,6 +178,13 @@ namespace Stratus
         EditorGUI.PropertyField(position, property.FindPropertyRelative(field.Name));
         position.y += lineHeight;
       }
+    }
+
+    protected void DrawSingleProperty(ref Rect position, SerializedProperty property)
+    {
+      EditorGUI.PropertyField(position, property);
+      position.y += lineHeight;
+      propertyHeight += lineHeight;
     }
 
     public T GetEnumValue<T>(SerializedProperty property, string enumPropertyName)

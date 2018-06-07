@@ -584,10 +584,10 @@ namespace Stratus
           // Record the attributes for this property
           Attribute[] attributes = property.GetFieldAttributes();
           propertyAttributes.Add(property, attributes);
-          propertyAttributesMap.Add(property, new Dictionary<Type, Attribute>());
+          propertyAttributesMap.AddIfMissing(property, new Dictionary<Type, Attribute>());
           foreach (var attr in attributes)
           {
-            propertyAttributesMap[property].Add(attr.GetType(), attr);
+            propertyAttributesMap[property].AddIfMissing(attr.GetType(), attr);
             //Trace.Script($"{property.displayName} has the attribute '{attr.GetType().Name}'");
           }
           OnPropertyAttributesAdded(property);

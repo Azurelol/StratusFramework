@@ -1,0 +1,56 @@
+Modern UI Pack - v1.3f
+
+Do you have any questions or requests?
+Contact me via e-mail: isa.steam@outlook.com
+
+YouTube channel (tutorials, changes, etc.):
+https://www.youtube.com/c/Michsky
+
+Want to support?
+https://www.patreon.com/michsky
+
+Special thanks to:
+Raphael Monnerat (https://github.com/Shinao)
+
+Change Log v1.3
+----------------------------------------
+• New demo scene
+• Modal windows added
+• Radial sliders added
+• Animated icons added
+• New notifications added
+• New buttons added
+• Disabled button animation added
+• New icons added
+• More borders added
+• Improved dropdown
+• Improved progress bar
+• Tutorials added
+
+Known issues:
+• PB Standart (Loop) is static
+----------------------------------------
+
+Change Log v1.2
+----------------------------------------
+• Tool tips added
+• Input field added (WIP)
+• Dropdowns added (WIP)
+• New icons added
+• Icons are categorized
+• Added notification example scene
+• Fixed notification prefab animator
+----------------------------------------
+
+Change Log v1.1
+----------------------------------------
+• Toggles added
+• Switches added
+• Rating system added (WIP)
+• New progress bars added
+• Re-work on progress bars
+• Re-work on sliders
+• Some icons added
+• Editor shortcuts added
+• Some animation bugs fixed
+----------------------------------------

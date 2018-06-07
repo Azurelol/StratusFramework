@@ -30,7 +30,14 @@ namespace Stratus.Gameplay
     {
       Velocity,
       Force,
-      CharacterController
+      CharacterController,
+      NavMeshAgent
+    }
+
+    public enum MovementSpeed
+    {
+      Walk,
+      Sprint
     }
 
     public struct Settings
@@ -38,17 +45,30 @@ namespace Stratus.Gameplay
 
     }
 
-    //public abstract class Action {}
-    //public abstract class ActionEvent<T> : Stratus.Event where T : Action {}
+    /// <summary>
+    /// Base class for all CharacterMovement events
+    /// </summary>
+    public abstract class BaseMoveEvent : Stratus.Event
+    {
+      public FloatOverride speedOVerride;
+      public bool adjustFacing;
+    }
 
     /// <summary>
-    /// Signals the character to move
+    /// Signals the character to move towards the given direction
     /// </summary>
-    public class MoveEvent : Stratus.Event
+    public class MoveEvent : BaseMoveEvent
     {
       public Vector3 direction;
-      public bool adjustFacing;
       public bool sprint;
+    }
+
+    /// <summary>
+    /// Signals the character to move towards the given position
+    /// </summary>
+    public class MoveToEvent : BaseMoveEvent
+    {
+      public Vector3 position;
     }
 
     /// <summary>
@@ -80,21 +100,23 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
-    public NavMeshAgent navigation { get; private set; }
     public new Rigidbody rigidbody { get; private set; }
+    public NavMeshAgent navigation { get; private set; }
+    public CharacterController characterController { get; private set; }
 
-    public Vector3 heading { get; private set; }
-    public bool moving { get; private set; } 
+    public bool moving { get; private set; }
+    public bool turning { get; private set; }
     public bool sprinting { get; private set; }
     public bool jumping { get; private set; }
     public bool grounded { get; private set; }
+    private bool movingTo { get; set; }
+
+    public Vector3 heading { get; private set; }
     public Vector3 velocity => rigidbody.velocity;
+    public float currentSpeed => rigidbody.velocity.magnitude;
     public float maximumSpeed => sprinting ? speed * sprintMuiltiplier : speed;
     public float speedRatio => maximumSpeed / speed;
-    public float currentSpeed => rigidbody.velocity.magnitude;
-    private CharacterController characterController { get; set; }
-    private Vector3 lastPosition { get; set; }
-    //public float acceleration { get; set; }
+    private Vector3 lastPosition { get; set; } = Vector3.zero;
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -106,7 +128,7 @@ namespace Stratus.Gameplay
       navigation = GetComponent<NavMeshAgent>();
 
       if (locomotion == LocomotionMode.CharacterController)
-        characterController = gameObject.AddComponent<CharacterController>();
+        characterController = gameObject.GetOrAddComponent<CharacterController>();
 
       Subscribe();
     }
@@ -121,28 +143,32 @@ namespace Stratus.Gameplay
       if (jumping)
         OnJump();
 
-      // Decelerate somehow..
     }
 
     private void FixedUpdate()
     {
-       moving = locomotion == LocomotionMode.CharacterController ? IsMovingWithPosition() : IsMovingWithVelocity();
+      CheckMovement();
     }
-
+    
     //--------------------------------------------------------------------------------------------/
     // Events
     //--------------------------------------------------------------------------------------------/
     private void Subscribe()
     {
       gameObject.Connect<MoveEvent>(OnMoveEvent);
+      gameObject.Connect<MoveToEvent>(OnMoveToEvent);
       gameObject.Connect<JumpEvent>(OnJumpEvent);
     }
 
     private void OnMoveEvent(MoveEvent e)
     {
-      //Trace.Script($"Direction = {e.direction}", this);
       Move(e.direction);
       sprinting = e.sprint;
+    }
+
+    private void OnMoveToEvent(MoveToEvent e)
+    {
+      MoveTo(e.position);
     }
 
     private void OnJumpEvent(JumpEvent e)
@@ -167,7 +193,8 @@ namespace Stratus.Gameplay
       Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
       float headingDifference = Mathf.Abs(rotation.eulerAngles.y - transform.eulerAngles.y);
       //Trace.Script($"Heading difference = {headingDifference}", this);
-      if (headingDifference >= rotationThreshold)
+      turning = (headingDifference >= rotationThreshold);
+      if (turning)
         return;
 
       switch (locomotion)
@@ -183,21 +210,26 @@ namespace Stratus.Gameplay
         case LocomotionMode.CharacterController:
           MoveWithCharacterController(direction);
           break;
+
+        case LocomotionMode.NavMeshAgent:
+          MoveWithNavMeshAgent(direction);
+          break;
       }
 
       OnMove();
+    }
 
-      // If the difference in rotation is less than 180
-      //Vector3 
-
-      //acceleration += (currentSpeed * Time.deltaTime);
-      //acceleration = Mathf.Min(acceleration, movementSpeed);
-      //OnMove();
+    protected void MoveTo(Vector3 position)
+    {
+      movingTo = true;
+      navigation.SetDestination(position);
+      OnMove();
     }
 
     private void OnMove()
     {
-      //moving = true;
+      //lastPosition = transform.position;
+      moving = true;
       inertiaTimer.Reset();
     }
 
@@ -215,27 +247,33 @@ namespace Stratus.Gameplay
     }
 
     //--------------------------------------------------------------------------------------------/
-    // Methods: Utility
+    // Methods: Locomotion
     //--------------------------------------------------------------------------------------------/
     protected virtual void MoveWithVelocity(Vector3 dir)
     {
-      Vector3 newVelocity = dir * maximumSpeed; 
+      Vector3 newVelocity = dir * maximumSpeed;
       float t = rigidbody.velocity.magnitude / maximumSpeed;
       rigidbody.velocity = Vector3.Lerp(rigidbody.velocity, newVelocity, t);
     }
 
     protected virtual void MoveWithForce(Vector3 dir)
     {
-      //rigidbody.AddForce(dir * maximumSpeed, ForceMode.Force);
-      rigidbody.AddForce(dir * acceleration * Time.deltaTime, ForceMode.VelocityChange);
+      rigidbody.AddForce(CalculateVelocity(dir), ForceMode.Acceleration);
     }
 
     protected virtual void MoveWithCharacterController(Vector3 dir)
     {
-      dir.y -= Physics.gravity.y;
-      characterController.Move(dir * acceleration * Time.deltaTime);
+      characterController.Move(CalculateVelocity(dir));
     }
 
+    protected virtual void MoveWithNavMeshAgent(Vector3 dir)
+    {
+      navigation.Move(CalculateVelocity(dir));
+    }
+
+    //--------------------------------------------------------------------------------------------/
+    // Methods: Utility
+    //--------------------------------------------------------------------------------------------/
     protected virtual void RotateToTarget(Vector3 target)
     {
       Quaternion rot = Quaternion.LookRotation(target - transform.position);
@@ -244,8 +282,44 @@ namespace Stratus.Gameplay
       transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(newPos), rotationSpeed * Time.deltaTime);
     }
 
+    private void CheckMovement()
+    {
+      if (inertiaTimer.isFinished)
+      {
+        // Override movement
+        if (movingTo)
+        {
+          moving = movingTo = navigation.hasPath;
+        }
+        // Moving along a direction
+        else if (moving)
+        {
+          switch (locomotion)
+          {
+            case LocomotionMode.Velocity:
+            case LocomotionMode.Force:
+              moving = IsMovingWithVelocity();
+              break;
+            case LocomotionMode.CharacterController:
+            case LocomotionMode.NavMeshAgent:
+              moving = IsMovingWithPosition();
+              lastPosition = transform.position;
+              break;
+          }
+        }
+      }
+
+    }
+
+    private Vector3 CalculateVelocity(Vector3 direction) => direction * acceleration * maximumSpeed * Time.deltaTime;
     private bool IsMovingWithVelocity() => Math.Abs(rigidbody.velocity.x) > movementThreshold || Math.Abs(rigidbody.velocity.z) > movementThreshold;
-    private bool IsMovingWithPosition() => Vector3.Distance(lastPosition, transform.position) <= movementThreshold;
+    private bool IsMovingWithPosition()
+    {
+      float distance = Vector3.Distance(lastPosition, transform.position);
+      bool isMoving = distance >= movementThreshold;
+      Trace.Script($"Distance = {distance}, Moving = {isMoving}");
+      return isMoving;
+    }
 
   }
 
