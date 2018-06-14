@@ -479,15 +479,6 @@ namespace Stratus
       return array.Select(c => c as U).Where(c => c != null).ToArray();
     }
 
-    //public static T[] OfType<T>(this T[] array, Type type)
-    //  where T : class
-    //{ 
-    //  return array.Select(c => c as type).Where(c => c != null).ToArray();
-    //}
-
-
-
-
   }
 
 }

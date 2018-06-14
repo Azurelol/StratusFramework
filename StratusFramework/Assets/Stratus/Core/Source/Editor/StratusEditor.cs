@@ -666,7 +666,7 @@ namespace Stratus
     /// </summary>
     /// <param name="drawFunction"></param>
     /// <param name="validateFunction"></param>
-    protected void AddSection(System.Action<Rect> drawFunction, Func<bool> validateFunction = null)
+    protected void AddArea(System.Action<Rect> drawFunction, Func<bool> validateFunction = null)
     {
       drawGroupRequests.Add(new DrawGroupRequest(drawFunction, validateFunction));
     }

@@ -15,6 +15,7 @@ using UnityEngine.UI;
 
 namespace Stratus
 {
+
   public enum VectorAxis
   {
     x,

@@ -46,6 +46,10 @@ namespace Stratus
     /// </summary>
     public virtual float normalizedProgress { get { if (total == 0.0f) return 0.0f; return (current / total); } }
     /// <summary>
+    /// The inverse of the normalized progress, as a percentage value ranging from 0 to 1
+    /// </summary>
+    public virtual float inverseNormalizedProgress => 1f - normalizedProgress;
+    /// <summary>
     /// The current progress in this timer as a percentage value ranging from 0 to 100.
     /// </summary>
     public virtual float progress { get { if (total == 0.0f) return 0.0f; return (current / total) * 100.0f; } }

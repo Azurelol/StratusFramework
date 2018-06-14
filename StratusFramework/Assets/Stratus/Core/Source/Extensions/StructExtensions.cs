@@ -10,6 +10,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Stratus.Utilities;
+using System;
 
 namespace Stratus
 {
@@ -87,12 +88,12 @@ namespace Stratus
     {
       var randomPos = vec;
       // Calculate a random radius from the given range
-      float radius = Random.Range(minDist, maxDist);
+      float radius = UnityEngine.Random.Range(minDist, maxDist);
       // Randomly change the x and z values of the position
-      randomPos.x += Random.Range(-radius, radius);
-      randomPos.z += Random.Range(-radius, radius);
+      randomPos.x += UnityEngine.Random.Range(-radius, radius);
+      randomPos.z += UnityEngine.Random.Range(-radius, radius);
       if (!keepVertical)
-        randomPos.y += Random.Range(-radius, radius);
+        randomPos.y += UnityEngine.Random.Range(-radius, radius);
 
       return randomPos;
     }
@@ -109,23 +110,21 @@ namespace Stratus
       return target + (dir * dist);
     }       
 
-    public enum Vector3Component { x, y, z }
-
     /// <summary>
     /// Strips one of the components from the vector
     /// </summary>
     /// <param name="vec"></param>
-    /// <param name="component"></param>
+    /// <param name="axis"></param>
     /// <returns></returns>
-    public static Vector3 StripComponent(this Vector3 vec, Vector3Component component)
+    public static Vector3 Strip(this Vector3 vec, VectorAxis axis)
     {
-      switch (component)
+      switch (axis)
       {
-        case Vector3Component.x:
+        case VectorAxis.x:
           return new Vector3(0f, vec.y, vec.z);
-        case Vector3Component.y:
+        case VectorAxis.y:
           return new Vector3(vec.x, 0f, vec.z);
-        case Vector3Component.z:
+        case VectorAxis.z:
           return new Vector3(vec.x, vec.y, 0f);
       }
 
@@ -155,6 +154,11 @@ namespace Stratus
     {
       return (1 - t) * a + t * b;
     }
+
+    //public static Enum UnsetAll<T>(this Enum enumeration)
+    //{
+    //}
+
 
   }
 

@@ -17,14 +17,15 @@ namespace Stratus.Gameplay
     {
       PlayerForward,
       CameraForward,
-      CameraUp
+      CameraUp,
+      CameraRight,
+      None
     }
 
     public enum CameraMode
     {
       Free,
       FreeStrafe,
-
       TopDown,
       SideView
     }
@@ -41,11 +42,82 @@ namespace Stratus.Gameplay
       Position
     }
 
+    /// <summary>
+    /// A preset specifiying a control scheme for this character
+    /// </summary>
     [Serializable]
-    public class CameraPreset : StratusSerializable
+    public class Preset : StratusSerializable
     {
+      public string label;
       public CinemachineVirtualCameraBase camera;
       public CameraMode mode;
+      [Header("Input")]
+      public Coordinates.Axis horizontal;
+      public MovementOffset horizontalOffset = MovementOffset.None;
+      public Coordinates.Axis vertical;      
+      public MovementOffset verticalOffset = MovementOffset.None;
+      [Header("Additional")]
+      [Tooltip("Synchronizes the character's forward to face the camera")]
+      public CursorLockMode cursorLock = CursorLockMode.None;
+      public bool synchronizeForward = false;
+
+      /// <summary>
+      /// A common template for character control (FPS, 3rd Person, etc)
+      /// </summary>
+      public enum Template
+      {
+        FirstPerson,
+        ThirdPerson,
+        TopDown,
+        SideView
+      }
+
+      public static Preset FromTemplate(Template template)
+      {
+        Preset preset = new Preset();
+        switch (template)
+        {
+          case Template.FirstPerson:
+            preset.label = "First Person";
+            preset.horizontal = Coordinates.Axis.X;
+            preset.horizontalOffset = MovementOffset.CameraRight;
+            preset.vertical = Coordinates.Axis.Z;
+            preset.verticalOffset = MovementOffset.CameraForward;
+            preset.synchronizeForward = true;
+            preset.cursorLock = CursorLockMode.Locked;
+            break;
+
+          case Template.ThirdPerson:
+            preset.label = "Third Person";
+            preset.horizontal = Coordinates.Axis.X;
+            preset.horizontalOffset = MovementOffset.CameraRight;
+            preset.vertical = Coordinates.Axis.Z;
+            preset.verticalOffset = MovementOffset.CameraForward;
+            preset.cursorLock = CursorLockMode.Locked;
+            break;
+
+          case Template.TopDown:
+            preset.label = "Top Down";
+            preset.horizontal = Coordinates.Axis.X;
+            preset.horizontalOffset = MovementOffset.CameraRight;
+            preset.vertical = Coordinates.Axis.Z;
+            preset.verticalOffset = MovementOffset.CameraUp;
+            preset.cursorLock = CursorLockMode.Locked;
+            break;
+
+          case Template.SideView:
+            preset.label = "Side View";
+            preset.horizontal = Coordinates.Axis.X;
+            preset.horizontalOffset = MovementOffset.CameraRight;
+            preset.vertical = preset.vertical.UnsetAll();
+            preset.cursorLock = CursorLockMode.Locked;
+            break;
+        }
+        return preset;
+      }
+
+
+
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -54,14 +126,13 @@ namespace Stratus.Gameplay
     public new Camera camera;
     public InputMode mode = InputMode.Controller;
 
-    [Header("Default")]    
     // Controller    
-    public InputField horizontal = new InputField();    
-    public InputField vertical = new InputField();    
-    public InputField sprint = new InputField();    
-    public InputField jump = new InputField();    
+    public InputField horizontal = new InputField();
+    public InputField vertical = new InputField();
+    public InputField sprint = new InputField();
+    public InputField jump = new InputField();
     // Mouse    
-    public MouseMovement mouseMovement = MouseMovement.Direction;    
+    public MouseMovement mouseMovement = MouseMovement.Direction;
     public InputField moveButton = new InputField(InputField.MouseButton.Right);
 
     [Header("Custom")]
@@ -71,12 +142,14 @@ namespace Stratus.Gameplay
     public InputField cameraHorizontal = new InputField();
     public InputField cameraVertical = new InputField();
     public InputField changeCamera = new InputField();
-    public List<CameraPreset> cameras = new List<CameraPreset>();
+    public List<Preset> presets = new List<Preset>();
 
     private static CharacterMovement.MoveEvent moveEvent = new CharacterMovement.MoveEvent();
     private static CharacterMovement.MoveToEvent moveToEvent = new CharacterMovement.MoveToEvent();
     private static CharacterMovement.JumpEvent jumpEvent = new CharacterMovement.JumpEvent();
-    private ArrayNavigator<CameraPreset> cameraNavigation;
+    private ArrayNavigator<Preset> cameraNavigation;
+    private Transform cameraTransform;
+    private Dictionary<string, Preset> presetsMap = new Dictionary<string, Preset>();
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -85,8 +158,8 @@ namespace Stratus.Gameplay
     public StratusCharacterController extensible { get; set; }
     public CharacterControllerMovement movement { get; set; }
     public Vector2 axis => new Vector2(horizontal.value, vertical.value);
-    public CameraPreset cameraPreset { get; private set; }
-    public bool hasCameras => cameras.NotEmpty();
+    public Preset currentPreset { get; private set; }
+    public bool hasCameras => presets.NotEmpty();
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -94,10 +167,13 @@ namespace Stratus.Gameplay
     public void OnExtensibleAwake(ExtensibleBehaviour extensible)
     {
       this.extensible = (StratusCharacterController)extensible;
+      cameraTransform = camera.transform;
       movement = GetComponent<CharacterControllerMovement>();
-      cameraNavigation = new ArrayNavigator<CameraPreset>(cameras.ToArray(), true);
+      cameraNavigation = new ArrayNavigator<Preset>(presets.ToArray(), true);
       cameraNavigation.onIndexChanged = ChangeCamera;
-      ChangeCamera(cameras[0]);
+      presetsMap.AddRange(presets, (Preset preset) => preset.label);
+      ChangeCamera(presets[0]);
+
     }
 
     public void OnExtensibleStart()
@@ -139,8 +215,14 @@ namespace Stratus.Gameplay
       if (!horizontal.isNeutral || !vertical.isNeutral)
       {
         moveEvent.sprint = sprint.isPressed;
-        moveEvent.direction = CalculateDirection(axis, camera, cameraPreset);
+        moveEvent.turn = currentPreset.mode != CameraMode.FreeStrafe ? true : false;
+        moveEvent.direction = CalculateDirection(axis, currentPreset);
         movement.gameObject.Dispatch<CharacterMovement.MoveEvent>(moveEvent);
+      }
+
+      if (currentPreset.synchronizeForward && cameraTransform.forward != Vector3.zero)
+      {
+        transform.forward = cameraTransform.forward.Strip(VectorAxis.y);
       }
     }
 
@@ -167,52 +249,91 @@ namespace Stratus.Gameplay
       }
     }
 
-    //public Vector3 CalculateDirection(Vector2 axis, MovementOffset offset)
-    //{
-    //  Vector3 dir = Vector3.zero;
-    //  switch (offset)
-    //  {
-    //    case MovementOffset.PlayerForward:
-    //      dir.x = axis.x;
-    //      dir.z = axis.y;
-    //      break;
-    //
-    //    case MovementOffset.CameraUp:
-    //      dir = (axis.y * camera.transform.up) + (axis.x * camera.transform.right);
-    //      dir.y = 0f;
-    //      break;
-    //
-    //    case MovementOffset.CameraForward:
-    //      dir = (axis.y * camera.transform.forward) + (axis.x * camera.transform.right);
-    //      dir.y = 0f;
-    //      break;
-    //  }
-    //  return dir;
-    //}
-
-    public static Vector3 CalculateDirection(Vector2 axis, Camera camera, CameraPreset preset)
+    //--------------------------------------------------------------------------------------------/
+    // Methods: Utility
+    //--------------------------------------------------------------------------------------------/
+    protected Vector3 CalculateDirection(Vector2 axis, Preset preset)
     {
       Vector3 dir = Vector3.zero;
-      switch (preset.mode)
-      {
-        case CameraMode.Free:
-          dir = (axis.y * camera.transform.forward) + (axis.x * camera.transform.right);
-          dir.y = 0f;
-          break;
 
-        case CameraMode.FreeStrafe:
-          break;
+      dir = (axis.x * GetMovementOffset(preset.horizontalOffset)) +
+            (axis.y * GetMovementOffset(preset.verticalOffset));
+      dir.y = 0f;
 
-        case CameraMode.TopDown:
-          dir = (axis.y * camera.transform.up) + (axis.x * camera.transform.right);
-          dir.y = 0f;
-          break;
+      Trace.Script($"Direction = {dir}");
+      //Vector3 horizontal;
+      //switch (preset.horizontal)
+      //{
+      //  case Coordinates.Axis.X:          
+      //    
+      //    break;
+      //  case Coordinates.Axis.Y:
+      //    dir.y = axis.x;
+      //    break;
+      //  case Coordinates.Axis.Z:
+      //    dir.z = axis.x;
+      //    break;
+      //}
+      //
+      //dir = GetMovementOffset(preset.horizontalOffset);
+      //
+      //switch (preset.vertical)
+      //{
+      //  case Coordinates.Axis.X:
+      //    dir = axis.y * GetMovementOffset(preset.verticalOffset);
+      //    break;
+      //  case Coordinates.Axis.Y:
+      //    break;
+      //  case Coordinates.Axis.Z:
+      //    break;
+      //  default:
+      //    break;
+      //}
 
-        case CameraMode.SideView:
-          dir.x = axis.x;
-          break;
-      }
+      //switch (preset.mode)
+      //{
+      //  case CameraMode.Free:
+      //    dir = (axis.y * cameraTransform.forward) + (axis.x * camera.transform.right);
+      //    dir.y = 0f;
+      //    break;
+      //
+      //  case CameraMode.FreeStrafe:
+      //    dir = (axis.y * camera.transform.forward) + (axis.x * camera.transform.right);
+      //    dir.y = 0f;
+      //    break;
+      //
+      //  case CameraMode.TopDown:
+      //    dir = (axis.y * camera.transform.up) + (axis.x * camera.transform.right);
+      //    dir.y = 0f;
+      //    break;
+      //
+      //  case CameraMode.SideView:
+      //    dir.x = axis.x;
+      //    break;
+      //}
       return dir.normalized;
+    }
+
+    protected Vector3 GetMovementOffset(MovementOffset offset)
+    {      
+      switch (offset)
+      {
+        case MovementOffset.PlayerForward:
+          return transform.forward;
+
+        case MovementOffset.CameraForward:
+          return cameraTransform.forward;
+
+        case MovementOffset.CameraUp:
+          return cameraTransform.up;
+
+        case MovementOffset.CameraRight:
+          return cameraTransform.right;
+
+        case MovementOffset.None:
+          return Vector3.zero;
+      }
+      throw new NotImplementedException();
     }
 
     protected Vector3 CalculateMouseDirection(Camera camera)
@@ -233,14 +354,25 @@ namespace Stratus.Gameplay
       cameraNavigation.Navigate(ArrayNavigatorBase.Direction.Right);
     }
 
-    private void ChangeCamera(CameraPreset preset)
+    //--------------------------------------------------------------------------------------------/
+    // Methods: Utility
+    //--------------------------------------------------------------------------------------------/
+    private void ChangeCamera(Preset preset)
     {
       if (extensible.debug)
         Trace.Script($"Switching to {preset.camera.name}");
 
       cameraNavigation.previous.camera.Priority = 10;
       preset.camera.Priority = 15;
-      cameraPreset = preset;
+      Cursor.lockState = preset.cursorLock;
+
+      currentPreset = preset;
+    }
+
+    public void ChangeCamera(string label)
+    {
+      Preset preset = presetsMap.TryGetValue(label);
+      ChangeCamera(preset);
     }
 
 

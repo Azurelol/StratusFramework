@@ -26,6 +26,25 @@ namespace Stratus
     }
 
     /// <summary>
+    /// The axis in 3D space
+    /// </summary>
+    [Flags]
+    public enum Axis
+    {
+      X = 1 << 0,
+      Y = 1 << 1,
+      Z = 1 << 2
+    }
+
+    public static Axis UnsetAll(this Axis axis)
+    {
+      axis &= ~Axis.X;
+      axis &= ~Axis.Y;
+      axis &= ~Axis.Z;
+      return axis;
+    }
+
+    /// <summary>
     /// Returns a random cardinal direction
     /// </summary>
     /// <returns></returns>

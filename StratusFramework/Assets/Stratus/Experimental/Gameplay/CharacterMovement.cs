@@ -34,6 +34,13 @@ namespace Stratus.Gameplay
       NavMeshAgent
     }
 
+    public enum GroundDetection
+    {
+      Raycast,
+      CheckSphere,
+      Collision
+    }
+
     public enum MovementSpeed
     {
       Walk,
@@ -51,7 +58,7 @@ namespace Stratus.Gameplay
     public abstract class BaseMoveEvent : Stratus.Event
     {
       public FloatOverride speedOVerride;
-      public bool adjustFacing;
+      public bool turn;
     }
 
     /// <summary>
@@ -74,20 +81,24 @@ namespace Stratus.Gameplay
     /// <summary>
     /// Signals the character to jump
     /// </summary>
-    public class JumpEvent : Stratus.Event
-    {
-    }
+    public class JumpEvent : Stratus.Event { }
+
+    public class DidSomethingEvent : ActionEvent<DidSomethingEvent> { }
+
 
     //--------------------------------------------------------------------------------------------/
     // Fields
     //--------------------------------------------------------------------------------------------/
     [Tooltip("How locomotion for this character is handled")]
     public LocomotionMode locomotion = LocomotionMode.Velocity;
-    [Header("Settings")]
+
+    [Header("Movement")]
     [Tooltip("The maximum speed at which the character will move")]
     public float speed = 10f;
-    [Tooltip("How fast the character achieves the desired speed")]
-    public float acceleration = 10f;
+    [Tooltip("The curve of determining how the character ramps up in speed")]
+    public AnimationCurve accelerationCurve;
+    [Tooltip("How long it takes the character to ramp up to full speed"), Range(0f, 1f)]
+    public float accelerationRampUp = 1.0f;
     public float movementThreshold = 0.2f;
     public float sprintMuiltiplier = 2f;
     public float rotationSpeed = 1f;
@@ -95,7 +106,19 @@ namespace Stratus.Gameplay
     public float rotationThreshold = 180f;
     public bool faceDirection = true;
 
-    private Countdown inertiaTimer;
+    [Header("Jumping")]
+    public GroundDetection groundDetection = GroundDetection.Raycast;
+    public CapsuleCollider groundCollider;
+    public LayerMask groundLayer = new LayerMask();
+    [Range(0f, 1f)]
+    public float groundCastFrequency = 0.1f;
+    public bool airControl = true;
+
+    private Vector3 sphereOffset;
+    private static Ray groundCastRay = new Ray();
+    private static RaycastHit[] groundCast = new RaycastHit[50];
+    private Countdown inertiaTimer, accelerationTimer, groundCastTimer, jumpTimer;
+
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -103,29 +126,40 @@ namespace Stratus.Gameplay
     public new Rigidbody rigidbody { get; private set; }
     public NavMeshAgent navigation { get; private set; }
     public CharacterController characterController { get; private set; }
+    private CollisionProxy collisionProxy { get; set; }
 
     public bool moving { get; private set; }
     public bool turning { get; private set; }
     public bool sprinting { get; private set; }
     public bool jumping { get; private set; }
-    public bool grounded { get; private set; }
+    public bool grounded { get; private set; } = true;
     private bool movingTo { get; set; }
+    public bool receivedInput => !inertiaTimer.isFinished;
 
+    private Vector3 nextVelocity { get; set; }
     public Vector3 heading { get; private set; }
     public Vector3 velocity => rigidbody.velocity;
-    public float currentSpeed => rigidbody.velocity.magnitude;
+    public float currentSpeed { get { Vector3 horizontalVelocity = velocity; horizontalVelocity.y = 0f; return horizontalVelocity.magnitude; } }
     public float maximumSpeed => sprinting ? speed * sprintMuiltiplier : speed;
     public float speedRatio => maximumSpeed / speed;
     private Vector3 lastPosition { get; set; } = Vector3.zero;
+    public float accelerationRatio => accelerationTimer.inverseNormalizedProgress;
+    public float velocityRatio => currentSpeed / maximumSpeed;
+    public bool checkingMovement => inertiaTimer.isFinished;
 
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
     private void Awake()
     {
-      inertiaTimer = new Countdown(0.1f);
+      inertiaTimer = new Countdown(0.05f);
+      jumpTimer = new Countdown(0.05f);
+      accelerationTimer = new Countdown(accelerationRampUp);
       rigidbody = GetComponent<Rigidbody>();
       navigation = GetComponent<NavMeshAgent>();
+      //navigation.updatePosition = navigation.updateRotation = false;
+
+      SetGroundDetection();
 
       if (locomotion == LocomotionMode.CharacterController)
         characterController = gameObject.GetOrAddComponent<CharacterController>();
@@ -137,19 +171,29 @@ namespace Stratus.Gameplay
     {
       inertiaTimer.Update(Time.deltaTime);
 
-      if (moving && currentSpeed <= movementThreshold)
-        rigidbody.velocity = Vector3.zero;
+      CheckMovement();
+      CheckGrounded();
 
       if (jumping)
-        OnJump();
+      {
+        jumping = !grounded;
+        //if (!jumping)
+        //  navigation.updatePosition = true;
+        Trace.Script($"Jumping {jumping}");
+      }
 
     }
 
     private void FixedUpdate()
     {
-      CheckMovement();
+
     }
-    
+
+    private void Reset()
+    {
+      groundCollider = GetComponent<CapsuleCollider>();
+    }
+
     //--------------------------------------------------------------------------------------------/
     // Events
     //--------------------------------------------------------------------------------------------/
@@ -162,8 +206,17 @@ namespace Stratus.Gameplay
 
     private void OnMoveEvent(MoveEvent e)
     {
-      Move(e.direction);
       sprinting = e.sprint;
+
+      // Don't move while jumping if there's no air control set
+      if (jumping && !airControl)
+        return;
+
+      if (e.turn)
+        Turn(e.direction);
+
+      if (!turning)
+        Move(e.direction, e.turn);
     }
 
     private void OnMoveToEvent(MoveToEvent e)
@@ -173,29 +226,17 @@ namespace Stratus.Gameplay
 
     private void OnJumpEvent(JumpEvent e)
     {
-      if (!jumping)
+      if (grounded && !jumping)
         Jump();
     }
 
     //--------------------------------------------------------------------------------------------/
     // Methods: Movement
     //--------------------------------------------------------------------------------------------/
-    protected void Move(Vector3 direction)
+    protected void Move(Vector3 direction, bool turn)
     {
+      // Record the latest heading
       heading = direction;
-
-      if (faceDirection)
-      {
-        transform.forward = Vector3.Lerp(transform.forward, heading, Time.fixedDeltaTime * rotationSpeed);
-      }
-
-      // Don't move while the heading is greater than 180 degrees?
-      Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
-      float headingDifference = Mathf.Abs(rotation.eulerAngles.y - transform.eulerAngles.y);
-      //Trace.Script($"Heading difference = {headingDifference}", this);
-      turning = (headingDifference >= rotationThreshold);
-      if (turning)
-        return;
 
       switch (locomotion)
       {
@@ -219,6 +260,19 @@ namespace Stratus.Gameplay
       OnMove();
     }
 
+    protected void Turn(Vector3 direction)
+    {
+      transform.forward = Vector3.Lerp(transform.forward, direction, Time.fixedDeltaTime * rotationSpeed);
+
+      // Don't move while the heading is greater than 180 degrees?
+      Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
+      float headingDifference = Mathf.Abs(rotation.eulerAngles.y - transform.eulerAngles.y);
+
+      // If currently turning greater than threshold, don't move yet
+      turning = (headingDifference >= rotationThreshold);
+
+    }
+
     protected void MoveTo(Vector3 position)
     {
       movingTo = true;
@@ -228,22 +282,41 @@ namespace Stratus.Gameplay
 
     private void OnMove()
     {
-      //lastPosition = transform.position;
       moving = true;
       inertiaTimer.Reset();
     }
 
     protected void Jump()
     {
-      rigidbody.AddRelativeForce(Vector3.up * navigation.speed);
-      jumping = true;
-      gameObject.Dispatch<JumpEvent>(Event.Cache<JumpEvent>());
+      switch (locomotion)
+      {
+        case LocomotionMode.Velocity:
+          JumpWithVelocity();
+          break;
+
+        case LocomotionMode.Force:
+          JumpWithVelocity();
+          break;
+
+        case LocomotionMode.CharacterController:
+          JumpWithCharacterController();
+          break;
+
+        case LocomotionMode.NavMeshAgent:
+          break;
+      }
+
+      OnJump();
     }
 
     protected void OnJump()
     {
-      if (velocity.y == 0.0f)
-        jumping = false;
+      grounded = false;
+      jumping = true;
+      //navigation.updatePosition = false;
+      jumpTimer.Reset();
+      Trace.Script($"Jumping {jumping}");
+      //gameObject.Dispatch<JumpEvent>(Event.Cache<JumpEvent>());
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -251,29 +324,73 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     protected virtual void MoveWithVelocity(Vector3 dir)
     {
-      Vector3 newVelocity = dir * maximumSpeed;
-      float t = rigidbody.velocity.magnitude / maximumSpeed;
-      rigidbody.velocity = Vector3.Lerp(rigidbody.velocity, newVelocity, t);
+      rigidbody.velocity = CalculateVelocity(velocity, dir, ComputeInterpolant(velocityRatio));
     }
 
     protected virtual void MoveWithForce(Vector3 dir)
     {
-      rigidbody.AddForce(CalculateVelocity(dir), ForceMode.Acceleration);
+      Vector3 newVelocity = CalculateVelocity(velocity, dir, ComputeInterpolant(velocityRatio));
+      rigidbody.AddForce(newVelocity * Time.deltaTime, ForceMode.Impulse);
     }
 
     protected virtual void MoveWithCharacterController(Vector3 dir)
     {
-      characterController.Move(CalculateVelocity(dir));
+      float t = ComputeInterpolant(accelerationRatio);
+      Vector3 newVelocity = CalculateVelocity(characterController.velocity, dir, t);
+      newVelocity.y += Physics.gravity.y * Time.deltaTime;
+      characterController.Move(newVelocity * Time.deltaTime);
     }
 
     protected virtual void MoveWithNavMeshAgent(Vector3 dir)
     {
-      navigation.Move(CalculateVelocity(dir));
+      float t = ComputeInterpolant(accelerationRatio);
+      Vector3 newVelocity = CalculateVelocity(velocity, dir, t);
+      navigation.Move(newVelocity * Time.deltaTime);
+    }
+
+    protected virtual void JumpWithVelocity()
+    {
+      Vector3 jumpVelocity = Vector3.up * (speed + -Physics.gravity.y);
+      Trace.Script($"velocity = {velocity}, jump velocity = {jumpVelocity}");
+      //rigidbody.velocity += jumpVelocity;
+      rigidbody.velocity = velocity + jumpVelocity;
+      //rigidbody.AddForce(jumpVelocity, ForceMode.Force);
+    }
+
+    protected virtual void JumpWithCharacterController()
+    {
+      characterController.Move(Vector3.up * speed);
     }
 
     //--------------------------------------------------------------------------------------------/
     // Methods: Utility
     //--------------------------------------------------------------------------------------------/
+    /// <summary>
+    /// Calculates what the current velocity of the character should be, based on acceleration
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <returns></returns>
+    private Vector3 CalculateVelocity(Vector3 currentVelocity, Vector3 direction, float t)
+    {
+      Vector3 newVelocity = Vector3.Lerp(currentVelocity, direction * maximumSpeed, t);
+      //Trace.Script($"t = {t}, newVelocity = {newVelocity}");
+      return newVelocity;
+    }
+
+    /// <summary>
+    /// Computes the intertpolant value 't', to be used in a lerp
+    /// </summary>
+    /// <param name="ratio"></param>
+    /// <returns></returns>
+    private float ComputeInterpolant(float ratio, float min = 0.1f)
+    {
+      return accelerationCurve.Evaluate(Mathf.Max(ratio, min));
+    }
+
+    /// <summary>
+    /// Rotates this transform to face the target
+    /// </summary>
+    /// <param name="target"></param>
     protected virtual void RotateToTarget(Vector3 target)
     {
       Quaternion rot = Quaternion.LookRotation(target - transform.position);
@@ -282,8 +399,17 @@ namespace Stratus.Gameplay
       transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(newPos), rotationSpeed * Time.deltaTime);
     }
 
+    /// <summary>
+    /// Checks the current state of character movement, updating several flags
+    /// </summary>
     private void CheckMovement()
     {
+      if (moving)
+      {
+        accelerationTimer.Update(Time.deltaTime);
+      }
+
+ 
       if (inertiaTimer.isFinished)
       {
         // Override movement
@@ -298,27 +424,141 @@ namespace Stratus.Gameplay
           {
             case LocomotionMode.Velocity:
             case LocomotionMode.Force:
-              moving = IsMovingWithVelocity();
-              break;
             case LocomotionMode.CharacterController:
             case LocomotionMode.NavMeshAgent:
               moving = IsMovingWithPosition();
               lastPosition = transform.position;
               break;
           }
+
+          // If no longer moving, reset the acceleration state
+          if (!moving)
+          {
+            accelerationTimer.Reset();
+          }
         }
+
+        // Check for jumping state
+
       }
+
 
     }
 
-    private Vector3 CalculateVelocity(Vector3 direction) => direction * acceleration * maximumSpeed * Time.deltaTime;
-    private bool IsMovingWithVelocity() => Math.Abs(rigidbody.velocity.x) > movementThreshold || Math.Abs(rigidbody.velocity.z) > movementThreshold;
+    /// <summary>
+    /// Checks whether the character is currently grounded
+    /// </summary>
+    private void CheckGrounded()
+    {
+      if (groundDetection == GroundDetection.Collision || grounded)
+        return;
+
+      jumpTimer.Update(Time.deltaTime);
+      if (!jumpTimer.isFinished)
+        return;
+
+      groundCastTimer.Update(Time.deltaTime);
+      if (!groundCastTimer.isFinished)
+        return;
+
+      switch (groundDetection)
+      {
+        case GroundDetection.Raycast:
+          grounded = IsGroundedRaycast();
+          break;
+        case GroundDetection.CheckSphere:
+          grounded = IsGroundedSphereCast();
+          break;
+      }
+      groundCastTimer.Reset();
+
+      Trace.Script($"Grounded = {grounded}");
+
+    }
+
+
+    /// <summary>
+    /// Determines whether a velocity-driven character is currently moving
+    /// </summary>
+    /// <returns></returns>
+    private bool IsMovingWithVelocity()
+    {
+      return Math.Abs(rigidbody.velocity.x) > movementThreshold || Math.Abs(rigidbody.velocity.z) > movementThreshold;
+    }
+
+    /// <summary>
+    /// Determines whether translation-driven character is currently moving
+    /// </summary>
+    /// <returns></returns>
     private bool IsMovingWithPosition()
     {
       float distance = Vector3.Distance(lastPosition, transform.position);
       bool isMoving = distance >= movementThreshold;
-      Trace.Script($"Distance = {distance}, Moving = {isMoving}");
       return isMoving;
+    }
+
+    /// <summary>
+    /// Determines whether the velocity-driven character is currently jumping
+    /// </summary>
+    /// <returns></returns>
+    private bool IsGroundedRaycast()
+    {
+      //Physics.RaycastNonAlloc(groundCastRay, groundCast, 0.1f, groundLayer);
+      return Physics.Raycast(transform.position, Vector3.down, 0.1f, groundLayer);
+    }
+
+    private bool IsGroundedSphereCast()
+    {
+      Vector3 position = transform.position + sphereOffset;
+      Trace.Script($"CheckSphere({position}, {groundCollider.radius}, {groundLayer.value})");
+      return Physics.CheckSphere(position, groundCollider.radius, groundLayer);
+    }
+
+    /// <summary>
+    /// Determines whether the translation-driven character is currently jumping
+    /// </summary>
+    /// <returns></returns>
+    private bool IsGroundedPosition()
+    {
+      return !characterController.isGrounded;
+    }
+
+    //--------------------------------------------------------------------------------------------/
+    // Methods: Setup
+    //--------------------------------------------------------------------------------------------/
+    private void SetGroundDetection()
+    {
+      if (groundDetection != GroundDetection.Collision)
+        groundCastTimer = new Countdown(groundCastFrequency);
+
+      switch (groundDetection)
+      {
+        case GroundDetection.Raycast:
+          break;
+
+        case GroundDetection.CheckSphere:
+          sphereOffset = Vector3.up * (groundCollider.radius * 0.9f);
+          break;
+
+        case GroundDetection.Collision:
+          if (groundCollider.isTrigger)
+            collisionProxy = CollisionProxy.Construct(groundCollider, CollisionProxy.CollisionMessage.TriggerEnter, OnCollider);
+          else
+            collisionProxy = CollisionProxy.Construct(groundCollider, CollisionProxy.CollisionMessage.CollisionEnter, OnCollision);
+          break;
+      }
+    }
+
+    private void OnCollision(Collision collision)
+    {
+      grounded = collision.gameObject.layer == groundLayer;
+      Trace.Script($"Grounded = {grounded}");
+    }
+
+    private void OnCollider(Collider collider)
+    {
+      grounded = collider.gameObject.layer == groundLayer;
+      Trace.Script($"Grounded = {grounded}");
     }
 
   }

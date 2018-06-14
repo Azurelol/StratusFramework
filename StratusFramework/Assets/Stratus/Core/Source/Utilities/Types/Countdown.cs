@@ -47,6 +47,8 @@ namespace Stratus
     /// <returns>True if is done, false otherwise</returns>
     public override bool Update(float dt)
     {
+      this.current -= dt;
+
       if (this.current <= 0.0f)
       {
         this.current = 0f;
@@ -54,7 +56,6 @@ namespace Stratus
         return true;
       }
 
-      this.current -= dt;
       return false;
     }
   }

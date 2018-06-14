@@ -260,7 +260,7 @@ namespace Stratus
       // For all members to be visualized in the game view...
       ConstructGameVisualizations();
       // Poll the member values initially
-      OnPoll();
+      //OnPoll();
     }
 
     private void DrawSceneVisualization()
