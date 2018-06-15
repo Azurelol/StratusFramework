@@ -101,9 +101,10 @@ namespace Stratus.Gameplay
     public float accelerationRampUp = 1.0f;
     public float movementThreshold = 0.2f;
     public float sprintMuiltiplier = 2f;
-    public float rotationSpeed = 1f;
+    public float turningSpeed = 1f;
     [Range(0f, 360f)]
-    public float rotationThreshold = 180f;
+    [Tooltip("The maximum angle at which to prevent movement while turning")]
+    public float turningThreshold = 180f;
     public bool faceDirection = true;
 
     [Header("Jumping")]
@@ -118,7 +119,6 @@ namespace Stratus.Gameplay
     private static Ray groundCastRay = new Ray();
     private static RaycastHit[] groundCast = new RaycastHit[50];
     private Countdown inertiaTimer, accelerationTimer, groundCastTimer, jumpTimer;
-
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -146,6 +146,9 @@ namespace Stratus.Gameplay
     public float accelerationRatio => accelerationTimer.inverseNormalizedProgress;
     public float velocityRatio => currentSpeed / maximumSpeed;
     public bool checkingMovement => inertiaTimer.isFinished;
+    private float deltaTime => Time.fixedDeltaTime;
+    private bool turnOverThreshold { get; set; }
+    private bool applyMovement { get; set; }
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -169,16 +172,20 @@ namespace Stratus.Gameplay
 
     private void Update()
     {
+      //turning = false;
+
+
+      //turning = false;
       inertiaTimer.Update(Time.deltaTime);
 
-      CheckMovement();
+      if (moving)
+        accelerationTimer.Update(Time.deltaTime);
+
       CheckGrounded();
 
       if (jumping)
       {
         jumping = !grounded;
-        //if (!jumping)
-        //  navigation.updatePosition = true;
         Trace.Script($"Jumping {jumping}");
       }
 
@@ -186,7 +193,13 @@ namespace Stratus.Gameplay
 
     private void FixedUpdate()
     {
+      if (turning)
+        ApplyTurn();
 
+      if (applyMovement)
+        ApplyMovement();
+
+      CheckMovement();
     }
 
     private void Reset()
@@ -207,6 +220,8 @@ namespace Stratus.Gameplay
     private void OnMoveEvent(MoveEvent e)
     {
       sprinting = e.sprint;
+      heading = e.direction;
+      //Trace.Script($"Heading = {heading}");
 
       // Don't move while jumping if there's no air control set
       if (jumping && !airControl)
@@ -215,7 +230,7 @@ namespace Stratus.Gameplay
       if (e.turn)
         Turn(e.direction);
 
-      if (!turning)
+      if (!turnOverThreshold)
         Move(e.direction, e.turn);
     }
 
@@ -235,41 +250,66 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     protected void Move(Vector3 direction, bool turn)
     {
-      // Record the latest heading
-      heading = direction;
-
+      // Compute the next velocity
       switch (locomotion)
       {
         case LocomotionMode.Velocity:
-          MoveWithVelocity(direction);
+          nextVelocity = CalculateVelocity(velocity, direction, ComputeInterpolant(velocityRatio));
           break;
 
         case LocomotionMode.Force:
-          MoveWithForce(direction);
+          nextVelocity = CalculateVelocity(velocity, direction, ComputeInterpolant(velocityRatio));
           break;
 
         case LocomotionMode.CharacterController:
-          MoveWithCharacterController(direction);
           break;
 
         case LocomotionMode.NavMeshAgent:
-          MoveWithNavMeshAgent(direction);
           break;
       }
 
+      // Begin movement
       OnMove();
     }
 
-    protected void Turn(Vector3 direction)
+    private void OnMove()
     {
-      transform.forward = Vector3.Lerp(transform.forward, direction, Time.fixedDeltaTime * rotationSpeed);
+      applyMovement = true;
+      moving = true;
+      inertiaTimer.Reset();
+    }
 
-      // Don't move while the heading is greater than 180 degrees?
-      Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
-      float headingDifference = Mathf.Abs(rotation.eulerAngles.y - transform.eulerAngles.y);
+    private void ApplyMovement()
+    {
+      //Trace.Script($"Next velocity = {nextVelocity}");
+      switch (locomotion)
+      {
+        case LocomotionMode.Velocity:       
+          rigidbody.velocity = nextVelocity;
+          break;
 
-      // If currently turning greater than threshold, don't move yet
-      turning = (headingDifference >= rotationThreshold);
+        case LocomotionMode.Force:
+          //rigidbody.MovePosition(transform.position + heading * Time.deltaTime * maximumSpeed);
+          // Force = 1/2 m * v * v
+          // Velocity = (F / m) * Time.fixedDeltaTime
+          //Vector3 force = (nextVelocity * rigidbody.mass
+          //Vector3 force = (heading * maximumSpeed * rigidbody.mass) / (1f - 0.02f * rigidbody.drag);
+          Vector3 force = nextVelocity / (deltaTime);
+          Trace.Script($"Force = {force}");
+          rigidbody.AddForce(force, ForceMode.Force);
+          break;
+
+        case LocomotionMode.CharacterController:
+          MoveWithCharacterController(heading);
+          break;
+
+        case LocomotionMode.NavMeshAgent:
+          MoveWithNavMeshAgent(heading);
+          break;
+      }
+
+
+      applyMovement = false;
 
     }
 
@@ -280,12 +320,25 @@ namespace Stratus.Gameplay
       OnMove();
     }
 
-    private void OnMove()
+    protected void Turn(Vector3 direction)
     {
-      moving = true;
-      inertiaTimer.Reset();
+      // Decide whether this turn is over the threshold
+      turnOverThreshold = IsTurningOverThreshold(heading);
+      // Now do turn during fixed update
+      turning = true;
     }
 
+    private void ApplyTurn()
+    {
+      Vector3 turnVector = Vector3.Lerp(transform.forward, heading, deltaTime * turningSpeed);
+      transform.forward = turnVector;
+      turning = false;
+    }
+
+
+    //--------------------------------------------------------------------------------------------/
+    // Methods: Jumping
+    //--------------------------------------------------------------------------------------------/
     protected void Jump()
     {
       switch (locomotion)
@@ -322,30 +375,30 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Methods: Locomotion
     //--------------------------------------------------------------------------------------------/
-    protected virtual void MoveWithVelocity(Vector3 dir)
-    {
-      rigidbody.velocity = CalculateVelocity(velocity, dir, ComputeInterpolant(velocityRatio));
-    }
+    //protected virtual void MoveWithVelocity(Vector3 velocity)
+    //{
+    //  rigidbody.velocity = 
+    //}
 
-    protected virtual void MoveWithForce(Vector3 dir)
-    {
-      Vector3 newVelocity = CalculateVelocity(velocity, dir, ComputeInterpolant(velocityRatio));
-      rigidbody.AddForce(newVelocity * Time.deltaTime, ForceMode.Impulse);
-    }
+    //protected virtual void MoveWithForce(Vector3 dir)
+    //{
+    //  Vector3 newVelocity = 
+    //  
+    //}
 
     protected virtual void MoveWithCharacterController(Vector3 dir)
     {
       float t = ComputeInterpolant(accelerationRatio);
       Vector3 newVelocity = CalculateVelocity(characterController.velocity, dir, t);
-      newVelocity.y += Physics.gravity.y * Time.deltaTime;
-      characterController.Move(newVelocity * Time.deltaTime);
+      newVelocity.y += Physics.gravity.y * deltaTime;
+      characterController.Move(newVelocity * deltaTime);
     }
 
     protected virtual void MoveWithNavMeshAgent(Vector3 dir)
     {
       float t = ComputeInterpolant(accelerationRatio);
       Vector3 newVelocity = CalculateVelocity(velocity, dir, t);
-      navigation.Move(newVelocity * Time.deltaTime);
+      navigation.Move(newVelocity * deltaTime);
     }
 
     protected virtual void JumpWithVelocity()
@@ -373,7 +426,7 @@ namespace Stratus.Gameplay
     private Vector3 CalculateVelocity(Vector3 currentVelocity, Vector3 direction, float t)
     {
       Vector3 newVelocity = Vector3.Lerp(currentVelocity, direction * maximumSpeed, t);
-      //Trace.Script($"t = {t}, newVelocity = {newVelocity}");
+      //Trace.Script($"t = {t}, currentVelocity = {currentVelocity}, newVelocity = {newVelocity}");
       return newVelocity;
     }
 
@@ -396,7 +449,7 @@ namespace Stratus.Gameplay
       Quaternion rot = Quaternion.LookRotation(target - transform.position);
       var newPos = new Vector3(transform.eulerAngles.x, rot.eulerAngles.y, transform.eulerAngles.z);
       //targetRotation = Quaternion.Euler(newPos);
-      transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(newPos), rotationSpeed * Time.deltaTime);
+      transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(newPos), turningSpeed * Time.deltaTime);
     }
 
     /// <summary>
@@ -404,12 +457,6 @@ namespace Stratus.Gameplay
     /// </summary>
     private void CheckMovement()
     {
-      if (moving)
-      {
-        accelerationTimer.Update(Time.deltaTime);
-      }
-
- 
       if (inertiaTimer.isFinished)
       {
         // Override movement
@@ -437,12 +484,8 @@ namespace Stratus.Gameplay
             accelerationTimer.Reset();
           }
         }
-
         // Check for jumping state
-
       }
-
-
     }
 
     /// <summary>
@@ -473,9 +516,20 @@ namespace Stratus.Gameplay
       groundCastTimer.Reset();
 
       Trace.Script($"Grounded = {grounded}");
-
     }
 
+    /// <summary>
+    /// Deteremins whether this character needs to do a turn over the turn threshold
+    /// </summary>
+    /// <returns></returns>
+    private bool IsTurningOverThreshold(Vector3 direction)
+    {
+      // Don't move while the heading is greater than 180 degrees?
+      Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
+      float headingDifference = Mathf.Abs(rotation.eulerAngles.y - transform.eulerAngles.y);
+      // If currently turning greater than threshold, don't move yet
+      return (headingDifference >= turningThreshold);
+    }
 
     /// <summary>
     /// Determines whether a velocity-driven character is currently moving
