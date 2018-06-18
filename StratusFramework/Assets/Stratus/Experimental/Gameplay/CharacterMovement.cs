@@ -7,8 +7,6 @@ using System;
 
 namespace Stratus.Gameplay
 {
-  [RequireComponent(typeof(Rigidbody))]
-  [RequireComponent(typeof(NavMeshAgent))]
   public class CharacterMovement : StratusBehaviour
   {
     //--------------------------------------------------------------------------------------------/
@@ -108,6 +106,12 @@ namespace Stratus.Gameplay
     public bool faceDirection = true;
 
     [Header("Jumping")]
+    public float jumpSpeed = 5f;
+    [Tooltip("The curve of determining how the character ramps up in speed")]
+    public AnimationCurve jumpCurve;
+    public AnimationCurve fallCurve;
+    [Range(0f, 1f), Tooltip("How long it takes to reach the top of the jump")]
+    public float jumpApex = 0.5f;
     public GroundDetection groundDetection = GroundDetection.Raycast;
     public CapsuleCollider groundCollider;
     public LayerMask groundLayer = new LayerMask();
@@ -118,13 +122,13 @@ namespace Stratus.Gameplay
     private Vector3 sphereOffset;
     private static Ray groundCastRay = new Ray();
     private static RaycastHit[] groundCast = new RaycastHit[50];
-    private Countdown inertiaTimer, accelerationTimer, groundCastTimer, jumpTimer;
+    private Countdown inertiaTimer, accelerationTimer, groundCastTimer, jumpTimer, fallTimer;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
     public new Rigidbody rigidbody { get; private set; }
-    public NavMeshAgent navigation { get; private set; }
+    public NavMeshAgent navMeshAgent { get; private set; }
     public CharacterController characterController { get; private set; }
     private CollisionProxy collisionProxy { get; set; }
 
@@ -132,23 +136,44 @@ namespace Stratus.Gameplay
     public bool turning { get; private set; }
     public bool sprinting { get; private set; }
     public bool jumping { get; private set; }
+    public bool falling { get; private set; }
     public bool grounded { get; private set; } = true;
     private bool movingTo { get; set; }
     public bool receivedInput => !inertiaTimer.isFinished;
 
-    private Vector3 nextVelocity { get; set; }
+    private Vector3 nextVelocity;
+    private float nextSpeedSquared;
     public Vector3 heading { get; private set; }
-    public Vector3 velocity => rigidbody.velocity;
+    public Vector3 velocity
+    {
+      get
+      {
+        switch (locomotion)
+        {
+          case LocomotionMode.Velocity:
+          case LocomotionMode.Force:
+            return rigidbody.velocity;
+          case LocomotionMode.CharacterController:
+            return characterController.velocity;
+          case LocomotionMode.NavMeshAgent:
+            return navMeshAgent.velocity;
+        }
+        throw new NotImplementedException("Missing locomotion mode");
+      }
+    }
     public float currentSpeed { get { Vector3 horizontalVelocity = velocity; horizontalVelocity.y = 0f; return horizontalVelocity.magnitude; } }
     public float maximumSpeed => sprinting ? speed * sprintMuiltiplier : speed;
     public float speedRatio => maximumSpeed / speed;
     private Vector3 lastPosition { get; set; } = Vector3.zero;
-    public float accelerationRatio => accelerationTimer.inverseNormalizedProgress;
     public float velocityRatio => currentSpeed / maximumSpeed;
     public bool checkingMovement => inertiaTimer.isFinished;
     private float deltaTime => Time.fixedDeltaTime;
     private bool turnOverThreshold { get; set; }
     private bool applyMovement { get; set; }
+    public float accelerationProgress => accelerationTimer.inverseNormalizedProgress;
+    private float jumpProgress => jumpTimer.inverseNormalizedProgress;
+    private float fallProgress => fallTimer.inverseNormalizedProgress;
+
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -156,39 +181,21 @@ namespace Stratus.Gameplay
     private void Awake()
     {
       inertiaTimer = new Countdown(0.05f);
-      jumpTimer = new Countdown(0.05f);
+      jumpTimer = new Countdown(jumpApex);
+      fallTimer = new Countdown(jumpApex);
       accelerationTimer = new Countdown(accelerationRampUp);
+
       rigidbody = GetComponent<Rigidbody>();
-      navigation = GetComponent<NavMeshAgent>();
-      //navigation.updatePosition = navigation.updateRotation = false;
+      navMeshAgent = GetComponent<NavMeshAgent>();
+      characterController = gameObject.GetComponent<CharacterController>();
 
       SetGroundDetection();
-
-      if (locomotion == LocomotionMode.CharacterController)
-        characterController = gameObject.GetOrAddComponent<CharacterController>();
-
       Subscribe();
     }
 
     private void Update()
     {
-      //turning = false;
-
-
-      //turning = false;
-      inertiaTimer.Update(Time.deltaTime);
-
-      if (moving)
-        accelerationTimer.Update(Time.deltaTime);
-
-      CheckGrounded();
-
-      if (jumping)
-      {
-        jumping = !grounded;
-        Trace.Script($"Jumping {jumping}");
-      }
-
+      UpdateTimers();
     }
 
     private void FixedUpdate()
@@ -196,15 +203,34 @@ namespace Stratus.Gameplay
       if (turning)
         ApplyTurn();
 
-      if (applyMovement)
+      if (applyMovement || jumping || falling)
         ApplyMovement();
+      else if (!grounded)
+        ApplyFall();
 
+      //if (jumping)
+      //  ApplyJump();
+      //
+      //if (falling)
+      //  ApplyFall();
+    }
+
+    private void LateUpdate()
+    {
       CheckMovement();
+
+      if (!jumping)
+        CheckGrounded();
     }
 
     private void Reset()
     {
       groundCollider = GetComponent<CapsuleCollider>();
+    }
+
+    private void OnValidate()
+    {
+
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -254,26 +280,30 @@ namespace Stratus.Gameplay
       switch (locomotion)
       {
         case LocomotionMode.Velocity:
-          nextVelocity = CalculateVelocity(velocity, direction, ComputeInterpolant(velocityRatio));
+          nextVelocity = CalculateVelocity(velocity, direction, ComputeInterpolant(accelerationCurve, velocityRatio));
           break;
 
         case LocomotionMode.Force:
-          nextVelocity = CalculateVelocity(velocity, direction, ComputeInterpolant(velocityRatio));
+          nextVelocity = CalculateVelocity(velocity, direction, ComputeInterpolant(accelerationCurve, velocityRatio));
           break;
 
         case LocomotionMode.CharacterController:
+          nextVelocity = CalculateVelocity(characterController.velocity, direction, ComputeInterpolant(accelerationCurve, accelerationProgress));
+          //nextVelocity.y = characterController.velocity.y;
           break;
 
         case LocomotionMode.NavMeshAgent:
+          nextVelocity = CalculateVelocity(velocity, direction, ComputeInterpolant(accelerationCurve, accelerationProgress));
           break;
       }
 
-      // Begin movement
+      // Begin movement          
       OnMove();
     }
 
     private void OnMove()
     {
+      nextSpeedSquared = nextVelocity.sqrMagnitude;
       applyMovement = true;
       moving = true;
       inertiaTimer.Reset();
@@ -281,42 +311,93 @@ namespace Stratus.Gameplay
 
     private void ApplyMovement()
     {
+      float verticalSpeed = 0f;
+      if (jumping)
+      {
+        float t = ComputeInterpolant(jumpCurve, jumpProgress);
+        switch (locomotion)
+        {
+          case LocomotionMode.Velocity:
+          case LocomotionMode.Force:
+            verticalSpeed = jumpSpeed * jumpCurve.Evaluate(t);
+            break;
+          case LocomotionMode.CharacterController:
+            verticalSpeed = jumpSpeed * jumpCurve.Evaluate(t);
+            break;
+          case LocomotionMode.NavMeshAgent:
+            break;
+        }
+      }
+      else if (falling)
+      {
+        float t = ComputeInterpolant(fallCurve, fallProgress);
+        switch (locomotion)
+        {
+          case LocomotionMode.Velocity:
+          case LocomotionMode.Force:
+            break;
+          case LocomotionMode.CharacterController:
+            verticalSpeed = fallCurve.Evaluate(t) * -jumpSpeed;
+            break;
+          case LocomotionMode.NavMeshAgent:
+            break;
+        }
+      }
+      else
+      {
+        verticalSpeed = Physics.gravity.y * deltaTime;
+      }
+
+      Trace.Script($"Vertical speed = {verticalSpeed}");
+      nextVelocity.y = verticalSpeed;
       //Trace.Script($"Next velocity = {nextVelocity}");
+
+      //if (!applyMovement)
+      //  nextVelocity = Vector3.zero;
+      
       switch (locomotion)
       {
-        case LocomotionMode.Velocity:       
+        case LocomotionMode.Velocity:
+          //nextVelocity.y = rigidbody.velocity.y;
           rigidbody.velocity = nextVelocity;
+          nextVelocity = Vector3.zero;
+          applyMovement = false;
           break;
 
         case LocomotionMode.Force:
-          //rigidbody.MovePosition(transform.position + heading * Time.deltaTime * maximumSpeed);
-          // Force = 1/2 m * v * v
-          // Velocity = (F / m) * Time.fixedDeltaTime
-          //Vector3 force = (nextVelocity * rigidbody.mass
-          //Vector3 force = (heading * maximumSpeed * rigidbody.mass) / (1f - 0.02f * rigidbody.drag);
-          Vector3 force = nextVelocity / (deltaTime);
-          Trace.Script($"Force = {force}");
-          rigidbody.AddForce(force, ForceMode.Force);
+          if (rigidbody.velocity.sqrMagnitude >= nextSpeedSquared)
+          {
+            nextVelocity = Vector3.zero;
+            applyMovement = false;
+          }
+          else
+          {
+            Vector3 force = nextVelocity;
+            rigidbody.AddForce(force, ForceMode.Impulse);
+          }
           break;
 
         case LocomotionMode.CharacterController:
-          MoveWithCharacterController(heading);
+          CollisionFlags flags = characterController.Move(nextVelocity * deltaTime);
+          if (!flags.HasFlag(CollisionFlags.CollidedBelow))
+            grounded = false;
+
+          nextVelocity = Vector3.zero;
+          applyMovement = false;
           break;
 
         case LocomotionMode.NavMeshAgent:
-          MoveWithNavMeshAgent(heading);
+          navMeshAgent.Move(nextVelocity * deltaTime);
+          nextVelocity = Vector3.zero;
+          applyMovement = false;
           break;
       }
-
-
-      applyMovement = false;
-
     }
 
     protected void MoveTo(Vector3 position)
     {
       movingTo = true;
-      navigation.SetDestination(position);
+      navMeshAgent.SetDestination(position);
       OnMove();
     }
 
@@ -335,6 +416,33 @@ namespace Stratus.Gameplay
       turning = false;
     }
 
+    private void UpdateTimers()
+    {
+      inertiaTimer.Update(Time.deltaTime);
+
+      if (moving)
+        accelerationTimer.Update(Time.deltaTime);
+
+      if (jumping)
+      {
+        jumpTimer.Update(Time.deltaTime);
+        if (jumpTimer.isFinished)
+        {
+          jumping = false;
+          falling = true;
+        }
+      }
+
+      if (falling)
+      {
+        fallTimer.Update(Time.deltaTime);
+        if (fallTimer.isFinished)
+        {
+          falling = false;
+          return;
+        }
+      }
+    }
 
     //--------------------------------------------------------------------------------------------/
     // Methods: Jumping
@@ -344,15 +452,12 @@ namespace Stratus.Gameplay
       switch (locomotion)
       {
         case LocomotionMode.Velocity:
-          JumpWithVelocity();
           break;
 
         case LocomotionMode.Force:
-          JumpWithVelocity();
           break;
 
         case LocomotionMode.CharacterController:
-          JumpWithCharacterController();
           break;
 
         case LocomotionMode.NavMeshAgent:
@@ -366,53 +471,50 @@ namespace Stratus.Gameplay
     {
       grounded = false;
       jumping = true;
-      //navigation.updatePosition = false;
+      falling = false;
       jumpTimer.Reset();
-      Trace.Script($"Jumping {jumping}");
-      //gameObject.Dispatch<JumpEvent>(Event.Cache<JumpEvent>());
+      fallTimer.Reset();
     }
 
-    //--------------------------------------------------------------------------------------------/
-    // Methods: Locomotion
-    //--------------------------------------------------------------------------------------------/
-    //protected virtual void MoveWithVelocity(Vector3 velocity)
-    //{
-    //  rigidbody.velocity = 
-    //}
-
-    //protected virtual void MoveWithForce(Vector3 dir)
-    //{
-    //  Vector3 newVelocity = 
-    //  
-    //}
-
-    protected virtual void MoveWithCharacterController(Vector3 dir)
+    protected void ApplyJump()
     {
-      float t = ComputeInterpolant(accelerationRatio);
-      Vector3 newVelocity = CalculateVelocity(characterController.velocity, dir, t);
-      newVelocity.y += Physics.gravity.y * deltaTime;
-      characterController.Move(newVelocity * deltaTime);
+
+      float t = ComputeInterpolant(jumpCurve, jumpProgress);
+      Vector3 newVelocity = velocity;
+
+      switch (locomotion)
+      {
+        case LocomotionMode.Velocity:
+        case LocomotionMode.Force:
+          newVelocity.y = jumpSpeed * jumpCurve.Evaluate(t);
+          rigidbody.velocity = newVelocity;
+          break;
+        case LocomotionMode.CharacterController:
+          newVelocity = Vector3.up * jumpSpeed * jumpCurve.Evaluate(t) * deltaTime;
+          characterController.Move(newVelocity);
+          break;
+        case LocomotionMode.NavMeshAgent:
+          break;
+      }
+      //Trace.Script($"Applying jump velocity ({t}) = {newVelocity}");
     }
 
-    protected virtual void MoveWithNavMeshAgent(Vector3 dir)
+    protected void ApplyFall()
     {
-      float t = ComputeInterpolant(accelerationRatio);
-      Vector3 newVelocity = CalculateVelocity(velocity, dir, t);
-      navigation.Move(newVelocity * deltaTime);
-    }
+      switch (locomotion)
+      {
+        case LocomotionMode.Velocity:
+        case LocomotionMode.Force:
+          break;
+        case LocomotionMode.CharacterController:
+          characterController.Move(Physics.gravity * deltaTime);
+          //float t = ComputeInterpolant(fallCurve, fallProgress);
+          //characterController.Move(fallCurve.Evaluate(t) * );
+          break;
+        case LocomotionMode.NavMeshAgent:
+          break;
+      }
 
-    protected virtual void JumpWithVelocity()
-    {
-      Vector3 jumpVelocity = Vector3.up * (speed + -Physics.gravity.y);
-      Trace.Script($"velocity = {velocity}, jump velocity = {jumpVelocity}");
-      //rigidbody.velocity += jumpVelocity;
-      rigidbody.velocity = velocity + jumpVelocity;
-      //rigidbody.AddForce(jumpVelocity, ForceMode.Force);
-    }
-
-    protected virtual void JumpWithCharacterController()
-    {
-      characterController.Move(Vector3.up * speed);
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -433,11 +535,11 @@ namespace Stratus.Gameplay
     /// <summary>
     /// Computes the intertpolant value 't', to be used in a lerp
     /// </summary>
-    /// <param name="ratio"></param>
+    /// <param name="progress"></param>
     /// <returns></returns>
-    private float ComputeInterpolant(float ratio, float min = 0.1f)
+    private float ComputeInterpolant(AnimationCurve curve, float progress, float min = 0.1f)
     {
-      return accelerationCurve.Evaluate(Mathf.Max(ratio, min));
+      return curve.Evaluate(Mathf.Max(progress, min));
     }
 
     /// <summary>
@@ -462,7 +564,7 @@ namespace Stratus.Gameplay
         // Override movement
         if (movingTo)
         {
-          moving = movingTo = navigation.hasPath;
+          moving = movingTo = navMeshAgent.hasPath;
         }
         // Moving along a direction
         else if (moving)
@@ -484,7 +586,6 @@ namespace Stratus.Gameplay
             accelerationTimer.Reset();
           }
         }
-        // Check for jumping state
       }
     }
 
@@ -500,22 +601,30 @@ namespace Stratus.Gameplay
       if (!jumpTimer.isFinished)
         return;
 
-      groundCastTimer.Update(Time.deltaTime);
-      if (!groundCastTimer.isFinished)
-        return;
-
-      switch (groundDetection)
+      if (locomotion == LocomotionMode.CharacterController)
       {
-        case GroundDetection.Raycast:
-          grounded = IsGroundedRaycast();
-          break;
-        case GroundDetection.CheckSphere:
-          grounded = IsGroundedSphereCast();
-          break;
+        grounded = characterController.isGrounded;
       }
-      groundCastTimer.Reset();
+      else
+      {
+        groundCastTimer.Update(Time.deltaTime);
+        if (!groundCastTimer.isFinished)
+          return;
 
-      Trace.Script($"Grounded = {grounded}");
+        switch (groundDetection)
+        {
+          case GroundDetection.Raycast:
+            grounded = IsGroundedRaycast();
+            break;
+          case GroundDetection.CheckSphere:
+            grounded = IsGroundedSphereCast();
+            break;
+        }
+        groundCastTimer.Reset();
+      }
+
+
+      //Trace.Script($"Grounded = {grounded}");
     }
 
     /// <summary>
@@ -563,9 +672,20 @@ namespace Stratus.Gameplay
 
     private bool IsGroundedSphereCast()
     {
-      Vector3 position = transform.position + sphereOffset;
-      Trace.Script($"CheckSphere({position}, {groundCollider.radius}, {groundLayer.value})");
-      return Physics.CheckSphere(position, groundCollider.radius, groundLayer);
+      RaycastHit hitInfo;
+      bool condition = Physics.SphereCast(
+        groundCollider.transform.position + groundCollider.center + (Vector3.up * 0.1f),
+        groundCollider.height / 2,
+        Vector3.down,
+        out hitInfo,
+        0.1f
+      );
+
+      return condition;
+
+      //Vector3 position = transform.position + sphereOffset;
+      //Trace.Script($"CheckSphere({position}, {groundCollider.radius}, {groundLayer.value})");
+      //return Physics.CheckSphere(position, groundCollider.radius, groundLayer);
     }
 
     /// <summary>
@@ -580,6 +700,34 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Methods: Setup
     //--------------------------------------------------------------------------------------------/
+    public void SetComponents()
+    {
+      switch (locomotion)
+      {
+        case CharacterMovement.LocomotionMode.Velocity:
+        case CharacterMovement.LocomotionMode.Force:
+          {
+            gameObject.RemoveComponents(typeof(NavMeshAgent), typeof(CharacterController));
+            Rigidbody rigidbody = gameObject.GetOrAddComponent<Rigidbody>();
+            rigidbody.freezeRotation = true;
+            //rigidbody.
+          }
+          break;
+        case CharacterMovement.LocomotionMode.CharacterController:
+          {
+            gameObject.RemoveComponents(typeof(Rigidbody), typeof(NavMeshAgent));
+            CharacterController characterController = gameObject.GetOrAddComponent<CharacterController>();
+          }
+          break;
+        case CharacterMovement.LocomotionMode.NavMeshAgent:
+          {
+            gameObject.RemoveComponents(typeof(Rigidbody), typeof(CharacterController));
+            NavMeshAgent navMeshAgent = gameObject.GetOrAddComponent<NavMeshAgent>();
+          }
+          break;
+      }
+    }
+
     private void SetGroundDetection()
     {
       if (groundDetection != GroundDetection.Collision)
@@ -599,6 +747,18 @@ namespace Stratus.Gameplay
             collisionProxy = CollisionProxy.Construct(groundCollider, CollisionProxy.CollisionMessage.TriggerEnter, OnCollider);
           else
             collisionProxy = CollisionProxy.Construct(groundCollider, CollisionProxy.CollisionMessage.CollisionEnter, OnCollision);
+          break;
+      }
+
+      switch (locomotion)
+      {
+        case LocomotionMode.Velocity:
+        case LocomotionMode.Force:
+          break;
+        case LocomotionMode.CharacterController:
+          characterController.Move(-Vector3.up);
+          break;
+        case LocomotionMode.NavMeshAgent:
           break;
       }
     }

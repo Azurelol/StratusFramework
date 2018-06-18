@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.AI;
 
 namespace Stratus.Gameplay
 {
@@ -10,9 +11,14 @@ namespace Stratus.Gameplay
   {
     protected override void OnStratusEditorEnable()
     {
-      //AddConstraint(nameof(CharacterMovement.groundLayer), () => target.groundDetection == CharacterMovement.GroundDetection.Layer);
       AddConstraint(nameof(CharacterMovement.groundCollider), () => target.groundDetection != CharacterMovement.GroundDetection.Collision);
       AddConstraint(nameof(CharacterMovement.groundCastFrequency), () => target.groundDetection != CharacterMovement.GroundDetection.Collision);
+      AddPropertyChangeCallback(nameof(CharacterMovement.locomotion), OnLocomotionChange);
+    }
+
+    private void OnLocomotionChange()
+    {
+      target.SetComponents();
     }
 
   }

@@ -9,8 +9,6 @@ namespace Stratus.Gameplay
   /// <summary>
   /// A simple, modular player controller
   /// </summary>
-  [RequireComponent(typeof(Rigidbody))]
-  [RequireComponent(typeof(NavMeshAgent))]
   public class StratusCharacterController : ExtensibleBehaviour
   {
     //--------------------------------------------------------------------------------------------/
@@ -64,7 +62,7 @@ namespace Stratus.Gameplay
     {
       rigidbody = GetComponent<Rigidbody>();
       navigation = GetComponent<NavMeshAgent>();
-      navigation.Warp(transform.position);
+      //navigation.Warp(transform.position);
     }
 
     protected override void OnStart()

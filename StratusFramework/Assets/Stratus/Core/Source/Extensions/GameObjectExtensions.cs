@@ -106,6 +106,40 @@ namespace Stratus
         component = go.gameObject.AddComponent(type);
       return component;
     }
+    
+    public static bool RemoveComponent<T>(this GameObject gameObject) where T : Component
+    {
+      T component = gameObject.GetComponent<T>();
+      if (component != null)
+      {
+        if (Application.isPlaying)
+          UnityEngine.Object.Destroy(component);
+        else if (Application.isEditor)
+          UnityEngine.Object.DestroyImmediate(component);
+        return true;
+      }
+      return false;
+    }
+
+    public static bool RemoveComponent(this GameObject gameObject, System.Type type)
+    {
+      Component component = gameObject.GetComponent(type);
+      if (component != null)
+      {
+        if (Application.isPlaying)
+          UnityEngine.Object.Destroy(component);
+        else if (Application.isEditor)
+          UnityEngine.Object.DestroyImmediate(component);
+        return true;
+      }
+      return false;
+    }
+
+    public static void RemoveComponents(this GameObject gameObject, params Type[] types)
+    {
+      foreach (var type in types)
+        gameObject.RemoveComponent(type);
+    }
 
     /// <summary>
     /// Duplicates the given component on this GameObject
