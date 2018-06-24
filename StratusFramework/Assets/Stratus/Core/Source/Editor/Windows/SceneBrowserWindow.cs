@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   SceneSelector.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using UnityEditor;
 using System.IO;
@@ -15,17 +8,22 @@ using Stratus.Utilities;
 
 namespace Stratus.Editor
 {
-  public class SceneBrowser : EditorWindow
+  /// <summary>
+  /// A window allowing quick and easy scene navigation
+  /// </summary>
+  public class SceneBrowserWindow : EditorWindow
   {
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    private Vector2 ScrollPosition;
-    private static string Title = "Scene Browser";
-
-    [SerializeField]
-    public static List<SceneAsset> BookmarkedScenes { get { return Preferences.instance.bookmarkedScenes; } }
-    private static GUIStyle RemoveButtonStyle
+    private static SceneAsset sceneToAdd;
+    private bool showBookmarkScenes, showBuildScenes;
+    private Vector2 scrollPosition;
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public static List<SceneAsset> bookmarkedScenes { get { return Preferences.instance.bookmarkedScenes; } }
+    private static GUIStyle removeButtonStyle
     {
       get
       {
@@ -38,23 +36,19 @@ namespace Stratus.Editor
       }
     }
 
-    public static SceneBrowser Instance;
-    private static SceneAsset sceneToAdd;
-    private bool showBookmarkScenes, showBuildScenes;
-
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
-    [MenuItem("Stratus/Windows/Scene Browser %g")]
+    [MenuItem("Stratus/Windows/Scene Browser")]
     public static void Open()
     {
-      EditorWindow.GetWindow(typeof(SceneBrowser), false, Title);
+      EditorWindow.GetWindow(typeof(SceneBrowserWindow), false, "Scene Browser");
     }
 
     private void OnGUI()
     {
       EditorGUILayout.BeginVertical();
-      this.ScrollPosition = EditorGUILayout.BeginScrollView(this.ScrollPosition, false, false);
+      this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition, false, false);
       {
         this.ShowBookmarkedScenes();
         EditorGUILayout.Space();
@@ -66,7 +60,7 @@ namespace Stratus.Editor
     }
 
     //------------------------------------------------------------------------/
-    // GUI
+    // Methods
     //------------------------------------------------------------------------/
     void ShowScenesInBuild()
     {
@@ -94,7 +88,7 @@ namespace Stratus.Editor
     void ShowBookmarkedScenes()
     {
       GUILayout.Label("Bookmarks", EditorStyles.centeredGreyMiniLabel);
-      foreach (var scene in BookmarkedScenes)
+      foreach (var scene in bookmarkedScenes)
       {
         // If it was deleted from the outside, we need to remove this reference
         if (scene == null)
@@ -141,9 +135,9 @@ namespace Stratus.Editor
     {
       EditorGUILayout.BeginHorizontal();
       sceneToAdd = EditorGUILayout.ObjectField(sceneToAdd, typeof(SceneAsset), false) as SceneAsset;
-      if (GUILayout.Button("Add", EditorStyles.miniButtonRight) && sceneToAdd != null && !BookmarkedScenes.Contains(sceneToAdd))
+      if (GUILayout.Button("Add", EditorStyles.miniButtonRight) && sceneToAdd != null && !bookmarkedScenes.Contains(sceneToAdd))
       {
-        BookmarkedScenes.Add(sceneToAdd);
+        bookmarkedScenes.Add(sceneToAdd);
         Preferences.Save();
         sceneToAdd = null;
       }
@@ -154,7 +148,7 @@ namespace Stratus.Editor
 
     void RemoveBookmarkedScene(SceneAsset scene)
     {
-      BookmarkedScenes.Remove(scene);
+      bookmarkedScenes.Remove(scene);
       Preferences.Save();
       Repaint();
     }

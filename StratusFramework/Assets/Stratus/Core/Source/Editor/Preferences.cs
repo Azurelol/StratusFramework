@@ -23,13 +23,18 @@ namespace Stratus
     /// Allows scenes to be bookmarked from the project folder, used by the scene browser
     /// </summary>
     [SerializeField]
-    public List<SceneAsset> bookmarkedScenes = new List<SceneAsset>();       
+    public List<SceneAsset> bookmarkedScenes = new List<SceneAsset>();
 
     /// <summary>
     /// Allows the coloring of GameObjects with tags in the hierarchy window
     /// </summary>
     [SerializeField]
     public Internal.TagColors tagColors = new Internal.TagColors();
+
+    /// <summary>
+    /// Allows objects in the scene and project to be bookmarked for quick access
+    /// </summary>
+    public ObjectBookmarksWindow.ObjectBookmarks objectBookmarks = new ObjectBookmarksWindow.ObjectBookmarks();    
 
     //------------------------------------------------------------------------/
     // Methods
