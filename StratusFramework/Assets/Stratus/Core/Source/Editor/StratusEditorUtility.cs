@@ -7,6 +7,7 @@ using System;
 using System.Reflection;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
+using UnityEditor.AnimatedValues;
 
 namespace Stratus
 {
@@ -14,6 +15,14 @@ namespace Stratus
   {
     public delegate bool DefaultPropertyFieldDelegate(Rect position, SerializedProperty property, GUIContent label);
     public static DefaultPropertyFieldDelegate DefaultPropertyField;
+
+    public enum ContextMenuStyle
+    {
+      Add,
+      Validation,
+      Options
+    }
+
 
     static StratusEditorUtility()
     {
@@ -342,38 +351,76 @@ namespace Stratus
       return false;
     }
 
+    public static void DrawContextMenu(GenericMenu menu, ContextMenuStyle style)
+    {
+      Texture texture = null;
+      switch (style)
+      {
+        case ContextMenuStyle.Add:
+          texture = StratusGUIStyles.addTexture;
+          break;
+        case ContextMenuStyle.Validation:
+          texture = StratusGUIStyles.validateTexture;
+          break;
+        case ContextMenuStyle.Options:
+          texture = StratusGUIStyles.optionsTexture;
+          break;
+      }
+      if (GUILayout.Button(texture, StratusGUIStyles.smallLayout))
+        menu.ShowAsContext();
+    }
+
+    private static GUIStyle fadeGroupStyle { get; } = EditorStyles.foldout;
+
+    public static void DrawFadeGroup(AnimBool show, string label, System.Action drawFunction)
+    {
+      show.target = EditorGUILayout.Foldout(show.target, label);
+      if (EditorGUILayout.BeginFadeGroup(show.faded))
+      {        
+        drawFunction();
+      }
+      EditorGUILayout.EndFadeGroup();
+    }
+
+    public static void DrawVerticalFadeGroup(AnimBool show, string label, System.Action drawFunction, GUIStyle verticalStyle = null, bool validate = true)
+    {
+      show.target = EditorGUILayout.Foldout(show.target, label) && validate;
+      if (EditorGUILayout.BeginFadeGroup(show.faded))
+      {
+        EditorGUILayout.BeginVertical(verticalStyle);
+        drawFunction();
+        EditorGUILayout.EndVertical();
+      }
+      EditorGUILayout.EndFadeGroup();
+    }
+
+    ///// <summary>
+    ///// Adds the given define symbols to PlayerSettings define symbols.
+    ///// Just add your own define symbols to the Symbols property at the below.
+    ///// </summary>
+    //[InitializeOnLoad]
+    //public class AddDefineSymbols : Editor
+    //{
+    //  /// <summary>
+    //  /// Symbols that will be added to the editor
+    //  /// </summary>
+    //  public static readonly string[] Symbols = new string[] {
+    //     "MYCOMPANY",
+    //     "MYCOMPANY_MYPACKAGE"
+    // };
+    //
+    //  /// <summary>
+    //  /// Add define symbols as soon as Unity gets done compiling.
+    //  /// </summary>
+    //  static AddDefineSymbols()
+    //  {
+    //
+    //  }
+    //
+    //}
 
 
 
-
-
-  ///// <summary>
-  ///// Adds the given define symbols to PlayerSettings define symbols.
-  ///// Just add your own define symbols to the Symbols property at the below.
-  ///// </summary>
-  //[InitializeOnLoad]
-  //public class AddDefineSymbols : Editor
-  //{
-  //  /// <summary>
-  //  /// Symbols that will be added to the editor
-  //  /// </summary>
-  //  public static readonly string[] Symbols = new string[] {
-  //     "MYCOMPANY",
-  //     "MYCOMPANY_MYPACKAGE"
-  // };
-  //
-  //  /// <summary>
-  //  /// Add define symbols as soon as Unity gets done compiling.
-  //  /// </summary>
-  //  static AddDefineSymbols()
-  //  {
-  //
-  //  }
-  //
-  //}
-
-
-
-}
+  }
 
 }

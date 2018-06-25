@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Callbacks;
 
 namespace Stratus
 {
@@ -17,6 +18,14 @@ namespace Stratus
       Trace.Script($"Deleting {assetName}");
     }
 
-  }  
+    [PostProcessScene]
+    public static void OnPostProcessScene()
+    {
+
+    }
+
+  }
+
+  
 
 }

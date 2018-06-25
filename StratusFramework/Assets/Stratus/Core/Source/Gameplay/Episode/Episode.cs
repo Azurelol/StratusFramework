@@ -178,6 +178,10 @@ namespace Stratus
     {
     }
 
+    protected override void OnReset()
+    {      
+    }
+
     private void Update()
     {
       if (debugNavigation && Application.isPlaying)

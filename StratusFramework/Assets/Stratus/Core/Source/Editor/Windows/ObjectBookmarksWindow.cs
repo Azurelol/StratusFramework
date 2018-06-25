@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.IO;
+using UnityEditor.Callbacks;
+using UnityEditor.SceneManagement;
+using UnityEditor.AnimatedValues;
 
 namespace Stratus
 {
@@ -15,62 +19,25 @@ namespace Stratus
     // Declaration
     //------------------------------------------------------------------------/
     [Serializable]
-    public class SceneBookmarks
-    {
-      public SceneField scene;
-      public List<UnityEngine.Object> objects = new List<UnityEngine.Object>();
-    }
-
-    [Serializable]
     public class ObjectBookmarks
     {
       public List<UnityEngine.Object> projectBookmarks = new List<UnityEngine.Object>();
-      public List<SceneBookmarks> sceneBookmarks = new List<SceneBookmarks>();
-
-      //public void AddAsset(UnityEngine.Object asset)
-      //{
-      //  projectBookmarks.Add(asset);
-      //}
-      //
-      //public void AddGameObject(UnityEngine.Object gameObject)
-      //{
-      //  SceneBookmarks currentSceneBookmarks = GetActiveSceneBookmark();
-      //  projectBookmarks.Add(asset);
-      //}
-
-      public SceneBookmarks GetActiveSceneBookmark()
-      {
-        SceneBookmarks nextSceneBookmark = null;
-        foreach (var bookmark in sceneBookmarks)
-        {
-          if (bookmark.scene == Scene.activeScene)
-          {
-            nextSceneBookmark = bookmark;
-            break;
-          }
-        }
-
-        if (nextSceneBookmark == null)
-        {
-          nextSceneBookmark = new SceneBookmarks() { scene = Scene.activeScene };
-          sceneBookmarks.Add(nextSceneBookmark);
-        }
-
-        return nextSceneBookmark;
-      }
-
     }
 
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
     private Vector2 scrollPosition;
+    private SceneAsset sceneToAdd;
+    private AnimBool showScenesInBuild, showScenes, showSceneObjects, showProjectAssets;
+    
 
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
     public static ObjectBookmarks bookmarks { get; private set; }
-    public static SceneBookmarks currentSceneBookmark { get; private set; }
+    public static List<SceneAsset> bookmarkedScenes { get { return Preferences.instance.bookmarkedScenes; } }
+    public static List<GameObjectBookmark> sceneBookmarks { get; private set; }
     private static ObjectBookmarksWindow instance { get; set; }
 
     //------------------------------------------------------------------------/
@@ -85,54 +52,195 @@ namespace Stratus
     private void OnEnable()
     {
       bookmarks = Preferences.instance.objectBookmarks;
-      SetSceneBookmarks();
+      sceneBookmarks = GameObjectBookmark.availableList;
+      showScenes = new AnimBool(true); showScenes.valueChanged.AddListener(Repaint);
+      showSceneObjects = new AnimBool(true); showSceneObjects.valueChanged.AddListener(Repaint);
+      showScenesInBuild = new AnimBool(true); showScenesInBuild.valueChanged.AddListener(Repaint);
+      showProjectAssets = new AnimBool(true); showProjectAssets.valueChanged.AddListener(Repaint);
+    }
+
+    private void OnDisable()
+    {
     }
 
     private void OnGUI()
     {
+      // Top bar
+      EditorGUILayout.BeginHorizontal();
+      {
+        GenericMenu menu = new GenericMenu();
+        menu.AddItem(new GUIContent("Remove GameObject Bookmarks"), false, RemoveGameObjectBookmarks);
+        StratusEditorUtility.DrawContextMenu(menu, StratusEditorUtility.ContextMenuStyle.Options);
+      }
+      EditorGUILayout.EndHorizontal();
+
+      // Bookmarks list
       EditorGUILayout.BeginVertical();
       this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition, false, false);
       {
-        ShowSceneBookmarks();
-        EditorGUILayout.Space();
-        ShowProjectBookmarks();
+        StratusEditorUtility.DrawVerticalFadeGroup(showScenesInBuild, "Scenes in Build", ShowScenesInBuild, EditorStyles.helpBox, EditorBuildSettings.scenes.Length > 0);
+        StratusEditorUtility.DrawVerticalFadeGroup(showScenes, "Scenes", ShowBookmarkedScenes, EditorStyles.helpBox, bookmarkedScenes.Count > 0);
+        StratusEditorUtility.DrawVerticalFadeGroup(showSceneObjects, "Scene Objects", ShowSceneObjects, EditorStyles.helpBox, GameObjectBookmark.hasAvailable);
+        StratusEditorUtility.DrawVerticalFadeGroup(showProjectAssets, "Project Assets", ShowProjectAssets, EditorStyles.helpBox, bookmarks.projectBookmarks.Count > 0);
       }
       EditorGUILayout.EndScrollView();
       EditorGUILayout.EndVertical();
     }
 
+    //------------------------------------------------------------------------/
+    // Events
+    //------------------------------------------------------------------------/
 
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    [MenuItem("Assets/Bookmark")]
+    [MenuItem("Assets/Bookmark", false, 0)]
     private static void BookmarkAsset()
     {
-      Preferences.instance.objectBookmarks.projectBookmarks.Add(Selection.activeObject);
+      UnityEngine.Object activeObject = Selection.activeObject;
+      // Special case for scenes
+      if (activeObject.GetType() == typeof(SceneAsset))
+      {
+        Trace.Script("That's a scene!");
+        SceneAsset scene = activeObject as SceneAsset;
+        if (!bookmarkedScenes.Contains(scene))
+        {
+          bookmarkedScenes.Add(scene);
+        }
+      }
+      else
+      {
+        Preferences.instance.objectBookmarks.projectBookmarks.Add(activeObject);
+      }
+
       Preferences.Save();
     }
 
-    [MenuItem("GameObject/Bookmark", false, 0)]
+    [MenuItem("GameObject/Bookmark", false, 49)]
     private static void BookmarkGameObject()
     {
-      currentSceneBookmark = bookmarks.GetActiveSceneBookmark();
-      currentSceneBookmark.objects.Add(Selection.activeGameObject);
-      Preferences.Save();
+      Selection.activeGameObject.GetOrAddComponent<GameObjectBookmark>();
     }
 
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    private void ShowSceneBookmarks()
+    private void ShowScenesInBuild()
     {
-      GUILayout.Label("Scene Objects", EditorStyles.centeredGreyMiniLabel);
-      int indexToRemove = -1;
-      for (int b = 0; b < currentSceneBookmark.objects.Count; ++b)
+      for (var i = 0; i < EditorBuildSettings.scenes.Length; ++i)
       {
-        UnityEngine.Object currentObject = currentSceneBookmark.objects[b];
-        currentSceneBookmark.objects[b] = EditorGUILayout.ObjectField(currentObject, currentObject.GetType(), true);
-        //if (GUILayout.Button(currentObject.name, EditorStyles.toolbarButton))
-        //{
+        var scene = EditorBuildSettings.scenes[i];
+        if (scene.enabled)
+        {
+          var sceneName = Path.GetFileNameWithoutExtension(scene.path);
+          var pressed = GUILayout.Button(i + ": " + sceneName, EditorStyles.toolbarButton);
+          if (pressed)
+          {
+            var button = UnityEngine.Event.current.button;
+            if (button == 0 && EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            {
+              EditorSceneManager.OpenScene(scene.path);
+            }
+          }
+        }
+      }
+    }
+
+
+    void ShowBookmarkedScenes()
+    {
+      //GUILayout.Label("Scenes", EditorStyles.centeredGreyMiniLabel);
+      foreach (var scene in bookmarkedScenes)
+      {
+        // If it was deleted from the outside, we need to remove this reference
+        if (scene == null)
+        {
+          RemoveBookmarkedScene(scene);
+          return;
+        }
+
+        //EditorGUILayout.BeginHorizontal();
+        // Open scene
+        if (GUILayout.Button(scene.name, EditorStyles.toolbarButton))
+        {
+          StratusEditorUtility.OnMouseClick(
+            () =>
+            {
+              var scenePath = AssetDatabase.GetAssetPath(scene);
+              if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+              {
+                EditorSceneManager.OpenScene(scenePath);
+              }
+            },
+
+            () =>
+            {
+              var menu = new GenericMenu();
+              menu.AddItem(new GUIContent("Remove"), false,
+                () =>
+                {
+                  RemoveBookmarkedScene(scene);
+                }
+                );
+              menu.ShowAsContext();
+            },
+
+            null,
+            true);
+        }
+        //EditorGUILayout.EndHorizontal();
+      }
+
+    }
+
+    private void ShowSceneObjects()
+    { 
+      for (int b = 0; b < sceneBookmarks.Count; ++b)
+      {
+        GameObjectBookmark bookmark = sceneBookmarks[b];
+
+        EditorGUILayout.ObjectField(bookmark, bookmark.GetType(), true);
+        StratusEditorUtility.OnLastControlMouseClick(
+        // Left
+        () =>
+        {
+          SelectBookmark(bookmark);
+        },
+
+        // Right
+        () =>
+        {
+          var menu = new GenericMenu();
+          menu.AddItem(new GUIContent("Remove"), false,
+            () =>
+            {
+              DestroyImmediate(bookmark);
+            }
+            );
+          menu.ShowAsContext();
+        },
+
+        null);
+      }
+    }
+
+
+    private void ShowProjectAssets()
+    {
+      for (int b = 0; b < bookmarks.projectBookmarks.Count; ++b)
+      {
+        UnityEngine.Object currentObject = bookmarks.projectBookmarks[b];
+
+        if (currentObject == null)
+        {
+          bookmarks.projectBookmarks.RemoveAt(b);
+          OnChange();
+          return;
+        }
+
+        Type objectType = currentObject.GetType();
+        bookmarks.projectBookmarks[b] = EditorGUILayout.ObjectField(currentObject, objectType, false);
+
         StratusEditorUtility.OnLastControlMouseClick(
         // Left
         () =>
@@ -144,82 +252,58 @@ namespace Stratus
         () =>
         {
           var menu = new GenericMenu();
+
+          // If it's a prefab, instantiate
+          if (PrefabUtility.GetPrefabType(currentObject) != PrefabType.None)
+          {
+            menu.AddItem(new GUIContent("Instantiate"), false, () => 
+            {
+              GameObject instantiated = (GameObject)GameObject.Instantiate(currentObject);
+              instantiated.name = currentObject.name;
+            });
+          }
+
+          // Remove
           menu.AddItem(new GUIContent("Remove"), false,
             () =>
             {
-              Trace.Script($"Removing {currentObject}");
-              indexToRemove = b;
-                //bookmarks.projectBookmarks.RemoveAt(b);
-                //OnChange();
-              }
+              bookmarks.projectBookmarks.Remove(currentObject);
+              OnChange();
+            }
             );
           menu.ShowAsContext();
         },
-
         null);
-      }      
 
-      if (indexToRemove > -1)
-      {
-        currentSceneBookmark.objects.RemoveAt(indexToRemove);
-        OnChange();
       }
     }
 
-    private void ShowProjectBookmarks()
+
+    void AddBookmarkedScene()
     {
-      GUILayout.Label("Project Assets", EditorStyles.centeredGreyMiniLabel);
-      int indexToRemove = -1;
-      for (int b = 0; b < bookmarks.projectBookmarks.Count; ++b)
+      EditorGUILayout.BeginHorizontal();
+      sceneToAdd = EditorGUILayout.ObjectField(sceneToAdd, typeof(SceneAsset), false) as SceneAsset;
+      if (GUILayout.Button("Add", EditorStyles.miniButtonRight) && sceneToAdd != null && !bookmarkedScenes.Contains(sceneToAdd))
       {
-        UnityEngine.Object currentObject = bookmarks.projectBookmarks[b];
-        bookmarks.projectBookmarks[b] = EditorGUILayout.ObjectField(currentObject, currentObject.GetType(), false);        
-        //if (GUILayout.Button(currentObject.name, EditorStyles.objectField))
-        //{
-        
-          StratusEditorUtility.OnLastControlMouseClick(
-          // Left
-          () =>
-          {
-            SelectBookmark(currentObject);
-          },
-
-          // Right
-          () =>
-          {
-            var menu = new GenericMenu();
-            menu.AddItem(new GUIContent("Remove"), false,
-              () =>
-              {
-                Trace.Script($"Removing {currentObject}");
-                indexToRemove = b;
-                //bookmarks.projectBookmarks.RemoveAt(b);
-                //OnChange();
-              }
-              );
-            menu.ShowAsContext();
-          },
-
-          null);
-        //}
+        bookmarkedScenes.Add(sceneToAdd);
+        Preferences.Save();
+        sceneToAdd = null;
       }
 
-      if (indexToRemove > -1)
-      {
+      EditorGUILayout.EndHorizontal();
 
-        bookmarks.projectBookmarks.RemoveAt(indexToRemove);
-        OnChange();
-      }
     }
 
-    private void SetSceneBookmarks()
+    void RemoveBookmarkedScene(SceneAsset scene)
     {
-      currentSceneBookmark = bookmarks.GetActiveSceneBookmark();
+      bookmarkedScenes.Remove(scene);
+      Preferences.Save();
+      Repaint();
     }
+
 
     private void SelectBookmark(UnityEngine.Object obj)
     {
-      Trace.Script($"Selecting {obj}");
       Selection.activeObject = obj;
     }
 
@@ -229,7 +313,21 @@ namespace Stratus
       Repaint();
     }
 
-    
+    [PostProcessScene]
+    private static void OnPostProcessScene()
+    {
+      RemoveGameObjectBookmarks();
+    }
+
+    private static void RemoveGameObjectBookmarks()
+    {
+      GameObjectBookmark[] bookmarks = FindObjectsOfType<GameObjectBookmark>();
+      foreach (var bookmark in bookmarks)
+        DestroyImmediate(bookmark);
+    }
+        
+
+
 
 
 

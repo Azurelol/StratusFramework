@@ -78,12 +78,19 @@ namespace Stratus
       OnMultitonEnable();
     }
 
+    private void Reset()
+    {
+      label = gameObject.name;
+      OnReset();
+    }
+
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
     protected abstract void OnAwake();
     protected abstract void OnMultitonEnable();
     protected abstract void OnMultitonDisable();
+    protected abstract void OnReset();
 
 
   }

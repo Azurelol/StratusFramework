@@ -4,4 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Prototypes/Scenes/Stratus Player Controller.unity
+    guid: a4622354d12c1684ab3356cb85037ace
+  m_configObjects: {}

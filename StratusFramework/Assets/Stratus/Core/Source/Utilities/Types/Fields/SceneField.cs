@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 // Inspired by:  http://wiki.unity3d.com/index.php/SceneField
 
@@ -14,21 +15,25 @@ namespace Stratus
   public class SceneField : ISerializationCallbackReceiver
   {
     //------------------------------------------------------------------------/
-    // Methods
+    // Fields
     //------------------------------------------------------------------------/
 #if UNITY_EDITOR
-    public UnityEditor.SceneAsset SceneAsset;
+    [FormerlySerializedAs("SceneAsset")]
+    public UnityEditor.SceneAsset sceneAsset;
 #endif
 
 #pragma warning disable 414
-    [SerializeField, HideInInspector]
-    private string SceneName = "";
+    [SerializeField, HideInInspector, FormerlySerializedAs("SceneName")]
+    private string sceneName = "";
 #pragma warning restore 414
-    
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
     /// <summary>
     /// The name of the scene
     /// </summary>
-    public string name { get { return SceneName; } }
+    public string name { get { return sceneName; } }
 
     /// <summary>
     /// Whether this is the currently active scene 
@@ -106,7 +111,7 @@ namespace Stratus
       get
       {        
 #if UNITY_EDITOR
-        return UnityEditor.AssetDatabase.GetAssetPath(SceneAsset);
+        return UnityEditor.AssetDatabase.GetAssetPath(sceneAsset);
 #else
         return string.Empty;
 #endif
@@ -116,14 +121,34 @@ namespace Stratus
     /// <summary>
     /// Returns a reference to the runtimee data structure for the scene
     /// </summary>
-    public UnityEngine.SceneManagement.Scene runtime { get { return SceneManager.GetSceneByName(name); } }    
+    public UnityEngine.SceneManagement.Scene runtime { get { return SceneManager.GetSceneByName(name); } }
+
+    //------------------------------------------------------------------------/
+    // CTOR
+    //------------------------------------------------------------------------/
+    public SceneField()
+    {
+    }
+    public SceneField(string sceneName)
+    {
+      this.sceneName = sceneName;
+    }
+#if UNITY_EDITOR
+    public SceneField(UnityEditor.SceneAsset asset)
+    {
+      sceneName = asset.name;
+    }
+
+    public SceneField(UnityEngine.SceneManagement.Scene scene)
+    {
+      sceneAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEditor.SceneAsset>(scene.path) as UnityEditor.SceneAsset;
+      sceneName = scene.name;
+    }
+#endif
 
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    public SceneField() {}
-    public SceneField(string sceneName) { SceneName = sceneName; }
-
     /// <summary>
     /// Makes it work with the existing Unity methods (LoadLevel/LoadScene) 
     /// </summary>
@@ -131,13 +156,13 @@ namespace Stratus
     public static implicit operator string(SceneField sceneField)
     {
       string name;
-      #if UNITY_EDITOR
-      name = System.IO.Path.GetFileNameWithoutExtension(UnityEditor.AssetDatabase.GetAssetPath(sceneField.SceneAsset));
+#if UNITY_EDITOR
+      name = System.IO.Path.GetFileNameWithoutExtension(UnityEditor.AssetDatabase.GetAssetPath(sceneField.sceneAsset));
       if (name == null || name == string.Empty)
+        name = sceneField.sceneName;
+#else
         name = sceneField.SceneName;
-      #else
-        name = sceneField.SceneName;
-      #endif
+#endif
       return name;
     }
 
@@ -148,9 +173,9 @@ namespace Stratus
 
     public void OnBeforeSerialize()
     {
-      #if UNITY_EDITOR
-      SceneName = this;
-      #endif
+#if UNITY_EDITOR
+      sceneName = this;
+#endif
     }
     public void OnAfterDeserialize() { }
 
