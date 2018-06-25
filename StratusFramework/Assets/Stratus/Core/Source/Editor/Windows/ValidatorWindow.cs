@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-using Stratus.Editor;
 using System;
 using Stratus.Interfaces;
 

@@ -1,6 +1,4 @@
 using UnityEngine;
-using Stratus;
-using Stratus.AI;
 using Stratus.Types;
 
 namespace Stratus
