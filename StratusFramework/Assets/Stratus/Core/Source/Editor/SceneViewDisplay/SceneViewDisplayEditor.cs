@@ -18,7 +18,7 @@ namespace Stratus
     {
     }
 
-    [MenuItem("Stratus/Windows/Scene View Display")]
+    [MenuItem("Stratus/Core/Scene View Display")]
     public static void Open()
     {
       EditorWindow.GetWindow(typeof(SceneViewDisplayEditorWindow), true, displayTitle);

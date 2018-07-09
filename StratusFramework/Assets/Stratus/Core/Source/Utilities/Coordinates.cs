@@ -25,6 +25,12 @@ namespace Stratus
       SouthEast
     }
 
+    public enum Orientation
+    {
+      Horizontal,
+      Vertical
+    }
+
     /// <summary>
     /// The axis in 3D space
     /// </summary>

@@ -7,18 +7,14 @@ using Stratus.Dependencies.Ludiq.Reflection.Editor;
 namespace Stratus
 {
   [CustomPropertyDrawer(typeof(MemberField))]
-  public class MemberFieldDrawer : PropertyDrawer
+  public class MemberFieldDrawer : SingleLinePropertyDrawer
   {
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    protected override void DrawProperty(Rect position, SerializedProperty property)
     {
-      return base.GetPropertyHeight(property.FindPropertyRelative("member"), label);
+      SerializedProperty memberProperty = property.FindPropertyRelative(nameof(MemberField.member));
+      EditorGUI.PropertyField(position, memberProperty);
     }
-  
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-    {
-      base.OnGUI(position, property.FindPropertyRelative("member"), label);
-    }
-  
+
   }
 
 }

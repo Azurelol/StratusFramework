@@ -32,7 +32,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/
-    [MenuItem("Stratus/Windows/Configure Tag Colors")]
+    [MenuItem("Stratus/Core/Tag Colors")]
     static void Open()
     {
       EditorWindow.GetWindow(typeof(TagColorsWindow), true, "Tag Colors");

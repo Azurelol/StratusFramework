@@ -18,10 +18,24 @@ namespace Stratus
       Trace.Script($"Deleting {assetName}");
     }
 
+    /// <summary>
+    /// Invoked just after building the scene, and when entering playmode
+    /// </summary>
     [PostProcessScene]
     public static void OnPostProcessScene()
     {
+      
+    }
 
+    /// <summary>
+    /// Invoked just after building the player
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="pathToBuiltProject"></param>
+    [PostProcessBuildAttribute(1)]
+    public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
+    {
+      //Debug.Log(pathToBuiltProject);
     }
 
   }

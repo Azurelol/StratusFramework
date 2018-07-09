@@ -184,13 +184,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   extensionsField:
   - {fileID: 183453840}
+  _selectedExtensionIndex: 0
   debug: 0
-  movementX:
-    axis: Horizontal
-  movementY:
-    axis: Vertical
-  camera: {fileID: 770947310}
-  pollInput: 1
 --- !u!23 &183453836
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -272,16 +267,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb27bd4a2d695a84cafbdf96b482e00c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extensibleField: {fileID: 183453835}
   cameras:
   - camera: {fileID: 211202902}
     offset: 0
   - camera: {fileID: 493095600}
     offset: 1
   changeCamera:
-    type: 0
+    _type: 0
     key: 0
     mouseButton: 0
+    axis: 
 --- !u!1 &211202900
 GameObject:
   m_ObjectHideFlags: 0
@@ -878,13 +873,15 @@ MonoBehaviour:
   debugNavigation: 1
   windowAnchor: 8
   nextSegmentInput:
-    type: 0
+    _type: 0
     key: 281
     mouseButton: 0
+    axis: 
   previousSegmentInput:
-    type: 0
+    _type: 0
     key: 280
     mouseButton: 0
+    axis: 
   debugTextColorHex: 9C27F4FF
 --- !u!4 &699835964
 Transform:
@@ -988,6 +985,47 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.5, y: 1, z: 1.5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &736833766
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 736833768}
+  - component: {fileID: 736833767}
+  m_Layer: 0
+  m_Name: Boo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &736833767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 736833766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9984fa7532209b64989107fc67e20fa4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  label: GameObject
+--- !u!4 &736833768
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 736833766}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.3235302, y: 2.7564697, z: -4.00264}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &749400913
 GameObject:
   m_ObjectHideFlags: 0
@@ -1223,8 +1261,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 770947306}
-  m_LocalRotation: {x: 0.3826835, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: -8, y: 15, z: -48}
+  m_LocalRotation: {x: 0.7005946, y: -0.021326952, z: 0.020957861, w: 0.7129328}
+  m_LocalPosition: {x: -7.590044, y: 19.997717, z: -38.237762}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1725,9 +1763,10 @@ MonoBehaviour:
   recursive: 0
   persistent: 1
   input:
-    type: 0
+    _type: 0
     key: 110
     mouseButton: 0
+    axis: 
   action: 1
 --- !u!114 &884915737
 MonoBehaviour:

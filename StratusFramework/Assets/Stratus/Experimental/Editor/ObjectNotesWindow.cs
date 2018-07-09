@@ -22,7 +22,7 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     // Static Methods
     //--------------------------------------------------------------------------------------------/
-    [MenuItem("Stratus/Windows/Object Notes")]
+    [MenuItem("Stratus/Experimental/Object Notes")]
     public static void Open()
     {
       EditorWindow.GetWindow(typeof(ObjectNotesWindow), false, Title);

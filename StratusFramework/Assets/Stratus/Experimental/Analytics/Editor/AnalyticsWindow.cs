@@ -16,7 +16,7 @@ namespace Stratus.Analytics
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    [MenuItem("Stratus/Windows/Analytics")]
+    [MenuItem("Stratus/Experimental/Analytics")]
     public static void Open()
     {
       EditorWindow.GetWindow(typeof(AnalyticsWindow), false, "Stratus Analytics");

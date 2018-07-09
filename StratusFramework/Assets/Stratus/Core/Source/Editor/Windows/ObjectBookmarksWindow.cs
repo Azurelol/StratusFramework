@@ -43,7 +43,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
-    [MenuItem("Stratus/Windows/Object Bookmarks")]
+    [MenuItem("Stratus/Core/Object Bookmarks")]
     public static void Open()
     {
       instance = (ObjectBookmarksWindow)EditorWindow.GetWindow(typeof(ObjectBookmarksWindow), false, "Bookmarks");
@@ -59,9 +59,6 @@ namespace Stratus
       showProjectAssets = new AnimBool(true); showProjectAssets.valueChanged.AddListener(Repaint);
     }
 
-    private void OnDisable()
-    {
-    }
 
     private void OnGUI()
     {
@@ -70,7 +67,7 @@ namespace Stratus
       {
         GenericMenu menu = new GenericMenu();
         menu.AddItem(new GUIContent("Remove GameObject Bookmarks"), false, RemoveGameObjectBookmarks);
-        StratusEditorUtility.DrawContextMenu(menu, StratusEditorUtility.ContextMenuStyle.Options);
+        StratusEditorUtility.DrawContextMenu(menu, StratusEditorUtility.ContextMenuType.Options);
       }
       EditorGUILayout.EndHorizontal();
 
@@ -211,6 +208,10 @@ namespace Stratus
         () =>
         {
           var menu = new GenericMenu();
+          menu.AddItem(new GUIContent("Inspect"), false, () =>
+          {
+            MemberInspectorWindow.Inspect(bookmark.gameObject);
+          });
           menu.AddItem(new GUIContent("Remove"), false,
             () =>
             {

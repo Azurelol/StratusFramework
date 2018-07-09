@@ -10,12 +10,32 @@ namespace Stratus
   /// Provides an easy way to hold a reference member within a class.
   /// Currently powered through Ludiq's awesome UnityMember!
   /// </summary>
+  [Serializable]
   public class MemberField
   {
+    //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
     public UnityMember member = new UnityMember();
 
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
     public Type type => member.type;
-    
+    public bool isAssigned => member.isAssigned;
+    public bool isReflected => member.isReflected;
+
+    //------------------------------------------------------------------------/
+    // CTOR
+    //------------------------------------------------------------------------/
+    public MemberField()
+    {
+      this.member = new UnityMember();
+    }
+
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/    
     public object Get()
     {
       return member.Get();
@@ -44,6 +64,11 @@ namespace Stratus
     public T Invoke<T>(params object[] arguments)
     {
       return member.Invoke<T>(arguments);
+    }
+
+    public void SetTarget(UnityEngine.Object target)
+    {
+      this.member.target = target;
     }
 
   }

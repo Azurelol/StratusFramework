@@ -80,7 +80,7 @@ namespace Stratus
       window.ShowValidation(header, messages);
     }
 
-    [MenuItem("Stratus/Windows/Validator")]
+    [MenuItem("Stratus/Core/Validator")]
     public static void Open()
     {
       window = (ValidatorWindow)EditorWindow.GetWindow(typeof(ValidatorWindow), true, "Stratus Validator");

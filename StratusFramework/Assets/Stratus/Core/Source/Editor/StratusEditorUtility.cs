@@ -16,7 +16,7 @@ namespace Stratus
     public delegate bool DefaultPropertyFieldDelegate(Rect position, SerializedProperty property, GUIContent label);
     public static DefaultPropertyFieldDelegate DefaultPropertyField;
 
-    public enum ContextMenuStyle
+    public enum ContextMenuType
     {
       Add,
       Validation,
@@ -351,18 +351,18 @@ namespace Stratus
       return false;
     }
 
-    public static void DrawContextMenu(GenericMenu menu, ContextMenuStyle style)
+    public static void DrawContextMenu(GenericMenu menu, ContextMenuType style)
     {
       Texture texture = null;
       switch (style)
       {
-        case ContextMenuStyle.Add:
+        case ContextMenuType.Add:
           texture = StratusGUIStyles.addTexture;
           break;
-        case ContextMenuStyle.Validation:
+        case ContextMenuType.Validation:
           texture = StratusGUIStyles.validateTexture;
           break;
-        case ContextMenuStyle.Options:
+        case ContextMenuType.Options:
           texture = StratusGUIStyles.optionsTexture;
           break;
       }

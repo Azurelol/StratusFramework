@@ -39,7 +39,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
-    [MenuItem("Stratus/Windows/Animator Preview")]
+    [MenuItem("Stratus/Experimental/Animator Preview")]
     private static void Open()
     {
       EditorWindow.GetWindow(typeof(AnimatorPreviewWindow), true, "Animator Preview");

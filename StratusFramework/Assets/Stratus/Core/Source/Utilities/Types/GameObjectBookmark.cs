@@ -3,31 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Stratus
-{
-  [DisallowMultipleComponent]
-  [ExecuteInEditMode]
-  public class GameObjectBookmark : Multiton<GameObjectBookmark>
+{  
+  public class GameObjectBookmark : StratusEditorBehaviour<GameObjectBookmark>
   {
-    protected override void OnAwake()
-    {
-      
-    }
-
-    protected override void OnMultitonEnable()
-    {
-      
-    }
-
-    protected override void OnMultitonDisable()
-    {
-      
-    }
-
-    protected override void OnReset()
-    {
-      
-    }
-
+#if UNITY_EDITOR
+    //public MemberField 
+#endif
   }
 
 }
