@@ -134,7 +134,7 @@ namespace Stratus
     /// <summary>
     /// The currently active segment in this episode
     /// </summary>
-    public Segment currentSegment => segments[currentSegmentIndex];
+    public Segment currentSegment => segments != null ? segments[currentSegmentIndex] : null;
     /// <summary>
     /// The previous segment
     /// </summary>

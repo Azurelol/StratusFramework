@@ -394,6 +394,18 @@ namespace Stratus
       EditorGUILayout.EndFadeGroup();
     }
 
+    public static void DrawVerticalFadeGroup<T>(AnimBool show, string label, System.Action<T> drawFunction, T argument, GUIStyle verticalStyle = null, bool validate = true)
+    {
+      show.target = EditorGUILayout.Foldout(show.target, label) && validate;
+      if (EditorGUILayout.BeginFadeGroup(show.faded))
+      {
+        EditorGUILayout.BeginVertical(verticalStyle);
+        drawFunction(argument);
+        EditorGUILayout.EndVertical();
+      }
+      EditorGUILayout.EndFadeGroup();
+    }
+
     ///// <summary>
     ///// Adds the given define symbols to PlayerSettings define symbols.
     ///// Just add your own define symbols to the Symbols property at the below.

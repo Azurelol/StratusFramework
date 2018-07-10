@@ -104,6 +104,16 @@ namespace Stratus
       return array.Length > 0;
     }
 
+    public static bool NotEmpty<T>(this ICollection<T> collection)
+    {
+      return collection.Count > 0;
+    }
+
+    public static bool NotEmpty<T>(this Stack<T> stack)
+    {
+      return stack.Count > 0;
+    }
+
     /// <summary>
     /// Returns true if the list is not empty
     /// </summary>

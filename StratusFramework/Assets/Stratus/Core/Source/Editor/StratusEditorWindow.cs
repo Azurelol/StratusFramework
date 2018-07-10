@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 using System;
+using UnityEditor.AnimatedValues;
 
 namespace Stratus
 {
@@ -42,12 +44,26 @@ namespace Stratus
       this.serializedObject = new SerializedObject(this);
       this.menuBarDrawer = this.OnSetMenuBar();
       this.OnWindowEnable();
+      EditorApplication.playModeStateChanged += this.OnPlayModeStateChange;
     }
 
     private void OnGUI()
     {
       this.menuBarDrawer?.Draw();
       this.OnWindowGUI();
+    }
+
+    private void Update()
+    {
+      this.OnUpdate();
+    }
+
+    protected virtual void OnPlayModeStateChange(PlayModeStateChange stateChange)
+    {
+    }
+
+    protected virtual void OnUpdate()
+    {
     }
 
     //------------------------------------------------------------------------/
@@ -63,6 +79,25 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Drawing
     //------------------------------------------------------------------------/
+    private void DrawMultiColumns()
+    {
+
+    }
+
+    //------------------------------------------------------------------------/
+    // Methods: Setup
+    //------------------------------------------------------------------------/
+    protected AnimBool[] GenerateAnimBools(int count, bool value)
+    {
+      List<AnimBool> bools = new List<AnimBool>();      
+      for(int i = 0; i < count; ++i)
+      {
+        AnimBool animBool = new AnimBool(value);
+        animBool.valueChanged.AddListener(this.Repaint);
+        bools.Add(animBool);
+      }
+      return bools.ToArray();
+    }
 
   }
 

@@ -218,7 +218,7 @@ MonoBehaviour:
     m_Normal:
       m_Background: {fileID: 0}
       m_ScaledBackgrounds: []
-      m_TextColor: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+      m_TextColor: {r: 0.33962262, g: 0.3155927, b: 0.3155927, a: 1}
     m_Hover:
       m_Background: {fileID: 0}
       m_ScaledBackgrounds: []
@@ -267,8 +267,8 @@ MonoBehaviour:
       m_Right: 0
       m_Top: 0
       m_Bottom: 0
-    m_Font: {fileID: 0}
-    m_FontSize: 0
+    m_Font: {fileID: 12800000, guid: 6fd67bdf5de649440b90c10d69ba49d2, type: 3}
+    m_FontSize: 10
     m_FontStyle: 0
     m_Alignment: 0
     m_WordWrap: 1

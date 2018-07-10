@@ -198,6 +198,10 @@ namespace Stratus
     /// </summary>
     public static GUISkin skin { get; private set; }
     /// <summary>
+    /// Common style for labels
+    /// </summary>
+    public static GUIStyle label { get; private set; }
+    /// <summary>
     /// A thin line for used within an editor window
     /// </summary>
     public static GUIStyle editorLine { get; private set; }
@@ -305,6 +309,9 @@ namespace Stratus
       {
         fonts.Add(font.name, font);
       }
+
+      // Set defaults
+      label = skin.label;
     }
 
     private static void CacheDefaultOptions()

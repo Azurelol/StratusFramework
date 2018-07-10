@@ -277,7 +277,7 @@ namespace Stratus
       }
 
       /// <summary>
-      /// Gets all the properties and fields in obj.
+      /// Gets all the properties and fields in object
       /// </summary>
       /// <param name="obj">Object to find the fields/properties in.</param>
       /// <param name="bindingFlags">Filters for the types of fields/properties that can be found.</param>
@@ -307,7 +307,7 @@ namespace Stratus
             yield return properties[i];
           }
         }
-      }
+      }      
 
       /// <summary>
       /// Gets all the fields in obj of type T.
@@ -334,7 +334,7 @@ namespace Stratus
             yield return (T)currentValue;
         }
       }
-
+      
       /// <summary>
       /// Gets all the fields in obj.
       /// </summary>
