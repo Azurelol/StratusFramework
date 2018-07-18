@@ -644,7 +644,12 @@ namespace Stratus
 
     protected void DrawEditor(UnityEditor.Editor editor, string header, int headerSize = 12)
     {
-      EditorGUILayout.LabelField($"<size={headerSize}>{header}</size>", StratusGUIStyles.header);
+      EditorGUILayout.BeginHorizontal();
+      {
+        //EditorGUILayout.LabelField($"<size={headerSize}>{header}</size>", StratusGUIStyles.header);
+        EditorGUILayout.InspectorTitlebar(false, editor.target, false);
+      }
+      EditorGUILayout.EndHorizontal();
       EditorGUI.indentLevel = 1;
       editor.OnInspectorGUI();
       EditorGUI.indentLevel = 0;

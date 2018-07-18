@@ -300,6 +300,7 @@ namespace Stratus
       list.RemoveAll(x => x == null);
     }
 
+
     /// <summary>
     /// Checks whether this list has elements with duplicate keys, given a function
     /// that extracts the key for each element

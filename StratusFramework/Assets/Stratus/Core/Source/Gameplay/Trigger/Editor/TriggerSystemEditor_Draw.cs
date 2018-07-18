@@ -96,12 +96,7 @@ namespace Stratus
       if (selectedEditor == null)
         return;
 
-      {
-        EditorGUILayout.LabelField($"<size=12>{selectedName}</size>", StratusGUIStyles.header);
-        EditorGUI.indentLevel = 1;
-        selectedEditor.OnInspectorGUI();
-        EditorGUI.indentLevel = 0;
-      }
+      DrawEditor(this.selectedEditor, this.selectedName);
     }
 
     private void DrawOptions(Rect rect)

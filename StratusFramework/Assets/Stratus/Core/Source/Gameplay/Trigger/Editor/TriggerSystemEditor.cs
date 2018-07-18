@@ -53,11 +53,6 @@ namespace Stratus
     //------------------------------------------------------------------------/
     protected override void OnStratusEditorEnable()
     {
-      //graph = SingletonAsset.LoadOrCreate<TriggerSystemEditorGraph>("Trigger System Graph", "Stratus/Core/Resources", false);
-      //graph.Initialize(this);
-      //XNodeEditor.NodeEditorWindow.OnOpen(graph.GetInstanceID(), 0);
-      ////graphEditor = XNodeEditor.NodeGraphEditor.GetEditor(graph);
-
       triggerTypes = new TypeSelector(typeof(Trigger), true);
       triggerableTypes = new TypeSelector(typeof(Triggerable), true);
 

@@ -46,7 +46,7 @@ namespace Stratus.Gameplay
     {
       
     }
-    
+
     public void NextCamera()
     {
       cameraNavigation.Navigate(ArrayNavigatorBase.Direction.Right);

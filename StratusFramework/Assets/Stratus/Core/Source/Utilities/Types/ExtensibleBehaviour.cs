@@ -49,7 +49,6 @@ namespace Stratus
         extensionsMap.Add(extension.GetType(), extension);
         extension.OnExtensibleAwake(this);        
       }
-
     }
 
     private void Start()

@@ -14,89 +14,15 @@ namespace Stratus
   /// <summary>
   /// A window used for inspecting the members of an object at runtime
   /// </summary>
-  public class MemberInspectorWindow : StratusEditorWindow<MemberInspectorWindow>
+  public class MemberInspectorWindow : StratusEditorWindow<MemberInspectorWindow>, ISerializationCallbackReceiver
   {
-    /// <summary>
-    /// Information about a component
-    /// </summary>
-    public class ComponentInfo
+    //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/ 
+    public enum Mode
     {
-      public Component component;
-      public Type type;
-      public FieldInfo[] fields;
-      public PropertyInfo[] properties;
-      public object[] fieldValues, propertyValues;
-      private const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-      public int fieldCount => fields.Length;
-      public int propertyCount => properties.Length;
-      public bool hasFields => fieldCount > 0;
-      public bool hasProperties => propertyCount > 0;
-
-      public ComponentInfo(Component component)
-      {
-        this.component = component;
-        this.type = this.component.GetType();
-        this.fields = this.type.GetFields(bindingFlags);
-        this.fieldValues = new object[this.fields.Length];
-        this.properties = this.type.GetProperties(bindingFlags);
-        this.propertyValues = new object[this.properties.Length];
-      }
-
-      public void UpdateValues()
-      {
-        // Some properties may fail in editor or in play mode
-        for (int f = 0; f < fields.Length; ++f)
-        {
-          try
-          {
-            this.fieldValues[f] = this.GetValue(this.fields[f]);
-          }
-          catch (Exception e)
-          {
-          }
-        }
-
-        for (int p = 0; p < properties.Length; ++p)
-        {
-          try
-          {
-            this.propertyValues[p] = this.GetValue(this.properties[p]);
-          }
-          catch (Exception e)
-          {
-          }
-        }
-
-
-      }
-
-      public object GetValue(FieldInfo field) => field.GetValue(component);
-      public object GetValue(PropertyInfo property) => property.GetValue(component);
-    }
-
-    /// <summary>
-    /// Information about a gameobject and all its components
-    /// </summary>
-    public class GameObjectInfo
-    {
-      public GameObject target;
-      public ComponentInfo[] componentInformation;
-      public int numberofComponents { get; private set; }
-
-      public GameObjectInfo(GameObject target)
-      {
-        // Set target
-        this.target = target;
-
-        // Set components
-        List<ComponentInfo> components = new List<ComponentInfo>();
-        foreach (var component in target.GetComponents<Component>())
-        {
-          components.Add(new ComponentInfo(component));
-        }
-        this.componentInformation = components.ToArray();
-        this.numberofComponents = this.componentInformation.Length;
-      }
+      Favorites,
+      Inspector
     }
 
     //------------------------------------------------------------------------/
@@ -106,23 +32,43 @@ namespace Stratus
     private TreeView treeView;
 
     [SerializeField]
+    private Mode mode = Mode.Inspector;
+
+    [SerializeField]
     private GameObject target;
 
     [SerializeField]
-    private float pollSpeed = 0.5f;
+    private GameObjectInfo targetInformation;
+
+    [SerializeField]
+    private float pollSpeed = 1f;
+
+    [SerializeField]
+    private int lastComponentIndex = 0;
+
+    [SerializeField]
+    private int selectedModeIndex = 0;
 
     private Countdown pollTimer;
+    private const float listRatio = 0.25f;
+    private GUILayoutOption listLeftElementWidth; 
+    private GUILayoutOption listRightElementWidth;
+    private GUILayoutOption listElementHeight;
+    private string[] toolbarOptions = new string[] { nameof(Mode.Inspector), nameof(Mode.Favorites) };
 
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/    
     private SerializedProperty memberProperty { get; set; }
     private Type gameObjectType { get; set; }
-    private bool hasTarget => target != null;
-    private GameObjectInfo targetInformation { get; set; }
+    private bool hasTarget => this.targetInformation != null ;
+
     private int selectedIndex { get; set; }
     private AnimBool[] showComponent { get; set; }
-    private Vector2 scrollPosition { get; set; }
+    private Vector2 componentScrollPosition { get; set; }
+    private Vector2 watchListScrollPosition { get; set; }
+    private DropdownList<ComponentInfo> componentList { get; set; }
+    private List<GameObjectInfo.MemberReference> watchedMembers { get; set; } = new List<GameObjectInfo.MemberReference>();
 
     //------------------------------------------------------------------------/
     // Messages
@@ -139,9 +85,27 @@ namespace Stratus
     protected override void OnWindowGUI()
     {
       this.SelectTarget();
+      this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions);
 
       if (this.hasTarget)
-        this.InspectTarget();
+      {
+        listLeftElementWidth = GUILayout.Width(position.width * listRatio);
+        listRightElementWidth = GUILayout.Width(position.width * (1f - listRatio));
+        listElementHeight = GUILayout.MinHeight(20f);
+
+        switch (this.mode)
+        {
+          case Mode.Favorites:
+            this.DrawFavorites();
+            break;
+
+          case Mode.Inspector:
+            this.InspectTarget();
+            break;
+        }
+
+        //this.DrawGrid();
+      }
     }
 
     protected override void OnPlayModeStateChange(PlayModeStateChange stateChange)
@@ -168,17 +132,46 @@ namespace Stratus
         bool updateValues = pollTimer.Update(Time.deltaTime);
         if (pollTimer.isFinished)
         {
-          for (int c = 0; c < this.targetInformation.numberofComponents; ++c)
+          switch (this.mode)
           {
-            ComponentInfo componentInfo = this.targetInformation.componentInformation[c];
-            // Update the values if the component is being shown
-            bool show = this.showComponent[c].target;
-            if (show && updateValues)
-              componentInfo.UpdateValues();
+            case Mode.Favorites:
+              this.targetInformation.UpdateFavorites();
+              break;
+
+            case Mode.Inspector:
+              componentList.selected.UpdateValues();
+              break;
           }
+
+
+          //for (int c = 0; c < this.targetInformation.numberofComponents; ++c)
+          //{
+          //  ComponentInfo componentInfo = this.targetInformation.components[c];
+          //  // Update the values if the component is being shown
+          //  bool show = this.showComponent[c].target;
+          //  if (show && updateValues)
+          //    componentInfo.UpdateValues();
+          //}
+
+          // Update display content
+          //this.targetInformation.UpdateDisplayContent();
+
+          // Reset the poll timer
           pollTimer.Reset();
+          this.Repaint();
         }
       }
+    }
+
+    public void OnBeforeSerialize()
+    {
+      if (this.componentList != null)
+        this.lastComponentIndex = this.componentList.selectedIndex;
+    }
+
+    public void OnAfterDeserialize()
+    {
+
     }
 
     //------------------------------------------------------------------------/
@@ -198,7 +191,7 @@ namespace Stratus
     }
 
     //------------------------------------------------------------------------/
-    // Methods
+    // Methods: Target Selection
     //------------------------------------------------------------------------/
     private void SelectTarget()
     {
@@ -210,41 +203,79 @@ namespace Stratus
       });
 
       if (changed)
-        this.CheckTarget();
+      {
+        if (this.target)
+        {
+          this.targetInformation = new GameObjectInfo(this.target);
+          this.OnTargetSelected();
+        }
+        else
+        {
+          this.targetInformation = null;
+        }
+      }
+      
     }
 
     private void SelectTarget(GameObject target)
     {
       this.target = target;
+      this.targetInformation = new GameObjectInfo(this.target);
       this.OnTargetSelected();
     }
 
     private void CheckTarget()
     {
       if (this.target)
+      {
         this.OnTargetSelected();
+      }
+      else
+      {
+        this.targetInformation = null;
+        this.lastComponentIndex = 0;
+      }
     }
 
     private void OnTargetSelected()
     {
-      this.targetInformation = new GameObjectInfo(this.target);
+      //if (this.targetInformation == null || !this.targetInformation.isValid)
+      //{
+      //  this.targetInformation = new GameObjectInfo(this.target);
+      //}
+      //else
+      //{
+      //}
       this.showComponent = this.GenerateAnimBools(this.targetInformation.numberofComponents, false);
+      this.componentList = new DropdownList<ComponentInfo>(this.targetInformation.components, (ComponentInfo component) => component.name, this.lastComponentIndex);
       this.member.SetTarget(this.target);
     }
 
+    //------------------------------------------------------------------------/
+    // Methods: Draw Target
+    //------------------------------------------------------------------------/
     private void InspectTarget()
     {
-
-
       EditorGUILayout.LabelField("Components", EditorStyles.centeredGreyMiniLabel);
-      this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition);
+      this.componentList.selectedIndex = EditorGUILayout.Popup(this.componentList.selectedIndex, this.componentList.displayedOptions, StratusGUIStyles.popup);
+
+      //for (int c = 0; c < this.targetInformation.numberofComponents; ++c)
+      //{
+      //  ComponentInfo componentInfo = this.targetInformation.components[c];
+      //  EditorGUILayout.
+      //}
+
+      this.componentScrollPosition = EditorGUILayout.BeginScrollView(this.componentScrollPosition, StratusGUIStyles.background);
       {
+        this.DrawComponent(this.componentList.selected);
+        //ComponentInfo componentInfo = this.componentList.selected;
+
         // Show fields and proeprties for every component
-        for (int c = 0; c < this.targetInformation.numberofComponents; ++c)
-        {
-          ComponentInfo componentInfo = this.targetInformation.componentInformation[c];
-          StratusEditorUtility.DrawVerticalFadeGroup(this.showComponent[c], componentInfo.type.Name, () => this.DrawComponent(componentInfo), EditorStyles.helpBox, EditorBuildSettings.scenes.Length > 0);
-        }
+        //for (int c = 0; c < this.targetInformation.numberofComponents; ++c)
+        //{
+        //  ComponentInfo componentInfo = this.targetInformation.components[c];
+        //  StratusEditorUtility.DrawVerticalFadeGroup(this.showComponent[c], componentInfo.type.Name, () => this.DrawComponent(componentInfo), EditorStyles.helpBox, EditorBuildSettings.scenes.Length > 0);
+        //}
       }
       EditorGUILayout.EndScrollView();
     }
@@ -252,28 +283,101 @@ namespace Stratus
     private void DrawComponent(ComponentInfo componentInfo)
     {
       if (componentInfo.hasFields)
-        DrawFields(componentInfo);
+        DrawList("Fields", componentInfo, componentInfo.fields, ref componentInfo.fieldValues, ref componentInfo.favoriteFields);
       if (componentInfo.hasProperties)
-        DrawProperties(componentInfo);
+        DrawList("Properties", componentInfo, componentInfo.properties, ref componentInfo.propertyValues, ref componentInfo.favoriteProperties);
     }
 
-    private void DrawFields(ComponentInfo componentInfo)
+    private void DrawList(string label, ComponentInfo component, MemberInfo[] members, ref object[] values, ref bool[] favorites)
     {
-      EditorGUILayout.LabelField($"Fields ({componentInfo.fieldCount})", EditorStyles.whiteLargeLabel);
-      for (int f = 0; f < componentInfo.fieldCount; ++f)
+      int count = members.Length;
+      EditorGUILayout.LabelField($"{label} ({count})", EditorStyles.whiteLargeLabel);
+      for (int i = 0; i < count; ++i)
       {
-        EditorGUILayout.LabelField($"- <b>{componentInfo.fields[f].Name}: </b> {componentInfo.fieldValues[f]}", StratusGUIStyles.skin.label);
+        MemberInfo member = members[i];
+        EditorGUILayout.BeginHorizontal();
+        {
+          EditorGUI.BeginChangeCheck();
+          {
+            favorites[i] = GUILayout.Toggle(favorites[i], string.Empty, StratusGUIStyles.listViewToggle, listElementHeight);
+          }
+          if (EditorGUI.EndChangeCheck())
+          {
+            if (favorites[i])
+              this.targetInformation.Watch(member, component, i);
+              //component.Watch(member);
+            else
+              this.targetInformation.RemoveWatch(member, component);
+          }
+
+          GUILayout.Label(new GUIContent(member.Name, null, member.Name), StratusGUIStyles.listViewLabel, listLeftElementWidth, listElementHeight);
+          EditorGUILayout.SelectableLabel($"{values[i]}", StratusGUIStyles.listViewTextField, listRightElementWidth, listElementHeight);
+          //{
+          //  StratusEditorUtility.OnLastControlMouseClick(null, () =>
+          //    {
+          //      GenericMenu menu = new GenericMenu();
+          //      menu.AddItem(new GUIContent("Watch"), false, () => this.targetInformation.Watch(member, component));
+          //      menu.ShowAsContext();
+          //    }, null);
+          //}
+        }
+        EditorGUILayout.EndHorizontal();
       }
     }
 
-    private void DrawProperties(ComponentInfo componentInfo)
+    private void DrawGrid()
     {
-      EditorGUILayout.LabelField($"Properties ({componentInfo.propertyCount})", EditorStyles.whiteLargeLabel);
-      for (int p = 0; p < componentInfo.propertyCount; ++p)
+      int numRows = 2;
+      string[] content = new string[this.targetInformation.numberofComponents * numRows];
+      for (int c = 0; c < this.targetInformation.numberofComponents; ++c)
       {
-        EditorGUILayout.LabelField($"- <b>{componentInfo.properties[p].Name}: </b>{componentInfo.propertyValues[p]}", StratusGUIStyles.skin.label);
+        ComponentInfo component = this.targetInformation.components[c];
+        content[(c * numRows) + 0] = component.type.Name;
+        content[(c * numRows) + 1] = "Boo";
       }
+      this.selectedIndex = GUILayout.SelectionGrid(this.selectedIndex, content, numRows, EditorStyles.toolbarButton);
     }
+
+    private void DrawFavorites()
+    {
+      EditorGUILayout.LabelField("Favorites", EditorStyles.centeredGreyMiniLabel);
+      this.watchListScrollPosition = EditorGUILayout.BeginScrollView(this.watchListScrollPosition, StratusGUIStyles.background);
+      {
+        const float ratio = 0.4f;
+        GUILayoutOption leftElementWidth = GUILayout.Width(position.width * ratio);
+        GUILayoutOption rightElementWidth = GUILayout.Width(position.width * (1f - ratio));
+        GUILayoutOption elementHeight = GUILayout.MinHeight(12f);
+
+        foreach (var member in this.targetInformation.favorites)
+        {
+          EditorGUILayout.BeginHorizontal();
+          {
+            GUILayout.Label(new GUIContent($"{member.componentName}.{member.name}"), StratusGUIStyles.listViewLabel, leftElementWidth, elementHeight);
+            EditorGUILayout.SelectableLabel(member.latestValueString, StratusGUIStyles.listViewTextField, rightElementWidth, elementHeight);
+          }
+          EditorGUILayout.EndHorizontal();
+        }
+
+      }
+      EditorGUILayout.EndScrollView();
+
+      //this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition);
+      //{
+      //  // Show fields and proeprties for every component
+      //  foreach (var member in this.targetInformation.watchList)
+      //  {
+      //    EditorGUILayout.LabelField($"{member.componentName}.{member.name}");
+      //  }
+      //}
+      //EditorGUILayout.EndScrollView();
+
+
+    }
+
+
+
+    
+
 
   }
 }

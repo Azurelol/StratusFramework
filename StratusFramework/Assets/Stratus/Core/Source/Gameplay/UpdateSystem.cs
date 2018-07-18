@@ -13,9 +13,7 @@ namespace Stratus
   {
     public struct UpdateSubscriber
     {
-      //GameObject gameObject;
       Dictionary<MonoBehaviour, List<System.Action>> behaviours;
-      //List<System.Action> updateMethods;
     }
 
     public class FrequencyUpdateBatch
@@ -47,12 +45,12 @@ namespace Stratus
 
       private void Invoke()
       {
-        foreach(var behaviour in behaviours)
+        foreach (var behaviour in behaviours)
         {
           if (!behaviour.Key.enabled)
             continue;
 
-          foreach(var action in behaviour.Value)
+          foreach (var action in behaviour.Value)
           {
             action.Invoke();
           }
@@ -100,11 +98,16 @@ namespace Stratus
     {
     }
 
+    private void Start()
+    {
+
+    }
+
     private void Update()
     {
-      foreach(var batch in update)
+      foreach (var batch in update)
       {
-        batch.Value.Update(Time.deltaTime);                
+        batch.Value.Update(Time.deltaTime);
       }
     }
 

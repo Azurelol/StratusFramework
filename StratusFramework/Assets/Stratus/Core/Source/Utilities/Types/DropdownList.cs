@@ -42,7 +42,7 @@ namespace Stratus
       this.list = list;
       isList = true;
       displayedOptions = list.Names(namer);
-      selectedIndex = 0;
+      selectedIndex = index;
     }
 
     public DropdownList(T[] array, Func<T, string> namer, T initial = null)
@@ -60,7 +60,7 @@ namespace Stratus
       this.array = array;
       isList = false;
       displayedOptions = array.Names(namer);
-      selectedIndex = 0;
+      selectedIndex = index;
     }
 
     /// <summary>

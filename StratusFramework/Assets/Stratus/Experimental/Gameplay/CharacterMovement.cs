@@ -348,7 +348,7 @@ namespace Stratus.Gameplay
         verticalSpeed = Physics.gravity.y * deltaTime;
       }
 
-      Trace.Script($"Vertical speed = {verticalSpeed}");
+      //Trace.Script($"Vertical speed = {verticalSpeed}");
       nextVelocity.y = verticalSpeed;
       //Trace.Script($"Next velocity = {nextVelocity}");
 

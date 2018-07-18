@@ -406,6 +406,20 @@ namespace Stratus
       EditorGUILayout.EndFadeGroup();
     }
 
+    public static void DrawListView<T>(IEnumerable<T> list, Func<T, GUIContent> leftContent, Func<T, string> rightContent, 
+                                       GUILayoutOption leftWidth, GUILayoutOption rightWidth, GUILayoutOption height)
+    {
+      foreach(var element in list)
+      {
+        EditorGUILayout.BeginHorizontal();
+        {
+          GUILayout.Label(leftContent(element), StratusGUIStyles.listViewLabel, leftWidth, height);
+          EditorGUILayout.SelectableLabel(rightContent(element), StratusGUIStyles.listViewTextField, rightWidth, height);
+        }
+        EditorGUILayout.EndHorizontal();
+      }
+    }
+
     ///// <summary>
     ///// Adds the given define symbols to PlayerSettings define symbols.
     ///// Just add your own define symbols to the Symbols property at the below.

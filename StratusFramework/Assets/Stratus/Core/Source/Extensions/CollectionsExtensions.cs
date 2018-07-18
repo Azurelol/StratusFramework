@@ -53,11 +53,13 @@ namespace Stratus
     /// <param name="dictionary"></param>
     /// <param name="list"></param>
     /// <param name="keyFunction"></param>
-    public static void AddRange<Key, Value>(this Dictionary<Key, Value> dictionary, List<Value> list, Func<Value, Key> keyFunction)
+    public static void AddRange<Key, Value>(this Dictionary<Key, Value> dictionary, IEnumerable<Value> list, Func<Value, Key> keyFunction)
     {
       foreach (var element in list)
         dictionary.Add(keyFunction(element), element);
     }
+
+
 
     public static Value TryGetValue<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, string errorMessage = null) 
     {
