@@ -66,7 +66,7 @@ namespace Stratus
       EditorGUILayout.BeginHorizontal();
       {
         GenericMenu menu = new GenericMenu();
-        menu.AddItem(new GUIContent("Remove GameObject Bookmarks"), false, RemoveGameObjectBookmarks);
+        menu.AddItem(new GUIContent("Remove GameObject Bookmarks"), false, GameObjectBookmark.RemoveAll);
         StratusEditorUtility.DrawContextMenu(menu, StratusEditorUtility.ContextMenuType.Options);
       }
       EditorGUILayout.EndHorizontal();
@@ -83,10 +83,6 @@ namespace Stratus
       EditorGUILayout.EndScrollView();
       EditorGUILayout.EndVertical();
     }
-
-    //------------------------------------------------------------------------/
-    // Events
-    //------------------------------------------------------------------------/
 
     //------------------------------------------------------------------------/
     // Methods
@@ -116,7 +112,12 @@ namespace Stratus
     [MenuItem("GameObject/Bookmark", false, 49)]
     private static void BookmarkGameObject()
     {
-      Selection.activeGameObject.GetOrAddComponent<GameObjectBookmark>();
+      //if (Selection.activeGameObject != null)
+      GameObject go = Selection.activeGameObject;
+      if (go != null)
+      {
+        go.GetOrAddComponent<GameObjectBookmark>();
+      }
     }
 
     //------------------------------------------------------------------------/
@@ -142,7 +143,6 @@ namespace Stratus
         }
       }
     }
-
 
     void ShowBookmarkedScenes()
     {
@@ -314,18 +314,21 @@ namespace Stratus
       Repaint();
     }
 
-    [PostProcessScene]
-    private static void OnPostProcessScene()
-    {
-      RemoveGameObjectBookmarks();
-    }
-
-    private static void RemoveGameObjectBookmarks()
-    {
-      GameObjectBookmark[] bookmarks = FindObjectsOfType<GameObjectBookmark>();
-      foreach (var bookmark in bookmarks)
-        DestroyImmediate(bookmark);
-    }
+    //[PostProcessScene]
+    //private static void OnPostProcessScene()
+    //{
+    //  //#if UNITY_EDITOR
+    //  //#else
+    //  //  RemoveGameObjectBookmarks();
+    //  //#endif
+    //}
+    //
+    //private static void RemoveGameObjectBookmarks()
+    //{
+    //  GameObjectBookmark[] bookmarks = FindObjectsOfType<GameObjectBookmark>();
+    //  foreach (var bookmark in bookmarks)
+    //    DestroyImmediate(bookmark);
+    //}
         
 
 

@@ -128,7 +128,6 @@ GameObject:
   - component: {fileID: 74665545}
   - component: {fileID: 74665544}
   - component: {fileID: 74665543}
-  - component: {fileID: 74665542}
   m_Layer: 5
   m_Name: InputField
   m_TagString: Untagged
@@ -156,18 +155,6 @@ RectTransform:
   m_AnchoredPosition: {x: -254, y: -244.5}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &74665542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 74665540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9984fa7532209b64989107fc67e20fa4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  label: InputField
 --- !u!114 &74665543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1209,7 +1196,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 45
+  field of view: 40
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -1233,8 +1220,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 776468811}
-  m_LocalRotation: {x: 0.12473845, y: 0, z: 0, w: 0.9921897}
-  m_LocalPosition: {x: 1, y: 1.5, z: -13}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: -0.9272058, z: -18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1358,6 +1345,7 @@ GameObject:
   - component: {fileID: 826323339}
   - component: {fileID: 826323338}
   - component: {fileID: 826323328}
+  - component: {fileID: 826323329}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1382,6 +1370,205 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &826323329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 826323327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9984fa7532209b64989107fc67e20fa4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _information:
+    target: {fileID: 826323327}
+    components:
+    - component: {fileID: 826323331}
+      favoriteFields: 
+      favoriteProperties: 01000000000100000000000000000000000000000000000000000000000000000000000000000000000000
+      fieldCount: 0
+      propertyCount: 43
+      alphabeticalSorted: 0
+    - component: {fileID: 826323337}
+      favoriteFields: 
+      favoriteProperties: 000000000000000000000000000000000000000000000000000000000000000000
+      fieldCount: 0
+      propertyCount: 33
+      alphabeticalSorted: 0
+    - component: {fileID: 826323335}
+      favoriteFields: 00000000
+      favoriteProperties: 000000000000000000000000000000000000000000000000000000000000
+      fieldCount: 4
+      propertyCount: 30
+      alphabeticalSorted: 0
+    - component: {fileID: 826323334}
+      favoriteFields: 000000000000
+      favoriteProperties: 0000000000000000000000000000000000000000000000000000000000000000
+      fieldCount: 6
+      propertyCount: 32
+      alphabeticalSorted: 0
+    - component: {fileID: 826323336}
+      favoriteFields: 000000000000
+      favoriteProperties: 0000000000000000000000000000000000000000000000000000000000000000
+      fieldCount: 6
+      propertyCount: 32
+      alphabeticalSorted: 0
+    - component: {fileID: 826323339}
+      favoriteFields: 00000000000000000000000000000000000000
+      favoriteProperties: 000000000101010101010000000000000000000000000000000000000000000000000000000000000000000000
+      fieldCount: 19
+      propertyCount: 45
+      alphabeticalSorted: 0
+    - component: {fileID: 826323338}
+      favoriteFields: 0000000000000000000000000000000000000000
+      favoriteProperties: 0000000000000000000000000000000000000000000000000000000000000000
+      fieldCount: 20
+      propertyCount: 32
+      alphabeticalSorted: 0
+    - component: {fileID: 826323328}
+      favoriteFields: 
+      favoriteProperties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000
+      fieldCount: 0
+      propertyCount: 41
+      alphabeticalSorted: 0
+    - component: {fileID: 826323329}
+      favoriteFields: 00
+      favoriteProperties: 0000000000000000000000000000000000000000000000000000000000
+      fieldCount: 1
+      propertyCount: 29
+      alphabeticalSorted: 0
+    favorites:
+    - type: 16
+      name: eulerAngles
+      componentName: Transform
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 2
+      component:
+        component: {fileID: 826323331}
+        favoriteFields: 
+        favoriteProperties: 01010100000000000000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 0
+        propertyCount: 43
+        alphabeticalSorted: 0
+    - type: 16
+      name: localPosition
+      componentName: Transform
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 1
+      component:
+        component: {fileID: 826323331}
+        favoriteFields: 
+        favoriteProperties: 01010100000000000000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 0
+        propertyCount: 43
+        alphabeticalSorted: 0
+    - type: 16
+      name: position
+      componentName: Transform
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 0
+      component:
+        component: {fileID: 826323331}
+        favoriteFields: 
+        favoriteProperties: 01010100000000000000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 0
+        propertyCount: 43
+        alphabeticalSorted: 0
+    - type: 16
+      name: up
+      componentName: Transform
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 5
+      component:
+        component: {fileID: 826323331}
+        favoriteFields: 
+        favoriteProperties: 01010100000100000000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 0
+        propertyCount: 43
+        alphabeticalSorted: 0
+    - type: 16
+      name: moving
+      componentName: CharacterControllerMovement
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 4
+      component:
+        component: {fileID: 826323339}
+        favoriteFields: 00000000000000000000000000000000000000
+        favoriteProperties: 000000000101010101010000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 19
+        propertyCount: 45
+        alphabeticalSorted: 0
+    - type: 16
+      name: turning
+      componentName: CharacterControllerMovement
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 5
+      component:
+        component: {fileID: 826323339}
+        favoriteFields: 00000000000000000000000000000000000000
+        favoriteProperties: 000000000101010101010000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 19
+        propertyCount: 45
+        alphabeticalSorted: 0
+    - type: 16
+      name: sprinting
+      componentName: CharacterControllerMovement
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 6
+      component:
+        component: {fileID: 826323339}
+        favoriteFields: 00000000000000000000000000000000000000
+        favoriteProperties: 000000000101010101010000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 19
+        propertyCount: 45
+        alphabeticalSorted: 0
+    - type: 16
+      name: jumping
+      componentName: CharacterControllerMovement
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 7
+      component:
+        component: {fileID: 826323339}
+        favoriteFields: 00000000000000000000000000000000000000
+        favoriteProperties: 000000000101010101010000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 19
+        propertyCount: 45
+        alphabeticalSorted: 0
+    - type: 16
+      name: falling
+      componentName: CharacterControllerMovement
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 8
+      component:
+        component: {fileID: 826323339}
+        favoriteFields: 00000000000000000000000000000000000000
+        favoriteProperties: 000000000101010101010000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 19
+        propertyCount: 45
+        alphabeticalSorted: 0
+    - type: 16
+      name: grounded
+      componentName: CharacterControllerMovement
+      gameObjectName: Player
+      componentIndex: 0
+      memberIndex: 9
+      component:
+        component: {fileID: 826323339}
+        favoriteFields: 00000000000000000000000000000000000000
+        favoriteProperties: 000000000101010101010000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 19
+        propertyCount: 45
+        alphabeticalSorted: 0
 --- !u!4 &826323331
 Transform:
   m_ObjectHideFlags: 0
@@ -1780,6 +1967,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 942188148}
+  - component: {fileID: 942188147}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -1787,6 +1975,59 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &942188147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 942188146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9984fa7532209b64989107fc67e20fa4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _information:
+    target: {fileID: 942188146}
+    components:
+    - component: {fileID: 942188148}
+      favoriteFields: 
+      favoriteProperties: 01010000000000000000000000000000000000000000000000000000000000000000000000000000000000
+      fieldCount: 0
+      propertyCount: 43
+      alphabeticalSorted: 0
+    - component: {fileID: 942188147}
+      favoriteFields: 00
+      favoriteProperties: 0000000000000000000000000000000000000000000000000000000000
+      fieldCount: 1
+      propertyCount: 29
+      alphabeticalSorted: 0
+    favorites:
+    - type: 16
+      name: position
+      componentName: Transform
+      gameObjectName: GameObject
+      componentIndex: 0
+      memberIndex: 0
+      component:
+        component: {fileID: 942188148}
+        favoriteFields: 
+        favoriteProperties: 01010000000000000000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 0
+        propertyCount: 43
+        alphabeticalSorted: 0
+    - type: 16
+      name: localPosition
+      componentName: Transform
+      gameObjectName: GameObject
+      componentIndex: 0
+      memberIndex: 1
+      component:
+        component: {fileID: 942188148}
+        favoriteFields: 
+        favoriteProperties: 01010000000000000000000000000000000000000000000000000000000000000000000000000000000000
+        fieldCount: 0
+        propertyCount: 43
+        alphabeticalSorted: 0
 --- !u!4 &942188148
 Transform:
   m_ObjectHideFlags: 0
@@ -2150,7 +2391,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1231410947}
-  m_LocalRotation: {x: 0.12473839, y: -0, z: -0, w: 0.9921897}
+  m_LocalRotation: {x: 0.12473884, y: -0, z: -0, w: 0.99218965}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

@@ -78,7 +78,6 @@ namespace Stratus
 
     private void DrawTriggerables()
     {
-
       foreach (var triggerable in target.triggerables)
         DrawTriggerable(triggerable);
 

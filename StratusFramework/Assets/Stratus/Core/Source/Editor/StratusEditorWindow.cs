@@ -29,6 +29,20 @@ namespace Stratus
     protected static T instance { get; private set; }
     protected StratusMenuBarDrawer menuBarDrawer { get; set; }
 
+    /// <summary>
+    /// Computes the current avaialble position within the window, after taking into account
+    /// the height consumed by the latest control
+    /// </summary>
+    protected Rect availablePosition
+    {
+      get
+      {
+        Rect available = this.position;
+        available.y = GUILayoutUtility.GetLastRect().height;
+        return available;
+      }
+    }
+
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
@@ -98,6 +112,7 @@ namespace Stratus
       }
       return bools.ToArray();
     }
+
 
   }
 

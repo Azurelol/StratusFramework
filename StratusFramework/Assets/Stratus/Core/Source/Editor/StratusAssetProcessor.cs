@@ -24,7 +24,16 @@ namespace Stratus
     [PostProcessScene]
     public static void OnPostProcessScene()
     {
-      
+      if (UnityEditor.BuildPipeline.isBuildingPlayer)
+      {
+        Trace.Script($"Removing all instances of:");
+        GameObjectBookmark.RemoveAll();
+        
+      }
+      else
+      {
+        //Trace.Script($"In Editor. Not removing!");
+      }
     }
 
     /// <summary>

@@ -8,23 +8,97 @@ namespace Stratus
   /// An editor-only behaviour, used for utility
   /// </summary>
   [DisallowMultipleComponent]
-  public class StratusEditorBehaviour<T> : Multiton<T> where T : MonoBehaviour
+  [ExecuteInEditMode]
+  public abstract class StratusEditorBehaviour<T> : StratusBehaviour where T : MonoBehaviour
   {
-    protected override void OnAwake()
-    {      
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    /// <summary>
+    /// All currently active instances, indexed by their labels
+    /// </summary>
+    public static Dictionary<string, T> available { get; private set; } = new Dictionary<string, T>();
+    /// <summary>
+    /// Returns the first instance listed
+    /// </summary>
+    public static T first => availableList.FirstOrNull() as T;
+    /// <summary>
+    /// All currently active instances
+    /// </summary>
+    public static List<T> availableList { get; private set; } = new List<T>();
+    /// <summary>
+    /// Whether there are available segments
+    /// </summary>
+    public static bool hasAvailable => availableList.Count > 0;
+    /// <summary>
+    /// Returns the underlying class for this multiton
+    /// </summary>
+    public T get { get; private set; }
+
+    //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
+    /// <summary>
+    /// The identifier for this instance
+    /// </summary>
+    //[Tooltip("The identifier for this instance")]
+    public string label => gameObject.name;
+
+    //------------------------------------------------------------------------/
+    // Virtual
+    //------------------------------------------------------------------------/
+    protected abstract void OnStratusEditorBehaviourEnable();
+    protected abstract void OnStratusEditorBehaviourDisable();
+    protected abstract void OnReset();
+
+    //------------------------------------------------------------------------/
+    // Messages
+    //------------------------------------------------------------------------/
+#if UNITY_EDITOR
+    private void OnEnable()
+    {
+      get = this as T;
+      available.Add(label, this as T);
+      availableList.Add(this as T);
+      OnStratusEditorBehaviourEnable();      
     }
 
-    protected override void OnMultitonDisable()
-    {      
+    private void OnDisable()
+    {
+      available.Remove(label); 
+      availableList.Remove(this as T);
+      OnStratusEditorBehaviourDisable();
     }
 
-    protected override void OnMultitonEnable()
-    {      
+    private void Reset()
+    {
+      //label = gameObject.name;
+      OnReset();
+    }
+#endif
+
+    ////------------------------------------------------------------------------/
+    //// Editor Methods
+    ////------------------------------------------------------------------------/
+    /// <summary>
+    /// Removes all instances of this behaviour
+    /// </summary>
+    private static void RemoveAll<T>() where T : StratusEditorBehaviour<T>
+    {
+      foreach(var behaviour in StratusEditorBehaviour<T>.availableList)
+      {
+        DestroyImmediate(behaviour);
+      }      
     }
 
-    protected override void OnReset()
-    {      
+    public static void RemoveAll()
+    {
+      foreach (var behaviour in availableList)
+      {
+        DestroyImmediate(behaviour);
+      }
     }
+
 
   }
 

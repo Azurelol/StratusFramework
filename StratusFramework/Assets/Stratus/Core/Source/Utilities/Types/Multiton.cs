@@ -16,22 +16,21 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/
     /// <summary>
-    /// All currently active segments, indexed by their labels
+    /// All currently active instances, indexed by their labels
     /// </summary>
     public static Dictionary<string, T> available { get; private set; } = new Dictionary<string, T>();
     /// <summary>
-    /// Returns the first episode listed
+    /// Returns the first listed multiton
     /// </summary>
     public static T first => availableList.FirstOrNull() as T;
     /// <summary>
-    /// All currently active episodes, unordered
+    /// All currently active instances
     /// </summary>
     public static List<T> availableList { get; private set; } = new List<T>();
     /// <summary>
-    /// Whether there are available segments
+    /// Whether there are available instances
     /// </summary>
     public static bool hasAvailable => availableList.Count > 0;
-
     /// <summary>
     /// Returns the underlying class for this multiton
     /// </summary>

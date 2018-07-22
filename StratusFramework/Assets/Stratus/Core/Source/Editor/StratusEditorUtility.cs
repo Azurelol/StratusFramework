@@ -414,7 +414,7 @@ namespace Stratus
         EditorGUILayout.BeginHorizontal();
         {
           GUILayout.Label(leftContent(element), StratusGUIStyles.listViewLabel, leftWidth, height);
-          EditorGUILayout.SelectableLabel(rightContent(element), StratusGUIStyles.listViewTextField, rightWidth, height);
+          EditorGUILayout.SelectableLabel(rightContent(element), StratusGUIStyles.textField, rightWidth, height);
         }
         EditorGUILayout.EndHorizontal();
       }

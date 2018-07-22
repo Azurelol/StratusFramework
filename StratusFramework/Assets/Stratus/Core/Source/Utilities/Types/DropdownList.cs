@@ -6,7 +6,7 @@ using System;
 namespace Stratus
 {
   /// <summary>
-  /// A dropdow
+  /// An utility class for generating content for a dropdown list
   /// </summary>
   public class DropdownList<T> where T : class
   {

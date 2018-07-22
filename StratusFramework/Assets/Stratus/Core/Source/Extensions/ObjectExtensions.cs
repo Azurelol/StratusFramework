@@ -87,6 +87,18 @@ namespace Stratus
       }
     }
 
+    public static void OverwriteJSON(this object self, object other)
+    {
+      string otherData = JsonUtility.ToJson(other);
+      JsonUtility.FromJsonOverwrite(otherData, self);
+    }
+
+    public static object CloneJSON(this object self)
+    {
+      string data = JsonUtility.ToJson(self);
+      return JsonUtility.FromJson(data, self.GetType());
+    }
+
     public static bool HasDefaultConstructor(this Type t)
     {
       return t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;

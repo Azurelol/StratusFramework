@@ -30,6 +30,7 @@ namespace Stratus
     public bool[] favoriteFields, favoriteProperties;
     public int fieldCount;
     public int propertyCount;
+    public bool alphabeticalSorted;
 
     [NonSerialized]
     public object[] fieldValues, propertyValues, favoriteValues;
@@ -64,7 +65,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    public ComponentInfo(Component component)
+    public ComponentInfo(Component component, bool alphabeticalSort = false)
     {
       this.component = component;
       this.Initialize();
@@ -76,10 +77,16 @@ namespace Stratus
       this.type = this.component.GetType();
 
       this.fields = this.type.GetFields(bindingFlags);
+      if (this.alphabeticalSorted)
+        Array.Sort(this.fields, delegate(FieldInfo a, FieldInfo b) { return a.Name.CompareTo(b.Name); });
+
       this.fieldValues = new object[this.fields.Length];
       this.fieldValueStrings = new string[this.fields.Length];
 
       this.properties = this.type.GetProperties(bindingFlags);
+      if (this.alphabeticalSorted)
+        Array.Sort(this.properties, delegate (PropertyInfo a, PropertyInfo b) { return a.Name.CompareTo(b.Name); });
+
       this.propertyValues = new object[this.properties.Length];
       this.propertyValueStrings = new string[this.properties.Length];
 
@@ -170,7 +177,7 @@ namespace Stratus
   /// Information about a gameobject and all its components
   /// </summary>
   [Serializable]
-  public class GameObjectInfo : ISerializationCallbackReceiver
+  public class GameObjectInformation : ISerializationCallbackReceiver
   {
     //------------------------------------------------------------------------/
     // Declarations
@@ -181,6 +188,7 @@ namespace Stratus
       public MemberTypes type;
       public string name;
       public string componentName;
+      public string gameObjectName;
       public int componentIndex;
       public int memberIndex;
       public ComponentInfo component;
@@ -238,7 +246,7 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/  
     public int numberofComponents { get; private set; }
-    public string[] displayContent { get; private set; }
+    //public string[] displayContent { get; private set; }
     public int fieldCount { get; private set; }
     public int propertyCount { get; private set; }
     public int memberCount => fieldCount + propertyCount;
@@ -285,7 +293,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/  
-    public GameObjectInfo(GameObject target)
+    public GameObjectInformation(GameObject target)
     {
       // We will be counting the total number of members
       this.fieldCount = 0;
@@ -312,17 +320,19 @@ namespace Stratus
 
       this.components = components.ToArray();
       this.numberofComponents = this.components.Length;
-      this.SetDisplayContent();
+      //this.SetDisplayContent();
     }
 
     public void Watch(MemberInfo member, ComponentInfo componentInfo, int memberIndex)
     {
       MemberReference memberReference = new MemberReference(member, componentInfo, memberIndex);
-      this.favorites.Add(memberReference);
+      memberReference.gameObjectName = this.target.name;
+      this.favorites.Add(memberReference);      
     }
-    public void RemoveWatch(MemberInfo member, ComponentInfo componentInfo)
+
+    public void RemoveWatch(MemberInfo member, ComponentInfo componentInfo, int memberIndex)
     {
-      this.favorites.RemoveAll(x => x.name == member.Name && x.component == componentInfo);
+      this.favorites.RemoveAll(x => x.name == member.Name && x.memberIndex == memberIndex);      
     }
 
     public void UpdateFavorites()
@@ -333,53 +343,53 @@ namespace Stratus
       }
     }
 
-    private void SetDisplayContent()
-    {
-      // Now set the display content list            
-      this.displayContent = new string[4 * this.memberCount];
-
-      int i = 0;
-      foreach (var component in this.components)
-      {
-
-        foreach (var field in component.fields)
-        {
-          this.displayContent[i++] = component.type.Name;
-          this.displayContent[i++] = "Field";
-          this.displayContent[i++] = field.Name;
-          this.displayContent[i++] = string.Empty;
-        }
-
-        foreach (var property in component.properties)
-        {
-          this.displayContent[i++] = component.type.Name;
-          this.displayContent[i++] = "Property";
-          this.displayContent[i++] = property.Name;
-          this.displayContent[i++] = string.Empty;
-        }
-
-      }
-    }
-
-    public void UpdateDisplayContent()
-    {
-      int i = 0;
-
-      foreach (var component in this.components)
-      {
-        for (int k = 0; k < component.fieldCount; ++k)
-        {
-          i += 3;
-          this.displayContent[i] = component.fieldValueStrings[k];
-        }
-
-        for (int k = 0; k < component.propertyCount; ++k)
-        {
-          i += 4;
-          this.displayContent[i] = component.propertyValueStrings[k];
-        }
-      }
-    }
+    //private void SetDisplayContent()
+    //{
+    //  // Now set the display content list            
+    //  this.displayContent = new string[4 * this.memberCount];
+    //
+    //  int i = 0;
+    //  foreach (var component in this.components)
+    //  {
+    //
+    //    foreach (var field in component.fields)
+    //    {
+    //      this.displayContent[i++] = component.type.Name;
+    //      this.displayContent[i++] = "Field";
+    //      this.displayContent[i++] = field.Name;
+    //      this.displayContent[i++] = string.Empty;
+    //    }
+    //
+    //    foreach (var property in component.properties)
+    //    {
+    //      this.displayContent[i++] = component.type.Name;
+    //      this.displayContent[i++] = "Property";
+    //      this.displayContent[i++] = property.Name;
+    //      this.displayContent[i++] = string.Empty;
+    //    }
+    //
+    //  }
+    //}
+    //
+    //public void UpdateDisplayContent()
+    //{
+    //  int i = 0;
+    //
+    //  foreach (var component in this.components)
+    //  {
+    //    for (int k = 0; k < component.fieldCount; ++k)
+    //    {
+    //      i += 3;
+    //      this.displayContent[i] = component.fieldValueStrings[k];
+    //    }
+    //
+    //    for (int k = 0; k < component.propertyCount; ++k)
+    //    {
+    //      i += 4;
+    //      this.displayContent[i] = component.propertyValueStrings[k];
+    //    }
+    //  }
+    //}
 
 
   }

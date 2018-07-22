@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Stratus
 {
-  internal class TreeViewItem<T> : TreeViewItem where T : TreeElement
+  public class TreeViewItem<T> : TreeViewItem where T : TreeElement
   {
     public T data { get; set; }
     public TreeViewItem(int id, int depth, string displayName, T data) : base(id, depth, displayName)
@@ -23,8 +23,8 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/ 
-    private TreeModel<T> treeModel;
-    private readonly List<TreeViewItem> rows = new List<TreeViewItem>(100);
+    protected TreeModel<T> treeModel;
+    protected readonly List<TreeViewItem> rows = new List<TreeViewItem>(100);
     private const int hiddenRootDepth = -1;
     private const string genericDragId = "GenericDragColumnDragging";
 
@@ -37,17 +37,19 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // CTOR
     //------------------------------------------------------------------------/ 
-    public TreeViewWithTreeModel(TreeViewState state, TreeModel<T> model) : base(state)
+    public TreeViewWithTreeModel(TreeViewState state, TreeModel<T> model) 
+      : base(state)
     {
-      this.Initialize(model);
+      this.InitializeTreeViewWithModel(model);
     }
 
-    public TreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<T> model) : base(state, multiColumnHeader)
+    public TreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<T> model) 
+      : base(state, multiColumnHeader)
     {
-      this.Initialize(model);
+      this.InitializeTreeViewWithModel(model);
     }
 
-    private void Initialize(TreeModel<T> model)
+    protected void InitializeTreeViewWithModel(TreeModel<T> model)
     {
       this.treeModel = model;
       this.treeModel.onModelChanged += this.OnModelChanged;

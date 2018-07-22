@@ -5,6 +5,7 @@ using System;
 using NUnit.Framework;
 using UnityEditor;
 using System.Linq;
+using UnityEditor.IMGUI.Controls;
 
 namespace Stratus
 {
@@ -45,8 +46,36 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/ 
+    public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(System.Action<TreeElementType, DataType> setter, params DataType[] elements) 
+      where TreeElementType : TreeElement, new ()
+      where DataType : class
+    {
+      List<TreeElementType> treeList = new List<TreeElementType>();
+
+      int idCounter = 0;
+
+      // Add root
+      TreeElementType root = new TreeElementType();
+      root.name = "Root";
+      root.depth = -1;
+      root.id = idCounter++;
+      treeList.Add(root);
+
+      // Add the elements right below root
+      foreach(var element in elements)
+      {
+        TreeElementType child = new TreeElementType();
+        setter(child, element);
+        child.depth = 0;
+        child.id = idCounter++;
+        treeList.Add(child);
+      }
+
+      return treeList;
+    }
+
     /// <summary>
-    /// Produces a list from the given root node
+    /// Fills out the list from the given root node
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="root"></param>
@@ -70,6 +99,42 @@ namespace Stratus
           for (int c = current.children.Count - 1; c >= 0; c--)
           {
             stack.Push((T)current.children[c]);
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Fills out the list from the given root node
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="result"></param>
+    public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
+    {
+      if (root == null)
+        throw new NullReferenceException("root");
+      if (result == null)
+        throw new NullReferenceException("result");
+
+      result.Clear();
+
+      if (root.children == null)
+        return;
+
+      Stack<TreeViewItem> stack = new Stack<TreeViewItem>();
+      for (int i = root.children.Count - 1; i >= 0; i--)
+        stack.Push(root.children[i]);
+
+      while (stack.Count > 0)
+      {
+        TreeViewItem current = stack.Pop();
+        result.Add(current);
+
+        if (current.hasChildren && current.children[0] != null)
+        {
+          for (int i = current.children.Count - 1; i >= 0; i--)
+          {
+            stack.Push(current.children[i]);
           }
         }
       }

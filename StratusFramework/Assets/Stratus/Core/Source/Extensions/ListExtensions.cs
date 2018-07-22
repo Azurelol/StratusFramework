@@ -483,6 +483,11 @@ namespace Stratus
       return newArray;
     }
 
+    //public static T[] Sort<T>(this T[] array, Comparison<T> comparison)
+    //{
+    //  T[] sorted = new T[array.Length];
+    //}
+
     public static U[] OfType<T, U>(this T[] array) 
       where T : class 
       where U : class, T
