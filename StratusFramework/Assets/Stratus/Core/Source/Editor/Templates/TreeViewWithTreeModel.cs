@@ -11,11 +11,13 @@ namespace Stratus
 {
   public class TreeViewItem<T> : TreeViewItem where T : TreeElement
   {
-    public T data { get; set; }
-    public TreeViewItem(int id, int depth, string displayName, T data) : base(id, depth, displayName)
+    public T item { get; set; }
+
+    public TreeViewItem(int id, int depth, string displayName, T item) : base(id, depth, displayName)
     {
-      this.data = data;
+      this.item = item;
     }
+
   }
 
   public class TreeViewWithTreeModel<T> : TreeView where T: TreeElement
@@ -209,7 +211,7 @@ namespace Stratus
             bool validDrag = ValidDrag(args.parentItem, draggedRows);
             if (args.performDrop && validDrag)
             {
-              T parentData = ((TreeViewItem<T>)args.parentItem).data;
+              T parentData = ((TreeViewItem<T>)args.parentItem).item;
               OnDropDraggedElementsAtIndex(draggedRows, parentData, args.insertAtIndex == -1 ? 0 : args.insertAtIndex);
             }
             return validDrag ? DragAndDropVisualMode.Move : DragAndDropVisualMode.None;
@@ -237,7 +239,7 @@ namespace Stratus
 
       var draggedElements = new List<TreeElement>();
       foreach (var x in draggedRows)
-        draggedElements.Add(((TreeViewItem<T>)x).data);
+        draggedElements.Add(((TreeViewItem<T>)x).item);
 
       var selectedIDs = draggedElements.Select(x => x.id).ToArray();
       this.treeModel.MoveElements(parent, insertIndex, draggedElements);

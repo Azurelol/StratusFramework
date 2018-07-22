@@ -7,41 +7,55 @@ using UnityEditor;
 
 namespace Stratus
 {  
-  public class MemberInspectorTreeAsset : TreeAsset<MemberInspectorTreeElement>
-  {
-  }
-
   [Serializable]
-  public class MemberInspectorTreeElement : TreeElement
+  public class MemberInspectorTreeElement : TreeElement<GameObjectInformation.MemberReference>
   {
-    public GameObjectInformation.MemberReference member;
+    protected override string GetName() => this.data.name;
 
-    public void Set(GameObjectInformation.MemberReference member)
+    /// <summary>
+    /// Generates a tree of all current favorited members from bookmarked GameObjects
+    /// </summary>
+    /// <returns></returns>
+    public static List<MemberInspectorTreeElement> GenerateFavoritesTree()
     {
-      this.member = member;
-      this.name = member.name;
+      var elements = MemberInspectorTreeElement.GenerateFlatTree<MemberInspectorTreeElement, GameObjectInformation.MemberReference>(Set, GameObjectBookmark.favorites);      
+      return elements;
     }
+
+    /// <summary>
+    /// Given a target, generates a tree for its members
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    public static List<MemberInspectorTreeElement> GenerateInspectorTree(GameObjectInformation target)
+    {
+      var treeBuilder = new TreeBuilder<MemberInspectorTreeElement, GameObjectInformation.MemberReference>(Set);
+      treeBuilder.AddRoot();
+      treeBuilder.AddChildren(target.memberReferences, 0);
+      return treeBuilder.ToTree();
+    }
+
+
   }
 
 
   public class MemberInspectorTreeView : MultiColumnTreeView<MemberInspectorTreeElement, MemberInspectorWindow.Column>  
   {
-    public MemberInspectorTreeView(TreeViewState state, TreeViewColumn[] columns, TreeModel<MemberInspectorTreeElement> model) : base(state, columns, model)
+    public MemberInspectorTreeView(TreeViewState state, TreeModel<MemberInspectorTreeElement> model) : base(state, model)
     {
     }
 
-    public MemberInspectorTreeView(TreeViewState state, TreeViewColumn[] columns, IList<MemberInspectorTreeElement> data) : base(state, columns, data)
+    public MemberInspectorTreeView(TreeViewState state, IList<MemberInspectorTreeElement> data) : base(state, data)
     {
     }
 
-    protected static TreeViewColumn[] BuildColumns()
+    protected override TreeViewColumn[] BuildColumns()
     {
       var columns = new TreeViewColumn[]
       {
         new TreeViewColumn
         {
           headerContent = new GUIContent("GameObject"),
-          headerTextAlignment = TextAlignment.Left,
           sortedAscending = true,
           sortingArrowAlignment = TextAlignment.Right,
           width = 100,
@@ -49,12 +63,11 @@ namespace Stratus
           maxWidth = 120,
           autoResize = false,
           allowToggleVisibility = true,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.data.member.gameObjectName
+          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.gameObjectName
         },
         new TreeViewColumn
         {
           headerContent = new GUIContent("Component"),
-          headerTextAlignment = TextAlignment.Left,
           sortedAscending = true,
           sortingArrowAlignment = TextAlignment.Right,
           width = 200,
@@ -62,24 +75,22 @@ namespace Stratus
           maxWidth = 250,
           autoResize = false,
           allowToggleVisibility = true,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.data.member.componentName
+          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.componentName
         },
         new TreeViewColumn
         {
           headerContent = new GUIContent("Type"),
-          headerTextAlignment = TextAlignment.Left,
           sortedAscending = true,
           sortingArrowAlignment = TextAlignment.Center,
           width = 60,
           minWidth = 60,
           autoResize = false,
-          allowToggleVisibility = false,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.data.member.type.ToString()
+          allowToggleVisibility = true,
+          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.type.ToString()
         },
         new TreeViewColumn
         {
           headerContent = new GUIContent("Member"),
-          headerTextAlignment = TextAlignment.Left,
           sortedAscending = true,
           sortingArrowAlignment = TextAlignment.Center,
           width = 100,
@@ -87,19 +98,19 @@ namespace Stratus
           maxWidth = 120,
           autoResize = false,
           allowToggleVisibility = false,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.data.member.name
+          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.name
         },
         new TreeViewColumn
         {
-          headerContent = new GUIContent("Value", "In sed porta ante. Nunc et nulla mi."),
-          headerTextAlignment = TextAlignment.Left,
+          headerContent = new GUIContent("Value"),
           sortedAscending = true,
           sortingArrowAlignment = TextAlignment.Left,
           width = 200,
           minWidth = 150,
           maxWidth = 250,
           autoResize = true,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.data.member.latestValueString
+          allowToggleVisibility = false,
+          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.latestValueString
         }        
       };
 
@@ -111,40 +122,26 @@ namespace Stratus
       switch (column)
       {
         case MemberInspectorWindow.Column.GameObject:
-          DefaultGUI.Label(cellRect, item.data.member.gameObjectName, args.selected, args.focused);
+          DefaultGUI.Label(cellRect, item.item.data.gameObjectName, args.selected, args.focused);
           break;
         case MemberInspectorWindow.Column.Component:
-          DefaultGUI.Label(cellRect, item.data.member.componentName, args.selected, args.focused);
+          DefaultGUI.Label(cellRect, item.item.data.componentName, args.selected, args.focused);
           break;
         case MemberInspectorWindow.Column.Type:
-          DefaultGUI.Label(cellRect, item.data.member.type.ToString(), args.selected, args.focused);
+          DefaultGUI.Label(cellRect, item.item.data.type.ToString(), args.selected, args.focused);
           break;
         case MemberInspectorWindow.Column.Member:
-          DefaultGUI.Label(cellRect, item.data.member.name, args.selected, args.focused);
+          DefaultGUI.Label(cellRect, item.item.data.name, args.selected, args.focused);
           break;
         case MemberInspectorWindow.Column.Value:
-          DefaultGUI.Label(cellRect, item.data.member.latestValueString, args.selected, args.focused);
+          DefaultGUI.Label(cellRect, item.item.data.latestValueString, args.selected, args.focused);
           break;
       }
     }
 
     protected override MemberInspectorWindow.Column GetColumn(int index) => (MemberInspectorWindow.Column)index;
 
-    public static MemberInspectorTreeView Create(IList<MemberInspectorTreeElement> tree, TreeViewState state = null)
-    {
-      TreeViewColumn[] columns = BuildColumns();
-      MemberInspectorTreeView treeView = new MemberInspectorTreeView(state, columns, tree);
-      return treeView;
-
-      // Columns
-      //// Header state
-      //MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(columns);
-      //// Header
-      //MultiColumnHeader header = new MultiColumnHeader(headerState);
-      // Model
-      //TreeModel<MemberInspectorTreeElement> treeModel = new TreeModel<MemberInspectorTreeElement>(tree);      
-
-    }
-
+    
+    
   }
 }

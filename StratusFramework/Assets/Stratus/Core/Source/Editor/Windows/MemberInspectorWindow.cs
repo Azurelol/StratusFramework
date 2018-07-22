@@ -74,9 +74,6 @@ namespace Stratus
     [SerializeField]
     private TreeViewState treeViewState;
 
-    //[SerializeField]
-    private IList<MemberInspectorTreeElement> inspectorTree, favoritesTree;
-
     private Countdown pollTimer;
     private const float listRatio = 0.25f;
     private GUILayoutOption listLeftElementWidth;
@@ -93,7 +90,7 @@ namespace Stratus
     private string[] toolbarOptions = new string[] { nameof(Mode.Inspector), nameof(Mode.Favorites) };
     private SerializedProperty memberProperty { get; set; }
     private Type gameObjectType { get; set; }
-    private bool hasTarget => this.target != null;
+    private bool hasTarget => this.target != null && this.currentTargetInformation != null;
     private int selectedIndex { get; set; }
     private AnimBool[] showComponent { get; set; }
     private Vector2 componentScrollPosition { get; set; }
@@ -104,28 +101,50 @@ namespace Stratus
     // Messages
     //------------------------------------------------------------------------/
     protected override void OnWindowEnable()
-    {      
+    {
+      if (this.treeViewState == null)
+        this.treeViewState = new TreeViewState();
+
       this.pollTimer = new Countdown(this.pollSpeed);
       this.gameObjectType = typeof(GameObject);
+
       this.CheckTarget();
+
       GameObjectBookmark.onUpdate += this.onBookmarkUpdate;
       GameObjectBookmark.onFavoritesChanged += this.onBookmarkUpdate;
     }
+
     protected override void OnWindowGUI()
     {
-      this.selectedModeIndex = GUILayout.Toolbar(this.selectedModeIndex, this.toolbarOptions);
+      EditorGUI.BeginChangeCheck();
+      {
+        this.selectedModeIndex = GUILayout.Toolbar(this.selectedModeIndex, this.toolbarOptions);
+      }
+      if (EditorGUI.EndChangeCheck())
+      {
+        this.SetTreeView();
+      }
+
+      if (this.memberInspector == null)
+        this.SetTreeView();
 
       switch (this.selectedModeIndex)
       {
         case 0:
           this.SelectTarget();
           if (this.hasTarget)
-            this.DrawInspector();
+          {
+            EditorGUILayout.LabelField($"Components ({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
+            this.componentList.selectedIndex = EditorGUILayout.Popup(this.componentList.selectedIndex, this.componentList.displayedOptions, StratusGUIStyles.popup);
+            this.memberInspector.OnTreeViewGUI(this.availablePosition);
+          }
           break;
 
         case 1:
           if (GameObjectBookmark.hasFavorites)
-            this.DrawFavorites();
+          {
+            this.memberInspector.OnTreeViewGUI(this.availablePosition);
+          }
           break;
       }
     }
@@ -185,19 +204,7 @@ namespace Stratus
     private void onBookmarkUpdate()
     {      
       Trace.Script("Bookmarks changed!");
-      this.SetFavoritesInspector();
-    }
-
-    private void SetFavoritesInspector()
-    {
-      this.favoritesTree = this.GenerateFavoritesTree();
-      if (this.memberInspector == null)
-      {
-        if (this.treeViewState == null)
-          this.treeViewState = new TreeViewState();
-        this.memberInspector = MemberInspectorTreeView.Create(this.favoritesTree, this.treeViewState);
-      }
-      this.memberInspector.SetTree(this.favoritesTree);
+      this.SetTreeView();
     }
 
     //------------------------------------------------------------------------/
@@ -313,72 +320,64 @@ namespace Stratus
         }
 
         this.lastComponentIndex = 0;
+        Trace.Script($"Setting target information for {this.target.name}");
       }
 
       this.showComponent = this.GenerateAnimBools(this.currentTargetInformation.numberofComponents, false);
       this.componentList = new DropdownList<ComponentInfo>(this.currentTargetInformation.components, (ComponentInfo component) => component.name, this.lastComponentIndex);
+      this.SetTreeView();
+      Trace.Script($"On target selected for {this.target.name}");
     }
 
     //------------------------------------------------------------------------/
     // Methods: Draw
     //------------------------------------------------------------------------/
+    private void SetTreeView()
+    {
+      IList<MemberInspectorTreeElement> members = null;
+      switch (this.selectedModeIndex)
+      {
+        case 0:
+          if (this.hasTarget )
+            members = MemberInspectorTreeElement.GenerateInspectorTree(this.currentTargetInformation);
+          else
+            return;
+          break;
+
+        case 1:
+          members = MemberInspectorTreeElement.GenerateFavoritesTree();
+          break;
+      }
+
+      //this.favoritesTree = MemberInspectorTreeElement.GenerateFavoritesTree();
+      if (this.memberInspector == null)
+      {
+        this.memberInspector = new MemberInspectorTreeView(this.treeViewState, members);
+        Trace.Script("Created member inspector tree view");
+      }
+      else
+      {
+        Trace.Script($"Set tree view with ({members.Count}) members");
+        this.memberInspector.SetTree(members);
+      }
+    }
+
     private void DrawInspector()
     {
-      listLeftElementWidth = GUILayout.Width(position.width * listRatio);
-      listRightElementWidth = GUILayout.Width(position.width * (1f - listRatio));
-      listElementHeight = GUILayout.MinHeight(20f);
+      //listLeftElementWidth = GUILayout.Width(position.width * listRatio);
+      //listRightElementWidth = GUILayout.Width(position.width * (1f - listRatio));
+      //listElementHeight = GUILayout.MinHeight(20f);
 
-      EditorGUILayout.LabelField($"Components ({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
 
-      // Select component
-      this.componentList.selectedIndex = EditorGUILayout.Popup(this.componentList.selectedIndex, this.componentList.displayedOptions, StratusGUIStyles.popup);
 
       // Scroll list      
-      this.componentScrollPosition = GUILayout.BeginScrollView(this.componentScrollPosition, StratusGUIStyles.background);
-      {
-        this.DrawComponent(this.componentList.selected);
-      }
-      GUILayout.EndScrollView();
+      //this.componentScrollPosition = GUILayout.BeginScrollView(this.componentScrollPosition, StratusGUIStyles.background);
+      //{
+      //  this.DrawComponent(this.componentList.selected);
+      //}
+      //GUILayout.EndScrollView();
     }
 
-    private void DrawFavorites()
-    {
-      if (this.memberInspector == null)
-        this.SetFavoritesInspector();
-
-      //Rect favoriteRect = this.position;
-      //Rect lastRect = GUILayoutUtility.GetLastRect();
-      //favoriteRect.y = lastRect.height;
-      //this.memberInspector.OnTreeViewGUI(favoriteRect);
-      this.memberInspector.OnTreeViewGUI(this.availablePosition);
-      //GUILayout.EndArea();
-      return;
-
-      EditorGUILayout.LabelField(nameof(Mode.Favorites), EditorStyles.centeredGreyMiniLabel);
-      this.watchListScrollPosition = GUILayout.BeginScrollView(this.watchListScrollPosition, StratusGUIStyles.background);
-      {
-        const float ratio = 0.4f;
-        GUILayoutOption leftElementWidth = GUILayout.Width(position.width * ratio);
-        GUILayoutOption rightElementWidth = GUILayout.Width(position.width * (1f - ratio));
-        GUILayoutOption elementHeight = GUILayout.MinHeight(12f);
-
-        foreach (var targetInformation in GameObjectBookmark.availableInformation)
-        {
-          foreach (var member in targetInformation.favorites)
-          {
-            GUILayout.BeginHorizontal();
-            {
-              GUILayout.Label(new GUIContent($"{targetInformation.target.name}.{member.componentName}.{member.name}"), StratusGUIStyles.listViewLabel, leftElementWidth, elementHeight);
-              EditorGUILayout.SelectableLabel(member.latestValueString, StratusGUIStyles.textField, rightElementWidth, elementHeight);
-            }
-            GUILayout.EndHorizontal();
-          }
-        }
-
-      }
-      GUILayout.EndScrollView();
-
-    }
 
     private void DrawComponent(ComponentInfo componentInfo)
     {
@@ -419,33 +418,6 @@ namespace Stratus
         GUILayout.EndHorizontal();
       }
     }
-
-    private void DrawGrid()
-    {
-      int numRows = 2;
-      string[] content = new string[this.targetTemporaryInformation.numberofComponents * numRows];
-      for (int c = 0; c < this.targetTemporaryInformation.numberofComponents; ++c)
-      {
-        ComponentInfo component = this.targetTemporaryInformation.components[c];
-        content[(c * numRows) + 0] = component.type.Name;
-        content[(c * numRows) + 1] = "Boo";
-      }
-      this.selectedIndex = GUILayout.SelectionGrid(this.selectedIndex, content, numRows, EditorStyles.toolbarButton);
-    }
-
-    //------------------------------------------------------------------------/
-    // Methods: TreeView
-    //------------------------------------------------------------------------/
-    private List<MemberInspectorTreeElement> GenerateFavoritesTree()
-    {
-      var elements = MemberInspectorTreeElement.GenerateFlatTree<MemberInspectorTreeElement, GameObjectInformation.MemberReference>(this.SetTreeElement, GameObjectBookmark.favorites);
-      Trace.Script($"Generated favorites tree view ({GameObjectBookmark.favorites.Length})");
-      return elements;
-    }
-
-    private void SetTreeElement(MemberInspectorTreeElement treeElement, GameObjectInformation.MemberReference member) => treeElement.Set(member);
-
-
 
 
 

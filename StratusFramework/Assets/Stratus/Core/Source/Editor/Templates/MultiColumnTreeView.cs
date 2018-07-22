@@ -8,23 +8,6 @@ using UnityEditor;
 
 namespace Stratus
 {
-  //public static class MultiColumnTreeView
-  //{
-  //  public static MultiColumnTreeViewType Create<MultiColumnTreeViewType, TreeElementType, ColumnType>(IList<TreeElementType> tree, MultiColumnTreeView<TreeElementType, ColumnType>. columns)
-  //  {
-  //    // Header state
-  //    MultiColumnHeaderState state = BuildMultiColumnHeaderState(columns);
-  //    // Header
-  //    MultiColumnHeader header = new MultiColumnHeader(state);
-  //    // Model
-  //    TreeModel<TreeElementType> treeModel = new TreeModel<TreeElementType>(tree);
-  //
-  //    MultiColumnTreeView<TreeElementType, ColumnType> treeView = new MultiColumnTreeView<TreeElementType, ColumnType>(state, header, treeModel);
-  //    return treeView;
-  //  }
-  //
-  //}
-
   public abstract class MultiColumnTreeView<TreeElementType, ColumnType> : TreeViewWithTreeModel<TreeElementType>
     where TreeElementType : TreeElement
     where ColumnType : struct, IConvertible
@@ -89,7 +72,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Virtual
     //------------------------------------------------------------------------/    
-    //protected abstract TreeViewColumn[] BuildColumns();
+    protected abstract TreeViewColumn[] BuildColumns();
     protected abstract void DrawColumn(Rect cellRect, TreeViewItem<TreeElementType> item, ColumnType column, ref RowGUIArgs args);
     protected abstract ColumnType GetColumn(int index);
 
@@ -104,20 +87,20 @@ namespace Stratus
     //  this.Reload();
     //}
 
-    public MultiColumnTreeView(TreeViewState state, TreeViewColumn[] columns, IList<TreeElementType> data)
+    public MultiColumnTreeView(TreeViewState state, IList<TreeElementType> data)
     : base(state, new TreeModel<TreeElementType>(data))
     {
-      this.columns = columns;
+      this.columns = this.BuildColumns();
       MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(columns);
       this.multiColumnHeader = new MultiColumnHeader(headerState);
       this.InitializeMultiColumnTreeView();
       this.Reload();
     }
 
-    public MultiColumnTreeView(TreeViewState state, TreeViewColumn[] columns, TreeModel<TreeElementType> model)
+    public MultiColumnTreeView(TreeViewState state,  TreeModel<TreeElementType> model)
     : base(state, model)
     {
-      this.columns = columns;
+      this.columns = this.BuildColumns();
       MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(columns);
       this.multiColumnHeader = new MultiColumnHeader(headerState);
       this.InitializeMultiColumnTreeView();
@@ -367,7 +350,7 @@ namespace Stratus
         return types.Order(l => column.selectorFunction(l), ascending);
 
       // Default
-      return types.Order(l => l.data.name, ascending);
+      return types.Order(l => l.item.name, ascending);
     }
 
     //------------------------------------------------------------------------/

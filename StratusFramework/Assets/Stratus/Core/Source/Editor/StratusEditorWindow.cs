@@ -38,7 +38,8 @@ namespace Stratus
       get
       {
         Rect available = this.position;
-        available.y = GUILayoutUtility.GetLastRect().height;
+        Rect lastRect = GUILayoutUtility.GetLastRect();
+        available.y = lastRect.height + lastRect.y;
         return available;
       }
     }

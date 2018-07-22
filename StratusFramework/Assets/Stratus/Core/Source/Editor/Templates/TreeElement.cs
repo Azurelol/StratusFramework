@@ -21,6 +21,7 @@ namespace Stratus
     [SerializeField] public int id;
     [SerializeField] public string name;
     [SerializeField] public int depth;
+
     [NonSerialized] public TreeElement parent;
     [NonSerialized] public List<TreeElement> children;
 
@@ -46,7 +47,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/ 
-    public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(System.Action<TreeElementType, DataType> setter, params DataType[] elements) 
+    public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(System.Action<TreeElementType, DataType> setData, params DataType[] elements) 
       where TreeElementType : TreeElement, new ()
       where DataType : class
     {
@@ -65,7 +66,7 @@ namespace Stratus
       foreach(var element in elements)
       {
         TreeElementType child = new TreeElementType();
-        setter(child, element);
+        setData(child, element);
         child.depth = 0;
         child.id = idCounter++;
         treeList.Add(child);
@@ -310,6 +311,28 @@ namespace Stratus
       return result;
     }
 
+  }
+
+  /// <summary>
+  /// Generic class for a tree element with one primary data member
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  public abstract class TreeElement<T> : TreeElement
+  {
+    public T data;
+
+    public void Set(T data)
+    {
+      this.data = data;
+    }
+
+    public static void Set(TreeElement<T> treeElement, T data)
+    {
+      treeElement.Set(data);
+    }
+
+    protected abstract string GetName();
+    
   }
 
   class TreeElementUtilityTests
