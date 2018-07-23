@@ -280,8 +280,6 @@ namespace Stratus
       if (this.components == null)
         return;
 
-      return; 
-
       //this.componentMap = new Dictionary<int, ComponentInformation>();
       //for (int i = 0; i < this.components.Length; ++i)
       //{
@@ -374,7 +372,7 @@ namespace Stratus
     }
 
     //------------------------------------------------------------------------/
-    // Methods
+    // Methods: Watch
     //------------------------------------------------------------------------/  
     /// <summary>
     /// Adds a member to the watch list
@@ -386,6 +384,7 @@ namespace Stratus
     {
       MemberReference memberReference = new MemberReference(member, componentInfo, this, memberIndex);
       this.favorites.Add(memberReference);
+      GameObjectBookmark.UpdateFavoriteMembers();
     }
 
     /// <summary>
@@ -397,6 +396,7 @@ namespace Stratus
     public void RemoveWatch(MemberInfo member, ComponentInformation componentInfo, int memberIndex)
     {
       this.favorites.RemoveAll(x => x.name == member.Name && x.componentName == componentInfo.name && x.memberIndex == memberIndex);
+      GameObjectBookmark.UpdateFavoriteMembers();
     }
 
     /// <summary>
@@ -407,8 +407,9 @@ namespace Stratus
     /// <param name="memberIndex"></param>
     public void Watch(MemberReference memberReference)
     {
-      if (this.Assert(memberReference))
+      if (this.AssertReference(memberReference))
         this.favorites.Add(memberReference);
+      GameObjectBookmark.UpdateFavoriteMembers();
     }
 
     /// <summary>
@@ -417,10 +418,14 @@ namespace Stratus
     /// <param name="memberReference"></param>
     public void RemoveWatch(MemberReference memberReference)
     {
-       if (this.Assert(memberReference))
+       if (this.AssertReference(memberReference))
         this.favorites.RemoveAll(x => x.name == memberReference.name && x.memberIndex == memberReference.memberIndex);
+      GameObjectBookmark.UpdateFavoriteMembers();
     }
 
+    //------------------------------------------------------------------------/
+    // Methods: Update
+    //------------------------------------------------------------------------/  
     /// <summary>
     /// Updates the values of all the favorite members for this GameObject
     /// </summary>
@@ -432,8 +437,11 @@ namespace Stratus
       }
     }
 
+    //------------------------------------------------------------------------/
+    // Methods: References
+    //------------------------------------------------------------------------/  
     /// <summary>
-    /// Sagves all member references for this GameObject
+    /// Saves all member references for this GameObject
     /// </summary>
     /// <returns></returns>
     private MemberReference[] SetAllMemberReferences()
@@ -462,7 +470,7 @@ namespace Stratus
     /// </summary>
     /// <param name="memberReference"></param>
     /// <returns></returns>
-    public bool Assert(MemberReference memberReference)
+    public bool AssertReference(MemberReference memberReference)
     {
       // If this is not the GameObject this member reference is for
       if (memberReference.gameObjectInfo != this)

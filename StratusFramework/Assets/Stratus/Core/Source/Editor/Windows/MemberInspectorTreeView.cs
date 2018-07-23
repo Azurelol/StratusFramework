@@ -144,9 +144,9 @@ namespace Stratus
       GameObjectInformation.MemberReference member = treeElement.data;
       bool isFavorite = member.isFavorite;
       if (isFavorite)
-        menu.AddItem(new GUIContent("Watch"), false, () => member.gameObjectInfo.Watch(member));        
-      else
         menu.AddItem(new GUIContent("Remove Watch"), false, () => member.gameObjectInfo.RemoveWatch(member));
+      else
+        menu.AddItem(new GUIContent("Watch"), false, () => member.gameObjectInfo.Watch(member));        
     }
 
   }
