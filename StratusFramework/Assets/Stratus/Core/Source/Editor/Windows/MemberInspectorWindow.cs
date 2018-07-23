@@ -397,6 +397,7 @@ namespace Stratus
         Trace.Script($"Set tree view with ({members.Count}) members");
         this.memberInspector.SetTree(members);
       }
+
     }
 
     private void DrawInspector()

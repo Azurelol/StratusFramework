@@ -15,13 +15,6 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Declarations
     //------------------------------------------------------------------------/
-    //// Maybe generate sort options dynamically
-    //public struct SortOption
-    //{
-    //  public string label;
-    //  public Func<TreeViewItem<T>, string> selectorFunction;
-    //}
-
     public class TreeViewColumn : MultiColumnHeaderState.Column
     {
       /// <summary>
@@ -47,11 +40,6 @@ namespace Stratus
 
     }
 
-    protected abstract class ColumnBuilder
-    {
-      protected abstract TreeViewColumn[] Build();
-    }
-
 
     //------------------------------------------------------------------------/
     // Fields
@@ -72,9 +60,11 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Virtual
     //------------------------------------------------------------------------/    
-    protected abstract TreeViewColumn[] BuildColumns();
+    //protected abstract TreeViewColumn[] BuildColumns();
+    protected abstract TreeViewColumn BuildColumn(ColumnType columnType);
     protected abstract void DrawColumn(Rect cellRect, TreeViewItem<TreeElementType> item, ColumnType column, ref RowGUIArgs args);
     protected abstract ColumnType GetColumn(int index);
+    protected abstract int GetColumnIndex(ColumnType columnType);
     protected abstract void OnItemContextMenu(GenericMenu menu, TreeElementType treeElement);
 
     //------------------------------------------------------------------------/
@@ -199,6 +189,22 @@ namespace Stratus
       return state;
     }
 
+    private TreeViewColumn[] BuildColumns()
+    {
+      int numberOfColumns = Enum.GetValues(typeof(ColumnType)).Length;
+      TreeViewColumn[] columns = new TreeViewColumn[numberOfColumns];
+      for (int c = 0; c < numberOfColumns; ++c)
+      {
+        ColumnType columnType = this.GetColumn(c);
+        columns[c] = this.BuildColumn(columnType);
+        if (columns[c] == null)
+        {
+          throw new Exception($"Column implementation missing for {columnType.ToString()}");
+        }
+      }
+      return columns;
+    }
+
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
@@ -255,7 +261,6 @@ namespace Stratus
       this.OnGUI(this.GetMultiColumnTreeViewRect(rect));
     }
 
-
     /// <summary>
     /// Draws the GUI for the search bar
     /// </summary>
@@ -283,6 +288,10 @@ namespace Stratus
     protected virtual Rect GetToolbarRect(Rect position)
     {
       return new Rect(20f, position.y + 10f, position.width - 40f, 20f);
+    }
+
+    public void ToggleColumn(ColumnType column)
+    {      
     }
 
     //------------------------------------------------------------------------/

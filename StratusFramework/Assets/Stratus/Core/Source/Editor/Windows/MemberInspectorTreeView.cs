@@ -47,73 +47,151 @@ namespace Stratus
     {
     }
 
-    protected override TreeViewColumn[] BuildColumns()
+    protected override TreeViewColumn BuildColumn(MemberInspectorWindow.Column columnType)
     {
-      var columns = new TreeViewColumn[]
+      TreeViewColumn column = null;
+      switch (columnType)
       {
-        new TreeViewColumn
-        {
-          headerContent = new GUIContent("GameObject"),
-          sortedAscending = true,
-          sortingArrowAlignment = TextAlignment.Right,
-          width = 100,
-          minWidth = 100,
-          maxWidth = 120,
-          autoResize = false,
-          allowToggleVisibility = true,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.gameObjectName
-        },
-        new TreeViewColumn
-        {
-          headerContent = new GUIContent("Component"),
-          sortedAscending = true,
-          sortingArrowAlignment = TextAlignment.Right,
-          width = 200,
-          minWidth = 150,
-          maxWidth = 250,
-          autoResize = false,
-          allowToggleVisibility = true,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.componentName
-        },
-        new TreeViewColumn
-        {
-          headerContent = new GUIContent("Type"),
-          sortedAscending = true,
-          sortingArrowAlignment = TextAlignment.Center,
-          width = 60,
-          minWidth = 60,
-          autoResize = false,
-          allowToggleVisibility = true,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.type.ToString()
-        },
-        new TreeViewColumn
-        {
-          headerContent = new GUIContent("Member"),
-          sortedAscending = true,
-          sortingArrowAlignment = TextAlignment.Center,
-          width = 100,
-          minWidth = 80,
-          maxWidth = 120,
-          autoResize = false,
-          allowToggleVisibility = false,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.name
-        },
-        new TreeViewColumn
-        {
-          headerContent = new GUIContent("Value"),
-          sortedAscending = true,
-          sortingArrowAlignment = TextAlignment.Left,
-          width = 200,
-          minWidth = 150,
-          maxWidth = 250,
-          autoResize = true,
-          allowToggleVisibility = false,
-          selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.latestValueString
-        }        
-      };
-
-      return columns;
+        case MemberInspectorWindow.Column.GameObject:
+          column = new TreeViewColumn
+          {
+            headerContent = new GUIContent("GameObject"),
+            sortedAscending = true,
+            sortingArrowAlignment = TextAlignment.Right,
+            width = 100,
+            minWidth = 100,
+            maxWidth = 120,
+            autoResize = false,
+            allowToggleVisibility = true,
+            selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.gameObjectName
+          };
+          break;
+        case MemberInspectorWindow.Column.Component:
+          column = new TreeViewColumn
+          {
+            headerContent = new GUIContent("Component"),
+            sortedAscending = true,
+            sortingArrowAlignment = TextAlignment.Right,
+            width = 150,
+            minWidth = 100,
+            maxWidth = 250,
+            autoResize = false,
+            allowToggleVisibility = true,
+            selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.componentName
+          };
+          break;
+        case MemberInspectorWindow.Column.Type:
+          column = new TreeViewColumn
+          {
+            headerContent = new GUIContent("Type"),
+            sortedAscending = true,
+            sortingArrowAlignment = TextAlignment.Center,
+            width = 60,
+            minWidth = 60,
+            autoResize = false,
+            allowToggleVisibility = true,
+            selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.type.ToString()
+          };
+          break;
+        case MemberInspectorWindow.Column.Member:
+          column = new TreeViewColumn
+          {
+            headerContent = new GUIContent("Member"),
+            sortedAscending = true,
+            sortingArrowAlignment = TextAlignment.Center,
+            width = 100,
+            minWidth = 80,
+            maxWidth = 120,
+            autoResize = false,
+            allowToggleVisibility = false,
+            selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.name
+          };
+          break;
+        case MemberInspectorWindow.Column.Value:
+          column = new TreeViewColumn
+          {
+            headerContent = new GUIContent("Value"),
+            sortedAscending = true,
+            sortingArrowAlignment = TextAlignment.Left,
+            width = 200,
+            minWidth = 150,
+            maxWidth = 250,
+            autoResize = true,
+            allowToggleVisibility = false,
+            selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.latestValueString
+          };
+          break;
+      }
+      return column;
     }
+
+    //protected override TreeViewColumn[] BuildColumns()
+    //{
+    //  var columns = new TreeViewColumn[]
+    //  {
+    //    new TreeViewColumn
+    //    {
+    //      headerContent = new GUIContent("GameObject"),
+    //      sortedAscending = true,
+    //      sortingArrowAlignment = TextAlignment.Right,
+    //      width = 100,
+    //      minWidth = 100,
+    //      maxWidth = 120,
+    //      autoResize = false,
+    //      allowToggleVisibility = true,
+    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.gameObjectName
+    //    },
+    //    new TreeViewColumn
+    //    {
+    //      headerContent = new GUIContent("Component"),
+    //      sortedAscending = true,
+    //      sortingArrowAlignment = TextAlignment.Right,
+    //      width = 200,
+    //      minWidth = 150,
+    //      maxWidth = 250,
+    //      autoResize = false,
+    //      allowToggleVisibility = true,
+    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.componentName
+    //    },
+    //    new TreeViewColumn
+    //    {
+    //      headerContent = new GUIContent("Type"),
+    //      sortedAscending = true,
+    //      sortingArrowAlignment = TextAlignment.Center,
+    //      width = 60,
+    //      minWidth = 60,
+    //      autoResize = false,
+    //      allowToggleVisibility = true,
+    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.type.ToString()
+    //    },
+    //    new TreeViewColumn
+    //    {
+    //      headerContent = new GUIContent("Member"),
+    //      sortedAscending = true,
+    //      sortingArrowAlignment = TextAlignment.Center,
+    //      width = 100,
+    //      minWidth = 80,
+    //      maxWidth = 120,
+    //      autoResize = false,
+    //      allowToggleVisibility = false,
+    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.name
+    //    },
+    //    new TreeViewColumn
+    //    {
+    //      headerContent = new GUIContent("Value"),
+    //      sortedAscending = true,
+    //      sortingArrowAlignment = TextAlignment.Left,
+    //      width = 200,
+    //      minWidth = 150,
+    //      maxWidth = 250,
+    //      autoResize = true,
+    //      allowToggleVisibility = false,
+    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.latestValueString
+    //    }        
+    //  };
+    //
+    //  return columns;
+    //}
 
     protected override void DrawColumn(Rect cellRect, TreeViewItem<MemberInspectorTreeElement> item, MemberInspectorWindow.Column column, ref RowGUIArgs args)
     {
@@ -138,6 +216,8 @@ namespace Stratus
     }
 
     protected override MemberInspectorWindow.Column GetColumn(int index) => (MemberInspectorWindow.Column)index;
+
+    protected override int GetColumnIndex(MemberInspectorWindow.Column columnType) => (int)columnType;
 
     protected override void OnItemContextMenu(GenericMenu menu, MemberInspectorTreeElement treeElement)
     {
