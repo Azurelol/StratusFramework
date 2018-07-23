@@ -143,6 +143,12 @@ namespace Stratus
       }
     }
 
+    public void ClearFavorites()
+    {
+      this.favoriteFields = new bool[this.fieldCount];
+      this.favoriteProperties = new bool[this.propertyCount];
+    }
+
     public object GetValue(FieldInfo field) => field.GetValue(component);
     public object GetValue(PropertyInfo property) => property.GetValue(component);
   }
@@ -361,13 +367,21 @@ namespace Stratus
       }
 
       this.components = components.ToArray();
-      this.numberofComponents = this.components.Length;
-
       this.Initialize();
     }
 
     private void Initialize()
     {
+      // Count the number of fields and properties
+      this.fieldCount = this.propertyCount = 0;
+      for (int i = 0; i < components.Length; ++i)
+      {
+        ComponentInformation component = this.components[i];
+        this.fieldCount += component.fieldCount;
+        this.propertyCount += component.propertyCount;
+      }
+
+      this.numberofComponents = this.components.Length;
       this.memberReferences = this.SetAllMemberReferences();
     }
 
@@ -420,6 +434,19 @@ namespace Stratus
     {
        if (this.AssertReference(memberReference))
         this.favorites.RemoveAll(x => x.name == memberReference.name && x.memberIndex == memberReference.memberIndex);
+      GameObjectBookmark.UpdateFavoriteMembers();
+    }
+
+    /// <summary>
+    /// Clears all favorites
+    /// </summary>
+    public void ClearWatchList()
+    {
+      this.favorites.Clear();
+      foreach(var component in this.components)
+      {
+        component.ClearFavorites();
+      }
       GameObjectBookmark.UpdateFavoriteMembers();
     }
 
@@ -479,8 +506,9 @@ namespace Stratus
         return false;
       }
 
-      // Noww assert all the others!
-      return AssertComponentIndex(memberReference) && AssertMemberIndex(memberReference);
+      // Noww assert all the others
+      bool valid = AssertComponentIndex(memberReference) && AssertMemberIndex(memberReference);
+      return valid;
     }
 
     /// <summary>

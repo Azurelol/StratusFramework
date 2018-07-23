@@ -136,8 +136,8 @@ namespace Stratus
           this.SelectTarget();
           if (this.hasTarget)
           {
-            EditorGUILayout.LabelField($"Components ({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
-            this.componentList.selectedIndex = EditorGUILayout.Popup(this.componentList.selectedIndex, this.componentList.displayedOptions, StratusGUIStyles.popup);
+            //EditorGUILayout.LabelField($"Components ({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
+            //this.componentList.selectedIndex = EditorGUILayout.Popup(this.componentList.selectedIndex, this.componentList.displayedOptions, StratusGUIStyles.popup);
             this.memberInspector.OnTreeViewGUI(this.availablePosition);
           }
           break;
@@ -250,24 +250,53 @@ namespace Stratus
           bool hasBookmark = this.target.HasComponent<GameObjectBookmark>();
           string bookmarkLabel = hasBookmark ? "Remove Bookmark" : "Bookmark";
           GenericMenu menu = new GenericMenu();
-          menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
+
+          // 1. Bookmark
+          if (hasBookmark)
           {
-            if (hasBookmark)
+            menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
             {
               this.targetTemporaryInformation = (GameObjectInformation)this.currentTargetInformation.CloneJSON();
               this.currentTargetInformation = this.targetTemporaryInformation;
-              //this.targetTemporaryInformation = this.currentTargetInformation;
               GameObjectBookmark.Remove(this.target);
               this.informationMode = InformationMode.Temporary;
-            }
-            else
+            });
+          }
+          else
+          {
+            menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
             {
               GameObjectBookmark bookmark = GameObjectBookmark.Add(this.target);
               bookmark.SetInformation(this.currentTargetInformation);
               this.currentTargetInformation = bookmark.information;
               this.informationMode = InformationMode.Bookmark;
-            }
+            });
+          }
+
+          // 2. Clear Favorites
+          menu.AddItem(new GUIContent("Clear Watch List"), false, () =>
+          {
+            this.currentTargetInformation.ClearWatchList();
           });
+
+          //menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
+          //{
+          //  if (hasBookmark)
+          //  {
+          //    this.targetTemporaryInformation = (GameObjectInformation)this.currentTargetInformation.CloneJSON();
+          //    this.currentTargetInformation = this.targetTemporaryInformation;
+          //    //this.targetTemporaryInformation = this.currentTargetInformation;
+          //    GameObjectBookmark.Remove(this.target);
+          //    this.informationMode = InformationMode.Temporary;
+          //  }
+          //  else
+          //  {
+          //    GameObjectBookmark bookmark = GameObjectBookmark.Add(this.target);
+          //    bookmark.SetInformation(this.currentTargetInformation);
+          //    this.currentTargetInformation = bookmark.information;
+          //    this.informationMode = InformationMode.Bookmark;
+          //  }
+          //});
           menu.ShowAsContext();
         });
       });
@@ -311,7 +340,7 @@ namespace Stratus
     private void OnTargetSelected()
     {
       // If there's no target information or if the target is different from the previous
-      if (this.currentTargetInformation == null || this.currentTargetInformation.target != this.target)
+      //if (this.currentTargetInformation == null || this.currentTargetInformation.target != this.target)
       {
         // If the target has as bookmark, use that information instead
         GameObjectBookmark bookmark = this.target.GetComponent<GameObjectBookmark>();
@@ -329,7 +358,7 @@ namespace Stratus
         }
 
         this.lastComponentIndex = 0;
-        Trace.Script($"Setting target information for {this.target.name}");
+        //Trace.Script($"Setting target information for {this.target.name}");
       }
 
       this.showComponent = this.GenerateAnimBools(this.currentTargetInformation.numberofComponents, false);
@@ -346,7 +375,7 @@ namespace Stratus
       switch (this.selectedModeIndex)
       {
         case 0:
-          if (this.hasTarget )
+          if (this.hasTarget)
             members = MemberInspectorTreeElement.GenerateInspectorTree(this.currentTargetInformation);
           else
             return;
