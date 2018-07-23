@@ -40,6 +40,7 @@ namespace Stratus
         Rect available = this.position;
         Rect lastRect = GUILayoutUtility.GetLastRect();
         available.y = lastRect.height + lastRect.y;
+        available.height -= lastRect.y;
         return available;
       }
     }

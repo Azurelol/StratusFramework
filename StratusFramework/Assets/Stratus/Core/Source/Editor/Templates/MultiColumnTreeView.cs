@@ -75,18 +75,11 @@ namespace Stratus
     protected abstract TreeViewColumn[] BuildColumns();
     protected abstract void DrawColumn(Rect cellRect, TreeViewItem<TreeElementType> item, ColumnType column, ref RowGUIArgs args);
     protected abstract ColumnType GetColumn(int index);
+    protected abstract void OnItemContextMenu(GenericMenu menu, TreeElementType treeElement);
 
     //------------------------------------------------------------------------/
     // CTOR
     //------------------------------------------------------------------------/
-    //public MultiColumnTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<TreeElementType> model)
-    //  : base(state, multiColumnHeader, model)
-    //{
-    //  this.columns = columns;
-    //  this.InitializeMultiColumnTreeView();
-    //  this.Reload();
-    //}
-
     public MultiColumnTreeView(TreeViewState state, IList<TreeElementType> data)
     : base(state, new TreeModel<TreeElementType>(data))
     {
@@ -97,7 +90,7 @@ namespace Stratus
       this.Reload();
     }
 
-    public MultiColumnTreeView(TreeViewState state,  TreeModel<TreeElementType> model)
+    public MultiColumnTreeView(TreeViewState state, TreeModel<TreeElementType> model)
     : base(state, model)
     {
       this.columns = this.BuildColumns();
@@ -127,7 +120,6 @@ namespace Stratus
       this.multiColumnHeader.sortingChanged += this.OnSortingChanged;
     }
 
-
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
@@ -151,8 +143,21 @@ namespace Stratus
         Rect cellRect = args.GetCellRect(i);
         this.CenterRectUsingSingleLineHeight(ref cellRect);
         this.DrawColumn(cellRect, item, this.GetColumn(args.GetColumn(i)), ref args);
-        //this.CellGUI(, item, columns[i].type, ref args);
+
       }
+    }
+
+    protected override void ContextClickedItem(int id)
+    {
+      base.ContextClickedItem(id);
+      TreeViewItem<TreeElementType> treeItem = (TreeViewItem<TreeElementType>)this.FindItem(id, this.rootItem);
+      TreeElementType treeElement = treeItem.item;
+
+      GenericMenu menu = new GenericMenu();
+      this.OnItemContextMenu(menu, treeElement);
+      menu.ShowAsContext();
+
+      //Trace.Script($"Context click on {treeElement.name}");
     }
 
     protected override bool CanRename(TreeViewItem item)
@@ -197,29 +202,6 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    //public void Initialize(IList<TreeElementType> tree)
-    //{      
-    //  //bool previouslyInitialized = (this.multiColumnHeaderState == null);
-    //  // Header state
-    //  MultiColumnHeaderState newState = this.BuildMultiColumnHeaderState();
-    //  if (MultiColumnHeaderState.CanOverwriteSerializedFields(this.multiColumnHeaderState, newState))
-    //    MultiColumnHeaderState.OverwriteSerializedFields(this.multiColumnHeaderState, newState);
-    //  this.multiColumnHeaderState = newState;
-    //  // Header
-    //  this.multiColumnHeader = new MultiColumnHeader(this.multiColumnHeaderState);
-    //  this.multiColumnHeader.sortingChanged += this.OnSortingChanged;
-    //  if (previouslyInitialized)
-    //    this.multiColumnHeader.ResizeToFit();
-    //  // Model
-    //  this.treeModel = new TreeModel<TreeElementType>(tree);
-    //  this.InitializeTreeViewWithModel(this.treeModel);
-    //
-    //
-    //  //this.initialized = true;
-    //}
-
-
-
     /// <summary>
     /// Checks whether the given instance id is a valid asset for this tree view,
     /// if so it sets it
@@ -243,12 +225,12 @@ namespace Stratus
     /// Sets the current tree asset at runtime
     /// </summary>
     /// <param name="asset"></param>
-    public void SetTreeAsset(TreeAsset<TreeElementType> asset) 
+    public void SetTreeAsset(TreeAsset<TreeElementType> asset)
     {
       this.treeAsset = asset;
       this.SetTree(asset.elements);
     }
-    
+
     /// <summary>
     /// Sets the data for this tree, also initializing it
     /// </summary>
@@ -258,7 +240,6 @@ namespace Stratus
       this.treeModel.SetData(tree);
       this.Reload();
     }
-
 
 
     //------------------------------------------------------------------------/
@@ -330,7 +311,6 @@ namespace Stratus
       for (int c = 1; c < sortedColumns.Length; ++c)
       {
         int index = sortedColumns[c];
-        //SortOption sortOption = this.sortOptions[index];
         TreeViewColumn column = this.columns[index];
         bool ascending = this.multiColumnHeader.IsSortedAscending(index);
         orderedQuery = orderedQuery.ThenBy(l => column.selectorFunction(l), ascending);
@@ -352,6 +332,8 @@ namespace Stratus
       // Default
       return types.Order(l => l.item.name, ascending);
     }
+
+
 
     //------------------------------------------------------------------------/
     // Utility Methods: Sorting

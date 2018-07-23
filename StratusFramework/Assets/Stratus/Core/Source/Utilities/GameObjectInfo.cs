@@ -12,13 +12,8 @@ namespace Stratus
   /// Information about a component
   /// </summary>
   [Serializable]
-  public class ComponentInfo : ISerializationCallbackReceiver
+  public class ComponentInformation : ISerializationCallbackReceiver
   {
-    //------------------------------------------------------------------------/
-    // Fields
-    //------------------------------------------------------------------------/
-
-
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
@@ -47,6 +42,7 @@ namespace Stratus
     public bool hasFields => fieldCount > 0;
     public bool hasProperties => propertyCount > 0;
     public Dictionary<string, MemberInfo> membersByName { get; private set; }
+    public bool valid { get; private set; }
 
     //------------------------------------------------------------------------/
     // Messages
@@ -57,6 +53,12 @@ namespace Stratus
 
     public void OnAfterDeserialize()
     {
+      if (this.component == null)
+      {
+        this.valid = false;
+        return;
+      }
+
       this.Initialize();
       if (this.fieldCount != this.fields.Length || this.propertyCount != this.properties.Length)
         this.Save();
@@ -65,8 +67,14 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    public ComponentInfo(Component component, bool alphabeticalSort = false)
+    public ComponentInformation(Component component, bool alphabeticalSort = false)
     {
+      if (component == null)
+      {
+        this.valid = false;
+        return;
+      }
+
       this.gameObjectName = component.gameObject.name;
       this.component = component;
       this.Initialize();
@@ -79,7 +87,7 @@ namespace Stratus
 
       this.fields = this.type.GetFields(bindingFlags);
       if (this.alphabeticalSorted)
-        Array.Sort(this.fields, delegate(FieldInfo a, FieldInfo b) { return a.Name.CompareTo(b.Name); });
+        Array.Sort(this.fields, delegate (FieldInfo a, FieldInfo b) { return a.Name.CompareTo(b.Name); });
 
       this.fieldValues = new object[this.fields.Length];
       this.fieldValueStrings = new string[this.fields.Length];
@@ -93,7 +101,8 @@ namespace Stratus
 
       this.members = this.type.GetMembers(bindingFlags);
       this.membersByName = new Dictionary<string, MemberInfo>();
-      //this.gameObjectName = this.component.name;
+
+      this.valid = true;
     }
 
     private void Save()
@@ -150,31 +159,71 @@ namespace Stratus
     [Serializable]
     public class MemberReference
     {
-      public MemberTypes type;
+      /// <summary>
+      /// The name of this member
+      /// </summary>
       public string name;
+      /// <summary>
+      /// The type for this member
+      /// </summary>
+      public MemberTypes type;
+      /// <summary>
+      /// The name of the component this member is part of
+      /// </summary>
       public string componentName;
-      public string gameObjectName; 
+      /// <summary>
+      /// The name of the GameObject for the component this member is a part of 
+      /// </summary>
+      public string gameObjectName;
+      /// <summary>
+      /// The index for the component that this member is part of in a GameObject
+      /// </summary>
       public int componentIndex;
+      /// <summary>
+      /// THe index to this member for either the fields or properties of the component
+      /// </summary>
       public int memberIndex;
-      public ComponentInfo component;
+
+      [NonSerialized]
+      public GameObjectInformation gameObjectInfo;
+      [NonSerialized]
+      public ComponentInformation componentInfo;
 
       public string latestValueString { get; private set; }
-      public object latestValue { get; private set; }         
+      public object latestValue { get; private set; }
+      public bool isFavorite
+      {
+        get
+        {
+          bool value = false;
+          switch (this.type)
+          {
+            case MemberTypes.Field:
+              value = componentInfo.favoriteFields[memberIndex];
+              break;
+            case MemberTypes.Property:
+              value = componentInfo.favoriteProperties[memberIndex];
+              break;
+          }
+          return value;
+        }
+      }
 
-      public MemberReference(MemberInfo member, ComponentInfo componentInfo, int index)
+
+      public MemberReference(MemberInfo member, ComponentInformation componentInfo, GameObjectInformation gameObjectInformation, int index)
       {
         this.name = member.Name;
         this.componentName = componentInfo.name;
         this.gameObjectName = componentInfo.gameObjectName;
         this.type = member.MemberType;
-        this.memberIndex = index; 
-
-        this.Set(componentInfo);
+        this.memberIndex = index;
+        this.Set(componentInfo, gameObjectInformation);
       }
 
-      public void Set(ComponentInfo componentInfo)
+      public void Set(ComponentInformation componentInfo, GameObjectInformation gameObjectInformation)
       {
-        this.component = componentInfo;
+        this.componentInfo = componentInfo;
+        this.gameObjectInfo = gameObjectInformation;
       }
 
       public void UpdateValue()
@@ -185,10 +234,10 @@ namespace Stratus
           switch (this.type)
           {
             case MemberTypes.Field:
-              value = component.fields[memberIndex].GetValue(component.component);
+              value = componentInfo.fields[memberIndex].GetValue(componentInfo.component);
               break;
             case MemberTypes.Property:
-              value = component.properties[memberIndex].GetValue(component.component);
+              value = componentInfo.properties[memberIndex].GetValue(componentInfo.component);
               break;
           }
         }
@@ -205,7 +254,7 @@ namespace Stratus
     // Fields
     //------------------------------------------------------------------------/  
     public GameObject target;
-    public ComponentInfo[] components;
+    public ComponentInformation[] components;
     public List<MemberReference> favorites = new List<MemberReference>();
 
     //------------------------------------------------------------------------/
@@ -215,9 +264,9 @@ namespace Stratus
     public int fieldCount { get; private set; }
     public int propertyCount { get; private set; }
     public int memberCount => fieldCount + propertyCount;
-    public MemberReference[] memberReferences { get; private set; }
+    public MemberReference[] memberReferences { get; private set; } = new MemberReference[0];
     public bool isValid => target != null && this.numberofComponents > 0;
-    public Dictionary<int, ComponentInfo> componentMap { get; private set; } = new Dictionary<int, ComponentInfo>();   
+    //public Dictionary<int, ComponentInformation> componentMap { get; private set; } = new Dictionary<int, ComponentInformation>();
 
     //------------------------------------------------------------------------/
     // Messages
@@ -231,24 +280,56 @@ namespace Stratus
       if (this.components == null)
         return;
 
-      this.componentMap = new Dictionary<int, ComponentInfo>();
-      for (int i = 0; i < this.components.Length; ++i)
-      {
-        componentMap.Add(i, this.components[i]);
-      }
+      return; 
+
+      //this.componentMap = new Dictionary<int, ComponentInformation>();
+      //for (int i = 0; i < this.components.Length; ++i)
+      //{
+      //  componentMap.Add(i, this.components[i]);
+      //}
 
       // Update member references
+      //List<MemberReference> validFavorites = new List<MemberReference>();      
       foreach (var member in this.favorites)
       {
-        if (!componentMap.ContainsKey(member.componentIndex))        
+        // If the component doesn't match...
+        if (!this.AssertComponentIndex(member))
+          continue;
+
+        // Assert the member index
+        if (!this.AssertMemberIndex(member))
           continue;
         
-        ComponentInfo component = this.componentMap[member.componentIndex];
-        if (!(component.name == member.componentName) || !component.membersByName.ContainsKey(member.name))
-          continue;
-        
-        member.Set(component);
+        // Member reference is still valid!
+        ComponentInformation component = this.components[member.componentIndex];
+        member.Set(component, this);
+
+
+        //ComponentInformation component = this.components[member.componentIndex];
+        //if (!(component.name == member.componentName) || !component.membersByName.ContainsKey(member.name))
+        //  continue;
+        //member.Set(component, this);
+
+        /// if (!componentMap.ContainsKey(member.componentIndex))
+        ///   continue;
+
+        /// if (!componentMap.ContainsKey(member.componentIndex))
+        ///   continue;
+
+        // If the member doesn't match
+
+
+        // Member is still valid
+        //validFavorites.Add(member);
+
+        //if (!(component.name == member.componentName) || !component.membersByName.ContainsKey(member.name))
+        //  continue;
+
+
+
       }
+
+      //this.favorites = validFavorites;
 
       this.Initialize();
     }
@@ -267,18 +348,18 @@ namespace Stratus
 
       // Set 
       Component[] targetComponents = target.GetComponents<Component>();
-      List<ComponentInfo> components = new List<ComponentInfo>();
+      List<ComponentInformation> components = new List<ComponentInformation>();
       for (int i = 0; i < targetComponents.Length; ++i)
       {
         Component component = targetComponents[i];
         if (component == null)
           return;
 
-        ComponentInfo componentInfo = new ComponentInfo(component);
+        ComponentInformation componentInfo = new ComponentInformation(component);
         this.fieldCount += componentInfo.fieldCount;
         this.propertyCount += componentInfo.propertyCount;
         components.Add(componentInfo);
-        this.componentMap.Add(i, componentInfo);
+        //this.componentMap.Add(i, componentInfo);
       }
 
       this.components = components.ToArray();
@@ -295,44 +376,142 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/  
-    public void Watch(MemberInfo member, ComponentInfo componentInfo, int memberIndex)
+    /// <summary>
+    /// Adds a member to the watch list
+    /// </summary>
+    /// <param name="member"></param>
+    /// <param name="componentInfo"></param>
+    /// <param name="memberIndex"></param>
+    public void Watch(MemberInfo member, ComponentInformation componentInfo, int memberIndex)
     {
-      MemberReference memberReference = new MemberReference(member, componentInfo, memberIndex);
-      this.favorites.Add(memberReference);      
+      MemberReference memberReference = new MemberReference(member, componentInfo, this, memberIndex);
+      this.favorites.Add(memberReference);
     }
 
-    public void RemoveWatch(MemberInfo member, ComponentInfo componentInfo, int memberIndex)
+    /// <summary>
+    /// Removes a member from the watch list
+    /// </summary>
+    /// <param name="member"></param>
+    /// <param name="componentInfo"></param>
+    /// <param name="memberIndex"></param>
+    public void RemoveWatch(MemberInfo member, ComponentInformation componentInfo, int memberIndex)
     {
-      this.favorites.RemoveAll(x => x.name == member.Name && x.memberIndex == memberIndex);      
+      this.favorites.RemoveAll(x => x.name == member.Name && x.componentName == componentInfo.name && x.memberIndex == memberIndex);
     }
 
-    public void UpdateFavorites()
+    /// <summary>
+    /// Adds a member to the watch list
+    /// </summary>
+    /// <param name="member"></param>
+    /// <param name="componentInfo"></param>
+    /// <param name="memberIndex"></param>
+    public void Watch(MemberReference memberReference)
     {
-      foreach(var member in this.favorites)
+      if (this.Assert(memberReference))
+        this.favorites.Add(memberReference);
+    }
+
+    /// <summary>
+    /// Removes a member from the watch list
+    /// </summary>
+    /// <param name="memberReference"></param>
+    public void RemoveWatch(MemberReference memberReference)
+    {
+       if (this.Assert(memberReference))
+        this.favorites.RemoveAll(x => x.name == memberReference.name && x.memberIndex == memberReference.memberIndex);
+    }
+
+    /// <summary>
+    /// Updates the values of all the favorite members for this GameObject
+    /// </summary>
+    public void UpdateFavoritesValues()
+    {
+      foreach (var member in this.favorites)
       {
         member.UpdateValue();
       }
     }
 
+    /// <summary>
+    /// Sagves all member references for this GameObject
+    /// </summary>
+    /// <returns></returns>
     private MemberReference[] SetAllMemberReferences()
     {
       List<MemberReference> memberReferences = new List<MemberReference>();
       foreach (var component in this.components)
       {
-        for(int f = 0; f < component.fieldCount; ++f)
+        for (int f = 0; f < component.fieldCount; ++f)
         {
-          MemberReference memberReference = new MemberReference(component.fields[f], component, f);
+          MemberReference memberReference = new MemberReference(component.fields[f], component, this, f);
           memberReferences.Add(memberReference);
         }
 
         for (int p = 0; p < component.propertyCount; ++p)
         {
-          MemberReference memberReference = new MemberReference(component.properties[p], component, p);
+          MemberReference memberReference = new MemberReference(component.properties[p], component, this, p);
           memberReferences.Add(memberReference);
         }
 
       }
       return memberReferences.ToArray();
+    }
+
+    /// <summary>
+    /// Verifies that this member reference is still valid
+    /// </summary>
+    /// <param name="memberReference"></param>
+    /// <returns></returns>
+    public bool Assert(MemberReference memberReference)
+    {
+      // If this is not the GameObject this member reference is for
+      if (memberReference.gameObjectInfo != this)
+      {
+        //throw new ArgumentException($"The member {memberReference.name} is not a member among the components of the GameObject {this.target.name}");
+        return false;
+      }
+
+      // Noww assert all the others!
+      return AssertComponentIndex(memberReference) && AssertMemberIndex(memberReference);
+    }
+
+    /// <summary>
+    /// If the component index doesn't match the current component index,
+    /// this means the component could have been shuffled or removed
+    /// </summary>
+    /// <param name="memberReference"></param>
+    /// <returns></returns>
+    public bool AssertComponentIndex(MemberReference memberReference)
+    {
+      if ((memberReference.componentIndex > this.numberofComponents - 1) ||
+          (memberReference.componentName != this.components[memberReference.componentIndex].name))
+      {
+        return false;
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// If the member at the index doesn't match the member reference index,
+    /// this means the member could have been removed or rearranged
+    /// </summary>
+    /// <param name="memberReference"></param>
+    /// <returns></returns>
+    public bool AssertMemberIndex(MemberReference memberReference)
+    {
+      ComponentInformation componentInformation = this.components[memberReference.componentIndex];
+      switch (memberReference.type)
+      {
+        case MemberTypes.Field:
+          if (componentInformation.fields[memberReference.memberIndex].Name != memberReference.name)
+            return false;
+          break;
+        case MemberTypes.Property:
+          if (componentInformation.properties[memberReference.memberIndex].Name != memberReference.name)
+            return false;
+          break;
+      }
+      return true;
     }
 
   }

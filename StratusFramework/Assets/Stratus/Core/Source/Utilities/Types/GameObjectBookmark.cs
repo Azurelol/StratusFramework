@@ -21,8 +21,8 @@ namespace Stratus
     //------------------------------------------------------------------------/
     public GameObjectInformation information => this._information;
     public static GameObjectInformation[] availableInformation { get; private set; }
-    public static bool hasAvailableInformation => availableInformation.Length > 0;
-    public static GameObjectInformation.MemberReference[] favorites { get; private set; }
+    public static bool hasAvailableInformation => availableInformation != null && availableInformation.Length > 0;
+    public static GameObjectInformation.MemberReference[] favorites { get; private set; } = new GameObjectInformation.MemberReference[0];
     public static bool hasFavorites => favorites != null && favorites.Length > 0;
     public static System.Action onFavoritesChanged { get; set; } = new System.Action(() => { });
     public static System.Action onInformationChanged{ get; set; } = new System.Action(() => { });

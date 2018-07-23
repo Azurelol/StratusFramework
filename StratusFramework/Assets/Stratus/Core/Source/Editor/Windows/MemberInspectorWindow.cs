@@ -75,10 +75,10 @@ namespace Stratus
     private TreeViewState treeViewState;
 
     private Countdown pollTimer;
-    private const float listRatio = 0.25f;
-    private GUILayoutOption listLeftElementWidth;
-    private GUILayoutOption listRightElementWidth;
-    private GUILayoutOption listElementHeight;
+    //private const float listRatio = 0.25f;
+    //private GUILayoutOption listLeftElementWidth;
+    //private GUILayoutOption listRightElementWidth;
+    //private GUILayoutOption listElementHeight;
     private TreeView treeView;
 
 
@@ -95,7 +95,7 @@ namespace Stratus
     private AnimBool[] showComponent { get; set; }
     private Vector2 componentScrollPosition { get; set; }
     private Vector2 watchListScrollPosition { get; set; }
-    private DropdownList<ComponentInfo> componentList { get; set; }
+    private DropdownList<ComponentInformation> componentList { get; set; }
 
     //------------------------------------------------------------------------/
     // Messages
@@ -116,6 +116,8 @@ namespace Stratus
 
     protected override void OnWindowGUI()
     {
+      //return; 
+
       EditorGUI.BeginChangeCheck();
       {
         this.selectedModeIndex = GUILayout.Toolbar(this.selectedModeIndex, this.toolbarOptions);
@@ -159,7 +161,7 @@ namespace Stratus
           break;
         case PlayModeStateChange.EnteredPlayMode:
           break;
-        case PlayModeStateChange.ExitingPlayMode:          
+        case PlayModeStateChange.ExitingPlayMode:
           break;
       }
 
@@ -176,12 +178,17 @@ namespace Stratus
         {
           case 0:
             if (this.hasTarget)
+            {
               componentList.selected.UpdateValues();
+            }
             break;
 
           case 1:
-            foreach (var targetInfo in GameObjectBookmark.availableInformation)
-              targetInfo.UpdateFavorites();
+            if (GameObjectBookmark.hasAvailableInformation)
+            {
+              foreach (var targetInfo in GameObjectBookmark.availableInformation)
+                targetInfo.UpdateFavoritesValues();
+            }
             break;
         }
 
@@ -202,7 +209,7 @@ namespace Stratus
     }
 
     private void onBookmarkUpdate()
-    {      
+    {
       Trace.Script("Bookmarks changed!");
       this.SetTreeView();
     }
@@ -216,6 +223,8 @@ namespace Stratus
     [OnOpenAsset]
     public static bool OnOpenAsset(int instanceID, int line)
     {
+      if (instance == null || instance.memberInspector == null)
+        return false;
       return instance.memberInspector.TryOpenAsset(instanceID, line);
     }
 
@@ -324,9 +333,8 @@ namespace Stratus
       }
 
       this.showComponent = this.GenerateAnimBools(this.currentTargetInformation.numberofComponents, false);
-      this.componentList = new DropdownList<ComponentInfo>(this.currentTargetInformation.components, (ComponentInfo component) => component.name, this.lastComponentIndex);
+      this.componentList = new DropdownList<ComponentInformation>(this.currentTargetInformation.components, (ComponentInformation component) => component.name, this.lastComponentIndex);
       this.SetTreeView();
-      Trace.Script($"On target selected for {this.target.name}");
     }
 
     //------------------------------------------------------------------------/
@@ -379,45 +387,45 @@ namespace Stratus
     }
 
 
-    private void DrawComponent(ComponentInfo componentInfo)
-    {
-      if (componentInfo.hasFields)
-        DrawList("Fields", componentInfo, componentInfo.fields, ref componentInfo.fieldValues, ref componentInfo.favoriteFields);
-      if (componentInfo.hasProperties)
-        DrawList("Properties", componentInfo, componentInfo.properties, ref componentInfo.propertyValues, ref componentInfo.favoriteProperties);
-    }
+    //private void DrawComponent(ComponentInformation componentInfo)
+    //{
+    //  if (componentInfo.hasFields)
+    //    DrawList("Fields", componentInfo, componentInfo.fields, ref componentInfo.fieldValues, ref componentInfo.favoriteFields);
+    //  if (componentInfo.hasProperties)
+    //    DrawList("Properties", componentInfo, componentInfo.properties, ref componentInfo.propertyValues, ref componentInfo.favoriteProperties);
+    //}
 
-    private void DrawList(string label, ComponentInfo component, MemberInfo[] members, ref object[] values, ref bool[] favorites)
-    {
-      int count = members.Length;
-      EditorGUILayout.LabelField($"{label} ({count})", EditorStyles.whiteLargeLabel);
-      for (int i = 0; i < count; ++i)
-      {
-        MemberInfo member = members[i];
-        GUILayout.BeginHorizontal();
-        {
-          EditorGUI.BeginChangeCheck();
-          {
-            favorites[i] = GUILayout.Toggle(favorites[i], string.Empty, StratusGUIStyles.listViewToggle, listElementHeight);
-          }
-          if (EditorGUI.EndChangeCheck())
-          {
-            if (favorites[i])
-              this.currentTargetInformation.Watch(member, component, i);
-            else
-              this.currentTargetInformation.RemoveWatch(member, component, i);
-
-            // Whenever faorites change
-            GameObjectBookmark.UpdateFavoriteMembers();
-            //this.OnFavoritesUpdated();
-          }
-
-          GUILayout.Label(new GUIContent(member.Name, null, member.Name), StratusGUIStyles.listViewLabel, listLeftElementWidth, listElementHeight);
-          EditorGUILayout.SelectableLabel($"{values[i]}", StratusGUIStyles.textField, listRightElementWidth, listElementHeight);
-        }
-        GUILayout.EndHorizontal();
-      }
-    }
+    //private void DrawList(string label, ComponentInformation component, MemberInfo[] members, ref object[] values, ref bool[] favorites)
+    //{
+    //  int count = members.Length;
+    //  EditorGUILayout.LabelField($"{label} ({count})", EditorStyles.whiteLargeLabel);
+    //  for (int i = 0; i < count; ++i)
+    //  {
+    //    MemberInfo member = members[i];
+    //    GUILayout.BeginHorizontal();
+    //    {
+    //      EditorGUI.BeginChangeCheck();
+    //      {
+    //        favorites[i] = GUILayout.Toggle(favorites[i], string.Empty, StratusGUIStyles.listViewToggle, listElementHeight);
+    //      }
+    //      if (EditorGUI.EndChangeCheck())
+    //      {
+    //        if (favorites[i])
+    //          this.currentTargetInformation.Watch(member, component, i);
+    //        else
+    //          this.currentTargetInformation.RemoveWatch(member, component, i);
+    //
+    //        // Whenever faorites change
+    //        GameObjectBookmark.UpdateFavoriteMembers();
+    //        //this.OnFavoritesUpdated();
+    //      }
+    //
+    //      GUILayout.Label(new GUIContent(member.Name, null, member.Name), StratusGUIStyles.listViewLabel, listLeftElementWidth, listElementHeight);
+    //      EditorGUILayout.SelectableLabel($"{values[i]}", StratusGUIStyles.textField, listRightElementWidth, listElementHeight);
+    //    }
+    //    GUILayout.EndHorizontal();
+    //  }
+    //}
 
 
 

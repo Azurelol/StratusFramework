@@ -329,6 +329,7 @@ namespace Stratus
     public static void Set(TreeElement<T> treeElement, T data)
     {
       treeElement.Set(data);
+      treeElement.name = treeElement.GetName();
     }
 
     protected abstract string GetName();
