@@ -103,7 +103,7 @@ namespace Stratus
       EditorGUILayout.BeginHorizontal();
 
       // Add Menu
-      if (GUILayout.Button(StratusGUIStyles.addTexture, StratusGUIStyles.smallLayout))
+      if (GUILayout.Button(StratusGUIStyles.addIcon, StratusGUIStyles.smallLayout))
       {
         var menu = new GenericMenu();
         menu.AddPopup("Add Trigger", triggerTypes.displayedOptions, (int index) =>
@@ -124,7 +124,7 @@ namespace Stratus
       //}
 
       // Validation
-      if (GUILayout.Button(StratusGUIStyles.validateTexture, StratusGUIStyles.smallLayout))
+      if (GUILayout.Button(StratusGUIStyles.validateIcon, StratusGUIStyles.smallLayout))
       {
         var menu = new GenericMenu();
         menu.AddItem(new GUIContent("Validate All"), false, ()=> Validate(ValidateAll));
@@ -135,7 +135,7 @@ namespace Stratus
       }
 
       // Options Menu
-      if (GUILayout.Button(StratusGUIStyles.optionsTexture, StratusGUIStyles.smallLayout))
+      if (GUILayout.Button(StratusGUIStyles.optionsIcon, StratusGUIStyles.smallLayout))
       {
         var menu = new GenericMenu();
         menu.AddEnumToggle<TriggerSystem.ConnectionDisplay>(propertyMap[nameof(TriggerSystem.connectionDisplay)]);

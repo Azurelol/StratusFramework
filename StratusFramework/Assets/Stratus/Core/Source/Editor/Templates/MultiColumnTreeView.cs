@@ -44,7 +44,6 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    public MultiColumnHeaderState multiColumnHeaderState;
     public bool showControls = true;
     float rowHeights = 20f;
     float toggleWidth = 18f;
@@ -56,6 +55,7 @@ namespace Stratus
     protected TreeViewColumn[] columns { get; private set; }
     public SearchField search { get; private set; }
     public bool initialized { get; private set; }
+    public StratusMultiColumnHeader stratusMultiColumnHeader { get; set; }
 
     //------------------------------------------------------------------------/
     // Virtual
@@ -75,7 +75,7 @@ namespace Stratus
     {
       this.columns = this.BuildColumns();
       MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(columns);
-      this.multiColumnHeader = new MultiColumnHeader(headerState);
+      this.multiColumnHeader = this.stratusMultiColumnHeader = new StratusMultiColumnHeader(headerState);
       this.InitializeMultiColumnTreeView();
       this.Reload();
     }
@@ -85,7 +85,7 @@ namespace Stratus
     {
       this.columns = this.BuildColumns();
       MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(columns);
-      this.multiColumnHeader = new MultiColumnHeader(headerState);
+      this.multiColumnHeader = new StratusMultiColumnHeader(headerState);
       this.InitializeMultiColumnTreeView();
       this.Reload();
     }
@@ -290,8 +290,31 @@ namespace Stratus
       return new Rect(20f, position.y + 10f, position.width - 40f, 20f);
     }
 
+    /// <summary>
+    /// Toggles the column
+    /// </summary>
+    /// <param name="column"></param>
     public void ToggleColumn(ColumnType column)
-    {      
+    {
+      this.stratusMultiColumnHeader.ToggleColumn(this.GetColumnIndex(column));
+    }
+
+    /// <summary>
+    /// Toggles the column
+    /// </summary>
+    /// <param name="column"></param>
+    public void EnableColumn(ColumnType column)
+    {
+      this.stratusMultiColumnHeader.EnableColumn(this.GetColumnIndex(column));
+    }
+
+    /// <summary>
+    /// Toggles the column
+    /// </summary>
+    /// <param name="column"></param>
+    public void DisableColumn(ColumnType column)
+    {
+      this.stratusMultiColumnHeader.DisableColumn(this.GetColumnIndex(column));
     }
 
     //------------------------------------------------------------------------/

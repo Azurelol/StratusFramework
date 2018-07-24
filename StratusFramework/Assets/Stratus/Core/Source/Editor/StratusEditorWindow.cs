@@ -57,6 +57,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     private void OnEnable()
     {
+      instance = this as T;
       this.serializedObject = new SerializedObject(this);
       this.menuBarDrawer = this.OnSetMenuBar();
       this.OnWindowEnable();
@@ -85,11 +86,11 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/    
-    protected static void OnOpen(string title = null, bool utlity = false)
+    protected static void OnOpen(string title = null, bool utility = false)
     {
       Type type = typeof(T);
       title = title != null ? title : type.Name;
-      instance = (T)EditorWindow.GetWindow(type, utlity, title);
+      EditorWindow.GetWindow(type, utility, title);
     }
 
     //------------------------------------------------------------------------/

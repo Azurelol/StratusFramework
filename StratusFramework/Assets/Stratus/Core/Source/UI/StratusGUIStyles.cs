@@ -89,7 +89,7 @@ namespace Stratus
     public static GUIStyle listViewLabel { get; private set; }
     public static GUIStyle listViewToggle { get; private set; }
     public static GUIStyle textField { get; private set; }
-    public static GUIStyle popup { get; private set; }
+    public static GUIStyle popup { get; private set; } 
     public static Font defaultFont { get; private set; }
     public static Font boldFont { get; private set; }
     public static Font lightFont { get; private set; }
@@ -98,18 +98,14 @@ namespace Stratus
     public static bool isProSkin { get; set; }
 
     // Icons
-    public static Texture2D folderIcon { get; private set; }
-    public static Texture2D audioSourceIcon { get; private set; }
-    public static Texture2D cameraIcon { get; private set; }
-    public static Texture2D windZoneIcon { get; private set; }
-    public static Texture2D gameObjectIcon { get; private set; }
-
-
-    public static Texture2D optionsTexture => textures["cog"];
-    public static Texture2D addTexture => textures["plus"];
-    public static Texture2D messageTexture => textures["talk"];
-    public static Texture2D trashTexture => textures["trash-can"];
-    public static Texture2D validateTexture => textures["magnifying-glass"];
+    public static Texture2D optionsIcon => textures["cog"];
+    public static Texture2D addIcon => textures["plus"];
+    public static Texture2D messageIcon => textures["talk"];
+    public static Texture2D trashIcon => textures["trash-can"];
+    public static Texture2D validateIcon => textures["magnifying-glass"];
+    public static Texture2D starIcon => textures["round-star"];
+    public static Texture2D starStackIcon => textures["stars-stack"];
+    public static Texture2D positionMarker => textures["position-marker"];
     // Layouts
 
     public static GUILayoutOption[] smallLayout { get; private set; }
@@ -127,9 +123,8 @@ namespace Stratus
       // Set colors
       SetColors();
       // Set icons
-
       // Store default options
-      CacheDefaultOptions();
+      CacheDefaultOptions(); 
     }
     
     private static void LoadGUIAssets()
@@ -166,11 +161,11 @@ namespace Stratus
       listViewLabel.padding = textField.padding;
       
 
-#if UNITY_EDITOR
-      popup = new GUIStyle(UnityEditor.EditorStyles.popup);
-      popup.richText = true;
-      popup.font = boldFont;
-      popup.fontSize = 10;
+#if UNITY_EDITOR      
+      //popup = new GUIStyle(UnityEditor.EditorStyles.popup);
+      //popup.richText = true;
+      //popup.font = boldFont;
+      //popup.fontSize = 10;
 #endif
 
       

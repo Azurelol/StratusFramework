@@ -10,6 +10,7 @@ namespace Stratus
   [Serializable]
   public class MemberInspectorTreeElement : TreeElement<GameObjectInformation.MemberReference>
   {
+
     protected override string GetName() => this.data.name;
 
     /// <summary>
@@ -31,7 +32,7 @@ namespace Stratus
     {
       var treeBuilder = new TreeBuilder<MemberInspectorTreeElement, GameObjectInformation.MemberReference>(Set);
       treeBuilder.AddRoot();
-      treeBuilder.AddChildren(target.memberReferences, 0);
+      treeBuilder.AddChildren(target.members, 0);
       return treeBuilder.ToTree();
     }
   } 
@@ -52,6 +53,21 @@ namespace Stratus
       TreeViewColumn column = null;
       switch (columnType)
       {
+        case MemberInspectorWindow.Column.Favorite: 
+          column = new TreeViewColumn
+          {
+            headerContent = new GUIContent(StratusGUIStyles.starStackIcon, "Watch"),
+            headerTextAlignment = TextAlignment.Center,
+            sortedAscending = true,
+            sortingArrowAlignment = TextAlignment.Right,
+            width = 30,
+            minWidth = 30,
+            maxWidth = 45,
+            autoResize = false,
+            allowToggleVisibility = false,
+            selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.isFavorite.ToString()
+          };
+          break;
         case MemberInspectorWindow.Column.GameObject:
           column = new TreeViewColumn
           {
@@ -125,78 +141,14 @@ namespace Stratus
       return column;
     }
 
-    //protected override TreeViewColumn[] BuildColumns()
-    //{
-    //  var columns = new TreeViewColumn[]
-    //  {
-    //    new TreeViewColumn
-    //    {
-    //      headerContent = new GUIContent("GameObject"),
-    //      sortedAscending = true,
-    //      sortingArrowAlignment = TextAlignment.Right,
-    //      width = 100,
-    //      minWidth = 100,
-    //      maxWidth = 120,
-    //      autoResize = false,
-    //      allowToggleVisibility = true,
-    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.gameObjectName
-    //    },
-    //    new TreeViewColumn
-    //    {
-    //      headerContent = new GUIContent("Component"),
-    //      sortedAscending = true,
-    //      sortingArrowAlignment = TextAlignment.Right,
-    //      width = 200,
-    //      minWidth = 150,
-    //      maxWidth = 250,
-    //      autoResize = false,
-    //      allowToggleVisibility = true,
-    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.componentName
-    //    },
-    //    new TreeViewColumn
-    //    {
-    //      headerContent = new GUIContent("Type"),
-    //      sortedAscending = true,
-    //      sortingArrowAlignment = TextAlignment.Center,
-    //      width = 60,
-    //      minWidth = 60,
-    //      autoResize = false,
-    //      allowToggleVisibility = true,
-    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.type.ToString()
-    //    },
-    //    new TreeViewColumn
-    //    {
-    //      headerContent = new GUIContent("Member"),
-    //      sortedAscending = true,
-    //      sortingArrowAlignment = TextAlignment.Center,
-    //      width = 100,
-    //      minWidth = 80,
-    //      maxWidth = 120,
-    //      autoResize = false,
-    //      allowToggleVisibility = false,
-    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.name
-    //    },
-    //    new TreeViewColumn
-    //    {
-    //      headerContent = new GUIContent("Value"),
-    //      sortedAscending = true,
-    //      sortingArrowAlignment = TextAlignment.Left,
-    //      width = 200,
-    //      minWidth = 150,
-    //      maxWidth = 250,
-    //      autoResize = true,
-    //      allowToggleVisibility = false,
-    //      selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.latestValueString
-    //    }        
-    //  };
-    //
-    //  return columns;
-    //}
-
     protected override void DrawColumn(Rect cellRect, TreeViewItem<MemberInspectorTreeElement> item, MemberInspectorWindow.Column column, ref RowGUIArgs args)
     {
       switch (column)
       {
+        case MemberInspectorWindow.Column.Favorite:
+          if (item.item.data.isFavorite)
+            this.DrawIcon(cellRect,StratusGUIStyles.starIcon);
+          break;
         case MemberInspectorWindow.Column.GameObject:
           DefaultGUI.Label(cellRect, item.item.data.gameObjectName, args.selected, args.focused);
           break;
@@ -220,13 +172,29 @@ namespace Stratus
     protected override int GetColumnIndex(MemberInspectorWindow.Column columnType) => (int)columnType;
 
     protected override void OnItemContextMenu(GenericMenu menu, MemberInspectorTreeElement treeElement)
-    {
+    {      
       GameObjectInformation.MemberReference member = treeElement.data;
+      // 1. Select
+      menu.AddItem(new GUIContent("Select"), false, () => Selection.activeGameObject = member.gameObjectInfo.target);
+      // 2. Watch
       bool isFavorite = member.isFavorite;
       if (isFavorite)
+      {
         menu.AddItem(new GUIContent("Remove Watch"), false, () => member.gameObjectInfo.RemoveWatch(member));
+      }
       else
-        menu.AddItem(new GUIContent("Watch"), false, () => member.gameObjectInfo.Watch(member));        
+      {
+        menu.AddItem(new GUIContent("Watch"), false, () =>
+        {
+          GameObject target = member.gameObjectInfo.target;
+          bool hasBookmark = target.HasComponent<GameObjectBookmark>();
+          if (!hasBookmark)
+          {
+            MemberInspectorWindow.SetBookmark(member.gameObjectInfo.target);
+          }
+          member.gameObjectInfo.Watch(member);
+        });        
+      }
     }
 
   }

@@ -148,7 +148,7 @@ namespace Stratus
       EditorGUILayout.BeginVertical(StratusGUIStyles.box, GUILayout.ExpandHeight(true));
       {
         // Validation
-        if (GUILayout.Button(StratusGUIStyles.validateTexture, StratusGUIStyles.smallLayout))
+        if (GUILayout.Button(StratusGUIStyles.validateIcon, StratusGUIStyles.smallLayout))
         {
           var menu = new GenericMenu();
           menu.AddItem(new GUIContent("Validator"), false, () => ShowValidation("Validator", Interfaces.Global.Validate()));
@@ -157,7 +157,7 @@ namespace Stratus
         }
 
         // Clear
-        if (GUILayout.Button(StratusGUIStyles.trashTexture, StratusGUIStyles.smallLayout))
+        if (GUILayout.Button(StratusGUIStyles.trashIcon, StratusGUIStyles.smallLayout))
         {
           messages = null;
         }

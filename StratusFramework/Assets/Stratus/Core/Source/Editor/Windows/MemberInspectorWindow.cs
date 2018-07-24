@@ -40,11 +40,12 @@ namespace Stratus
 
     public enum Column
     {
+      Favorite,
       GameObject,
       Component,
-      Type,
       Member,
-      Value
+      Value,
+      Type,
     }
 
     //------------------------------------------------------------------------/
@@ -110,8 +111,8 @@ namespace Stratus
 
       this.CheckTarget();
 
-      GameObjectBookmark.onUpdate += this.onBookmarkUpdate;
-      GameObjectBookmark.onFavoritesChanged += this.onBookmarkUpdate;
+      GameObjectBookmark.onUpdate += this.OnBookmarkUpdate;
+      //GameObjectBookmark.onFavoritesChanged += this.OnBookmarkUpdate;
     }
 
     protected override void OnWindowGUI()
@@ -136,7 +137,7 @@ namespace Stratus
           this.SelectTarget();
           if (this.hasTarget)
           {
-            //EditorGUILayout.LabelField($"Components ({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
+            EditorGUILayout.LabelField($"Members ({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
             //this.componentList.selectedIndex = EditorGUILayout.Popup(this.componentList.selectedIndex, this.componentList.displayedOptions, StratusGUIStyles.popup);
             this.memberInspector.OnTreeViewGUI(this.availablePosition);
           }
@@ -174,23 +175,24 @@ namespace Stratus
       bool updateValues = pollTimer.Update(Time.deltaTime);
       if (pollTimer.isFinished)
       {
-        switch (this.selectedModeIndex)
+        if (GameObjectBookmark.hasAvailableInformation)
         {
-          case 0:
-            if (this.hasTarget)
-            {
-              componentList.selected.UpdateValues();
-            }
-            break;
-
-          case 1:
-            if (GameObjectBookmark.hasAvailableInformation)
-            {
-              foreach (var targetInfo in GameObjectBookmark.availableInformation)
-                targetInfo.UpdateFavoritesValues();
-            }
-            break;
+          foreach (var targetInfo in GameObjectBookmark.availableInformation)
+            targetInfo.UpdateFavoritesValues();
         }
+
+        //switch (this.selectedModeIndex)
+        //{
+        //  case 0:
+        //    if (this.hasTarget)
+        //    {
+        //      componentList.selected.UpdateValues();
+        //    }
+        //    break;
+        //
+        //  case 1:
+        //    break;
+        //}
 
         // Reset the poll timer
         pollTimer.Reset();
@@ -208,7 +210,7 @@ namespace Stratus
     {
     }
 
-    private void onBookmarkUpdate()
+    private void OnBookmarkUpdate()
     {
       Trace.Script("Bookmarks changed!");
       this.SetTreeView();
@@ -235,6 +237,23 @@ namespace Stratus
       instance.SelectTarget(target);
     }
 
+    public static void SetBookmark(GameObject target)
+    {
+      GameObjectBookmark bookmark = GameObjectBookmark.Add(target);
+      bookmark.SetInformation(instance.currentTargetInformation);
+      instance.currentTargetInformation = bookmark.information;
+      instance.informationMode = InformationMode.Bookmark;
+    }
+
+    public static void RemoveBookmark(GameObject target)
+    {
+      instance.targetTemporaryInformation = (GameObjectInformation)instance.currentTargetInformation.CloneJSON();
+      instance.targetTemporaryInformation.ClearWatchList();
+      instance.currentTargetInformation = instance.targetTemporaryInformation;
+      GameObjectBookmark.Remove(target);
+      instance.informationMode = InformationMode.Temporary;
+    }
+
     //------------------------------------------------------------------------/
     // Methods: Target Selection
     //------------------------------------------------------------------------/
@@ -256,20 +275,14 @@ namespace Stratus
           {
             menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
             {
-              this.targetTemporaryInformation = (GameObjectInformation)this.currentTargetInformation.CloneJSON();
-              this.currentTargetInformation = this.targetTemporaryInformation;
-              GameObjectBookmark.Remove(this.target);
-              this.informationMode = InformationMode.Temporary;
+              RemoveBookmark(target);
             });
           }
           else
           {
             menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
             {
-              GameObjectBookmark bookmark = GameObjectBookmark.Add(this.target);
-              bookmark.SetInformation(this.currentTargetInformation);
-              this.currentTargetInformation = bookmark.information;
-              this.informationMode = InformationMode.Bookmark;
+              SetBookmark(target);
             });
           }
 
@@ -279,24 +292,6 @@ namespace Stratus
             this.currentTargetInformation.ClearWatchList();
           });
 
-          //menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
-          //{
-          //  if (hasBookmark)
-          //  {
-          //    this.targetTemporaryInformation = (GameObjectInformation)this.currentTargetInformation.CloneJSON();
-          //    this.currentTargetInformation = this.targetTemporaryInformation;
-          //    //this.targetTemporaryInformation = this.currentTargetInformation;
-          //    GameObjectBookmark.Remove(this.target);
-          //    this.informationMode = InformationMode.Temporary;
-          //  }
-          //  else
-          //  {
-          //    GameObjectBookmark bookmark = GameObjectBookmark.Add(this.target);
-          //    bookmark.SetInformation(this.currentTargetInformation);
-          //    this.currentTargetInformation = bookmark.information;
-          //    this.informationMode = InformationMode.Bookmark;
-          //  }
-          //});
           menu.ShowAsContext();
         });
       });
@@ -396,6 +391,19 @@ namespace Stratus
       {
         Trace.Script($"Set tree view with ({members.Count}) members");
         this.memberInspector.SetTree(members);
+      }
+
+      switch (this.selectedModeIndex)
+      {
+        case 0:
+          this.memberInspector.DisableColumn(Column.GameObject);
+          this.memberInspector.EnableColumn(Column.Favorite);
+          break;
+
+        case 1:
+          this.memberInspector.EnableColumn(Column.GameObject);
+          this.memberInspector.DisableColumn(Column.Favorite);
+          break;
       }
 
     }

@@ -357,13 +357,13 @@ namespace Stratus
       switch (style)
       {
         case ContextMenuType.Add:
-          texture = StratusGUIStyles.addTexture;
+          texture = StratusGUIStyles.addIcon;
           break;
         case ContextMenuType.Validation:
-          texture = StratusGUIStyles.validateTexture;
+          texture = StratusGUIStyles.validateIcon;
           break;
         case ContextMenuType.Options:
-          texture = StratusGUIStyles.optionsTexture;
+          texture = StratusGUIStyles.optionsIcon;
           break;
       }
       if (GUILayout.Button(texture, StratusGUIStyles.smallLayout))

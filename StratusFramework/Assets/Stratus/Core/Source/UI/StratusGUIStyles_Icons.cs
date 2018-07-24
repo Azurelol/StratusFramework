@@ -11,6 +11,36 @@ namespace Stratus
     /// </summary>
     public static class Icons
     {
+      /// <summary>
+      /// A reference to a given icon
+      /// </summary>
+      public struct BuiltInIcon : System.IEquatable<BuiltInIcon>, System.IComparable<BuiltInIcon>
+      {
+        public string name;
+        public Texture2D icon;
+
+        public override bool Equals(object obj)
+        {
+          return obj is BuiltInIcon && this.Equals((BuiltInIcon)obj);
+        }
+
+        public override int GetHashCode()
+        {
+          return this.name.GetHashCode();
+        }
+
+        public int CompareTo(BuiltInIcon other)
+        {
+          return this.name.CompareTo(other.name);
+        }
+
+        public bool Equals(BuiltInIcon other)
+        {         
+          return this.name == other.name;
+        }
+      }
+
+
       public static Dictionary<string, Texture2D> builtInIcons { get; private set; } = new Dictionary<string, Texture2D>();
 
       public static string[] builtInIconNames = new string[]
@@ -335,20 +365,28 @@ namespace Stratus
       public static Texture2D gameObjectIcon { get; private set; }
       public static Texture2D cameraIcon { get; private set; }
 
-      private static void SetIcons()
-      {
-        #if UNITY_EDITOR
-        foreach (var name in Icons.builtInIconNames)
-        {
-          Texture2D icon = UnityEditor.EditorGUIUtility.FindTexture(name);
-          if (icon != null)
-            Icons.builtInIcons.Add(name, icon);
-        }
+      //static Icons()
+      //{
+      //  #if UNITY_EDITOR
+      //  foreach (var name in Icons.builtInIconNames)
+      //  {
+      //    Texture2D icon = UnityEditor.EditorGUIUtility.FindTexture(name);
+      //    if (icon != null && !Icons.builtInIcons.ContainsKey(name))
+      //      Icons.builtInIcons.Add(name, icon);
+      //  }
+      //   
+      //  //gameObjectIcon = builtInIcons["GameObject Icon"]; 
+      //  //cameraIcon = builtInIcons["Camera Icon"];
+      //  #endif
+      //}
+      //
+      //private static void FindIcons()
+      //{
+      //  #if UNITY_EDITOR
+      //        
+      //  #endif
+      //}
 
-        gameObjectIcon = builtInIcons["GameObject Icon"];
-        cameraIcon = builtInIcons["Camera Icon"];
-        #endif
-      }
     }
 
 
