@@ -586,41 +586,7 @@ namespace Stratus
       public static MemberReference GetReference<T>(Expression<Func<T>> varExpr)
       {
         // Slow, probs
-        //var cast = varExpr as Expression<Func<object>>;
         return MemberReference.Construct(varExpr);
-
-        //// Use expressions to find the underlying owner object
-        //var memberExpr = varExpr.Body as MemberExpression;
-        //var inst = memberExpr.Expression;
-        //var targetObj = Expression.Lambda<Func<object>>(inst).Compile()();
-        //
-        //// Get the name of the variable
-        //var variableName = memberExpr.Member.Name;
-        //
-        //var variableReference = new MemberReference();
-        //variableReference.label = variableName;
-        //variableReference.target = targetObj;
-        //        
-        //// Check if it's a property
-        //var property = targetObj.GetType().GetProperty(variableName);
-        //if (property != null)
-        //{
-        //  variableReference.property = property;
-        //  variableReference.type = property.PropertyType;
-        //  return variableReference;
-        //}
-        //
-        //// Check if it's a field
-        //var field = targetObj.GetType().GetField(variableName);
-        //if (field != null)
-        //{
-        //  variableReference.field = field;
-        //  variableReference.type = field.FieldType;
-        //  return variableReference;
-        //}
-        //
-        //// Invalid
-        //throw new ArgumentException("The given variable is neither a property or a field!");        
       }
 
       /// <summary>

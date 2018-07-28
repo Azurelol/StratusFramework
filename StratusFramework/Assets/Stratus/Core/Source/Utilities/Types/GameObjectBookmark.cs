@@ -97,6 +97,9 @@ namespace Stratus
       List<ComponentInformation.MemberReference> values = new List<ComponentInformation.MemberReference>();
       foreach (var targetInfo in availableInformation)
       {
+        // Update the watch list cache first
+        targetInfo.CacheWatchList();
+        // Now add that object's members onto this
         values.AddRange(targetInfo.watchList);
       }
       GameObjectBookmark.watchList = values.ToArray();

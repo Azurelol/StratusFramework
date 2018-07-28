@@ -43,10 +43,6 @@ namespace Stratus
       /// </summary>
       public string gameObjectName;
       /// <summary>
-      /// The index for the component that this member is part of in a GameObject
-      /// </summary>
-      public int componentIndex;
-      /// <summary>
       /// THe index to this member for either the fields or properties of the component
       /// </summary>
       public int memberIndex;
@@ -54,7 +50,9 @@ namespace Stratus
       /// Whether this memebr reference is favorited
       /// </summary>
       public bool isWatched = false;
-
+      /// <summary>
+      /// Information regarding the component this member belongs to
+      /// </summary>
       [NonSerialized]
       public ComponentInformation componentInfo;
 
@@ -151,7 +149,7 @@ namespace Stratus
     public bool hasFields => fieldCount > 0;
     public bool hasProperties => propertyCount > 0;
     public Dictionary<string, MemberInfo> membersByName { get; private set; }
-    public List<MemberReference> watchList { get; private set; }
+    public List<MemberReference> watchList { get; private set; } = new List<MemberReference>();
     public bool valid { get; private set; }
 
     //------------------------------------------------------------------------/
@@ -169,9 +167,11 @@ namespace Stratus
         return;
       }
 
-      this.Initialize();
+      this.InitializeComponentInformation();
+      this.InitializeMemberReferences();
+
       if (this.fieldCount != this.fields.Length || this.propertyCount != this.properties.Length)
-        this.Save();
+        this.SaveMemberCount();
     }
 
     //------------------------------------------------------------------------/
@@ -186,16 +186,16 @@ namespace Stratus
       }
 
       this.component = component;
-      this.memberReferences = this.CreateAllMemberReferences();
       this.gameObjectName = component.gameObject.name;
-      this.Initialize();
-      this.Save();
+      this.InitializeComponentInformation();
+      this.SaveMemberCount();
+      this.memberReferences = this.CreateAllMemberReferences();
     }
 
     /// <summary>
     /// Runtime: Record all type information about the members of the component
     /// </summary>
-    private void Initialize()
+    private void InitializeComponentInformation()
     {
       // Type
       this.type = this.component.GetType();
@@ -214,17 +214,11 @@ namespace Stratus
       // Members
       this.members = this.type.GetMembers(bindingFlags);
       this.membersByName = new Dictionary<string, MemberInfo>();
-      // Set all member references
-      foreach (var member in this.memberReferences)
-      {
-        member.Initialize(this);
-      }
-
       // This information is now valid
       this.valid = true;
     }
 
-    private void Save()
+    private void SaveMemberCount()
     {
       this.fieldCount = this.fields.Length;
       this.propertyCount = this.properties.Length;
@@ -308,23 +302,34 @@ namespace Stratus
     {
       // Make a reference for all members
       List<MemberReference> memberReferences = new List<MemberReference>();
-      for (int f = 0; f < this.fieldCount; ++f)
+      for (int f = 0; f < this.fields.Length; ++f)
       {
         MemberReference memberReference = new MemberReference(this.fields[f], this, f);
         memberReferences.Add(memberReference);
       }
 
-      for (int p = 0; p < this.propertyCount; ++p)
+      for (int p = 0; p < this.properties.Length; ++p)
       {
         MemberReference memberReference = new MemberReference(this.properties[p], this, p);
         memberReferences.Add(memberReference);
       }
-
-
       // Also rebuild favorites!
       this.watchList = new List<MemberReference>();
 
       return memberReferences.ToArray();
+    }
+
+    private void InitializeMemberReferences()
+    {
+      // Set all member references, also record initial watchlist
+      this.watchList = new List<MemberReference>();
+      foreach (var member in this.memberReferences)
+      {
+        member.Initialize(this);
+        if (member.isWatched)
+          this.watchList.Add(member);
+      }
+      
     }
 
     /// <summary>
@@ -367,44 +372,19 @@ namespace Stratus
         GameObjectBookmark.UpdateWatchList();
     }
 
+    /// <summary>
+    /// Retrieves the value of the selected field
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    private object GetValue(FieldInfo field) => field.GetValue(component);
 
-    ///// <summary>
-    ///// Verifies that this member reference is still valid
-    ///// </summary>
-    ///// <param name="memberReference"></param>
-    ///// <returns></returns>
-    //public bool AssertReference(ComponentInformation.MemberReference memberReference)
-    //{
-    //  // If this is not the GameObject this member reference is for
-    //  //if (memberReference.gameObjectInfo != this)
-    //  //{
-    //  //  //throw new ArgumentException($"The member {memberReference.name} is not a member among the components of the GameObject {this.target.name}");
-    //  //  return false;
-    //  //}
-    //
-    //  // Noww assert all the others
-    //  bool valid = AssertComponentIndex(memberReference) && AssertMemberIndex(memberReference);
-    //  return valid;
-    //}
-    //
-    ///// <summary>
-    ///// If the component index doesn't match the current component index,
-    ///// this means the component could have been shuffled or removed
-    ///// </summary>
-    ///// <param name="memberReference"></param>
-    ///// <returns></returns>
-    //public bool AssertComponentIndex(ComponentInformation.MemberReference memberReference)
-    //{
-    //  if ((memberReference.componentIndex > this.numberofComponents - 1) ||
-    //      (memberReference.componentName != this.components[memberReference.componentIndex].name))
-    //  {
-    //    return false;
-    //  }
-    //  return true;
-    //}
-
-    public object GetValue(FieldInfo field) => field.GetValue(component);
-    public object GetValue(PropertyInfo property) => property.GetValue(component);
+    /// <summary>
+    /// Retrieves the value of the selected property
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    private object GetValue(PropertyInfo property) => property.GetValue(component);
   }
 
   /// <summary>
@@ -443,19 +423,6 @@ namespace Stratus
     {
       if (this.components == null)
         return;
-
-      //// Count the number of fields and properties
-      ////int fieldCount = 0;
-      ////int propertyCount = 0;
-      //for (int i = 0; i < components.Length; ++i)
-      //{
-      //  ComponentInformation component = this.components[i];
-      //  this.fieldCount += component.fieldCount;
-      //  this.propertyCount += component.propertyCount;
-      //}
-      //if (fieldCount != this.fieldCount)
-
-      //this.UpdateReferences();
 
       // Cache current member references
       this.CacheReferences();
@@ -497,57 +464,6 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Watch
     //------------------------------------------------------------------------/  
-    ///// <summary>
-    ///// Adds a member to the watch list
-    ///// </summary>
-    ///// <param name="member"></param>
-    ///// <param name="componentInfo"></param>
-    ///// <param name="memberIndex"></param>
-    //public void Watch(MemberInfo member, ComponentInformation componentInfo, int memberIndex)
-    //{
-    //  MemberReference memberReference = new MemberReference(member, componentInfo, this, memberIndex);
-    //  this.favorites.Add(memberReference);
-    //  GameObjectBookmark.UpdateFavoriteMembers();
-    //}
-    //
-    ///// <summary>
-    ///// Removes a member from the watch list
-    ///// </summary>
-    ///// <param name="member"></param>
-    ///// <param name="componentInfo"></param>
-    ///// <param name="memberIndex"></param>
-    //public void RemoveWatch(MemberInfo member, ComponentInformation componentInfo, int memberIndex)
-    //{
-    //  this.favorites.RemoveAll(x => x.name == member.Name && x.componentName == componentInfo.name && x.memberIndex == memberIndex);
-    //  GameObjectBookmark.UpdateFavoriteMembers();
-    //}
-
-    /// <summary>
-    ///// Adds a member to the watch list
-    ///// </summary>
-    ///// <param name="member"></param>
-    ///// <param name="componentInfo"></param>
-    ///// <param name="memberIndex"></param>
-    //public void Watch(ComponentInformation.MemberReference memberReference)
-    //{
-    //  memberReference.isFavorite = true;
-    //  if (this.AssertReference(memberReference))
-    //    this.favorites.Add(memberReference);
-    //  GameObjectBookmark.UpdateFavoriteMembers();
-    //}
-    //
-    ///// <summary>
-    ///// Removes a member from the watch list
-    ///// </summary>
-    ///// <param name="memberReference"></param>
-    //public void RemoveWatch(ComponentInformation.MemberReference memberReference)
-    //{
-    //  memberReference.isFavorite = false;
-    //  if (this.AssertReference(memberReference))
-    //    this.favorites.RemoveAll(x => x.name == memberReference.name && x.memberIndex == memberReference.memberIndex);
-    //  GameObjectBookmark.UpdateFavoriteMembers();
-    //}
-
     /// <summary>
     /// Clears the watchlist for every component
     /// </summary>
@@ -581,142 +497,28 @@ namespace Stratus
     public void CacheReferences()
     {
       List<ComponentInformation.MemberReference> memberReferences = new List<ComponentInformation.MemberReference>();
-      List<ComponentInformation.MemberReference> watchList = new List<ComponentInformation.MemberReference>();
       foreach (var component in this.components)
       {
         memberReferences.AddRange(component.memberReferences);
-        watchList.AddRange(component.watchList);
       }
       this.members = memberReferences.ToArray();
-      this.watchList = watchList.ToArray();
 
+      this.CacheWatchList();
       this.initialized = true;
     }
 
-    ///// <summary>
-    ///// Initializes the current member references in the object, also setting current favorites
-    ///// </summary>
-    //public void UpdateReferences()
-    //{
-    //  this.favorites = new List<ComponentInformation.MemberReference>();
-    //  foreach (var member in this.members)
-    //  {
-    //    // If the component doesn't match...
-    //    //if (!this.AssertComponentIndex(member))
-    //    //{
-    //    //  Trace.Script($"Component index doesn't match!");
-    //    //  continue;
-    //    //}
-    //    //
-    //    //// Assert the member index
-    //    //if (!this.AssertMemberIndex(member))
-    //    //{
-    //    //  Trace.Script($"Member index doesn't match!");
-    //    //  continue;
-    //    //}
-    //
-    //    // Set the component
-    //    //ComponentInformation component = this.components[member.componentIndex];
-    //    //member.Set(component, this);
-    //    //
-    //    //// If the member is a favorite, add it to the favorite list
-    //    //if (member.isFavorite)
-    //    //  this.favorites.Add(member);
-    //  }
-    //
-    //  this.initialized = true;
-    //}
-
-    //------------------------------------------------------------------------/
-    // Methods: References
-    //------------------------------------------------------------------------/  
-    ///// <summary>
-    ///// Saves all member references for this GameObject
-    ///// </summary>
-    ///// <returns></returns>
-    //private ComponentInformation.MemberReference[] CreateAllMemberReferences()
-    //{
-    //  // Make a reference for all members
-    //  List<ComponentInformation.MemberReference> memberReferences = new List<ComponentInformation.MemberReference>();
-    //  foreach (var component in this.components)
-    //  {
-    //    for (int f = 0; f < component.fieldCount; ++f)
-    //    {
-    //      ComponentInformation.MemberReference memberReference = new ComponentInformation.MemberReference(component.fields[f], component, this, f);
-    //      memberReferences.Add(memberReference);
-    //    }
-    //
-    //    for (int p = 0; p < component.propertyCount; ++p)
-    //    {
-    //      ComponentInformation.MemberReference memberReference = new ComponentInformation.MemberReference(component.properties[p], component, this, p);
-    //      memberReferences.Add(memberReference);
-    //    }
-    //
-    //  }
-    //
-    //  // Also rebuild favorites!
-    //  this.favorites = new List<ComponentInformation.MemberReference>();
-    //
-    //  return memberReferences.ToArray();
-    //}
-
-    ///// <summary>
-    ///// Verifies that this member reference is still valid
-    ///// </summary>
-    ///// <param name="memberReference"></param>
-    ///// <returns></returns>
-    //public bool AssertReference(ComponentInformation.MemberReference memberReference)
-    //{
-    //  // If this is not the GameObject this member reference is for
-    //  if (memberReference.gameObjectInfo != this)
-    //  {
-    //    //throw new ArgumentException($"The member {memberReference.name} is not a member among the components of the GameObject {this.target.name}");
-    //    return false;
-    //  }
-    //
-    //  // Noww assert all the others
-    //  bool valid = AssertComponentIndex(memberReference) && AssertMemberIndex(memberReference);
-    //  return valid;
-    //}
-    //
-    ///// <summary>
-    ///// If the component index doesn't match the current component index,
-    ///// this means the component could have been shuffled or removed
-    ///// </summary>
-    ///// <param name="memberReference"></param>
-    ///// <returns></returns>
-    //public bool AssertComponentIndex(ComponentInformation.MemberReference memberReference)
-    //{
-    //  if ((memberReference.componentIndex > this.numberofComponents - 1) ||
-    //      (memberReference.componentName != this.components[memberReference.componentIndex].name))
-    //  {
-    //    return false;
-    //  }
-    //  return true;
-    //}
-
-    ///// <summary>
-    ///// If the member at the index doesn't match the member reference index,
-    ///// this means the member could have been removed or rearranged
-    ///// </summary>
-    ///// <param name="memberReference"></param>
-    ///// <returns></returns>
-    //public bool AssertMemberIndex(ComponentInformation.MemberReference memberReference)
-    //{
-    //  ComponentInformation componentInformation = this.components[memberReference.componentIndex];
-    //  switch (memberReference.type)
-    //  {
-    //    case MemberTypes.Field:
-    //      if (componentInformation.fields[memberReference.memberIndex].Name != memberReference.name)
-    //        return false;
-    //      break;
-    //    case MemberTypes.Property:
-    //      if (componentInformation.properties[memberReference.memberIndex].Name != memberReference.name)
-    //        return false;
-    //      break;
-    //  }
-    //  return true;
-    //}
+    /// <summary>
+    /// Caches all member references under a watchlist for each component
+    /// </summary>
+    public void CacheWatchList()
+    {
+      List<ComponentInformation.MemberReference> watchList = new List<ComponentInformation.MemberReference>();
+      foreach (var component in this.components)
+      {
+        watchList.AddRange(component.watchList);
+      }
+      this.watchList = watchList.ToArray();
+    }
 
 
   }

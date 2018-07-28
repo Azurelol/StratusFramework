@@ -48,44 +48,12 @@ namespace Stratus
     /// </summary>
     public object value => Get();
 
-    ///// <summary>
-    ///// Constructs a reference to the given member
-    ///// </summary>
-    ///// <param name="varExpr"></param>
-    //public MemberReference(Expression<Func<object>> varExpr)
-    //{
-    //  // Use expressions to find the underlying owner object
-    //  var memberExpr = varExpr.Body as MemberExpression;
-    //  var inst = memberExpr.Expression;
-    //  var targetObj = Expression.Lambda<Func<object>>(inst).Compile()();
-    //
-    //  // Get the name of the variable
-    //  var variableName = memberExpr.Member.Name;
-    //  this.name = variableName;
-    //  this.target = targetObj;
-    //
-    //  // Check if it's a property
-    //  var property = targetObj.GetType().GetProperty(variableName);
-    //  if (property != null)
-    //  {
-    //    this.property = property;
-    //    this.type = property.PropertyType;
-    //    this.memberType = MemberType.Property;
-    //  }
-    //
-    //  // Check if it's a field
-    //  var field = targetObj.GetType().GetField(variableName);
-    //  if (field != null)
-    //  {
-    //    this.field = field;
-    //    this.type = field.FieldType;
-    //    this.memberType = MemberType.Field;
-    //  }
-    //
-    //  // Invalid
-    //  throw new ArgumentException("The given variable is neither a property or a field!");
-    //}
-
+    /// <summary>
+    /// Constructs a reference to the given member from a lambda expression capture
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="expression"></param>
+    /// <returns></returns>
     public static MemberReference Construct<T>(Expression<Func<T>> expression)
     {
       // Use expressions to find the underlying owner object
