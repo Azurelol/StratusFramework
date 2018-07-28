@@ -22,8 +22,8 @@ namespace Stratus
     public GameObjectInformation information => this._information;
     public static GameObjectInformation[] availableInformation { get; private set; } = new GameObjectInformation[0];
     public static bool hasAvailableInformation => availableInformation != null && availableInformation.Length > 0;
-    public static GameObjectInformation.MemberReference[] favorites { get; private set; } = new GameObjectInformation.MemberReference[0];
-    public static bool hasFavorites => favorites != null && favorites.Length > 0;
+    public static ComponentInformation.MemberReference[] watchList { get; private set; } = new ComponentInformation.MemberReference[0];
+    public static bool hasWatchList => watchList != null && watchList.Length > 0;
     public static System.Action onFavoritesChanged { get; set; } = new System.Action(() => { });
     public static System.Action onInformationChanged{ get; set; } = new System.Action(() => { });
     public static System.Action onUpdate { get; set; } = new System.Action(() => { });
@@ -81,7 +81,7 @@ namespace Stratus
             
       //availableInformation.Remove(this._information);
       this._information = (GameObjectInformation)information.CloneJSON();
-      this._information.Initialize();
+      this._information.CacheReferences();
       GameObjectBookmark.UpdateAvailable();
     }
 
@@ -92,14 +92,14 @@ namespace Stratus
     /// <summary>
     /// Updates the list of current favorited members
     /// </summary>
-    public static void UpdateFavoriteMembers()
+    public static void UpdateWatchList()
     {
-      List<GameObjectInformation.MemberReference> values = new List<GameObjectInformation.MemberReference>();
+      List<ComponentInformation.MemberReference> values = new List<ComponentInformation.MemberReference>();
       foreach (var targetInfo in availableInformation)
       {
-        values.AddRange(targetInfo.favorites);
+        values.AddRange(targetInfo.watchList);
       }
-      GameObjectBookmark.favorites = values.ToArray();
+      GameObjectBookmark.watchList = values.ToArray();
       GameObjectBookmark.onFavoritesChanged();
     }
 
@@ -123,7 +123,7 @@ namespace Stratus
     public static void UpdateAvailable()
     {
       GameObjectBookmark.UpdateInformation();
-      GameObjectBookmark.UpdateFavoriteMembers();
+      GameObjectBookmark.UpdateWatchList();
       GameObjectBookmark.onUpdate();
     }
 

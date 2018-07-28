@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Stratus
 {
@@ -18,7 +19,7 @@ namespace Stratus
   {
     public enum Direction { Up, Down, Left, Right }
   }
-  
+
   /// <summary>
   /// Provides a generic way to navigate a 1D array using directional axis.
   /// </summary>
@@ -79,10 +80,25 @@ namespace Stratus
     /// The amount of 0-indexed elements in the array
     /// </summary>
     private int indexSize { get { return array.Length - 1; } }
+
+    /// <summary>
+    /// The length of the array
+    /// </summary>
+    public int length => array.Length;
+
+    /// <summary>
+    /// Whether the underlying array is empty
+    /// </summary>
+    public bool notEmpty => this.length > 0;
+
+    /// <summary>
+    /// Whether the underlying array is empty
+    /// </summary>
+    public bool empty => this.length == 0;
+
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-
     /// <summary>
     /// The array being used
     /// </summary>
@@ -113,6 +129,13 @@ namespace Stratus
       this.currentIndex = 0;
     }
 
+    public ArrayNavigator(List<T> list, bool loop = false)
+    {
+      this.array = list.ToArray();
+      this.loop = loop;
+      this.currentIndex = 0;
+    }
+
     /// <summary>
     /// Sets an updated array to use for navigation
     /// </summary>
@@ -122,7 +145,7 @@ namespace Stratus
       this.array = array;
       currentIndex = 0;
     }
-    
+
     /// <summary>
     /// Updates the current index to point at the given element
     /// </summary>
@@ -131,7 +154,7 @@ namespace Stratus
     {
       // Look for the element in the array
       var index = 0;
-      foreach(var e in array)
+      foreach (var e in array)
       {
         // The element was found
         if (e.Equals(element))
@@ -154,43 +177,57 @@ namespace Stratus
     {
       if (dir == Direction.Right || dir == Direction.Up)
       {
-        if (currentIndex < indexSize)
-        {
-          previousIndex = currentIndex;
-          currentIndex++;          
-          onIndexChanged?.Invoke(current);
-        }
-        else if (loop)
-        {
-          Trace.Script("Looping around");
-          previousIndex = currentIndex;
-          currentIndex = 0;
-          onIndexChanged?.Invoke(current);
-        }
+        return this.Next();
       }
       else if (dir == Direction.Left || dir == Direction.Down)
       {
-        if (currentIndex != 0)
-        {
-          previousIndex = currentIndex;
-          currentIndex--;
-          onIndexChanged?.Invoke(current);
-        }
-        else if (loop)
-        {
-          previousIndex = currentIndex;
-          currentIndex = indexSize;
-          onIndexChanged?.Invoke(current);
-        }
+        return this.Previous();
       }
-
       return array[currentIndex];
     }
+
+    /// <summary>
+    /// Navigates to the next element in the array
+    /// </summary>
+    /// <returns></returns>
+    public T Next()
+    {
+      if (currentIndex < indexSize)
+      {
+        previousIndex = currentIndex;
+        currentIndex++;
+        onIndexChanged?.Invoke(current);
+      }
+      else if (loop)
+      {
+        previousIndex = currentIndex;
+        currentIndex = 0;
+        onIndexChanged?.Invoke(current);
+      }
+      return this.current;
+    }
+
+    /// <summary>
+    /// Navigates to the previous element in the array
+    /// </summary>
+    /// <returns></returns>
+    public T Previous()
+    {
+      if (currentIndex != 0)
+      {
+        previousIndex = currentIndex;
+        currentIndex--;
+        onIndexChanged?.Invoke(current);
+      }
+      else if (loop)
+      {
+        previousIndex = currentIndex;
+        currentIndex = indexSize;
+        onIndexChanged?.Invoke(current);
+      }
+        onIndexChanged?.Invoke(current);
+      return this.current;
+    }
+
   }
-
-
-
-
-
-
 }

@@ -144,7 +144,7 @@ namespace Stratus
           break;
 
         case 1:
-          if (GameObjectBookmark.hasFavorites)
+          if (GameObjectBookmark.hasWatchList)
           {
             this.memberInspector.OnTreeViewGUI(this.availablePosition);
           }
@@ -178,7 +178,7 @@ namespace Stratus
         if (GameObjectBookmark.hasAvailableInformation)
         {
           foreach (var targetInfo in GameObjectBookmark.availableInformation)
-            targetInfo.UpdateFavoritesValues();
+            targetInfo.UpdateWatchValues();
         }
 
         //switch (this.selectedModeIndex)

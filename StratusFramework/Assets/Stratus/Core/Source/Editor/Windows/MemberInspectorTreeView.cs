@@ -8,7 +8,7 @@ using UnityEditor;
 namespace Stratus
 {  
   [Serializable]
-  public class MemberInspectorTreeElement : TreeElement<GameObjectInformation.MemberReference>
+  public class MemberInspectorTreeElement : TreeElement<ComponentInformation.MemberReference>
   {
 
     protected override string GetName() => this.data.name;
@@ -19,7 +19,7 @@ namespace Stratus
     /// <returns></returns>
     public static List<MemberInspectorTreeElement> GenerateFavoritesTree()
     {
-      var elements = MemberInspectorTreeElement.GenerateFlatTree<MemberInspectorTreeElement, GameObjectInformation.MemberReference>(Set, GameObjectBookmark.favorites);      
+      var elements = MemberInspectorTreeElement.GenerateFlatTree<MemberInspectorTreeElement, ComponentInformation.MemberReference>(Set, GameObjectBookmark.watchList);      
       return elements;
     }
 
@@ -30,7 +30,7 @@ namespace Stratus
     /// <returns></returns>
     public static List<MemberInspectorTreeElement> GenerateInspectorTree(GameObjectInformation target)
     {
-      var treeBuilder = new TreeBuilder<MemberInspectorTreeElement, GameObjectInformation.MemberReference>(Set);
+      var treeBuilder = new TreeBuilder<MemberInspectorTreeElement, ComponentInformation.MemberReference>(Set);
       treeBuilder.AddRoot();
       treeBuilder.AddChildren(target.members, 0);
       return treeBuilder.ToTree();
@@ -65,7 +65,7 @@ namespace Stratus
             maxWidth = 45,
             autoResize = false,
             allowToggleVisibility = false,
-            selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.isFavorite.ToString()
+            selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.isWatched.ToString()
           };
           break;
         case MemberInspectorWindow.Column.GameObject:
@@ -146,7 +146,7 @@ namespace Stratus
       switch (column)
       {
         case MemberInspectorWindow.Column.Favorite:
-          if (item.item.data.isFavorite)
+          if (item.item.data.isWatched)
             this.DrawIcon(cellRect,StratusGUIStyles.starIcon);
           break;
         case MemberInspectorWindow.Column.GameObject:
@@ -173,26 +173,26 @@ namespace Stratus
 
     protected override void OnItemContextMenu(GenericMenu menu, MemberInspectorTreeElement treeElement)
     {      
-      GameObjectInformation.MemberReference member = treeElement.data;
+      ComponentInformation.MemberReference member = treeElement.data;
       // 1. Select
-      menu.AddItem(new GUIContent("Select"), false, () => Selection.activeGameObject = member.gameObjectInfo.target);
+      menu.AddItem(new GUIContent("Select"), false, () => Selection.activeGameObject = member.componentInfo.gameObject);
       // 2. Watch
-      bool isFavorite = member.isFavorite;
+      bool isFavorite = member.isWatched;
       if (isFavorite)
       {
-        menu.AddItem(new GUIContent("Remove Watch"), false, () => member.gameObjectInfo.RemoveWatch(member));
+        menu.AddItem(new GUIContent("Remove Watch"), false, () => member.componentInfo.RemoveWatch(member));
       }
       else
       {
         menu.AddItem(new GUIContent("Watch"), false, () =>
         {
-          GameObject target = member.gameObjectInfo.target;
+          GameObject target = member.componentInfo.gameObject;
           bool hasBookmark = target.HasComponent<GameObjectBookmark>();
           if (!hasBookmark)
           {
-            MemberInspectorWindow.SetBookmark(member.gameObjectInfo.target);
+            MemberInspectorWindow.SetBookmark(member.componentInfo.gameObject);
           }
-          member.gameObjectInfo.Watch(member);
+          member.componentInfo.Watch(member);
         });        
       }
     }

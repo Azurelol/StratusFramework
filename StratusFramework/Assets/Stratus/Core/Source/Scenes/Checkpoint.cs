@@ -13,7 +13,7 @@ using UnityEngine.AI;
 
 namespace Stratus 
 {
-  public class Checkpoint : StratusBehaviour 
+  public class Checkpoint : Multiton<Checkpoint> 
   {
     //--------------------------------------------------------------------------------------------/
     // Declarations
@@ -22,47 +22,28 @@ namespace Stratus
     /// Signals that a checkpoint hhas been added
     /// </summary>
     public class AnnounceEvent : Stratus.Event { public Checkpoint Checkpoint; }
-
-    /// <summary>
-    /// A map of all currently enabled checkpoints, indexed by their names
-    /// </summary>
-    public static Dictionary<string, Checkpoint> available { get; private set; } = new Dictionary<string, Checkpoint>();
-
+    
     //--------------------------------------------------------------------------------------------/
-    // Fields
+    // Properties
     //--------------------------------------------------------------------------------------------/
-    //[Tooltip("An unique identifier for this checkpoint")]
-    public string label => name;
 
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
-    void Start()
-    {
-      var e = new AnnounceEvent();
-      e.Checkpoint = this;
-      Scene.Dispatch<AnnounceEvent>(e);
+    protected override void OnAwake()
+    {     
     }
 
-    private void OnEnable()
-    {
-      if (available.ContainsKey(label))
-        Trace.Error($"There's an existing checkpoint using the label <i>{label}</i>", this, true);
-      available.Add(label, this);
+    protected override void OnMultitonEnable()
+    {     
     }
 
-    private void OnDisable()
-    {
-      available.Remove(label);
+    protected override void OnMultitonDisable()
+    {     
     }
 
-    private void OnValidate()
-    {
-      
-    }
-
-    private void Reset()
-    {
+    protected override void OnReset()
+    {      
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -72,15 +53,21 @@ namespace Stratus
     /// Warps the selected transform onto this checkpoint
     /// </summary>
     /// <param name="transform"></param>
-    public void WarpTo(Transform obj)
+    public void WarpOnto(Transform transform)
     {
       // If it's a NavMeshAgent, just warp it here
-      NavMeshAgent navMeshAgent = obj.GetComponent<NavMeshAgent>();
+      NavMeshAgent navMeshAgent = transform.GetComponent<NavMeshAgent>();
       if (navMeshAgent != null)
         navMeshAgent.Warp(this.transform.position);
       else
-        obj.position = this.transform.position;
+        transform.position = this.transform.position;
     }
+
+    /// <summary>
+    /// Warps the selected transform onto this checkpoint
+    /// </summary>
+    /// <param name="transform"></param>
+    public static void WarpOnto(Checkpoint checkpoint, Transform transform) => checkpoint.WarpOnto(transform);
 
     /// <summary>
     /// Returns the world space position of the specified checkpoint
@@ -92,6 +79,7 @@ namespace Stratus
       return available[checkpointName].transform.position;
       //return available.Find(x => x.name == checkpointName).transform.position;
     }
+
 
   }  
 }

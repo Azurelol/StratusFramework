@@ -13,6 +13,19 @@ namespace Stratus
   public abstract class Multiton<T> : StratusBehaviour where T : MonoBehaviour
   {
     //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/
+    ///// <summary>
+    ///// Utility class used for navigating through all instances of a given multiton
+    ///// </summary>
+    //public class Navigator : ArrayNavigator<T>
+    //{
+    //  public ArrayNavigator(List<T> list, bool loop = false)
+    //  {
+    //  }
+    //}
+
+    //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
     /// <summary>
@@ -84,13 +97,25 @@ namespace Stratus
     }
 
     //------------------------------------------------------------------------/
-    // Methods
+    // Virtual
     //------------------------------------------------------------------------/
     protected abstract void OnAwake();
     protected abstract void OnMultitonEnable();
     protected abstract void OnMultitonDisable();
     protected abstract void OnReset();
 
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
+    /// <summary>
+    /// Returns a navigator, which allows easy navigation between instances of this class
+    /// </summary>
+    /// <returns></returns>
+    public static ArrayNavigator<T> GetNavigator(bool loop = true)
+    {
+      var navigator = new ArrayNavigator<T>(availableList, loop);
+      return navigator;
+    }
 
   }
 

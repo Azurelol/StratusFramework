@@ -18,7 +18,6 @@ MonoBehaviour:
   - {fileID: 102900000, guid: dd30c6a7a95b1894185852b10a50b85f, type: 3}
   - {fileID: 102900000, guid: 5311940562bbf064bb0a552d62d82096, type: 3}
   - {fileID: 102900000, guid: a4622354d12c1684ab3356cb85037ace, type: 3}
-  - {fileID: 102900000, guid: b723c263aa43f5a4282436cb05441ab0, type: 3}
   tagColors:
     enabled: 1
     coloredTags:
@@ -38,6 +37,4 @@ MonoBehaviour:
     projectBookmarks:
     - {fileID: 11500000, guid: ade417d6036ed1a49a620426a64d0ade, type: 3}
     - {fileID: 11400000}
-    - {fileID: 1909629097719652, guid: 3e86700be571c71468308b117b38eed2, type: 2}
     - {fileID: 11400000, guid: 7c252266617aae3479272c671d225861, type: 2}
-    - {fileID: 102900000, guid: 5c484d1a0c2c80841945f0633147cd1b, type: 3}
