@@ -11,7 +11,7 @@ namespace Stratus
   /// <summary>
   /// Holds a reference to a given variable
   /// </summary>
-  public class MemberReference 
+  public class VariableReference 
   {
     public enum MemberType
     {
@@ -54,7 +54,7 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public static MemberReference Construct<T>(Expression<Func<T>> expression)
+    public static VariableReference Construct<T>(Expression<Func<T>> expression)
     {
       // Use expressions to find the underlying owner object
       var memberExpr = expression.Body as MemberExpression;
@@ -63,7 +63,7 @@ namespace Stratus
       var variableName = memberExpr.Member.Name;
 
       // Construct the member reference object
-      MemberReference memberReference = new MemberReference();
+      VariableReference memberReference = new VariableReference();
       memberReference.name = variableName;
       memberReference.target = targetObj;
 

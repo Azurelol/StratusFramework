@@ -17,7 +17,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     public class SerializedStateRecorder
     {
-      public List<MemberReference> memberReferences;
+      public List<VariableReference> memberReferences;
       public List<UnityMember> memberFields;
     }
 
@@ -88,7 +88,7 @@ namespace Stratus
 
     private Dictionary<string, SerializedState> stateMap = new Dictionary<string, SerializedState>();
     private List<SerializedState> stateList = new List<SerializedState>();
-    private List<MemberReference> memberReferences = new List<MemberReference>();
+    private List<VariableReference> memberReferences = new List<VariableReference>();
 
     //------------------------------------------------------------------------/
     // Properties
@@ -307,10 +307,10 @@ namespace Stratus
 
     private void AddTransformRecorder()
     {
-      memberReferences.Add(MemberReference.Construct(() => transform.position));
-      memberReferences.Add(MemberReference.Construct(() => transform.rotation));
-      memberReferences.Add(MemberReference.Construct(() => transform.localScale));
-      memberReferences.Add(MemberReference.Construct(() => transform.parent));
+      memberReferences.Add(VariableReference.Construct(() => transform.position));
+      memberReferences.Add(VariableReference.Construct(() => transform.rotation));
+      memberReferences.Add(VariableReference.Construct(() => transform.localScale));
+      memberReferences.Add(VariableReference.Construct(() => transform.parent));
     }
 
     

@@ -79,7 +79,6 @@ namespace Stratus
       if (information.target != this.gameObject)
         return;
             
-      //availableInformation.Remove(this._information);
       this._information = (GameObjectInformation)information.CloneJSON();
       this._information.CacheReferences();
       GameObjectBookmark.UpdateAvailable();

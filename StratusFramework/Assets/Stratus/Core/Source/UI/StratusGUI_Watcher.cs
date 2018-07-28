@@ -23,7 +23,7 @@ namespace Stratus
       /// <summary>
       /// A reference to the given variable
       /// </summary>
-      private MemberReference Variable;
+      private VariableReference Variable;
 
       /// <summary>
       /// The owner of this variable
@@ -40,7 +40,7 @@ namespace Stratus
       /// </summary>
       /// <param name="prefix">A given prefix for this variable</param>
       /// <param name="variable">The variable being watched</param>
-      public Watcher(MemberReference variable, string description, MonoBehaviour behaviour) : base(variable.name)
+      public Watcher(VariableReference variable, string description, MonoBehaviour behaviour) : base(variable.name)
       {
         Behaviour = behaviour;
         Variable = variable;

@@ -181,19 +181,6 @@ namespace Stratus
             targetInfo.UpdateWatchValues();
         }
 
-        //switch (this.selectedModeIndex)
-        //{
-        //  case 0:
-        //    if (this.hasTarget)
-        //    {
-        //      componentList.selected.UpdateValues();
-        //    }
-        //    break;
-        //
-        //  case 1:
-        //    break;
-        //}
-
         // Reset the poll timer
         pollTimer.Reset();
         this.Repaint();
@@ -407,65 +394,6 @@ namespace Stratus
       }
 
     }
-
-    private void DrawInspector()
-    {
-      //listLeftElementWidth = GUILayout.Width(position.width * listRatio);
-      //listRightElementWidth = GUILayout.Width(position.width * (1f - listRatio));
-      //listElementHeight = GUILayout.MinHeight(20f);
-
-
-
-      // Scroll list      
-      //this.componentScrollPosition = GUILayout.BeginScrollView(this.componentScrollPosition, StratusGUIStyles.background);
-      //{
-      //  this.DrawComponent(this.componentList.selected);
-      //}
-      //GUILayout.EndScrollView();
-    }
-
-
-    //private void DrawComponent(ComponentInformation componentInfo)
-    //{
-    //  if (componentInfo.hasFields)
-    //    DrawList("Fields", componentInfo, componentInfo.fields, ref componentInfo.fieldValues, ref componentInfo.favoriteFields);
-    //  if (componentInfo.hasProperties)
-    //    DrawList("Properties", componentInfo, componentInfo.properties, ref componentInfo.propertyValues, ref componentInfo.favoriteProperties);
-    //}
-
-    //private void DrawList(string label, ComponentInformation component, MemberInfo[] members, ref object[] values, ref bool[] favorites)
-    //{
-    //  int count = members.Length;
-    //  EditorGUILayout.LabelField($"{label} ({count})", EditorStyles.whiteLargeLabel);
-    //  for (int i = 0; i < count; ++i)
-    //  {
-    //    MemberInfo member = members[i];
-    //    GUILayout.BeginHorizontal();
-    //    {
-    //      EditorGUI.BeginChangeCheck();
-    //      {
-    //        favorites[i] = GUILayout.Toggle(favorites[i], string.Empty, StratusGUIStyles.listViewToggle, listElementHeight);
-    //      }
-    //      if (EditorGUI.EndChangeCheck())
-    //      {
-    //        if (favorites[i])
-    //          this.currentTargetInformation.Watch(member, component, i);
-    //        else
-    //          this.currentTargetInformation.RemoveWatch(member, component, i);
-    //
-    //        // Whenever faorites change
-    //        GameObjectBookmark.UpdateFavoriteMembers();
-    //        //this.OnFavoritesUpdated();
-    //      }
-    //
-    //      GUILayout.Label(new GUIContent(member.Name, null, member.Name), StratusGUIStyles.listViewLabel, listLeftElementWidth, listElementHeight);
-    //      EditorGUILayout.SelectableLabel($"{values[i]}", StratusGUIStyles.textField, listRightElementWidth, listElementHeight);
-    //    }
-    //    GUILayout.EndHorizontal();
-    //  }
-    //}
-
-
 
   }
 }

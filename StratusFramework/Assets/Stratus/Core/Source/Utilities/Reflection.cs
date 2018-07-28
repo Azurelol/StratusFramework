@@ -583,10 +583,10 @@ namespace Stratus
       /// </summary>
       /// <param name="varExpr">A lambda expression capturing a reference to a field or property</param>
       /// <returns></returns>
-      public static MemberReference GetReference<T>(Expression<Func<T>> varExpr)
+      public static VariableReference GetReference<T>(Expression<Func<T>> varExpr)
       {
         // Slow, probs
-        return MemberReference.Construct(varExpr);
+        return VariableReference.Construct(varExpr);
       }
 
       /// <summary>
