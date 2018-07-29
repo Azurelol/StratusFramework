@@ -50,6 +50,7 @@ namespace Stratus
         Rect available = guiPosition;
         available.x += lastRect.x;
         available.y += lastRect.height + lastRect.y;
+        available.height -= lastRect.y;
         return available;
       }
     }

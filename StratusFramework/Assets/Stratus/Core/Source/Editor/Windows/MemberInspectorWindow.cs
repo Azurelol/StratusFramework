@@ -25,8 +25,8 @@ namespace Stratus
     /// </summary>
     public enum Mode
     {
-      Favorites,
-      Inspector
+      Inspector = 0,
+      WatchList = 1,
     }
 
     /// <summary>
@@ -69,9 +69,6 @@ namespace Stratus
     private int lastComponentIndex = 0;
 
     [SerializeField]
-    private int selectedModeIndex = 0;
-
-    [SerializeField]
     private MemberInspectorTreeView memberInspector;
 
     [SerializeField]
@@ -85,7 +82,11 @@ namespace Stratus
     //------------------------------------------------------------------------/     
     public InformationMode informationMode { get; private set; }
     public GameObjectInformation currentTargetInformation { get; private set; }
-    private string[] toolbarOptions = new string[] { nameof(Mode.Inspector), nameof(Mode.Favorites) };
+    private string[] toolbarOptions = new string[] 
+    {
+      nameof(Mode.Inspector),
+      nameof(Mode.WatchList),
+    };
     private SerializedProperty memberProperty { get; set; }
     private Type gameObjectType { get; set; }
     private bool hasTarget => this.target != null && this.currentTargetInformation != null;
@@ -114,11 +115,10 @@ namespace Stratus
 
     protected override void OnWindowGUI()
     {
-      //return; 
-
       EditorGUI.BeginChangeCheck();
       {
-        this.selectedModeIndex = GUILayout.Toolbar(this.selectedModeIndex, this.toolbarOptions);
+        int index = (int)this.mode;
+        this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions);
       }
       if (EditorGUI.EndChangeCheck())
       {
@@ -128,9 +128,9 @@ namespace Stratus
       if (this.memberInspector == null)
         this.SetTreeView();
 
-      switch (this.selectedModeIndex)
+      switch (this.mode)
       {
-        case 0:
+        case Mode.Inspector:
           this.SelectTarget();
           if (this.hasTarget)
           {
@@ -139,13 +139,14 @@ namespace Stratus
           }
           break;
 
-        case 1:
+        case Mode.WatchList:
           if (GameObjectBookmark.hasWatchList)
           {
             this.memberInspector.OnTreeViewGUI(this.currentPosition);
           }
           break;
       }
+
     }
     protected override void OnWindowUpdate()
     {
@@ -153,10 +154,22 @@ namespace Stratus
       bool updateValues = pollTimer.Update(Time.deltaTime);
       if (pollTimer.isFinished)
       {
-        if (GameObjectBookmark.hasAvailableInformation)
+        switch (this.mode)
         {
-          foreach (var targetInfo in GameObjectBookmark.availableInformation)
-            targetInfo.UpdateWatchValues();
+          case Mode.Inspector:
+            if (this.hasTarget)
+            {
+              this.currentTargetInformation.UpdateWatchValues();
+            }
+            break;
+
+          case Mode.WatchList:
+            if (GameObjectBookmark.hasAvailableInformation)
+            {
+              foreach (var targetInfo in GameObjectBookmark.availableInformation)
+                targetInfo.UpdateWatchValues();
+            }
+            break;
         }
 
         // Reset the poll timer
@@ -193,7 +206,6 @@ namespace Stratus
 
     private void OnBookmarkUpdate()
     {
-      Trace.Script("Bookmarks changed!");
       this.SetTreeView();
     }
 
@@ -326,7 +338,7 @@ namespace Stratus
           this.currentTargetInformation = bookmark.information;
         }
         // Otherwise recreate the current target information
-        else
+        else if (this.currentTargetInformation == null || this.currentTargetInformation.target != this.target)
         {
           this.informationMode = InformationMode.Temporary;
           this.targetTemporaryInformation = new GameObjectInformation(this.target);
@@ -348,20 +360,19 @@ namespace Stratus
     private void SetTreeView()
     {
       IList<MemberInspectorTreeElement> members = null;
-      switch (this.selectedModeIndex)
+      switch (this.mode)
       {
-        case 0:
+        case Mode.WatchList:
+          members = MemberInspectorTreeElement.GenerateFavoritesTree();
+          break;
+
+        case Mode.Inspector:
           if (this.hasTarget)
             members = MemberInspectorTreeElement.GenerateInspectorTree(this.currentTargetInformation);
           else
             return;
           break;
-
-        case 1:
-          members = MemberInspectorTreeElement.GenerateFavoritesTree();
-          break;
       }
-
       //this.favoritesTree = MemberInspectorTreeElement.GenerateFavoritesTree();
       if (this.memberInspector == null)
       {
@@ -374,16 +385,16 @@ namespace Stratus
         this.memberInspector.SetTree(members);
       }
 
-      switch (this.selectedModeIndex)
+      switch (this.mode)
       {
-        case 0:
-          this.memberInspector.DisableColumn(Column.GameObject);
-          this.memberInspector.EnableColumn(Column.Favorite);
-          break;
-
-        case 1:
+        case Mode.WatchList:
           this.memberInspector.EnableColumn(Column.GameObject);
           this.memberInspector.DisableColumn(Column.Favorite);
+          break;
+
+        case Mode.Inspector:
+          this.memberInspector.DisableColumn(Column.GameObject);
+          this.memberInspector.EnableColumn(Column.Favorite);
           break;
       }
 

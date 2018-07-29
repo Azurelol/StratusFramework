@@ -180,11 +180,11 @@ namespace Stratus
           menu.AddItem(new GUIContent("Watch"), false, () =>
           {
             GameObject target = member.componentInfo.gameObject;
-            bool hasBookmark = target.HasComponent<GameObjectBookmark>();
-            if (!hasBookmark)
-            {
-              MemberInspectorWindow.SetBookmark(member.componentInfo.gameObject);
-            }
+            //bool hasBookmark = target.HasComponent<GameObjectBookmark>();
+            //if (!hasBookmark)
+            //{
+            //  MemberInspectorWindow.SetBookmark(member.componentInfo.gameObject);
+            //}
             member.componentInfo.Watch(member);
           });        
         }
