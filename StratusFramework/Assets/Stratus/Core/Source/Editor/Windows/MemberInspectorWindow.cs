@@ -48,6 +48,8 @@ namespace Stratus
       Type,
     }
 
+
+
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/   
@@ -76,12 +78,7 @@ namespace Stratus
     private TreeViewState treeViewState;
 
     private Countdown pollTimer;
-    //private const float listRatio = 0.25f;
-    //private GUILayoutOption listLeftElementWidth;
-    //private GUILayoutOption listRightElementWidth;
-    //private GUILayoutOption listElementHeight;
     private TreeView treeView;
-
 
     //------------------------------------------------------------------------/
     // Properties
@@ -137,39 +134,20 @@ namespace Stratus
           this.SelectTarget();
           if (this.hasTarget)
           {
-            EditorGUILayout.LabelField($"Members ({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
-            //this.componentList.selectedIndex = EditorGUILayout.Popup(this.componentList.selectedIndex, this.componentList.displayedOptions, StratusGUIStyles.popup);
-            this.memberInspector.OnTreeViewGUI(this.availablePosition);
+            EditorGUILayout.LabelField($"({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
+            this.memberInspector.OnTreeViewGUI(this.currentPosition);
           }
           break;
 
         case 1:
           if (GameObjectBookmark.hasWatchList)
           {
-            this.memberInspector.OnTreeViewGUI(this.availablePosition);
+            this.memberInspector.OnTreeViewGUI(this.currentPosition);
           }
           break;
       }
     }
-
-    protected override void OnPlayModeStateChange(PlayModeStateChange stateChange)
-    {
-      switch (stateChange)
-      {
-        case PlayModeStateChange.EnteredEditMode:
-          break;
-        case PlayModeStateChange.ExitingEditMode:
-          break;
-        case PlayModeStateChange.EnteredPlayMode:
-          break;
-        case PlayModeStateChange.ExitingPlayMode:
-          break;
-      }
-
-      GameObjectBookmark.UpdateAvailable();
-    }
-
-    protected override void OnUpdate()
+    protected override void OnWindowUpdate()
     {
       // Check whether values need to be updated
       bool updateValues = pollTimer.Update(Time.deltaTime);
@@ -186,6 +164,22 @@ namespace Stratus
         this.Repaint();
       }
     }
+
+    protected override void OnPlayModeStateChange(PlayModeStateChange stateChange)
+    {
+      switch (stateChange)
+      {
+        case PlayModeStateChange.EnteredPlayMode:
+        case PlayModeStateChange.EnteredEditMode:
+          if (this.target)
+            this.OnTargetSelected();
+          //GameObjectBookmark.UpdateAvailable();
+          break;
+      }
+
+      
+    }
+
 
     public void OnBeforeSerialize()
     {

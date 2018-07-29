@@ -26,21 +26,30 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
+    /// <summary>
+    /// The active instance for this editor window
+    /// </summary>
     protected static T instance { get; private set; }
+
     protected StratusMenuBarDrawer menuBarDrawer { get; set; }
+
+    /// <summary>
+    /// The rect used by this window in GUI space, where top left is at position(0,0)
+    /// </summary>
+    protected Rect guiPosition => GUIUtility.ScreenToGUIRect(this.position);
 
     /// <summary>
     /// Computes the current avaialble position within the window, after taking into account
     /// the height consumed by the latest control
     /// </summary>
-    protected Rect availablePosition
+    protected Rect currentPosition
     {
       get
-      {
-        Rect available = this.position;
+      {        
         Rect lastRect = GUILayoutUtility.GetLastRect();
-        available.y = lastRect.height + lastRect.y;
-        available.height -= lastRect.y;
+        Rect available = guiPosition;
+        available.x += lastRect.x;
+        available.y += lastRect.height + lastRect.y;
         return available;
       }
     }
@@ -66,20 +75,22 @@ namespace Stratus
 
     private void OnGUI()
     {
+      //EditorGUILayout.BeginVertical();
       this.menuBarDrawer?.Draw();
       this.OnWindowGUI();
+      //EditorGUILayout.EndVertical();
     }
 
     private void Update()
     {
-      this.OnUpdate();
+      this.OnWindowUpdate();
     }
 
     protected virtual void OnPlayModeStateChange(PlayModeStateChange stateChange)
     {
     }
 
-    protected virtual void OnUpdate()
+    protected virtual void OnWindowUpdate()
     {
     }
 

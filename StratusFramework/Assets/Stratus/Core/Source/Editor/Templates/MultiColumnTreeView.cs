@@ -247,27 +247,32 @@ namespace Stratus
       this.Reload();
     }
 
-
     //------------------------------------------------------------------------/
     // Methods: GUI
     //------------------------------------------------------------------------/
+    private float xOffset = 20f, yOffset = 30;
+
     /// <summary>
     /// Draws the multicolumn tree view GUI
     /// </summary>
     /// <param name="rect"></param>
     public void OnTreeViewGUI(Rect rect)
     {
-      this.SearchGUI(rect);
+      this.searchString = this.search.OnGUI(this.GetSearchBarRect(rect), this.searchString);
       this.OnGUI(this.GetMultiColumnTreeViewRect(rect));
     }
-
+    
     /// <summary>
-    /// Draws the GUI for the search bar
+    /// Calculates the rect to be used by the search bar
     /// </summary>
-    /// <param name="rect"></param>
-    protected void SearchGUI(Rect rect)
+    /// <param name="position"></param>
+    /// <returns></returns>
+    protected virtual Rect GetSearchBarRect(Rect position)
     {
-      this.searchString = this.search.OnGUI(this.GetToolbarRect(rect), this.searchString);
+      return new Rect(position.x + 20f, 
+                      position.y + 10f, 
+                      position.width - 40f, 
+                      20f);
     }
 
     /// <summary>
@@ -277,17 +282,10 @@ namespace Stratus
     /// <returns></returns>
     protected virtual Rect GetMultiColumnTreeViewRect(Rect position)
     {
-      return new Rect(20, position.y + 30, position.width - 40, position.height - 60);
-    }
-
-    /// <summary>
-    /// Calculates the rect to be used by the search bar
-    /// </summary>
-    /// <param name="position"></param>
-    /// <returns></returns>
-    protected virtual Rect GetToolbarRect(Rect position)
-    {
-      return new Rect(20f, position.y + 10f, position.width - 40f, 20f);
+      return new Rect(position.x + 20f, 
+                      position.y + 30f, 
+                      position.width - 40, 
+                      position.height - 60);
     }
 
     /// <summary>

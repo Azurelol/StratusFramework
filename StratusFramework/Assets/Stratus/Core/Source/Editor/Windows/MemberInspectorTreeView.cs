@@ -10,28 +10,17 @@ namespace Stratus
   [Serializable]
   public class MemberInspectorTreeElement : TreeElement<ComponentInformation.MemberReference>
   {
-
     protected override string GetName() => this.data.name;
 
-    /// <summary>
-    /// Generates a tree of all current favorited members from bookmarked GameObjects
-    /// </summary>
-    /// <returns></returns>
     public static List<MemberInspectorTreeElement> GenerateFavoritesTree()
     {
       var elements = MemberInspectorTreeElement.GenerateFlatTree<MemberInspectorTreeElement, ComponentInformation.MemberReference>(Set, GameObjectBookmark.watchList);      
       return elements;
     }
 
-    /// <summary>
-    /// Given a target, generates a tree for its members
-    /// </summary>
-    /// <param name="target"></param>
-    /// <returns></returns>
     public static List<MemberInspectorTreeElement> GenerateInspectorTree(GameObjectInformation target)
     {
       var treeBuilder = new TreeBuilder<MemberInspectorTreeElement, ComponentInformation.MemberReference>(Set);
-      treeBuilder.AddRoot();
       treeBuilder.AddChildren(target.members, 0);
       return treeBuilder.ToTree();
     }
@@ -174,27 +163,33 @@ namespace Stratus
     protected override void OnItemContextMenu(GenericMenu menu, MemberInspectorTreeElement treeElement)
     {      
       ComponentInformation.MemberReference member = treeElement.data;
+      
       // 1. Select
       menu.AddItem(new GUIContent("Select"), false, () => Selection.activeGameObject = member.componentInfo.gameObject);
-      // 2. Watch
-      bool isFavorite = member.isWatched;
-      if (isFavorite)
+
+      if (!Application.isPlaying)
       {
-        menu.AddItem(new GUIContent("Remove Watch"), false, () => member.componentInfo.RemoveWatch(member));
-      }
-      else
-      {
-        menu.AddItem(new GUIContent("Watch"), false, () =>
+        // 2. Watch
+        bool isFavorite = member.isWatched;
+        if (isFavorite)
         {
-          GameObject target = member.componentInfo.gameObject;
-          bool hasBookmark = target.HasComponent<GameObjectBookmark>();
-          if (!hasBookmark)
+          menu.AddItem(new GUIContent("Remove Watch"), false, () => member.componentInfo.RemoveWatch(member));
+        }
+        else
+        {
+          menu.AddItem(new GUIContent("Watch"), false, () =>
           {
-            MemberInspectorWindow.SetBookmark(member.componentInfo.gameObject);
-          }
-          member.componentInfo.Watch(member);
-        });        
+            GameObject target = member.componentInfo.gameObject;
+            bool hasBookmark = target.HasComponent<GameObjectBookmark>();
+            if (!hasBookmark)
+            {
+              MemberInspectorWindow.SetBookmark(member.componentInfo.gameObject);
+            }
+            member.componentInfo.Watch(member);
+          });        
+        }
       }
+
     }
 
   }

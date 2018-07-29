@@ -150,7 +150,8 @@ namespace Stratus
       List<ComponentInformation.MemberReference> watchList = new List<ComponentInformation.MemberReference>();
       foreach (var component in this.components)
       {
-        watchList.AddRange(component.watchList);
+        if (component.valid)
+          watchList.AddRange(component.watchList);
       }
       this.watchList = watchList.ToArray();
     }

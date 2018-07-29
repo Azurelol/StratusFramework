@@ -644,6 +644,7 @@ namespace Stratus
 
     protected void DrawEditor(UnityEditor.Editor editor, string header, int headerSize = 12)
     {
+      EditorGUILayout.Space();
       EditorGUILayout.BeginHorizontal();
       {
         //EditorGUILayout.LabelField($"<size={headerSize}>{header}</size>", StratusGUIStyles.header);

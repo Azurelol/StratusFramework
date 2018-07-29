@@ -19,11 +19,18 @@ namespace Stratus
     private System.Action<TreeElementType, DataType> setData;
 
     //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public bool hasRoot { get; private set; }
+
+    //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    public TreeBuilder(System.Action<TreeElementType, DataType> setData)
+    public TreeBuilder(System.Action<TreeElementType, DataType> setData, bool addRoot = true)
     {
       this.setData = setData;
+      if (addRoot)
+        this.AddRoot();
     }
 
     public void AddRoot()
@@ -33,6 +40,7 @@ namespace Stratus
       root.depth = -1;
       root.id = idCounter++;
       tree.Add(root);
+      this.hasRoot = true;
     }
 
     public void AddChild(DataType childData, int depth)
