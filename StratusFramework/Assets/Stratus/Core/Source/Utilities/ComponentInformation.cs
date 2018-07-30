@@ -343,20 +343,6 @@ namespace Stratus
       };
 
       this.memberReferences.IterateAndRemoveInvalid(iterate, validate);
-
-      //foreach (var member in this.memberReferences)
-      //{
-      //  bool valid = AssertMemberIndex(member);
-      //  if (!valid)
-      //  {
-      //
-      //  }
-      //
-      //  member.Initialize(this);
-      //  if (member.isWatched)
-      //    this.watchList.Add(member);
-      //}
-
     }
 
     /// <summary>

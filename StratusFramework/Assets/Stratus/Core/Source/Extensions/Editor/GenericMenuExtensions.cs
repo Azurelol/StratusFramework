@@ -42,6 +42,16 @@ namespace Stratus
       }
     }
 
+    public static void AddItem(this GenericMenu menu, string content, bool on, GenericMenu.MenuFunction menuFunction)
+    {
+      menu.AddItem(new GUIContent(content), on, menuFunction);
+    }
+
+    public static void AddItem(this GenericMenu menu, string content, bool on, GenericMenu.MenuFunction2 menuFunction, object useData)
+    {
+      menu.AddItem(new GUIContent(content), on, menuFunction, useData); 
+    }
+
     /// <summary>
     /// Adds a menu item that will allow the modification of an enum property
     /// </summary>

@@ -12,7 +12,7 @@ namespace Stratus
   /// <summary>
   /// Displays all present derived Stratus events in the assembly
   /// </summary>
-  public class EventBrowser : StratusEditorWindow<EventBrowser>
+  public class EventBrowserWindow : StratusEditorWindow<EventBrowserWindow>
   {
     //------------------------------------------------------------------------/
     // Tree View

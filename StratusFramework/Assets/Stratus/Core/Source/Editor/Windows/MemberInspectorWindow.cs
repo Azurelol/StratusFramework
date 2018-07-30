@@ -82,7 +82,7 @@ namespace Stratus
     //------------------------------------------------------------------------/     
     public InformationMode informationMode { get; private set; }
     public GameObjectInformation currentTargetInformation { get; private set; }
-    private string[] toolbarOptions = new string[] 
+    private string[] toolbarOptions = new string[]
     {
       nameof(Mode.Inspector),
       nameof(Mode.WatchList),
@@ -95,6 +95,7 @@ namespace Stratus
     private Vector2 componentScrollPosition { get; set; }
     private Vector2 watchListScrollPosition { get; set; }
     private DropdownList<ComponentInformation> componentList { get; set; }
+    private bool updateTreeView { get; set; }
 
     //------------------------------------------------------------------------/
     // Messages
@@ -109,24 +110,14 @@ namespace Stratus
 
       this.CheckTarget();
 
+      // Update tree view on assembly reload
+      this.updateTreeView = true;
       GameObjectBookmark.onUpdate += this.OnBookmarkUpdate;
-      //GameObjectBookmark.onFavoritesChanged += this.OnBookmarkUpdate;
     }
 
     protected override void OnWindowGUI()
     {
-      EditorGUI.BeginChangeCheck();
-      {
-        int index = (int)this.mode;
-        this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions);
-      }
-      if (EditorGUI.EndChangeCheck())
-      {
-        this.SetTreeView();
-      }
-
-      if (this.memberInspector == null)
-        this.SetTreeView();
+      StratusEditorUtility.DrawCentered(this.DrawControls);
 
       switch (this.mode)
       {
@@ -153,12 +144,13 @@ namespace Stratus
       // Check whether values need to be updated
       bool updateValues = pollTimer.Update(Time.deltaTime);
       if (pollTimer.isFinished)
-      {
+      {        
         switch (this.mode)
         {
           case Mode.Inspector:
             if (this.hasTarget)
             {
+              this.currentTargetInformation.Refresh();
               this.currentTargetInformation.UpdateWatchValues();
             }
             break;
@@ -167,7 +159,10 @@ namespace Stratus
             if (GameObjectBookmark.hasAvailableInformation)
             {
               foreach (var targetInfo in GameObjectBookmark.availableInformation)
+              {
+                targetInfo.Refresh();
                 targetInfo.UpdateWatchValues();
+              }
             }
             break;
         }
@@ -182,16 +177,29 @@ namespace Stratus
     {
       switch (stateChange)
       {
+        // Update the tree view only when entering 
         case PlayModeStateChange.EnteredPlayMode:
         case PlayModeStateChange.EnteredEditMode:
+          updateTreeView = true;
           if (this.target)
             this.OnTargetSelected();
-          //GameObjectBookmark.UpdateAvailable();
+          break;
+
+        // Don't bother trying to update while exiting
+        case PlayModeStateChange.ExitingEditMode:
+        case PlayModeStateChange.ExitingPlayMode:
+          updateTreeView = false;
           break;
       }
-
-      
     }
+
+    //protected override StratusMenuBarDrawer OnSetMenuBar()
+    //{
+    //  StratusMenuBarDrawer menuBar = new StratusMenuBarDrawer(Coordinates.Orientation.Horizontal, GUILayout.ExpandWidth(false));
+    //  menuBar.AddItem("Refresh", this.Refresh, "Options");
+    //  menuBar.AddItem("Refresh", this.Refresh, "Options 2");
+    //  return menuBar;
+    //}
 
 
     public void OnBeforeSerialize()
@@ -206,7 +214,8 @@ namespace Stratus
 
     private void OnBookmarkUpdate()
     {
-      this.SetTreeView();
+      if (updateTreeView)
+        this.SetTreeView();
     }
 
     //------------------------------------------------------------------------/
@@ -355,8 +364,34 @@ namespace Stratus
     }
 
     //------------------------------------------------------------------------/
+    // Methods: Data
+    //------------------------------------------------------------------------/
+    private void Refresh()
+    {
+      this.currentTargetInformation?.Refresh();
+      foreach (var targetInformation in GameObjectBookmark.availableInformation)
+      {
+        targetInformation.Refresh();
+      }
+    }
+
+    //------------------------------------------------------------------------/
     // Methods: Draw
     //------------------------------------------------------------------------/
+    private void DrawControls()
+    {
+      // Toolbar      
+      EditorGUI.BeginChangeCheck();
+      {
+        int index = (int)this.mode;
+        this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions, GUILayout.ExpandWidth(false));
+      }
+      if (EditorGUI.EndChangeCheck() || this.memberInspector == null)
+      {
+        this.SetTreeView();
+      }
+    }
+
     private void SetTreeView()
     {
       IList<MemberInspectorTreeElement> members = null;
@@ -377,7 +412,7 @@ namespace Stratus
       if (this.memberInspector == null)
       {
         this.memberInspector = new MemberInspectorTreeView(this.treeViewState, members);
-        Trace.Script("Created member inspector tree view");
+        //Trace.Script("Created member inspector tree view");
       }
       else
       {

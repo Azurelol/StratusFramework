@@ -111,8 +111,6 @@ namespace Stratus
     public static GUILayoutOption[] smallLayout { get; private set; }
     public static GUILayoutOption[] singleLineLayout { get; private set; }
 
-
-
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/

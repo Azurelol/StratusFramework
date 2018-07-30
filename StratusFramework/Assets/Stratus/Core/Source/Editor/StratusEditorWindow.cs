@@ -77,7 +77,8 @@ namespace Stratus
     private void OnGUI()
     {
       //EditorGUILayout.BeginVertical();
-      this.menuBarDrawer?.Draw();
+      EditorGUILayout.Space();
+      this.menuBarDrawer?.Draw(this.currentPosition);
       this.OnWindowGUI();
       //EditorGUILayout.EndVertical();
     }
@@ -127,6 +128,11 @@ namespace Stratus
       }
       return bools.ToArray();
     }
+
+    //protected void DrawMenu(GenericMenu menu, float width, float height)
+    //{
+    //  menu.DropDown(new Rect(this.currentPosition.position, new Vector2(width, height)));
+    //}
 
 
   }

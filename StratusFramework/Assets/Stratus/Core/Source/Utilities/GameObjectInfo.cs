@@ -157,11 +157,14 @@ namespace Stratus
     }
 
     /// <summary>
-    /// Adds new components for this GameObject
+    /// Refreshes the information for the target GameObject. If any components wwere added or removed,
+    /// it will update the cache
     /// </summary>
-    private void AddNewComponents()
+    public void Refresh()
     {
-      
+      bool changed = ValidateComponents();
+      if (changed)
+        this.CacheReferences();
     }
 
     /// <summary>

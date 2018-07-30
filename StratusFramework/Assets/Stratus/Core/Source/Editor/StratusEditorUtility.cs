@@ -34,6 +34,7 @@ namespace Stratus
 
     public static UnityEngine.Event currentEvent => UnityEngine.Event.current;
     public static bool currentEventUsed => currentEvent.type == EventType.Used;
+    public static bool onRepaint => currentEvent.type == EventType.Repaint;
 
     public static void OnMouseClick(System.Action onLeftClick, System.Action onRightClick, System.Action onDoubleClick, bool used = false)
     {
@@ -418,6 +419,15 @@ namespace Stratus
         }
         EditorGUILayout.EndHorizontal();
       }
+    }
+
+    public static void DrawCentered(System.Action drawFunction)
+    {
+      GUILayout.BeginHorizontal();
+      GUILayout.FlexibleSpace();
+      drawFunction();
+      GUILayout.FlexibleSpace();
+      GUILayout.EndHorizontal();
     }
 
     ///// <summary>
