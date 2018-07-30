@@ -152,6 +152,7 @@ namespace Stratus
     public Dictionary<string, MemberInfo> membersByName { get; private set; }
     public List<MemberReference> watchList { get; private set; } = new List<MemberReference>();
     public bool valid { get; private set; }
+    public bool hasWatchList => watchList.NotEmpty();
 
     //------------------------------------------------------------------------/
     // Messages

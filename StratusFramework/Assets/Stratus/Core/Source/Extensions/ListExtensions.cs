@@ -461,6 +461,21 @@ namespace Stratus
       return foundNull;
     }
 
+    public static void AddRangeFiltered<T>(this IList<T> list, IList<T> other, Predicate<T> predicate)
+    {
+      foreach (var item in other)
+      {
+        bool valid = predicate(item);
+        if (valid)
+          list.Add(item);
+      }
+    }
+
+    public static void AddRangeFiltered<T>(this IList<T> list, IList<T> other, Func<T, bool> predicate)
+    {
+      AddRangeFiltered(list, other, ConvertToPredicate(predicate));
+    }
+
     /// <summary>
     /// Iterates over the given list, removing any invalid elements (described hy the validate functon)
     /// Returns true if any elements were removed.

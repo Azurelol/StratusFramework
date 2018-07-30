@@ -5,10 +5,11 @@ using System;
 using System.Reflection;
 using UnityEngine.Serialization;
 using System.Linq.Expressions;
+using UnityEngine.Events;
 
 namespace Stratus
 {
-  
+
   /// <summary>
   /// Information about a gameobject and all its components
   /// </summary>
@@ -16,21 +17,33 @@ namespace Stratus
   public class GameObjectInformation : ISerializationCallbackReceiver
   {
     //------------------------------------------------------------------------/
+    // Declaration
+    //------------------------------------------------------------------------/  
+    public enum Change
+    {
+      Components,
+      WatchList,
+      ComponentsAndWatchList,
+      None
+    }
+
+    //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/  
     public GameObject target;
     public ComponentInformation[] components;
     public int fieldCount;
     public int propertyCount;
-    public int numberofComponents;
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/  
     public bool initialized { get; private set; }
+    public int numberofComponents => components.Length;
     public ComponentInformation.MemberReference[] members { get; private set; }
     public ComponentInformation.MemberReference[] watchList { get; private set; }
     public int memberCount => fieldCount + propertyCount;
     public bool isValid => target != null && this.numberofComponents > 0;
+    public static UnityAction<GameObjectInformation, Change> onChanged { get; set; } = new UnityAction<GameObjectInformation, Change>( (GameObjectInformation information, Change change) => { });
 
     //------------------------------------------------------------------------/
     // Messages
@@ -63,9 +76,8 @@ namespace Stratus
       this.fieldCount = 0;
       this.propertyCount = 0;
       Component[] targetComponents = target.GetComponents<Component>();
-      this.numberofComponents = targetComponents.Length;
       List<ComponentInformation> components = new List<ComponentInformation>();
-      for (int i = 0; i < this.numberofComponents; ++i)
+      for (int i = 0; i < targetComponents.Length; ++i)
       {
         Component component = targetComponents[i];
         if (component == null)
@@ -92,7 +104,7 @@ namespace Stratus
     /// </summary>
     public void ClearWatchList()
     {
-      foreach(var component in this.components)
+      foreach (var component in this.components)
       {
         component.ClearWatchList(false);
       }
@@ -108,7 +120,7 @@ namespace Stratus
     /// </summary>
     public void UpdateWatchValues()
     {
-      foreach(var component in this.components)
+      foreach (var component in this.components)
       {
         component.UpdateWatchValues();
       }
@@ -162,37 +174,44 @@ namespace Stratus
     /// </summary>
     public void Refresh()
     {
-      bool changed = ValidateComponents();
-      if (changed)
-        this.CacheReferences();
+      Change change = ValidateComponents();
+      switch (change)
+      {
+        case Change.Components:          
+          this.CacheReferences();
+          onChanged(this, change);
+          break;
+        case Change.ComponentsAndWatchList:          
+          this.CacheReferences();
+          onChanged(this, change);
+          break;
+        case Change.None:
+          break;
+      }
     }
 
     /// <summary>
     /// Verifies that the component references for this GameObject are still valid,
     /// returning false if any components were removed
     /// </summary>
-    private bool ValidateComponents()
+    private Change ValidateComponents()
     {
+      bool watchlistChanged = false;
       bool changed = false;
 
-      // Remove null components
-      Func<ComponentInformation, bool> validate = (ComponentInformation component) =>
-      {
-        return component.component != null;
-      };
-
-      
-      foreach(var component in this.components)
+      // Check if any components are null
+      foreach (var component in this.components)
       {
         if (component.component == null)
         {
           changed = true;
-          break;
+          if (component.hasWatchList)
+          {
+            watchlistChanged = true;
+          }
         }
-
       }
-
-      //changed = this.components.RemoveInvalid(validate);
+      
       // Check for other component changes
       Component[] targetComponents = target.GetComponents<Component>();
       changed |= this.numberofComponents != targetComponents.Length;
@@ -200,19 +219,15 @@ namespace Stratus
       // If there's noticeable changes, let's add any components that were not there before
       if (changed)
       {
-        Func<Component, ComponentInformation, bool> predicate = (Component component, ComponentInformation ci) =>
-        {
-          return component == ci.component;
-        };
-
         List<ComponentInformation> currentComponents = new List<ComponentInformation>();
-        currentComponents.AddRangeNotNull(this.components);
-
-        foreach(var component in targetComponents)
+        Func<ComponentInformation, bool> validate = (ComponentInformation component) => { return component.component != null; };
+        currentComponents.AddRangeFiltered(this.components, validate);
+          
+        // If there's no information for this component, let's add it
+        foreach (var component in targetComponents)
         {
           ComponentInformation ci = currentComponents.Find(x => x.component == component);
 
-          // If there's no information for this component, let's add it
           if (ci == null)
           {
             ci = new ComponentInformation(component);
@@ -220,12 +235,22 @@ namespace Stratus
           }
         }
 
+        // Now update the list of components
+        this.components = currentComponents.ToArray();
+      }      
+
+      if (changed)
+      {
+        if (watchlistChanged)
+        {
+          return Change.ComponentsAndWatchList;
+        }
+
+        return Change.Components;
       }
 
-      
-
       // If any components were removed, or added, note the change
-      return changed;
+      return Change.None;
     }
 
 

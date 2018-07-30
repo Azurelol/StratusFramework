@@ -48,8 +48,6 @@ namespace Stratus
       Type,
     }
 
-
-
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/   
@@ -113,6 +111,7 @@ namespace Stratus
       // Update tree view on assembly reload
       this.updateTreeView = true;
       GameObjectBookmark.onUpdate += this.OnBookmarkUpdate;
+      GameObjectInformation.onChanged += this.OnGameObjectInformationChanged;
     }
 
     protected override void OnWindowGUI()
@@ -214,6 +213,17 @@ namespace Stratus
 
     private void OnBookmarkUpdate()
     {
+      if (updateTreeView)
+        this.SetTreeView();
+    }
+
+    private void OnGameObjectInformationChanged(GameObjectInformation information, GameObjectInformation.Change change)
+    {
+      Trace.Script($"Information for {information.target.name}, change = {change}");
+
+      if (change == GameObjectInformation.Change.ComponentsAndWatchList)
+        GameObjectBookmark.UpdateWatchList();
+
       if (updateTreeView)
         this.SetTreeView();
     }
@@ -358,8 +368,8 @@ namespace Stratus
         //Trace.Script($"Setting target information for {this.target.name}");
       }
 
-      this.showComponent = this.GenerateAnimBools(this.currentTargetInformation.numberofComponents, false);
-      this.componentList = new DropdownList<ComponentInformation>(this.currentTargetInformation.components, (ComponentInformation component) => component.name, this.lastComponentIndex);
+      //this.showComponent = this.GenerateAnimBools(this.currentTargetInformation.numberofComponents, false);
+      //this.componentList = new DropdownList<ComponentInformation>(this.currentTargetInformation.components, (ComponentInformation component) => component.name, this.lastComponentIndex);
       this.SetTreeView();
     }
 

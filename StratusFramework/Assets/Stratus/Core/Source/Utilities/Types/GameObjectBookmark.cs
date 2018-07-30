@@ -24,9 +24,9 @@ namespace Stratus
     public static bool hasAvailableInformation => availableInformation != null && availableInformation.Length > 0;
     public static ComponentInformation.MemberReference[] watchList { get; private set; } = new ComponentInformation.MemberReference[0];
     public static bool hasWatchList => watchList != null && watchList.Length > 0;
-    public static System.Action onFavoritesChanged { get; set; } = new System.Action(() => { });
+    public static System.Action onWatchListChanged { get; set; } = new System.Action(() => { });
     public static System.Action onInformationChanged{ get; set; } = new System.Action(() => { });
-    public static System.Action onUpdate { get; set; } = new System.Action(() => { });
+    public static System.Action onUpdate { get; set; } = new System.Action( () => { });
 
     //------------------------------------------------------------------------/
     // Messages
@@ -102,7 +102,7 @@ namespace Stratus
         values.AddRange(targetInfo.watchList);
       }
       GameObjectBookmark.watchList = values.ToArray();
-      GameObjectBookmark.onFavoritesChanged();
+      GameObjectBookmark.onWatchListChanged();
     }
 
     /// <summary>
