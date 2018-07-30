@@ -181,8 +181,18 @@ namespace Stratus
         return component.component != null;
       };
 
-      changed = this.components.RemoveInvalid(validate);
+      
+      foreach(var component in this.components)
+      {
+        if (component.component == null)
+        {
+          changed = true;
+          break;
+        }
 
+      }
+
+      //changed = this.components.RemoveInvalid(validate);
       // Check for other component changes
       Component[] targetComponents = target.GetComponents<Component>();
       changed |= this.numberofComponents != targetComponents.Length;
@@ -195,7 +205,9 @@ namespace Stratus
           return component == ci.component;
         };
 
-        List<ComponentInformation> currentComponents = new List<ComponentInformation>(this.components);
+        List<ComponentInformation> currentComponents = new List<ComponentInformation>();
+        currentComponents.AddRangeNotNull(this.components);
+
         foreach(var component in targetComponents)
         {
           ComponentInformation ci = currentComponents.Find(x => x.component == component);

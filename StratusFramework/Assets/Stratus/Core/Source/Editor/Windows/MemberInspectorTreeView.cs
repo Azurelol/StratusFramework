@@ -14,7 +14,8 @@ namespace Stratus
 
     public static List<MemberInspectorTreeElement> GenerateFavoritesTree()
     {
-      var elements = MemberInspectorTreeElement.GenerateFlatTree<MemberInspectorTreeElement, ComponentInformation.MemberReference>(Set, GameObjectBookmark.watchList);      
+      var members = GameObjectBookmark.watchList;
+      var elements = MemberInspectorTreeElement.GenerateFlatTree<MemberInspectorTreeElement, ComponentInformation.MemberReference>(Set, members);      
       return elements;
     }
 

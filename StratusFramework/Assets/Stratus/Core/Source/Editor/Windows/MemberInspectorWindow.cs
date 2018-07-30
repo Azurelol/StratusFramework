@@ -416,7 +416,7 @@ namespace Stratus
       }
       else
       {
-        Trace.Script($"Set tree view with ({members.Count}) members");
+        Trace.Script($"Set tree view with ({members.Count - 1}) members");
         this.memberInspector.SetTree(members);
       }
 

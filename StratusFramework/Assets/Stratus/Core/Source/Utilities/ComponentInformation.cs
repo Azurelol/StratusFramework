@@ -126,7 +126,7 @@ namespace Stratus
     public Type type;
 
     public bool alphabeticalSorted;
-    public MemberReference[] memberReferences;
+    public List<MemberReference> memberReferences;
 
     [NonSerialized]
     public object[] fieldValues, propertyValues, favoriteValues;
@@ -299,7 +299,7 @@ namespace Stratus
     /// Saves all member references for this GameObject
     /// </summary>
     /// <returns></returns>
-    private MemberReference[] CreateAllMemberReferences()
+    private List<MemberReference> CreateAllMemberReferences()
     {
       // Make a reference for all members
       List<MemberReference> memberReferences = new List<MemberReference>();
@@ -317,7 +317,7 @@ namespace Stratus
       // Also rebuild favorites!
       this.watchList = new List<MemberReference>();
 
-      return memberReferences.ToArray();
+      return memberReferences;
     }
 
     /// <summary>

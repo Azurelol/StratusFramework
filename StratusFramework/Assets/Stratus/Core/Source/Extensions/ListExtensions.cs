@@ -445,6 +445,23 @@ namespace Stratus
     }
 
     /// <summary>
+    /// Adds the items from another list, except null ones
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public static bool AddRangeNotNull<T>(this IList<T> list, IList<T> other) where T : class
+    {
+      bool foundNull = false;
+      foreach(var item in other)
+      {
+        foundNull |= !(AddIfNotNull(list, item));
+      }
+      return foundNull;
+    }
+
+    /// <summary>
     /// Iterates over the given list, removing any invalid elements (described hy the validate functon)
     /// Returns true if any elements were removed.
     /// </summary>
@@ -452,7 +469,7 @@ namespace Stratus
     /// <param name="list"></param>
     /// <param name="predicate"></param>
     /// <param name="iterateFunction"></param>
-    public static bool IterateAndRemoveInvalid<T>(this List<T> list, Predicate<T> predicate, System.Action<T> iterateFunction)
+    public static bool IterateAndRemoveInvalid<T>(this List<T> list, System.Action<T> iterateFunction, Predicate<T> predicate)
     {
       bool removed = false;
       List<T> invalid = new List<T>();
@@ -476,9 +493,9 @@ namespace Stratus
       return removed;
     }
 
-    public static bool IterateAndRemoveInvalid<T>(this List<T> list, Func<T, bool> predicate, System.Action<T> iterateFunction)
+    public static bool IterateAndRemoveInvalid<T>(this List<T> list, System.Action<T> iterateFunction, Func<T, bool> predicate)
     {
-      return IterateAndRemoveInvalid(list, ConvertToPredicate(predicate), iterateFunction);
+      return IterateAndRemoveInvalid(list, iterateFunction, ConvertToPredicate(predicate));
     }
 
     /// <summary>
@@ -514,68 +531,79 @@ namespace Stratus
       return RemoveInvalid(list, ConvertToPredicate(predicate));
     }
 
-    /// <summary>
-    /// Iterates over the given list, removing any invalid elements (described hy the validate functon)
-    /// using backwards traversal. Returns true if any elements were removed.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
-    /// <param name="predicate"></param>
-    /// <param name="iterateFunction"></param>
-    public static bool IterateAndRemoveInvalid<T>(this IList<T> list, System.Action<T> iterateFunction, Predicate<T> predicate)
+    ///// <summary>
+    ///// Iterates over the given list, removing any invalid elements (described hy the validate functon)
+    ///// using backwards traversal. Returns true if any elements were removed.
+    ///// </summary>
+    ///// <typeparam name="T"></typeparam>
+    ///// <param name="list"></param>
+    ///// <param name="predicate"></param>
+    ///// <param name="iterateFunction"></param>
+    //public static bool IterateAndRemoveInvalid<T>(this IList<T> list, System.Action<T> iterateFunction, Predicate<T> predicate)
+    //{
+    //  bool removed = false;
+    //  for (int i = list.Count - 1; i >= 0; i--)
+    //  {
+    //    T element = list[i];
+    //    bool valid = predicate(element);
+    //    removed |= valid;
+    //
+    //    if (!valid)
+    //    {
+    //      list.RemoveAt(i);
+    //    }
+    //    else
+    //    {
+    //      iterateFunction(element);
+    //    }
+    //  }
+    //  return removed;
+    //}
+    //
+    //public static bool IterateAndRemoveInvalid<T>(this IList<T> list, System.Action<T> iterateFunction, Func<T, bool> predicate)
+    //{
+    //  return IterateAndRemoveInvalid(list, iterateFunction, ConvertToPredicate(predicate));
+    //}
+    //
+    ///// <summary>
+    ///// Iterates over the given list, removing any invalid elements (described hy the validate functon)
+    ///// using backwards traversal. Returns true if any elements were removed.
+    ///// </summary>
+    ///// <typeparam name="T"></typeparam>
+    ///// <param name="list"></param>
+    ///// <param name="predicate"></param>
+    ///// <param name="iterateFunction"></param>
+    //public static bool RemoveInvalid<T>(this IList<T> list, Predicate<T> predicate)
+    //{
+    //  bool removed = false;
+    //  for (int i = list.Count - 1; i >= 0; i--)
+    //  {
+    //    T element = list[i];
+    //    bool valid = predicate(element);
+    //    removed |= valid;
+    //
+    //    if (!valid)
+    //    {
+    //      list.RemoveAt(i);
+    //    }
+    //  }
+    //  return removed;
+    //}
+    //
+    //public static bool RemoveInvalid<T>(this IList<T> list, Func<T, bool> predicate)
+    //{
+    //  return RemoveInvalid(list, ConvertToPredicate(predicate));
+    //}
+
+    public static T[] GetNonNull<T>(this T[] array)
     {
-      bool removed = false;
-      for (int i = list.Count - 1; i >= 0; i--)
+      List<T> list = new List<T>();
+      foreach(var item in array)
       {
-        T element = list[i];
-        bool valid = predicate(element);
-        removed |= valid;
-
-        if (!valid)
-        {
-          list.RemoveAt(i);
-        }
-        else
-        {
-          iterateFunction(element);
-        }
+        if (item != null)
+          list.Add(item);
       }
-      return removed;
-    }
-
-    public static bool IterateAndRemoveInvalid<T>(this IList<T> list, System.Action<T> iterateFunction, Func<T, bool> predicate)
-    {
-      return IterateAndRemoveInvalid(list, iterateFunction, ConvertToPredicate(predicate));
-    }
-
-    /// <summary>
-    /// Iterates over the given list, removing any invalid elements (described hy the validate functon)
-    /// using backwards traversal. Returns true if any elements were removed.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
-    /// <param name="predicate"></param>
-    /// <param name="iterateFunction"></param>
-    public static bool RemoveInvalid<T>(this IList<T> list, Predicate<T> predicate)
-    {
-      bool removed = false;
-      for (int i = list.Count - 1; i >= 0; i--)
-      {
-        T element = list[i];
-        bool valid = predicate(element);
-        removed |= valid;
-
-        if (!valid)
-        {
-          list.RemoveAt(i);
-        }
-      }
-      return removed;
-    }
-
-    public static bool RemoveInvalid<T>(this IList<T> list, Func<T, bool> predicate)
-    {
-      return RemoveInvalid(list, ConvertToPredicate(predicate));
+      return list.ToArray();
     }
 
     /// <summary>
