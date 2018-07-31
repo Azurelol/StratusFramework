@@ -109,14 +109,14 @@ namespace Stratus
       this.CheckTarget();
 
       // Update tree view on assembly reload
-      this.updateTreeView = true;
+      //this.updateTreeView = true;
       GameObjectBookmark.onUpdate += this.OnBookmarkUpdate;
       GameObjectInformation.onChanged += this.OnGameObjectInformationChanged;
     }
 
     protected override void OnWindowGUI()
-    {
-      StratusEditorUtility.DrawCentered(this.DrawControls);
+    {      
+      StratusEditorUtility.DrawAligned(this.DrawControls, TextAlignment.Center);
 
       switch (this.mode)
       {
@@ -190,6 +190,8 @@ namespace Stratus
           updateTreeView = false;
           break;
       }
+
+      Trace.Script($"Change = {stateChange}, UpdateTreeView = {updateTreeView}");
     }
 
     //protected override StratusMenuBarDrawer OnSetMenuBar()
@@ -214,18 +216,20 @@ namespace Stratus
     private void OnBookmarkUpdate()
     {
       if (updateTreeView)
+      {
         this.SetTreeView();
+      }
     }
 
     private void OnGameObjectInformationChanged(GameObjectInformation information, GameObjectInformation.Change change)
     {
-      Trace.Script($"Information for {information.target.name}, change = {change}");
+      Trace.Script($"Information changed for {information.target.name}, change = {change}");
 
       if (change == GameObjectInformation.Change.ComponentsAndWatchList)
         GameObjectBookmark.UpdateWatchList();
 
-      if (updateTreeView)
-        this.SetTreeView();
+      this.SetTreeView();
+      //this.OnBookmarkUpdate();
     }
 
     //------------------------------------------------------------------------/
@@ -390,6 +394,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     private void DrawControls()
     {
+     
       // Toolbar      
       EditorGUI.BeginChangeCheck();
       {
@@ -400,6 +405,16 @@ namespace Stratus
       {
         this.SetTreeView();
       }
+
+      //StratusEditorUtility.DrawContextMenu(this.DrawSettingsContext, StratusEditorUtility.ContextMenuType.Options);
+      
+    }
+
+    private GenericMenu DrawSettingsContext()
+    {
+      GenericMenu menu = new GenericMenu();
+      menu.AddItem("Refresh", false, this.Refresh);
+      return menu;
     }
 
     private void SetTreeView()

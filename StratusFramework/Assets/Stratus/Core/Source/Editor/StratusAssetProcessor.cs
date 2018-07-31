@@ -3,20 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using UnityEditor.SceneManagement;
 
 namespace Stratus
 {
-  public class StratusAssetProcessor : UnityEditor.AssetModificationProcessor
+  /// <summary>
+  /// Class that listens to Unity's asset pipeline events
+  /// </summary>
+  public static class StratusAssetProcessor //: UnityEditor.AssetModificationProcessor
   {
-    private void OnWillCreateAsset(string assetName)
+    //------------------------------------------------------------------------/
+    // CTOR
+    //------------------------------------------------------------------------/  
+    static StratusAssetProcessor()
     {
-      Trace.Script($"Creating {assetName}");
+      EditorSceneManager.sceneSaving += OnSceneSaving;
+      Undo.postprocessModifications += OnPostProcessModifications;
     }
 
-    private void OnWillDeleteAsset(string assetName, RemoveAssetOptions options)
-    {
-      Trace.Script($"Deleting {assetName}");
-    }
+    //private void OnWillCreateAsset(string assetName)
+    //{
+    //  Trace.Script($"Creating {assetName}");
+    //}
+    //
+    //private void OnWillDeleteAsset(string assetName, RemoveAssetOptions options)
+    //{
+    //  Trace.Script($"Deleting {assetName}");
+    //}
 
     /// <summary>
     /// Invoked just after building the scene, and when entering playmode
@@ -45,6 +58,20 @@ namespace Stratus
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
       //Debug.Log(pathToBuiltProject);
+    }
+
+    static UndoPropertyModification[] OnPostProcessModifications(UndoPropertyModification[] propertyModifications)
+    {
+      foreach(UndoPropertyModification modification in propertyModifications)
+      {
+        Trace.Script($"Modified {modification.currentValue.target.name}");
+      }
+      return propertyModifications;
+    }
+
+    private static void OnSceneSaving(UnityEngine.SceneManagement.Scene scene, string path)
+    {
+      Trace.Script($"Saving {scene.name}");
     }
 
   }

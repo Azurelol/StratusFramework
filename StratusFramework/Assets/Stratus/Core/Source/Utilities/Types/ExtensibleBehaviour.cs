@@ -25,10 +25,11 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
+    public MonoBehaviour[] extensionBehaviours => extensionsField.ToArray();
     public IExtensionBehaviour[] extensions => (from MonoBehaviour e in extensionsField select (e as IExtensionBehaviour)).ToArray();
     private Dictionary<Type, IExtensionBehaviour> extensionsMap { get; set; } = new Dictionary<Type, IExtensionBehaviour>();
-    private static Dictionary<IExtensionBehaviour, ExtensibleBehaviour> extensionOwnershipMap { get; set; } = new Dictionary<IExtensionBehaviour, ExtensibleBehaviour>();
     public bool hasExtensions => extensionsField.Count > 0;
+    private static Dictionary<IExtensionBehaviour, ExtensibleBehaviour> extensionOwnershipMap { get; set; } = new Dictionary<IExtensionBehaviour, ExtensibleBehaviour>();
     //public int selectedExtensionIndex { get { return _selectedExtension; } set { _selectedExtension = value; } }
 
     //--------------------------------------------------------------------------------------------/
@@ -103,6 +104,26 @@ namespace Stratus
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public bool HasExtension(Type type) => extensionsMap.ContainsKey(type);
+
+
+    [ContextMenu("Show Extensions")]
+    private void ShowExtensions()
+    {
+      foreach(var extension in this.extensionsField)
+      {
+        extension.hideFlags = HideFlags.None;
+      }
+    }
+
+    [ContextMenu("Hide Extensions")]
+    private void HideExtensions()
+    {
+      foreach (var extension in this.extensionsField)
+      {
+        extension.hideFlags = HideFlags.HideInInspector;
+      }
+    }
+
 
     /// <summary>
     /// Retrieves the extensible that the extension is for

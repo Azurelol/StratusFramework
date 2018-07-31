@@ -210,6 +210,11 @@ namespace Stratus
             watchlistChanged = true;
           }
         }
+        else
+        {
+          if (component.valid)
+            changed |= component.Refresh();
+        }
       }
       
       // Check for other component changes

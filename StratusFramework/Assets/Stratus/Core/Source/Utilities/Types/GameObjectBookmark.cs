@@ -24,8 +24,6 @@ namespace Stratus
     public static bool hasAvailableInformation => availableInformation != null && availableInformation.Length > 0;
     public static ComponentInformation.MemberReference[] watchList { get; private set; } = new ComponentInformation.MemberReference[0];
     public static bool hasWatchList => watchList != null && watchList.Length > 0;
-    public static System.Action onWatchListChanged { get; set; } = new System.Action(() => { });
-    public static System.Action onInformationChanged{ get; set; } = new System.Action(() => { });
     public static System.Action onUpdate { get; set; } = new System.Action( () => { });
 
     //------------------------------------------------------------------------/
@@ -91,7 +89,7 @@ namespace Stratus
     /// <summary>
     /// Updates the list of current favorited members
     /// </summary>
-    public static void UpdateWatchList()
+    public static void UpdateWatchList(bool invokeDelegate = false)
     {
       List<ComponentInformation.MemberReference> values = new List<ComponentInformation.MemberReference>();
       foreach (var targetInfo in availableInformation)
@@ -102,13 +100,15 @@ namespace Stratus
         values.AddRange(targetInfo.watchList);
       }
       GameObjectBookmark.watchList = values.ToArray();
-      GameObjectBookmark.onWatchListChanged();
+
+      if (invokeDelegate)
+        GameObjectBookmark.onUpdate();
     }
 
     /// <summary>
     /// Updates the list of available information from enabled bookmarks
     /// </summary>
-    private static void UpdateInformation()
+    private static void UpdateInformation(bool invokeDelegate = false)
     {
       List<GameObjectInformation> availableInformation = new List<GameObjectInformation>();
       foreach (var bookmark in GameObjectBookmark.available)
@@ -116,7 +116,9 @@ namespace Stratus
         availableInformation.Add(bookmark.Value.information);
       }
       GameObjectBookmark.availableInformation = availableInformation.ToArray();
-      GameObjectBookmark.onInformationChanged();
+
+      if (invokeDelegate)
+        GameObjectBookmark.onUpdate();
     }
 
     /// <summary>
@@ -126,6 +128,7 @@ namespace Stratus
     {
       GameObjectBookmark.UpdateInformation();
       GameObjectBookmark.UpdateWatchList();
+
       GameObjectBookmark.onUpdate();
     }
 

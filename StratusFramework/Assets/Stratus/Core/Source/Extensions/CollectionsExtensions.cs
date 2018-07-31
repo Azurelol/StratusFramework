@@ -59,7 +59,24 @@ namespace Stratus
         dictionary.Add(keyFunction(element), element);
     }
 
-
+    /// <summary>
+    /// Adds the given list to the dictionary, provided a function that will extract the key for each value.
+    /// This will not attempt to add elements with duplicate kaeys.
+    /// </summary>
+    /// <typeparam name="Key"></typeparam>
+    /// <typeparam name="Value"></typeparam>
+    /// <param name="dictionary"></param>
+    /// <param name="list"></param>
+    /// <param name="keyFunction"></param>
+    public static void AddRangeUnique<Key, Value>(this Dictionary<Key, Value> dictionary, IEnumerable<Value> list, Func<Value, Key> keyFunction)
+    {
+      foreach (var element in list)
+      {
+        Key key = keyFunction(element);
+        if (!dictionary.ContainsKey(key))
+          dictionary.Add(key, element);
+      }
+    }
 
     public static Value TryGetValue<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, string errorMessage = null) 
     {

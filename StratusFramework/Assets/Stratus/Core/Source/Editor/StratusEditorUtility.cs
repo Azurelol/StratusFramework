@@ -22,7 +22,7 @@ namespace Stratus
       Validation,
       Options
     }
-
+       
 
     static StratusEditorUtility()
     {
@@ -371,6 +371,29 @@ namespace Stratus
         menu.ShowAsContext();
     }
 
+    public static void DrawContextMenu(Func<GenericMenu> menuFunction, ContextMenuType context)
+    {
+      Texture texture = null;
+      switch (context)
+      {
+        case ContextMenuType.Add:
+          texture = StratusGUIStyles.addIcon;
+          break;
+        case ContextMenuType.Validation:
+          texture = StratusGUIStyles.validateIcon;
+          break;
+        case ContextMenuType.Options:
+          texture = StratusGUIStyles.optionsIcon;
+          break;
+      }
+      
+      if (GUILayout.Button(texture, StratusGUIStyles.editorStyles.button, StratusGUIStyles.smallLayout))
+      {
+        GenericMenu menu = menuFunction();
+        menu.ShowAsContext();
+      }
+    }
+
     private static GUIStyle fadeGroupStyle { get; } = EditorStyles.foldout;
 
     public static void DrawFadeGroup(AnimBool show, string label, System.Action drawFunction)
@@ -421,13 +444,30 @@ namespace Stratus
       }
     }
 
-    public static void DrawCentered(System.Action drawFunction)
-    {
+    public static void DrawAligned(System.Action drawFunction, TextAlignment alignment)
+    {      
       GUILayout.BeginHorizontal();
-      GUILayout.FlexibleSpace();
-      drawFunction();
-      GUILayout.FlexibleSpace();
-      GUILayout.EndHorizontal();
+
+      switch (alignment)
+      {
+        case TextAlignment.Left:
+          drawFunction();
+          GUILayout.FlexibleSpace();
+          break;
+
+        case TextAlignment.Center:
+          GUILayout.FlexibleSpace();
+          drawFunction();
+          GUILayout.FlexibleSpace();
+          break;
+
+        case TextAlignment.Right:
+          GUILayout.FlexibleSpace();
+          drawFunction();
+          break;
+      }
+     
+      GUILayout.EndVertical();
     }
 
     ///// <summary>

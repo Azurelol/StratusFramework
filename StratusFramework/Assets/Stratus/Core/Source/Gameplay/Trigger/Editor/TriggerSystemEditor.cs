@@ -56,9 +56,9 @@ namespace Stratus
       triggerTypes = new TypeSelector(typeof(Trigger), true);
       triggerableTypes = new TypeSelector(typeof(Triggerable), true);
 
-      selectedColor = StratusGUIStyles.selectedColor;
-      connectedColor = StratusGUIStyles.connectedColor;
-      disconnectedColor = StratusGUIStyles.disconnectedColor;
+      selectedColor = StratusGUIStyles.Colors.selectedColor;
+      connectedColor = StratusGUIStyles.Colors.connectedColor;
+      disconnectedColor = StratusGUIStyles.Colors.disconnectedColor;
 
       selected = null;
       selectedTrigger = null;

@@ -19,6 +19,22 @@ namespace Stratus
       Right
     }
 
+    public class EditorStyles
+    {
+      public GUIStyle button { get; private set; }
+      public GUIStyle toolbarButton { get; private set; }
+      
+      public EditorStyles()
+      {
+        button = new GUIStyle(GUI.skin.button);
+        button.alignment = TextAnchor.MiddleCenter;        
+
+        toolbarButton = new GUIStyle(UnityEditor.EditorStyles.toolbarButton);
+        toolbarButton.alignment = TextAnchor.MiddleCenter;
+      }
+
+    }
+
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
@@ -26,6 +42,18 @@ namespace Stratus
     /// The default skin used by the Stratus framework
     /// </summary>
     public static GUISkin skin { get; private set; }
+    /// <summary>
+    /// Variations on Unity's EditorStyles. Invoke only during an OnGUI event!
+    /// </summary>
+    public static EditorStyles editorStyles
+    {
+      get
+      {
+        if (_editorStyles == null)
+          _editorStyles = new EditorStyles();
+        return _editorStyles;
+      }
+    }
     /// <summary>
     /// Common style for labels
     /// </summary>
@@ -38,22 +66,6 @@ namespace Stratus
     /// A tintable background
     /// </summary>
     public static GUIStyle tintable { get; private set; }
-    /// <summary>
-    /// The main background color used by UI elmeents
-    /// </summary>
-    public static Color backgroundColor => Colors.azure;
-    /// <summary>
-    /// The default color for connections
-    /// </summary>
-    public static Color connectedColor => Colors.jade;
-    /// <summary>
-    /// The default color for connections
-    /// </summary>
-    public static Color disconnectedColor => Colors.saffron;
-    /// <summary>
-    /// The default color for connections
-    /// </summary>
-    public static Color selectedColor => Colors.royalBlue;
     /// <summary>
     /// A map of all custom textures used by the framework
     /// </summary>
@@ -74,6 +86,7 @@ namespace Stratus
     // Styles    
     public static GUIStyle box => skin.box;
     public static GUIStyle button => skin.button;
+
     public static GUIStyle miniButton => skin.FindStyle("Mini Button");
     public static GUIStyle outlineBox => skin.FindStyle("Outline Box");
     public static GUIStyle circleButton => skin.FindStyle("Circle Button");
@@ -90,9 +103,11 @@ namespace Stratus
     public static GUIStyle listViewToggle { get; private set; }
     public static GUIStyle textField { get; private set; }
     public static GUIStyle popup { get; private set; } 
+
     public static Font defaultFont { get; private set; }
-    public static Font boldFont { get; private set; }
+    public static Font boldFont { get; private set; }    
     public static Font lightFont { get; private set; }
+    
     //public static GUIStyle currentHeader
 
     public static bool isProSkin { get; set; }
@@ -112,14 +127,17 @@ namespace Stratus
     public static GUILayoutOption[] singleLineLayout { get; private set; }
 
     //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
+    private static EditorStyles _editorStyles;
+
+    //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
     static StratusGUIStyles()
     {
       // Load custom assets
       LoadGUIAssets(); 
-      // Set colors
-      SetColors();
       // Set icons
       // Store default options
       CacheDefaultOptions(); 
@@ -183,32 +201,33 @@ namespace Stratus
       tintable.normal.background = Texture2D.whiteTexture;
       tintable.stretchWidth = tintable.stretchHeight = true;
 
+      
+      
+      
       smallLayout = new GUILayoutOption[] { GUILayout.Width(25f), GUILayout.Height(25f) };
+      
+      //smallLayout = new GUILayoutOption[] { GUILayout.ExpandHeight(false), GUILayout.ExpandWidth(false)};
 
 #if UNITY_EDITOR
       //UnityEditor.EditorStyles.helpBox.richText = true;
       isProSkin = UnityEditor.EditorGUIUtility.isProSkin;
       header = isProSkin ? headerWhite : headerBlack;
       singleLineLayout = new GUILayoutOption[] { GUILayout.Width(UnityEditor.EditorGUIUtility.singleLineHeight), GUILayout.Height(UnityEditor.EditorGUIUtility.singleLineHeight)};
+
+      //alignedButton = new GUIStyle(GUI.skin.button);
+      //alignedButton.alignment = TextAnchor.MiddleCenter;
+      //toolbarButton = new GUIStyle(UnityEditor.EditorStyles.toolbarButton);
+      //toolbarButton.alignment = TextAnchor.MiddleCenter;
 #endif
     }
 
-    /// <summary>
-    /// Set common colors used by the framework
-    /// </summary>
-    private static void SetColors()
-    {
-      Colors.azure = new Color32(0, 191, 255, 255);
-      Colors.sanMarino = new Color32(66, 108, 179, 255);
-      Colors.royalBlue = new Color32(65, 131,215, 255);
-      Colors.jacksonsPurple = new Color32(31, 58, 147, 255);
-      Colors.aquaIsland = new Color32(162, 222, 208, 255);
-      Colors.jade = new Color32(0, 177, 106, 255);
-      Colors.cinnabar= new Color32(240, 52, 52, 255);
-      Colors.valencia = new Color32(214, 69, 65, 255);
-      Colors.chestnutRose = new Color32(210, 77, 87, 255);
-      Colors.saffron = new Color32(244, 208, 63, 255);
-    }
+    ///// <summary>
+    ///// Set common colors used by the framework
+    ///// </summary>
+    //private static void SetColors()
+    //{
+    //
+    //}
 
     /// <summary>
     /// Draws the selected background color inside the given rect

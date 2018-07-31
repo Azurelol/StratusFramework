@@ -44,6 +44,13 @@ namespace Stratus
       RefreshExtensions();
       drawGroupRequests.Add(new DrawGroupRequest(DrawExtensions, () => { return target.hasExtensions; }));
       //drawGroupRequests.Add(new DrawGroupRequest(AddExtension));
+      //foreach(var extension in this.target.extensionBehaviours)
+      //{
+      //  extension.hideFlags = HideFlags.None;
+      //}
+
+      //foreach (var extension in target.extensions)
+      //  (extension as MonoBehaviour).hideFlags = extensionFlags;
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -103,8 +110,6 @@ namespace Stratus
         return;
 
       extensionsNames = target.extensions.TypeNames();
-      foreach (var extension in target.extensions)
-        (extension as MonoBehaviour).hideFlags = extensionFlags;
     }
 
     private void AddExtension(Rect rect)

@@ -14,6 +14,23 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/
+      /// <summary>
+      /// The main background color used by UI elmeents
+      /// </summary>
+      public static Color backgroundColor => Colors.azure;
+      /// <summary>
+      /// The default color for connections
+      /// </summary>
+      public static Color connectedColor => Colors.jade;
+      /// <summary>
+      /// The default color for connections
+      /// </summary>
+      public static Color disconnectedColor => Colors.saffron;
+      /// <summary>
+      /// The default color for connections
+      /// </summary>
+      public static Color selectedColor => Colors.royalBlue;
+
       public static Color azure { get; internal set; }
       public static Color sanMarino { get; internal set; }
       public static Color royalBlue { get; internal set; }
@@ -175,6 +192,27 @@ namespace Stratus
         "E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0",
     };
 
+      //------------------------------------------------------------------------/
+      // CTOR
+      //------------------------------------------------------------------------/
+      static Colors()
+      {
+        Colors.azure = new Color32(0, 191, 255, 255);
+        Colors.sanMarino = new Color32(66, 108, 179, 255);
+        Colors.royalBlue = new Color32(65, 131, 215, 255);
+        Colors.jacksonsPurple = new Color32(31, 58, 147, 255);
+        Colors.aquaIsland = new Color32(162, 222, 208, 255);
+        Colors.jade = new Color32(0, 177, 106, 255);
+        Colors.cinnabar = new Color32(240, 52, 52, 255);
+        Colors.valencia = new Color32(214, 69, 65, 255);
+        Colors.chestnutRose = new Color32(210, 77, 87, 255);
+        Colors.saffron = new Color32(244, 208, 63, 255);
+      }
+
+
+      //------------------------------------------------------------------------/
+      // Methods
+      //------------------------------------------------------------------------/
       /// <summary>
       /// Gets a distinct color, given an index (up to 1024)
       /// </summary>
