@@ -7,7 +7,7 @@ using Cinemachine;
 namespace Stratus.Gameplay
 {
   [RequireComponent(typeof(CharacterControllerMovement))]
-  [CustomExtension(typeof(StratusCharacterController))]
+  [CustomExtensionAttribute(typeof(StratusCharacterController))]
   public class CharacterControllerInput : StratusBehaviour, IExtensionBehaviour<StratusCharacterController>
   {
     //--------------------------------------------------------------------------------------------/

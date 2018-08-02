@@ -5,7 +5,7 @@ using System;
 
 namespace Stratus.Examples
 {
-  [CustomExtension(typeof(SampleExtensibleBehaviour))]
+  [CustomExtensionAttribute(typeof(SampleExtensibleBehaviour))]
   public class UsefulExtension : StratusBehaviour, IExtensionBehaviour
   {
     public bool useful = true;

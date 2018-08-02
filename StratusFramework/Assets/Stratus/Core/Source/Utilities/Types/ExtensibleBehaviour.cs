@@ -16,20 +16,19 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     // Fields
     //--------------------------------------------------------------------------------------------/
-    [SerializeField]
-    private List<MonoBehaviour> extensionsField = new List<MonoBehaviour>();
-    //[SerializeField]
     [HideInInspector]
-    public int _selectedExtensionIndex;
+    public List<MonoBehaviour> extensionBehaviours = new List<MonoBehaviour>();
+    [HideInInspector]
+    public int selectedExtensionIndex;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
-    public MonoBehaviour[] extensionBehaviours => extensionsField.ToArray();
-    public IExtensionBehaviour[] extensions => (from MonoBehaviour e in extensionsField select (e as IExtensionBehaviour)).ToArray();
+    public IExtensionBehaviour[] extensions => GetExtensionBehaviours(this.extensionBehaviours);
     private Dictionary<Type, IExtensionBehaviour> extensionsMap { get; set; } = new Dictionary<Type, IExtensionBehaviour>();
-    public bool hasExtensions => extensionsField.Count > 0;
+    public bool hasExtensions => extensionBehaviours.Count > 0;
     private static Dictionary<IExtensionBehaviour, ExtensibleBehaviour> extensionOwnershipMap { get; set; } = new Dictionary<IExtensionBehaviour, ExtensibleBehaviour>();
+    public static HideFlags extensionFlags { get; } = HideFlags.HideInInspector;
     //public int selectedExtensionIndex { get { return _selectedExtension; } set { _selectedExtension = value; } }
 
     //--------------------------------------------------------------------------------------------/
@@ -70,8 +69,9 @@ namespace Stratus
     /// <param name="extension"></param>
     public void Add(IExtensionBehaviour extension)
     {
-      //extension.extensibleField = this;
-      extensionsField.Add((MonoBehaviour)extension);
+      //extension.extensibleField = this;      
+      (extension as MonoBehaviour).hideFlags = ExtensibleBehaviour.extensionFlags;
+      extensionBehaviours.Add((MonoBehaviour)extension);
       extensionsMap.Add(extension.GetType(), extension);
     }
 
@@ -81,8 +81,21 @@ namespace Stratus
     /// <param name="extension"></param>
     public void Remove(IExtensionBehaviour extension)
     {
-      extensionsField.Remove((MonoBehaviour)extension);
+      extensionBehaviours.Remove((MonoBehaviour)extension);
       extensionsMap.Remove(extension.GetType());
+    }
+
+    /// <summary>
+    /// Removes the extension from this behaviour
+    /// </summary>
+    /// <param name="extension"></param>
+    public void Remove(int index)
+    {
+      var extension = extensionBehaviours[index];
+      Type extensionType = extension.GetType();
+      Trace.Script($"Noww removing {extensionType}");
+      extensionsMap.Remove(extensionType);
+      extensionBehaviours.RemoveAt(index);
     }
 
     /// <summary>
@@ -105,27 +118,26 @@ namespace Stratus
     /// <returns></returns>
     public bool HasExtension(Type type) => extensionsMap.ContainsKey(type);
 
-
-    [ContextMenu("Show Extensions")]
-    private void ShowExtensions()
+    /// <summary>
+    /// Retrieves the extension of the given type, if its present
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public bool HasExtension<T>() where T : IExtensionBehaviour
     {
-      foreach(var extension in this.extensionsField)
-      {
-        extension.hideFlags = HideFlags.None;
-      }
+      return this.GetExtension<T>() != null;
     }
-
-    [ContextMenu("Hide Extensions")]
-    private void HideExtensions()
-    {
-      foreach (var extension in this.extensionsField)
-      {
-        extension.hideFlags = HideFlags.HideInInspector;
-      }
-    }
-
 
     /// <summary>
+    /// Retrieves the extension of the given type, if its present
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public bool HasExtension(IExtensionBehaviour behaviour)
+    {
+      return this.HasExtension(behaviour.GetType());
+    }
+
     /// Retrieves the extensible that the extension is for
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -135,57 +147,68 @@ namespace Stratus
     {
       return extensionOwnershipMap[extension] as T;
     }
+
+    public static IExtensionBehaviour[] GetExtensionBehaviours(MonoBehaviour[] monoBehaviours)
+    {
+      return (from MonoBehaviour e in monoBehaviours select (e as IExtensionBehaviour)).ToArray();
+    }
+
+    public static IExtensionBehaviour[] GetExtensionBehaviours(List<MonoBehaviour> monoBehaviours)
+    {
+      return (from MonoBehaviour e in monoBehaviours select (e as IExtensionBehaviour)).ToArray();
+    }
+
+    [ContextMenu("Show Extensions")]
+    private void ShowExtensions()
+    {
+      foreach(var extension in this.extensionBehaviours)
+      {
+        extension.hideFlags = HideFlags.None;
+      }
+    }
+
+    [ContextMenu("Hide Extensions")]
+    private void HideExtensions()
+    {
+      foreach (var extension in this.extensionBehaviours)
+      {
+        extension.hideFlags = HideFlags.HideInInspector;
+      }
+    }
+
+
+    /// <summary>
+
     
   }
 
   /// <summary>
   /// Tells the Editor which extensible class this extension is for
   /// </summary>
-  public class CustomExtension : Attribute
+  public class CustomExtensionAttribute : Attribute
   {
-    public CustomExtension(Type extensibleType)
+    public CustomExtensionAttribute(params Type[] supportedExtensibles)
     {
-      this.extensibleType = extensibleType;
+      this.supportedExtensibles = supportedExtensibles;
     }
 
-    public Type extensibleType { get; set; }
+    public Type[] supportedExtensibles { get; set; }
 
   }
 
-  ///// <summary>
-  ///// A behaviour that acts as an extension to extensible behaviour (one that
-  ///// derives from ExtensibleBehaviour). Make sure to use the 'CustomExtension' attribute in order
-  ///// to specify which extensible behaviour this extension is for.
-  ///// </summary>
-  //[RequireComponent(typeof(IExtensible), typeof(ExtensibleBehaviour))]
-  //public abstract class ExtensionBehaviour : StratusBehaviour
-  //{
-  //  [HideInInspector]
-  //  [SerializeField]
-  //  internal ExtensibleBehaviour extensibleField;
-  //  internal virtual void OnAwake() => OnExtensibleAwake();
-  //  internal void OnStart() => OnExtensibleStart();
-  //  protected abstract void OnExtensibleAwake();
-  //  protected abstract void OnExtensibleStart();
-  //}
-  //
-  ///// <summary>
-  ///// A behaviour that acts as an extension to extensible behaviour (one that
-  ///// derives from ExtensibleBehaviour). Make sure to use the 'CustomExtension' attribute in order
-  ///// to specify which extensible behaviour this extension is for.
-  ///// </summary>
-  //public abstract class ExtensionBehaviour<T> : ExtensionBehaviour where T : ExtensibleBehaviour
-  //{
-  //  /// <summary>
-  //  /// The extensible component this extension is for
-  //  /// </summary>
-  //  public T extensible { private set; get; }
-  //  internal override void OnAwake()
-  //  {
-  //    extensible = extensibleField as T;
-  //    base.OnAwake();
-  //  }
-  //}
+  /// <summary>
+  /// Allows additional configuration of an extensible behaviour
+  /// </summary>
+  public class ExtensibleBehaviourAttribute : Attribute
+  {
+    public ExtensibleBehaviourAttribute(params Type[] extensionTypes)
+    {
+      this.extensionTypes = extensionTypes;
+    }
+
+    public Type[] extensionTypes{ get; set; }
+  }
+
 
   /// <summary>
   /// Interface type used to validate all extensible behaviours

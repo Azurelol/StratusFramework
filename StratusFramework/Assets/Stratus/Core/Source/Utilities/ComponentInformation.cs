@@ -199,6 +199,7 @@ namespace Stratus
       this.component = component;
       this.InitializeComponentInformation();
       this.memberReferences = this.CreateAllMemberReferences();
+      this.OnMemberReferencesSet();
 
       // This information is now valid
       this.valid = true;
@@ -327,8 +328,7 @@ namespace Stratus
         MemberReference memberReference = new MemberReference(this.properties[p], this, p);
         memberReferences.Add(memberReference);
       }
-      this.watchList = new List<MemberReference>();
-      this.OnMemberReferencesSet();
+      this.watchList = new List<MemberReference>();      
       return memberReferences;
     }
 

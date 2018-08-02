@@ -6,7 +6,7 @@ using System;
 
 namespace Stratus.Gameplay
 {
-  [CustomExtension(typeof(StratusCharacterController))]
+  [CustomExtensionAttribute(typeof(StratusCharacterController))]
   public class CinemachineCameraController : StratusBehaviour, IExtensionBehaviour<StratusCharacterController>
   {
     //--------------------------------------------------------------------------------------------/

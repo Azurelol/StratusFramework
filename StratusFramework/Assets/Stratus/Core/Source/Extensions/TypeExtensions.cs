@@ -19,6 +19,11 @@ namespace Stratus
       return AttributeUtility.FindAttribute<T>(type);
     }
 
+    public static Dictionary<Type, Attribute> MapAttributes(this Type type)
+    {
+      return AttributeUtility.MapAttributes(type);
+    }
+
   }
 
 }

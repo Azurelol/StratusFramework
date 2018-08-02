@@ -12,6 +12,7 @@ namespace Stratus.Gameplay
   /// <summary>
   /// A component for generically managing animations in a character
   /// </summary>
+  [DisallowMultipleComponent]
   public abstract class CharacterAnimator : StratusBehaviour
   {
     //------------------------------------------------------------------------/
@@ -239,7 +240,9 @@ namespace Stratus.Gameplay
 
     private void Reset()
     {
-      rootTransform = animator.transform;
+      this.animator = GetComponentInChildren<Animator>();
+      if (animator)
+        this.rootTransform = animator.transform;
     }
 
     //--------------------------------------------------------------------------------------------/

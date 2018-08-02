@@ -7,6 +7,7 @@ using System;
 
 namespace Stratus.Gameplay
 {
+  [DisallowMultipleComponent]
   public class CharacterMovement : StratusBehaviour
   {
     //--------------------------------------------------------------------------------------------/

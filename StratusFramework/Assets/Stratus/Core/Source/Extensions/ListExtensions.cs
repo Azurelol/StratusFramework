@@ -709,6 +709,37 @@ namespace Stratus
       return newArray;
     }
 
+    public static bool Contains<T>(this T[] array, T element)
+    {
+      foreach(var item in array)
+      {
+        if (item.Equals(element))
+          return true;
+      }
+      return false;
+    }
+
+
+    public static bool Contains<T>(this T[] array, T element, Func<T, T, bool> comparer)
+    {
+      foreach (var item in array)
+      {
+        if (comparer(item, element))
+          return true;
+      }
+      return false;
+    }
+
+    public static bool Contains<T>(this T[] array, T element, Comparer<T> comparer)
+    {
+      foreach (var item in array)
+      {
+        if (comparer.Compare(item, element) == 0)
+          return true;
+      }
+      return false;
+    }
+
     public static U[] OfType<T, U>(this T[] array)
       where T : class
       where U : class, T

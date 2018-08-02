@@ -66,12 +66,6 @@ namespace Stratus
     }
   }
 
-  public class EnumUtils : ConstrainedEnumParser<System.Enum>
-  // reference type constraint to any <System.Enum>
-  {
-    // call to parse will then contain constraint to specific <System.Enum>-class
-  }
-
   
 
 }
