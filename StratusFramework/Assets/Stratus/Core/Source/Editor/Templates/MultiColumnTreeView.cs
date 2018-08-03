@@ -250,7 +250,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: GUI
     //------------------------------------------------------------------------/
-    private float xOffset = 20f, yOffset = 30;
+    //private float xOffset = 20f, yOffset = 30;
 
     /// <summary>
     /// Draws the multicolumn tree view GUI

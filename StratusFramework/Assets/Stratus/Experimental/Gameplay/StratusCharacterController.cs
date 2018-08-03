@@ -46,28 +46,37 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Fields
     //--------------------------------------------------------------------------------------------/
-    [Tooltip("Whether to print debug output")]
+    [HideInInspector]
     public bool debug = false;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
-    public NavMeshAgent navigation { get; private set; }
-    public new Rigidbody rigidbody { get; private set; }
 
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
     protected override void OnAwake()
     {
-      rigidbody = GetComponent<Rigidbody>();
-      navigation = GetComponent<NavMeshAgent>();
-      //navigation.Warp(transform.position);
     }
 
     protected override void OnStart()
+    {      
+    }
+
+    //--------------------------------------------------------------------------------------------/
+    // Methods
+    //--------------------------------------------------------------------------------------------/
+    [ContextMenu("Show Debug")]
+    private void ShowDebug()
     {
-      
+      this.debug = true;
+    }
+
+    [ContextMenu("Hide Debug")]
+    private void HideDebug()
+    {
+      this.debug = false;
     }
 
   }

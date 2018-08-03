@@ -12,26 +12,20 @@ namespace Stratus
   /// </summary>
   public static class StratusAssetProcessor //: UnityEditor.AssetModificationProcessor
   {
-    //------------------------------------------------------------------------/
-    // CTOR
-    //------------------------------------------------------------------------/  
-    static StratusAssetProcessor()
+    public class AssetModification : UnityEditor.AssetModificationProcessor
     {
-      EditorSceneManager.sceneSaving += OnSceneSaving;
-      Undo.postprocessModifications += OnPostProcessModifications;
-    }
+      /// <summary>
+      /// Invoked when any asset is saved
+      /// </summary>
+      /// <param name="paths"></param>
+      /// <returns></returns>
+      public static string[] OnWillSaveAssets(string[] paths)
+      { 
+        return paths;
+      }
+     }
 
-    //private void OnWillCreateAsset(string assetName)
-    //{
-    //  Trace.Script($"Creating {assetName}");
-    //}
-    //
-    //private void OnWillDeleteAsset(string assetName, RemoveAssetOptions options)
-    //{
-    //  Trace.Script($"Deleting {assetName}");
-    //}
-
-    /// <summary>
+        /// <summary>
     /// Invoked just after building the scene, and when entering playmode
     /// </summary>
     [PostProcessScene]
@@ -49,6 +43,57 @@ namespace Stratus
       }
     }
 
+    //------------------------------------------------------------------------/
+    // Declaration
+    //------------------------------------------------------------------------/  
+    public delegate void AssetChangeCallback();
+    public delegate void ObjectModificationCallback(Object target);
+    public delegate void ModificationCallback();
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/  
+    private static Dictionary<string, List<AssetChangeCallback>> onFileModified { get; set; } = new Dictionary<string, List<AssetChangeCallback>>();
+    private static Dictionary<Object, List<ObjectModificationCallback>> onObjectModified { get; set; } = new Dictionary<Object, List<ObjectModificationCallback>>();
+    private static Dictionary<string, List<ModificationCallback>> onObjectByNameModified { get; set; } = new Dictionary<string, List<ModificationCallback>>();
+
+    //------------------------------------------------------------------------/
+    // CTOR
+    //------------------------------------------------------------------------/      
+    static StratusAssetProcessor()
+    {
+      EditorSceneManager.sceneSaving += OnSceneSaving;
+      Undo.postprocessModifications += OnPostProcessModifications;
+    }
+
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
+    public static void RegisterFileModified(string fileName, AssetChangeCallback callback)
+    {
+      onFileModified.AddListIfMissing(fileName, callback);
+    }
+
+    /// <summary>
+    /// Registers a callback for an object of given name whenever it is changed
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <param name="callback"></param>
+    public static void ObjectModified(Object target, ObjectModificationCallback callback)
+    {
+      onObjectModified.AddListIfMissing(target, callback);
+    }
+
+    /// <summary>
+    /// Registers a callback for an object of given name whenever it is changed
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <param name="callback"></param>
+    public static void ObjectModified(string name, ModificationCallback callback)
+    {
+      onObjectByNameModified.AddListIfMissing(name, callback);
+    }
+
     /// <summary>
     /// Invoked just after building the player
     /// </summary>
@@ -64,14 +109,16 @@ namespace Stratus
     {
       foreach(UndoPropertyModification modification in propertyModifications)
       {
-        Trace.Script($"Modified {modification.currentValue.target.name}");
+        Object target = modification.currentValue.target;
+        onObjectModified.InvokeIfKeyPresent(target, (ObjectModificationCallback callback) => callback.Invoke(target));
+        onObjectByNameModified.InvokeIfKeyPresent(target.name, (ModificationCallback callback) => callback.Invoke());
       }
       return propertyModifications;
     }
 
     private static void OnSceneSaving(UnityEngine.SceneManagement.Scene scene, string path)
     {
-      Trace.Script($"Saving {scene.name}");
+      //Trace.Script($"Saving {scene.name}");
     }
 
   }

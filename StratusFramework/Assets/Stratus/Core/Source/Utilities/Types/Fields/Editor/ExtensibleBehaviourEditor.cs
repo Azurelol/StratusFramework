@@ -19,46 +19,55 @@ namespace Stratus
     private string[] extensionTypeNames;
     private StratusEditor extensionEditor;
     private Type extensibleType, extensionType;
-    private SerializedProperty selectedExtensionIndexProperty;
-    private bool hasSelectedExtension;
+    private SerializedProperty selectedExtensionTypeIndexProperty;
 
     [SerializeField]
     private int extensionTypesIndex = 0;
     [SerializeField]
-    private int extensionIndex = 0;    
+    private int extensionIndex = 0;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/    
+    private bool hasSelectedExtension => selectedExtensionBehaviour != null;
+    private bool removingExtension { get; set; }
     public IExtensionBehaviour selectedExtension => target.hasExtensions ? target.extensions[extensionIndex] : null;
-    public MonoBehaviour selectedExtensionBehaviour => target.hasExtensions ? target.extensionBehaviours[extensionIndex] : null;
+    public MonoBehaviour selectedExtensionBehaviour => target.extensionBehaviours.HasIndex(extensionIndex) ? target.extensionBehaviours[extensionIndex] : null;
     public string selectedExtensionTypeName => extensionTypeNames[extensionTypesIndex];
+    public Type selectedExtensionType => extensionTypes[extensionTypesIndex];
 
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/    
     protected override void OnStratusEditorEnable()
     {
+      // Set the draw request
+      drawGroupRequests.Add(new DrawGroupRequest(DrawExtensions));
+
       // Remove any null behaviours
       this.target.extensionBehaviours.RemoveNull();
 
-      this.selectedExtensionIndexProperty = propertyMap[nameof(ExtensibleBehaviour.selectedExtensionIndex)];
+      // Find all possible extension types
       this.extensibleType = target.GetType();
       this.extensionType = typeof(IExtensionBehaviour);
       this.GetMatchingExtensionTypes();
 
-      // Set the index
-      //this.extensionIndex = selectedExtensionIndexProperty.intValue;
-      //this.extensionTypesIndex = this.extensionTypeNames.FindIndex(this.selectedExtensionName);
-      //this.extensionTypesIndex = this.selectedExtensionBehaviour != null ? this.selectedExtensionBehaviour.name
-      if (!this.target.extensions.HasIndex(this.extensionIndex))
-        this.extensionIndex = -1;
-      this.TryCreateExtensionEditor();
+      // Set the type index
+      this.selectedExtensionTypeIndexProperty = propertyMap[nameof(ExtensibleBehaviour.selectedExtensionTypeIndex)];
+      this.extensionTypesIndex = this.selectedExtensionTypeIndexProperty.intValue;
+      if (this.extensionTypesIndex > this.extensionTypes.Length)
+        this.extensionTypesIndex = 0;
 
       this.RefreshExtensions();
+      this.SetExtensionIndex();
+      this.TryCreateExtensionEditor();
+    }
 
-      // Set the draw request
-      drawGroupRequests.Add(new DrawGroupRequest(DrawExtensions));
+    protected override void OnStratusEditorDisable()
+    {
+
+      propertyMap["selectedExtensionTypeIndex"].intValue = this.extensionTypesIndex;
+      this.selectedExtensionTypeIndexProperty.serializedObject.ApplyModifiedProperties();
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -71,15 +80,15 @@ namespace Stratus
 
       SelectExtension(rect);
 
-      if (this.extensionEditor != null)
+      if (this.hasSelectedExtension && this.extensionEditor)
       {
         DrawExtension(rect);
       }
-      
+
     }
 
     private void SelectExtension(Rect rect)
-    {            
+    {
       EditorGUILayout.BeginHorizontal();
       {
         bool changed = StratusEditorUtility.CheckControlChange(() =>
@@ -90,7 +99,9 @@ namespace Stratus
           if (this.hasSelectedExtension)
           {
             if (GUILayout.Button("Remove", EditorStyles.miniButtonRight))
+            {
               this.RemoveExtension(extensionIndex);
+            }
           }
           else
           {
@@ -101,14 +112,9 @@ namespace Stratus
           }
         });
 
-        if (changed)
+        if (changed && !removingExtension)
         {
-          //Trace.Script("Attributes:");
-          //foreach(var attr in this.extensionAttributes[extensionTypesIndex])
-          //{
-          //  Trace.Script($" - {attr.Value.GetType().Name}");
-          //}
-          this.extensionIndex = this.GetExtensionIndex(extensionTypes[extensionTypesIndex]);
+          this.SetExtensionIndex();
           this.TryCreateExtensionEditor();
         }
 
@@ -120,9 +126,6 @@ namespace Stratus
 
     private void TryCreateExtensionEditor()
     {
-      //this.extensionIndex = this.GetExtensionIndex(extensionTypes[extensionTypesIndex]);
-      this.hasSelectedExtension = this.extensionIndex != -1;
-
       if (this.hasSelectedExtension)
       {
         CreateExtensionEditor();
@@ -134,32 +137,23 @@ namespace Stratus
     }
 
     private void CreateExtensionEditor()
-    {     
-      this.selectedExtensionIndexProperty.intValue = this.extensionIndex;
-      this.selectedExtensionIndexProperty.serializedObject.ApplyModifiedProperties();
+    {
+      //if (!this.hasSelectedExtension)
+      //  return;
 
-      this.extensionEditor = UnityEditor.Editor.CreateEditor((MonoBehaviour)selectedExtension) as StratusEditor;
-      this.extensionEditor.backgroundStyle = EditorStyles.helpBox;
+      this.extensionEditor = UnityEditor.Editor.CreateEditor(selectedExtensionBehaviour) as StratusEditor;
+      //this.extensionEditor.backgroundStyle = EditorStyles.helpBox;
     }
 
     private void DrawExtension(Rect rect)
     {
       DrawEditor(extensionEditor, selectedExtensionTypeName);
-      // Now draw the selected extension
-      //EditorGUI.indentLevel = 1;
-      //extensionEditor.OnInspectorGUI();
-      //EditorGUI.indentLevel = 0;
     }
 
 
     private void AddExtension(int extensionTypeIndex)
     {
       Type extensionType = extensionTypes[extensionTypeIndex];
-      //if (GetExtensionIndex(extensionType) == -1)
-      //{
-      //  Debug.LogWarning($"{target} already has the extension {extensionType.Name}");
-      //  return;
-      //}
 
       IExtensionBehaviour extension = target.gameObject.AddComponent(extensionType) as IExtensionBehaviour;
       if (extension == null)
@@ -168,44 +162,42 @@ namespace Stratus
         return;
       }
 
-      target.Add(extension);            
+      Trace.Script($"Adding extension {extensionType.Name}");
+      target.Add(extension);
       Undo.RecordObject(target, extensionType.Name);
       serializedObject.ApplyModifiedProperties();
 
-      this.hasSelectedExtension = true;
+      this.SetExtensionIndex();
       this.RefreshExtensions();
-
-      //Trace.Script($"Adding {extensionType.Name}");
     }
 
     private void RemoveExtension(int index)
     {
+      MonoBehaviour extensionBehaviour = selectedExtensionBehaviour;
+      this.removingExtension = true;
+      target.Remove(index);
+      extensionEditor = null;
 
+      Undo.RecordObject(target, extensionBehaviour.GetType().Name);
+      Undo.DestroyObjectImmediate(extensionBehaviour);
+      this.removingExtension = false;
+      this.RefreshExtensions();
 
-      endOfFrameRequests.Add(() =>
-      {
-        MonoBehaviour extensionBehaviour = selectedExtensionBehaviour;
-        target.Remove(index);
-        Undo.RecordObject(target, extensionBehaviour.GetType().Name);
-        Undo.DestroyObjectImmediate(extensionBehaviour);
+      //endOfFrameRequests.Add(() =>
+      //{
+      //});
 
-        serializedObject.ApplyModifiedProperties();
-
-        extensionIndex = -1;
-        extensionEditor = null;
-        this.hasSelectedExtension = false;
-
-        this.RefreshExtensions();
-      });
+      EditorGUIUtility.ExitGUI();
     }
 
     private void RefreshExtensions()
     {
+      this.target.extensionBehaviours.RemoveNull();
       // Check that there's no extensions present on the GAmeObject but not added to the extensible
       var extensionBehaviours = ExtensibleBehaviour.GetExtensionBehaviours(this.target.GetComponents<MonoBehaviour>());
-      foreach(var behaviour in extensionBehaviours)
+      foreach (var behaviour in extensionBehaviours)
       {
-        if (behaviour == null)
+        if (behaviour == null || !this.extensionTypes.Contains(behaviour.GetType()))
           continue;
 
         bool hasExtension = this.target.HasExtension(behaviour);
@@ -216,26 +208,15 @@ namespace Stratus
       }
     }
 
-    //private void RemoveExtension(IExtensionBehaviour extension)
-    //{
-    //  endOfFrameRequests.Add(() =>
-    //  {
-    //    extensionEditor = null;
-    //    extensionIndex = -1;
-    //    this.hasSelectedExtension = false;
-    //
-    //    target.Remove(extension);
-    //    Undo.RecordObject(target, extension.GetType().Name);
-    //    Undo.DestroyObjectImmediate((extension as MonoBehaviour));
-    //
-    //    serializedObject.ApplyModifiedProperties();
-    //
-    //    RefreshExtensions();
-    //  });
-    //}
+    private void SetExtensionIndex()
+    {
+      this.extensionIndex = this.GetExtensionIndex(selectedExtensionType);
+      //this.hasSelectedExtension = this.extensionIndex != -1;
+    }
 
     private int GetExtensionIndex(Type type)
     {
+      //target.extensionBehaviours.RemoveNull();
       return target.extensions.FindIndex((IExtensionBehaviour e) => e.GetType() == type);
     }
 
@@ -259,14 +240,6 @@ namespace Stratus
       extensionTypes = matchingTypes.ToArray();
       extensionTypeNames = matchingTypes.Names(x => x.Name);
     }
-    
-    // 2. Get any extensions marked by 
-
-    //private void Repair()
-    //{
-    //  
-    //}
-
   }
 
 }

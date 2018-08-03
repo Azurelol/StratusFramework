@@ -1013,6 +1013,177 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &752326147
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 752326152}
+  - component: {fileID: 752326151}
+  - component: {fileID: 752326150}
+  - component: {fileID: 752326149}
+  - component: {fileID: 752326148}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &752326148
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 752326147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8cf9fdfd0479b4687fb7794694aa03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 776468814}
+  mode: 0
+  horizontal:
+    _type: 2
+    key: 41
+    mouseButton: 0
+    axis: Horizontal
+  vertical:
+    _type: 2
+    key: 0
+    mouseButton: 0
+    axis: Vertical
+  sprint:
+    _type: 2
+    key: 0
+    mouseButton: 0
+    axis: Sprint
+  jump:
+    _type: 2
+    key: 0
+    mouseButton: 0
+    axis: Jump
+  mouseMovement: 0
+  moveButton:
+    _type: 1
+    key: 0
+    mouseButton: 1
+    axis: 
+  additional: []
+  changeCamera:
+    _type: 0
+    key: 0
+    mouseButton: 0
+    axis: 
+  presets:
+  - label: Third Person
+    camera: {fileID: 952091469}
+    horizontalOffset: 3
+    verticalOffset: 1
+    cursorLock: 1
+    turn: 1
+    synchronizeForward: 0
+--- !u!114 &752326149
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 752326147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffafab3d05ae4a945abd26ca749bd66b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1099526892}
+  rootTransform: {fileID: 1099526891}
+  animatorTriggers:
+  - onEvent:
+      _classRef: 
+    parameterType: 1
+    parameterName: 
+    boolValue: 0
+    intValue: 0
+    floatValue: 0
+  animatorParameters: []
+--- !u!114 &752326150
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 752326147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be8242489e67b6545aec937d32584ba7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  locomotion: 0
+  speed: 10
+  accelerationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  accelerationRampUp: 1
+  movementThreshold: 0.2
+  sprintMuiltiplier: 2
+  turningSpeed: 1
+  turningThreshold: 180
+  faceDirection: 1
+  jumpSpeed: 5
+  jumpCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fallCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  jumpApex: 0.5
+  groundDetection: 0
+  groundCollider: {fileID: 0}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  groundCastFrequency: 0.1
+  airControl: 1
+--- !u!114 &752326151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 752326147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80e5ad6c5e2cb5742a13736783cf10ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extensionBehaviours:
+  - {fileID: 752326149}
+  - {fileID: 752326150}
+  - {fileID: 752326148}
+  selectedExtensionTypeIndex: 0
+  debug: 0
+--- !u!4 &752326152
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 752326147}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1099526891}
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &776468811
 GameObject:
   m_ObjectHideFlags: 0
@@ -1519,7 +1690,7 @@ Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 752326152}
     m_Modifications:
     - target: {fileID: 400138, guid: b911adf7c8bd6554f9b4f1080eea621b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1551,7 +1722,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400138, guid: b911adf7c8bd6554f9b4f1080eea621b, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: b911adf7c8bd6554f9b4f1080eea621b, type: 3}
       propertyPath: m_Controller
@@ -1560,6 +1731,15 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b911adf7c8bd6554f9b4f1080eea621b, type: 3}
   m_IsPrefabParent: 0
+--- !u!4 &1099526891 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 400138, guid: b911adf7c8bd6554f9b4f1080eea621b, type: 3}
+  m_PrefabInternal: {fileID: 1099526890}
+--- !u!95 &1099526892 stripped
+Animator:
+  m_PrefabParentObject: {fileID: 9500000, guid: b911adf7c8bd6554f9b4f1080eea621b,
+    type: 3}
+  m_PrefabInternal: {fileID: 1099526890}
 --- !u!1 &1231410947
 GameObject:
   m_ObjectHideFlags: 3
@@ -1858,12 +2038,6 @@ MonoBehaviour:
     - component: {fileID: 1438584640}
       alphabeticalSorted: 0
       memberReferences:
-      - name: position
-        type: 16
-        componentName: Transform
-        gameObjectName: GameObject
-        memberIndex: 0
-        isWatched: 1
       - name: localPosition
         type: 16
         componentName: Transform
@@ -2119,18 +2293,6 @@ MonoBehaviour:
     - component: {fileID: 1438584639}
       alphabeticalSorted: 0
       memberReferences:
-      - name: _information
-        type: 4
-        componentName: GameObjectBookmark
-        gameObjectName: GameObject
-        memberIndex: 0
-        isWatched: 0
-      - name: information
-        type: 16
-        componentName: GameObjectBookmark
-        gameObjectName: GameObject
-        memberIndex: 0
-        isWatched: 0
       - name: get
         type: 16
         componentName: GameObjectBookmark
@@ -2481,97 +2643,6 @@ Transform:
   - {fileID: 1585778500}
   m_Father: {fileID: 1456404618}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1840064941
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1840064944}
-  - component: {fileID: 1840064943}
-  - component: {fileID: 1840064942}
-  m_Layer: 0
-  m_Name: GameObject (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1840064942
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1840064941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be8242489e67b6545aec937d32584ba7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  locomotion: 0
-  speed: 10
-  accelerationCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  accelerationRampUp: 1
-  movementThreshold: 0.2
-  sprintMuiltiplier: 2
-  turningSpeed: 1
-  turningThreshold: 180
-  faceDirection: 1
-  jumpSpeed: 5
-  jumpCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  fallCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  jumpApex: 0.5
-  groundDetection: 0
-  groundCollider: {fileID: 0}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  groundCastFrequency: 0.1
-  airControl: 1
---- !u!114 &1840064943
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1840064941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80e5ad6c5e2cb5742a13736783cf10ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  extensionBehaviours:
-  - {fileID: 1840064942}
-  selectedExtensionIndex: 0
-  debug: 0
---- !u!4 &1840064944
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1840064941}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0000009536743, y: 0.90226483, z: 0.021623328}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1867566672
 GameObject:

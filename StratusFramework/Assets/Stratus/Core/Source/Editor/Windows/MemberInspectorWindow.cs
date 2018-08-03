@@ -64,9 +64,6 @@ namespace Stratus
     private float pollSpeed = 1f;
 
     [SerializeField]
-    private int lastComponentIndex = 0;
-
-    [SerializeField]
     private MemberInspectorTreeView memberInspector;
 
     [SerializeField]
@@ -85,13 +82,9 @@ namespace Stratus
       nameof(Mode.Inspector),
       nameof(Mode.WatchList),
     };
-    private SerializedProperty memberProperty { get; set; }
     private Type gameObjectType { get; set; }
     private bool hasTarget => this.target != null && this.currentTargetInformation != null;
     private int selectedIndex { get; set; }
-    private AnimBool[] showComponent { get; set; }
-    private Vector2 componentScrollPosition { get; set; }
-    private Vector2 watchListScrollPosition { get; set; }
     private DropdownList<ComponentInformation> componentList { get; set; }
     private bool updateTreeView { get; set; }
 
@@ -141,7 +134,7 @@ namespace Stratus
     protected override void OnWindowUpdate()
     {
       // Check whether values need to be updated
-      bool updateValues = pollTimer.Update(Time.deltaTime);
+      pollTimer.Update(Time.deltaTime);
       if (pollTimer.isFinished)
       {        
         switch (this.mode)
@@ -205,8 +198,6 @@ namespace Stratus
 
     public void OnBeforeSerialize()
     {
-      if (this.componentList != null)
-        this.lastComponentIndex = this.componentList.selectedIndex;
     }
 
     public void OnAfterDeserialize()
@@ -344,7 +335,6 @@ namespace Stratus
       else
       {
         this.currentTargetInformation = this.targetTemporaryInformation = null;
-        this.lastComponentIndex = 0;
       }
     }
 
@@ -368,7 +358,6 @@ namespace Stratus
           this.currentTargetInformation = this.targetTemporaryInformation;
         }
 
-        this.lastComponentIndex = 0;
         //Trace.Script($"Setting target information for {this.target.name}");
       }
 
@@ -393,12 +382,10 @@ namespace Stratus
     // Methods: Draw
     //------------------------------------------------------------------------/
     private void DrawControls()
-    {
-     
+    {     
       // Toolbar      
       EditorGUI.BeginChangeCheck();
       {
-        int index = (int)this.mode;
         this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions, GUILayout.ExpandWidth(false));
       }
       if (EditorGUI.EndChangeCheck() || this.memberInspector == null)

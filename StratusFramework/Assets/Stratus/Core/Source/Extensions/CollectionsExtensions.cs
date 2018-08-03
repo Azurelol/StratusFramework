@@ -46,6 +46,34 @@ namespace Stratus
     }
 
     /// <summary>
+    /// Adds the given key-value pair if the key is not present, also adding the necessary list
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="U"></typeparam>
+    /// <param name="dictionary"></param>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public static void AddListIfMissing<T, U>(this Dictionary<T, List<U>> dictionary, T key, U value)
+    {
+      if (!dictionary.ContainsKey(key))
+      {
+        dictionary.Add(key, new List<U>());
+      }
+      dictionary[key].Add(value);
+    }
+
+    public static void InvokeIfKeyPresent<T, U>(this Dictionary<T, List<U>> dictionary, T key, System.Action<U> invoke)
+    {
+      if (dictionary.ContainsKey(key))
+      {
+        foreach(var item in dictionary[key])
+        {
+          invoke(item);
+        }
+      }
+    }
+
+    /// <summary>
     /// Adds the given list to the dictionary, provided a function that will extract the key for each value
     /// </summary>
     /// <typeparam name="Key"></typeparam>

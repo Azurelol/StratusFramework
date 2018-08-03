@@ -23,7 +23,7 @@ namespace Stratus
       PropertyInfo[] propertyInfo = sourceType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
       // 3. Assign all source property to target object properties
-      foreach(PropertyInfo property in propertyInfo)
+      foreach (PropertyInfo property in propertyInfo)
       {
         // Check whether the property can be written to
         if (property.CanWrite)
@@ -99,10 +99,16 @@ namespace Stratus
       return JsonUtility.FromJson(data, self.GetType());
     }
 
+    public static bool Destroyed(this UnityEngine.Object obj)
+    {
+      return obj == null || obj.Equals(null);
+    }
+
     public static bool HasDefaultConstructor(this Type t)
     {
       return t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
     }
+
 
   }
 

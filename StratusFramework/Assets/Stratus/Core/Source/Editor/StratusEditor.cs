@@ -129,7 +129,6 @@ namespace Stratus
     /// A list of all messages added
     /// </summary>
     public List<Validation> messages { get; private set; } = new List<Validation>();
-
     //public System.Action onEnteredEditMode { get; protected set; }
     //public System.Action onExitingEditMode { get; protected set; }
     //public System.Action onEnteredPlayMode { get; protected set; }
@@ -142,6 +141,14 @@ namespace Stratus
     /// The base type for the component type this editor is for. It marks the stopping point to look at properties.
     /// </summary>
     protected abstract Type baseType { get; }
+    /// <summary>
+    /// The number of properties drawn by the base editor GUI
+    /// </summary>
+    protected int drawnProperties { get; set; }
+    /// <summary>
+    /// Whether the target component is still valid
+    /// </summary>
+    protected bool isTargetValid => !target.Destroyed();
 
 
 
@@ -149,7 +156,8 @@ namespace Stratus
     // Virtual Methods
     //------------------------------------------------------------------------/
     protected abstract void OnStratusEditorEnable();
-    protected virtual void OnFirstUpdate() { }
+    protected virtual void OnStratusEditorDisable() {}
+    protected virtual void OnFirstUpdate() {}
     internal abstract void OnStratusGenericEditorEnable();
     internal abstract void OnGenericStratusEditorValidate();
 
@@ -170,6 +178,9 @@ namespace Stratus
     private void OnDisable()
     {
       EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+
+      if (isTargetValid)
+        this.OnStratusEditorDisable();
     }
 
     protected virtual void OnPlayModeStateChanged(PlayModeStateChange stateChange)
@@ -218,7 +229,8 @@ namespace Stratus
         DrawMessages();
 
       // Now draw the base editor
-      OnBaseEditorGUI();
+      if (drawnProperties > 0)
+        OnBaseEditorGUI();
 
       // Now draw any custom draw functions
       if (drawGroupRequests.Count > 0)
@@ -562,6 +574,9 @@ namespace Stratus
       //  if (!propertyMap.ContainsKey(property.name))
       //    propertyMap.Add(property.name, property);
       //}
+
+      // Reset the number of drawn properties
+      this.drawnProperties = 0;
 
       // For every type, starting from the most derived up to the base, get its serialized properties      
       Type declaredType = target.GetType();

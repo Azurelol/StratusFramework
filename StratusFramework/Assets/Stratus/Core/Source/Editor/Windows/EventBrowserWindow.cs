@@ -156,7 +156,6 @@ namespace Stratus
     private EventTreeView treeView;
 
     private Vector2 scrollPosition;
-    private static string displayTitle = "Event Browser";
     private Type[] events;
 
     //------------------------------------------------------------------------/

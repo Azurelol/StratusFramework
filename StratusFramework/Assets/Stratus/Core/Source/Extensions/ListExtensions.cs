@@ -334,9 +334,8 @@ namespace Stratus
     /// <param name="list"></param>
     public static void RemoveNull<T>(this List<T> list)
     {
-      list.RemoveAll(x => x == null);
+      list.RemoveAll(x => x == null || x.Equals(null));
     }
-
 
     /// <summary>
     /// Checks whether this list has elements with duplicate keys, given a function
@@ -478,7 +477,7 @@ namespace Stratus
 
     public static bool HasIndex<T>(this IList<T> list, int index)
     {
-      return (list.Count - 1) >= index; ;
+      return (index >= 0) && ((list.Count - 1) >= index);
     }
 
     /// <summary>

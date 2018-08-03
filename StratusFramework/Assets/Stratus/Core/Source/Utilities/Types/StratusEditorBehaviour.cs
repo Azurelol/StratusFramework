@@ -77,20 +77,9 @@ namespace Stratus
     }
 #endif
 
-    ////------------------------------------------------------------------------/
-    //// Editor Methods
-    ////------------------------------------------------------------------------/
-    /// <summary>
-    /// Removes all instances of this behaviour
-    /// </summary>
-    private static void RemoveAll<T>() where T : StratusEditorBehaviour<T>
-    {
-      foreach(var behaviour in StratusEditorBehaviour<T>.availableList)
-      {
-        DestroyImmediate(behaviour);
-      }      
-    }
-
+    //------------------------------------------------------------------------/
+    // Editor Methods
+    //------------------------------------------------------------------------/
     public static void RemoveAll()
     {
       foreach (var behaviour in availableList)

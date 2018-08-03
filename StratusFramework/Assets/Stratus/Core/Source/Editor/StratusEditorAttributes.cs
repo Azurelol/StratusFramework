@@ -49,6 +49,8 @@ namespace Stratus
       bool hideInInspector = GetAttribute<HideInInspector>(property, hideInInspectorType) != null;
       if (hideInInspector)
         AddConstraint(property, False);
+      else
+        this.drawnProperties++;
     }
 
     /// <summary>

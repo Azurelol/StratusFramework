@@ -221,14 +221,6 @@ namespace Stratus
 #endif
     }
 
-    ///// <summary>
-    ///// Set common colors used by the framework
-    ///// </summary>
-    //private static void SetColors()
-    //{
-    //
-    //}
-
     /// <summary>
     /// Draws the selected background color inside the given rect
     /// </summary>

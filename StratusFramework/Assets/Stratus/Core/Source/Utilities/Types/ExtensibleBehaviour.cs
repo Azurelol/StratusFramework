@@ -18,18 +18,16 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     [HideInInspector]
     public List<MonoBehaviour> extensionBehaviours = new List<MonoBehaviour>();
-    [HideInInspector]
-    public int selectedExtensionIndex;
+    [SerializeField, HideInInspector]
+    public int selectedExtensionTypeIndex;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
     public IExtensionBehaviour[] extensions => GetExtensionBehaviours(this.extensionBehaviours);
-    private Dictionary<Type, IExtensionBehaviour> extensionsMap { get; set; } = new Dictionary<Type, IExtensionBehaviour>();
     public bool hasExtensions => extensionBehaviours.Count > 0;
     private static Dictionary<IExtensionBehaviour, ExtensibleBehaviour> extensionOwnershipMap { get; set; } = new Dictionary<IExtensionBehaviour, ExtensibleBehaviour>();
     public static HideFlags extensionFlags { get; } = HideFlags.HideInInspector;
-    //public int selectedExtensionIndex { get { return _selectedExtension; } set { _selectedExtension = value; } }
 
     //--------------------------------------------------------------------------------------------/
     // Virtual
@@ -46,7 +44,7 @@ namespace Stratus
 
       foreach (var extension in extensions)
       {
-        extensionsMap.Add(extension.GetType(), extension);
+        //extensionsMap.Add(extension.GetType(), extension);
         extension.OnExtensibleAwake(this);        
       }
     }
@@ -69,20 +67,9 @@ namespace Stratus
     /// <param name="extension"></param>
     public void Add(IExtensionBehaviour extension)
     {
-      //extension.extensibleField = this;      
-      (extension as MonoBehaviour).hideFlags = ExtensibleBehaviour.extensionFlags;
-      extensionBehaviours.Add((MonoBehaviour)extension);
-      extensionsMap.Add(extension.GetType(), extension);
-    }
-
-    /// <summary>
-    /// Removes the extension from this behaviour
-    /// </summary>
-    /// <param name="extension"></param>
-    public void Remove(IExtensionBehaviour extension)
-    {
-      extensionBehaviours.Remove((MonoBehaviour)extension);
-      extensionsMap.Remove(extension.GetType());
+      MonoBehaviour behaviour = (MonoBehaviour)extension;
+      behaviour.hideFlags = ExtensibleBehaviour.extensionFlags;
+      extensionBehaviours.Add(behaviour);
     }
 
     /// <summary>
@@ -93,8 +80,6 @@ namespace Stratus
     {
       var extension = extensionBehaviours[index];
       Type extensionType = extension.GetType();
-      Trace.Script($"Noww removing {extensionType}");
-      extensionsMap.Remove(extensionType);
       extensionBehaviours.RemoveAt(index);
     }
 
@@ -103,30 +88,26 @@ namespace Stratus
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public T GetExtension<T>() where T : IExtensionBehaviour
+    public T GetExtension<T>() where T : MonoBehaviour
     {
       Type type = typeof(T);
-      if (!extensionsMap.ContainsKey(type))
-        Trace.Error($"The extension of type {type} is not present!", this);
-      return (T)extensionsMap[type];
+      foreach(var extension in this.extensionBehaviours)
+      {
+        if (extension.GetType() == type)
+          return (T)extension;
+      }
+      return default(T);
+      //if (!extensionsMap.ContainsKey(type))
+      //  Trace.Error($"The extension of type {type} is not present!", this);
+      //return (T)extensionsMap[type];
     }
 
-    /// <summary>
-    /// Retrieves the extension of the given type, if its present
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public bool HasExtension(Type type) => extensionsMap.ContainsKey(type);
-
-    /// <summary>
-    /// Retrieves the extension of the given type, if its present
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public bool HasExtension<T>() where T : IExtensionBehaviour
-    {
-      return this.GetExtension<T>() != null;
-    }
+    ///// <summary>
+    ///// Retrieves the extension of the given type, if its present
+    ///// </summary>
+    ///// <typeparam name="T"></typeparam>
+    ///// <returns></returns>
+    //public bool HasExtension(Type type) => this.extensionBehaviours.Contains((MonoBehaviour)behaviour);
 
     /// <summary>
     /// Retrieves the extension of the given type, if its present
@@ -135,8 +116,20 @@ namespace Stratus
     /// <returns></returns>
     public bool HasExtension(IExtensionBehaviour behaviour)
     {
-      return this.HasExtension(behaviour.GetType());
+      return this.extensionBehaviours.Contains((MonoBehaviour)behaviour);
+      //return this.HasExtension(behaviour.GetType());
     }
+
+    ///// <summary>
+    ///// Retrieves the extension of the given type, if its present
+    ///// </summary>
+    ///// <typeparam name="T"></typeparam>
+    ///// <returns></returns>
+    //public bool HasExtension<T>() where T : IExtensionBehaviour
+    //{
+    //  return this.GetExtension<T>() != null;
+    //}
+
 
     /// Retrieves the extensible that the extension is for
     /// </summary>

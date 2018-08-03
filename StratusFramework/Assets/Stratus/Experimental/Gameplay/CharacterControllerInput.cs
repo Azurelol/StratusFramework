@@ -112,8 +112,6 @@ namespace Stratus.Gameplay
         return preset;
       }
 
-
-
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -135,9 +133,7 @@ namespace Stratus.Gameplay
     public List<InputAction> additional = new List<InputAction>();
 
     [Header("Camera")]
-    public InputField cameraHorizontal = new InputField();
-    public InputField cameraVertical = new InputField();
-    public InputField changeCamera = new InputField();
+    public InputField changeCamera = new InputField(KeyCode.C);
     public List<Preset> presets = new List<Preset>();
 
     private static CharacterMovement.MoveEvent moveEvent = new CharacterMovement.MoveEvent();
@@ -174,6 +170,12 @@ namespace Stratus.Gameplay
 
     public void OnExtensibleStart()
     {
+
+    }
+
+    private void Reset()
+    {
+      this.camera = Camera.main;
     }
 
     private void Update()
