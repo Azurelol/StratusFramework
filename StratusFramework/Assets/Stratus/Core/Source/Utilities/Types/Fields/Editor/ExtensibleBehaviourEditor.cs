@@ -75,6 +75,7 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/    
     private void DrawExtensions(Rect rect)
     {
+      EditorGUILayout.Space();
       EditorGUILayout.LabelField("Extensions", StratusGUIStyles.header);
       EditorGUILayout.Separator();
 
@@ -141,8 +142,8 @@ namespace Stratus
       //if (!this.hasSelectedExtension)
       //  return;
 
-      this.extensionEditor = UnityEditor.Editor.CreateEditor(selectedExtensionBehaviour) as StratusEditor;
-      //this.extensionEditor.backgroundStyle = EditorStyles.helpBox;
+      this.extensionEditor = CreateEditor(selectedExtensionBehaviour) as StratusEditor;
+      this.extensionEditor.backgroundStyle = StratusGUIStyles.backgroundLight;
     }
 
     private void DrawExtension(Rect rect)

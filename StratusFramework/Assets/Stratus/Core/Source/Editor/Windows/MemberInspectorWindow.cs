@@ -71,6 +71,7 @@ namespace Stratus
 
     private Countdown pollTimer;
     private TreeView treeView;
+    private const string displayName = "Watcher";
 
     //------------------------------------------------------------------------/
     // Properties
@@ -226,8 +227,8 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/
-    [MenuItem("Stratus/Core/Member Inspector")]
-    private static void Open() => OnOpen("Members");
+    [MenuItem("Stratus/Core/" + displayName)]
+    private static void Open() => OnOpen(displayName);
 
     [OnOpenAsset]
     public static bool OnOpenAsset(int instanceID, int line)

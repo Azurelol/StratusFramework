@@ -48,7 +48,8 @@ namespace Stratus
     protected override void OnReset()
     {
       segment = GetComponent<Segment>();
-      episode = segment.episode;
+      if (segment)
+        episode = segment.episode;
     }    
 
     //------------------------------------------------------------------------/

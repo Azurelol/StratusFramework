@@ -23,11 +23,11 @@ namespace Stratus
     {
       public GUIStyle button { get; private set; }
       public GUIStyle toolbarButton { get; private set; }
-      
+
       public EditorStyles()
       {
         button = new GUIStyle(GUI.skin.button);
-        button.alignment = TextAnchor.MiddleCenter;        
+        button.alignment = TextAnchor.MiddleCenter;
 
         toolbarButton = new GUIStyle(UnityEditor.EditorStyles.toolbarButton);
         toolbarButton.alignment = TextAnchor.MiddleCenter;
@@ -96,18 +96,20 @@ namespace Stratus
     public static GUIStyle headerBlack => skin.FindStyle("Header");
     public static GUIStyle miniText => skin.FindStyle("Mini Text");
     public static GUIStyle background => skin.FindStyle("Background");
+    public static GUIStyle backgroundLight => skin.FindStyle("Background Light");
     public static GUIStyle whiteBorder => skin.FindStyle("White Border");
     public static GUIStyle whiteRightBorder => skin.FindStyle("White Right Border");
     public static GUIStyle whiteLeftBorder => skin.FindStyle("White Left Border");
     public static GUIStyle listViewLabel { get; private set; }
     public static GUIStyle listViewToggle { get; private set; }
     public static GUIStyle textField { get; private set; }
-    public static GUIStyle popup { get; private set; } 
+    public static GUIStyle popup { get; private set; }
 
+    public static Font unityDefaultFont { get; private set; }
     public static Font defaultFont { get; private set; }
-    public static Font boldFont { get; private set; }    
+    public static Font boldFont { get; private set; }
     public static Font lightFont { get; private set; }
-    
+
     //public static GUIStyle currentHeader
 
     public static bool isProSkin { get; set; }
@@ -137,12 +139,12 @@ namespace Stratus
     static StratusGUIStyles()
     {
       // Load custom assets
-      LoadGUIAssets(); 
+      LoadGUIAssets();
       // Set icons
       // Store default options
-      CacheDefaultOptions(); 
+      CacheDefaultOptions();
     }
-    
+
     private static void LoadGUIAssets()
     {
       // Load the default skin
@@ -150,17 +152,18 @@ namespace Stratus
 
       // Load gui assets
       Texture2D[] assets = Resources.LoadAll<Texture2D>(StratusCore.guiFolder);
-      foreach(var asset in assets)
+      foreach (var asset in assets)
       {
         textures.Add(asset.name, asset);
       }
 
       // Load fonts
       Font[] fontAssets = Resources.LoadAll<Font>(StratusCore.fontFolder);
-      foreach(var font in fontAssets)
+      foreach (var font in fontAssets)
       {
         fonts.Add(font.name, font);
       }
+
       defaultFont = fonts["OpenSans-Regular"];
       boldFont = fonts["OpenSans-Bold"];
       lightFont = fonts["OpenSans-Light"];
@@ -175,16 +178,28 @@ namespace Stratus
       listViewLabel.margin = textField.margin;
       listViewLabel.border = textField.border;
       listViewLabel.padding = textField.padding;
-      
 
-#if UNITY_EDITOR      
+
+#if UNITY_EDITOR
       //popup = new GUIStyle(UnityEditor.EditorStyles.popup);
       //popup.richText = true;
       //popup.font = boldFont;
       //popup.fontSize = 10;
 #endif
 
-      
+
+    }
+
+    public static void OverrideDefaultFont()
+    {
+      if (!unityDefaultFont)
+        unityDefaultFont = GUI.skin.font;
+      GUI.skin.font = StratusGUIStyles.defaultFont;      
+    }
+
+    public static void RevertDefaultFont()
+    {
+      GUI.skin.font = StratusGUIStyles.unityDefaultFont;
     }
 
     private static void CacheDefaultOptions()
@@ -201,18 +216,18 @@ namespace Stratus
       tintable.normal.background = Texture2D.whiteTexture;
       tintable.stretchWidth = tintable.stretchHeight = true;
 
-      
-      
-      
+
+
+
       smallLayout = new GUILayoutOption[] { GUILayout.Width(25f), GUILayout.Height(25f) };
-      
+
       //smallLayout = new GUILayoutOption[] { GUILayout.ExpandHeight(false), GUILayout.ExpandWidth(false)};
 
 #if UNITY_EDITOR
       //UnityEditor.EditorStyles.helpBox.richText = true;
       isProSkin = UnityEditor.EditorGUIUtility.isProSkin;
       header = isProSkin ? headerWhite : headerBlack;
-      singleLineLayout = new GUILayoutOption[] { GUILayout.Width(UnityEditor.EditorGUIUtility.singleLineHeight), GUILayout.Height(UnityEditor.EditorGUIUtility.singleLineHeight)};
+      singleLineLayout = new GUILayoutOption[] { GUILayout.Width(UnityEditor.EditorGUIUtility.singleLineHeight), GUILayout.Height(UnityEditor.EditorGUIUtility.singleLineHeight) };
 
       //alignedButton = new GUIStyle(GUI.skin.button);
       //alignedButton.alignment = TextAnchor.MiddleCenter;
@@ -306,7 +321,7 @@ namespace Stratus
         coloredBackgrounds.Add(color, cb);
       }
 
-      return coloredBackgrounds[color];      
+      return coloredBackgrounds[color];
     }
 
     public static Texture2D GetColorTexture(Color color)
@@ -319,7 +334,7 @@ namespace Stratus
       return coloredTextures[color];
     }
 
-    
+
 
   }
 

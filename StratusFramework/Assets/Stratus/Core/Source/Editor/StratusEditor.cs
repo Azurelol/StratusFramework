@@ -150,7 +150,7 @@ namespace Stratus
     /// </summary>
     protected bool isTargetValid => !target.Destroyed();
 
-
+    
 
     //------------------------------------------------------------------------/
     // Virtual Methods
@@ -214,6 +214,8 @@ namespace Stratus
 
     public override void OnInspectorGUI()
     {
+      StratusGUIStyles.OverrideDefaultFont();
+
       // Invoke the very first time
       if (!doneFirstUpdate)
         DoFirstUpdate();
@@ -246,7 +248,7 @@ namespace Stratus
         }
       }
 
-
+      StratusGUIStyles.RevertDefaultFont();
     }
 
     public virtual void OnBaseEditorGUI()
@@ -402,16 +404,8 @@ namespace Stratus
         else
         {
           bool overridden = false;
-
-          // If there's any custom attributes
-          //if (propertyAttributes[property].Length > 0)
-          //{
-          //  DrawDefaultPropertyAttributes(property);
-          //}
-
           if (!overridden)
             EditorGUILayout.PropertyField(property, true);
-
         }
       }
 
@@ -527,7 +521,7 @@ namespace Stratus
     private void DoFirstUpdate()
     {
       if (backgroundStyle == null)
-        backgroundStyle = StratusGUIStyles.box;
+        backgroundStyle = StratusGUIStyles.background;
       if (labelStyle == null)
         labelStyle = StratusGUIStyles.skin.label;
 
@@ -658,11 +652,10 @@ namespace Stratus
     }
 
     protected void DrawEditor(UnityEditor.Editor editor, string header, int headerSize = 12)
-    {
+    {      
       EditorGUILayout.Space();
       EditorGUILayout.BeginHorizontal();
-      {
-        //EditorGUILayout.LabelField($"<size={headerSize}>{header}</size>", StratusGUIStyles.header);
+      {        
         EditorGUILayout.InspectorTitlebar(false, editor.target, false);
       }
       EditorGUILayout.EndHorizontal();

@@ -14,6 +14,8 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/
+      public static Color defaultFontColor { get; private set; }
+
       /// <summary>
       /// The main background color used by UI elmeents
       /// </summary>
@@ -197,6 +199,7 @@ namespace Stratus
       //------------------------------------------------------------------------/
       static Colors()
       {
+        Colors.defaultFontColor = new Color(0, 28, 0);
         Colors.azure = new Color32(0, 191, 255, 255);
         Colors.sanMarino = new Color32(66, 108, 179, 255);
         Colors.royalBlue = new Color32(65, 131, 215, 255);

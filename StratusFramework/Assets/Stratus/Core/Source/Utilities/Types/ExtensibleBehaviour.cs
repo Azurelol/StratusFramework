@@ -44,7 +44,6 @@ namespace Stratus
 
       foreach (var extension in extensions)
       {
-        //extensionsMap.Add(extension.GetType(), extension);
         extension.OnExtensibleAwake(this);        
       }
     }
@@ -55,7 +54,6 @@ namespace Stratus
 
       foreach (var extension in extensions)
         extension.OnExtensibleStart();
-
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -79,7 +77,6 @@ namespace Stratus
     public void Remove(int index)
     {
       var extension = extensionBehaviours[index];
-      Type extensionType = extension.GetType();
       extensionBehaviours.RemoveAt(index);
     }
 

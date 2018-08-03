@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -1621,7 +1621,7 @@ MonoBehaviour:
     m_Normal:
       m_Background: {fileID: 0}
       m_ScaledBackgrounds: []
-      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+      m_TextColor: {r: 0, g: 0.10980392, b: 0, a: 1}
     m_Hover:
       m_Background: {fileID: 0}
       m_ScaledBackgrounds: []
@@ -1671,7 +1671,7 @@ MonoBehaviour:
       m_Top: 0
       m_Bottom: 0
     m_Font: {fileID: 12800000, guid: 8ee29d6645760ec42b525512035da03b, type: 3}
-    m_FontSize: 0
+    m_FontSize: 16
     m_FontStyle: 1
     m_Alignment: 4
     m_WordWrap: 0
@@ -1872,7 +1872,7 @@ MonoBehaviour:
     m_FontSize: 12
     m_FontStyle: 0
     m_Alignment: 0
-    m_WordWrap: 0
+    m_WordWrap: 1
     m_RichText: 1
     m_TextClipping: 0
     m_ImagePosition: 0
@@ -1920,21 +1920,87 @@ MonoBehaviour:
       m_Top: 12
       m_Bottom: 12
     m_Margin:
-      m_Left: 4
-      m_Right: 4
-      m_Top: 4
-      m_Bottom: 4
+      m_Left: 8
+      m_Right: 8
+      m_Top: 8
+      m_Bottom: 8
     m_Padding:
       m_Left: 4
-      m_Right: 4
-      m_Top: 4
-      m_Bottom: 4
+      m_Right: 8
+      m_Top: 8
+      m_Bottom: 8
     m_Overflow:
       m_Left: 0
       m_Right: 0
       m_Top: 0
       m_Bottom: 0
-    m_Font: {fileID: 0}
+    m_Font: {fileID: 12800000, guid: 6fd67bdf5de649440b90c10d69ba49d2, type: 3}
+    m_FontSize: 11
+    m_FontStyle: 0
+    m_Alignment: 4
+    m_WordWrap: 0
+    m_RichText: 1
+    m_TextClipping: 0
+    m_ImagePosition: 0
+    m_ContentOffset: {x: 0, y: 0}
+    m_FixedWidth: 0
+    m_FixedHeight: 0
+    m_StretchWidth: 1
+    m_StretchHeight: 0
+  - m_Name: Background Light
+    m_Normal:
+      m_Background: {fileID: 2800000, guid: 8f9994401bb135548b855cdadfb069a6, type: 3}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0.8396226, g: 0.75645244, b: 0.75645244, a: 1}
+    m_Hover:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Active:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Focused:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnNormal:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnHover:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnActive:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnFocused:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Border:
+      m_Left: 10
+      m_Right: 10
+      m_Top: 12
+      m_Bottom: 12
+    m_Margin:
+      m_Left: 8
+      m_Right: 8
+      m_Top: 8
+      m_Bottom: 8
+    m_Padding:
+      m_Left: 4
+      m_Right: 8
+      m_Top: 8
+      m_Bottom: 8
+    m_Overflow:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Font: {fileID: 12800000, guid: 6fd67bdf5de649440b90c10d69ba49d2, type: 3}
     m_FontSize: 10
     m_FontStyle: 0
     m_Alignment: 4

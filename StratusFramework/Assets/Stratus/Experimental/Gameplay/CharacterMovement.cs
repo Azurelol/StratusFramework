@@ -121,8 +121,8 @@ namespace Stratus.Gameplay
     public bool airControl = true;
 
     private Vector3 sphereOffset;
-    private static Ray groundCastRay = new Ray();
-    private static RaycastHit[] groundCast = new RaycastHit[50];
+    //private static Ray groundCastRay = new Ray();
+    //private static RaycastHit[] groundCast = new RaycastHit[50];
     private Countdown inertiaTimer, accelerationTimer, groundCastTimer, jumpTimer, fallTimer;
 
     //--------------------------------------------------------------------------------------------/
@@ -711,19 +711,18 @@ namespace Stratus.Gameplay
             gameObject.RemoveComponents(typeof(NavMeshAgent), typeof(CharacterController));
             Rigidbody rigidbody = gameObject.GetOrAddComponent<Rigidbody>();
             rigidbody.freezeRotation = true;
-            //rigidbody.
           }
           break;
         case CharacterMovement.LocomotionMode.CharacterController:
           {
             gameObject.RemoveComponents(typeof(Rigidbody), typeof(NavMeshAgent));
-            CharacterController characterController = gameObject.GetOrAddComponent<CharacterController>();
+            this.characterController = gameObject.GetOrAddComponent<CharacterController>();
           }
           break;
         case CharacterMovement.LocomotionMode.NavMeshAgent:
           {
             gameObject.RemoveComponents(typeof(Rigidbody), typeof(CharacterController));
-            NavMeshAgent navMeshAgent = gameObject.GetOrAddComponent<NavMeshAgent>();
+            this.navMeshAgent = gameObject.GetOrAddComponent<NavMeshAgent>();
           }
           break;
       }
