@@ -105,9 +105,9 @@ namespace Stratus
 
     public static float PowerInOut(float t, float exponent)
     {
-      if ((2f * t) < 1f)
-        return 0.5f * Power(t, exponent);
-      return 0.5f * ((t - 2f) * Power(t, exponent - 1) + 2f);
+      if (t < 0.5f)
+        return PowerIn(t * 2, exponent) / 2;
+      return PowerOut(t * 2 - 1, exponent) / 2 + 0.5f;
     }
 
     // Quadratic
@@ -144,8 +144,9 @@ namespace Stratus
 
     public static float CubicInOut(float t)
     {
-      if ((t * 2f) < 1f) return 0.5f * t * t * t;
-      return 0.5f * ((t - 2f) * t * t + 2f);
+      if ((t *= 2f) < 1f)
+        return 0.5f * t * t * t;
+      return 0.5f * ((t -= 2f) * t * t + 2f);
     }
 
     // Sine
