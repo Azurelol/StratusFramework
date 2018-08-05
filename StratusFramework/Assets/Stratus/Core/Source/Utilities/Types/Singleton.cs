@@ -86,7 +86,7 @@ namespace Stratus
     /// <summary>
     /// What name to use for GameObject this singleton will be instantiated on
     /// </summary>
-    private static string ownerName => attribute?.GetProperty<string>("name") ?? typeof(T).GetType().Name;
+    private static string ownerName => attribute?.GetProperty<string>("name") ?? typeof(T).Name;
     /// <summary>
     /// Returns a reference to the singular instance of this class. If not available currently, 
     /// it will instantiate it when accessed.

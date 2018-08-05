@@ -185,7 +185,7 @@ namespace Stratus
           break;
       }
 
-      Trace.Script($"Change = {stateChange}, UpdateTreeView = {updateTreeView}");
+      //Trace.Script($"Change = {stateChange}, UpdateTreeView = {updateTreeView}");
     }
 
     //protected override StratusMenuBarDrawer OnSetMenuBar()

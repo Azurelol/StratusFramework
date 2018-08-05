@@ -8,6 +8,15 @@ namespace Stratus
   public class ManagedBehaviourSystem : Singleton<ManagedBehaviourSystem>
   {
     private static List<ManagedBehaviour> behaviours = new List<ManagedBehaviour>();
+    
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void OnSceneLoaded()
+    {
+      Instantiate();
+      ManagedBehaviour[] behaviours = FindObjectsOfType<ManagedBehaviour>();
+      Trace.Script($"Adding {behaviours.Length} behaviours");
+      behaviours.AddRange(behaviours);
+    }
 
     protected override void OnAwake()
     {
