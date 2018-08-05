@@ -18,7 +18,9 @@ namespace Stratus.Gameplay
 
     protected override void DrawProperty(Rect position, SerializedProperty property)
     {
-      //CharacterAnimator.AnimationEventHook aeh = property.GetValue<CharacterAnimator.AnimationEventHook>();
+      // Special case if it's being used by the character animator
+      CharacterAnimator characterAnimator = target as CharacterAnimator;
+      bool hasParameters = characterAnimator != null && characterAnimator.animator != null && characterAnimator.hasParameters;
 
       // Event
       SerializedProperty onEventProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorEventHook.onEvent));
@@ -60,6 +62,8 @@ namespace Stratus.Gameplay
           parameterProperties = new SerializedProperty[] { parameterTypeProperty, parameterNameProperty };
           break;
       }
+
+      // Now draw the properties
       DrawPropertiesInSingleLine(position, parameterProperties); 
     }
 

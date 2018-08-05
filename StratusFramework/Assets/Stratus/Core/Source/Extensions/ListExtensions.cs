@@ -480,6 +480,16 @@ namespace Stratus
       return (index >= 0) && ((list.Count - 1) >= index);
     }
 
+    public static T AtIndexOrDefault<T>(this IList<T> list, int index)
+    {
+      return list.HasIndex(index) ? list[index] : default(T);
+    }
+
+    public static T AtIndexOrDefault<T>(this IList<T> list, int index, T defaultValue)
+    {
+      return list.HasIndex(index) ? list[index] : defaultValue;
+    }
+
     /// <summary>
     /// Iterates over the given list, removing any invalid elements (described hy the validate functon)
     /// Returns true if any elements were removed.

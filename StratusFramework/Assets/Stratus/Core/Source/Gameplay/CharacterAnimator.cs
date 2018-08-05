@@ -6,6 +6,7 @@ using Stratus.Dependencies.TypeReferences;
 using Stratus.Dependencies.Ludiq.Reflection;
 using UnityEngine.Animations;
 using UnityEngine.Events;
+using System.Linq;
 
 namespace Stratus.Gameplay
 {
@@ -140,12 +141,13 @@ namespace Stratus.Gameplay
       /// </summary>
       [Tooltip("The name of the animator parameter whose value to set")]
       public string parameterName;
-
       /// <summary>
       /// The type of parameter
       /// </summary>
       public AnimatorControllerParameterType parameterType { get; set; }
-
+      /// <summary>
+      /// Whether the member has been assigned to this hook
+      /// </summary>
       public bool isAssigned => member.isAssigned;
 
       /// <summary>
@@ -188,15 +190,23 @@ namespace Stratus.Gameplay
     [Serializable]
     public class AnimationParameterEvent : UnityEvent<float, bool, int> {}
 
-    public delegate void OnUpdate();
+    public delegate void UpdateFunction();
 
     //--------------------------------------------------------------------------------------------/
     // Fields
     //--------------------------------------------------------------------------------------------/    
     public Animator animator;
     public Transform rootTransform;
-    public List<AnimatorEventHook> animatorTriggers = new List<AnimatorEventHook>();
-    public List<AnimatorParameterHook> animatorParameters = new List<AnimatorParameterHook>();
+    [Tooltip("When the specified event is received by this GameObject, set the given values onto the animator")]
+    public List<AnimatorEventHook> animatorEventHooks = new List<AnimatorEventHook>();
+    [Tooltip("When the specified member changes, update the corresponding parameter on the animator")]
+    public List<AnimatorParameterHook> animatorParameterHooks = new List<AnimatorParameterHook>();
+    [SerializeField]
+    private AnimatorControllerParameter[] _animatorParameters;
+    [SerializeField]
+    private string [] _animatorParameterNames;
+    [SerializeField]
+    private string[] _floatParameters, _boolParameters, _intParameters, _triggerParameters;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -213,7 +223,20 @@ namespace Stratus.Gameplay
     /// Whether to print debug output
     /// </summary>
     public virtual bool debug { get; }
-    protected OnUpdate onUpdate { get; set; }
+    /// <summary>
+    /// Whether there's available parameters for the character animator
+    /// </summary>
+    public bool hasParameters => _animatorParameters != null && _animatorParameters.NotEmpty();
+
+    // - Parameter names
+    public string[] animatorParameterNames => this._animatorParameterNames;
+    public string[] floatParameters => this._floatParameters;
+    public string[] intParameters => this._intParameters;
+    public string[] boolParameters => this._boolParameters;
+    public string[] triggerParameters => this._triggerParameters;
+
+    protected UpdateFunction onUpdate { get; set; }
+
     private Dictionary<Type, string> animatorEventTriggers = new Dictionary<Type, string>();
 
     //--------------------------------------------------------------------------------------------/
@@ -226,7 +249,8 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     protected internal override void OnBehaviourAwake()
     {
-      onUpdate = new OnUpdate(() => { });
+      Trace.Script(string.Join(",", animator.parameters.Names((AnimatorControllerParameter param) => param.name)));
+      onUpdate = new UpdateFunction(() => { });
       SetHooks();
       Subscribe();
     }
@@ -240,8 +264,16 @@ namespace Stratus.Gameplay
     private void Reset()
     {
       this.animator = GetComponentInChildren<Animator>();
-      if (animator)
+      if (this.animator)
+      {
         this.rootTransform = animator.transform;
+        this.RecordParameters();
+      }
+    }
+
+    private void OnValidate()
+    {
+      this.RecordParameters();      
     }
 
     //--------------------------------------------------------------------------------------------/
@@ -357,7 +389,7 @@ namespace Stratus.Gameplay
 
     private void SetHooks()
     {
-      foreach(var hook in animatorTriggers)
+      foreach(var hook in animatorEventHooks)
       {
         if (hook.onEvent.Type == null || hook.parameterName == null)
         {
@@ -369,7 +401,7 @@ namespace Stratus.Gameplay
         
       }
 
-      foreach (var hook in animatorParameters)
+      foreach (var hook in animatorParameterHooks)
       {
         if (!hook.member.isAssigned)
         {
@@ -383,12 +415,28 @@ namespace Stratus.Gameplay
 
     private void UpdateParameters()
     {
-      foreach (var parameter in animatorParameters)
+      foreach (var parameter in animatorParameterHooks)
       {
-
-
         if (parameter.isAssigned)
           parameter.Update(this);
+      }
+    }
+
+    private void RecordParameters()
+    {
+      if (this.animator)
+      {
+        this._animatorParameters = this.animator.parameters;
+        this._animatorParameterNames = this._animatorParameters.Names((AnimatorControllerParameter parameter) => parameter.name);
+        this._floatParameters = this._animatorParameters.Where(x => x.type == AnimatorControllerParameterType.Float).ToArray().Names((AnimatorControllerParameter parameter) => parameter.name);
+        this._intParameters = this._animatorParameters.Where(x => x.type == AnimatorControllerParameterType.Int).ToArray().Names((AnimatorControllerParameter parameter) => parameter.name);
+        this._boolParameters = this._animatorParameters.Where(x => x.type == AnimatorControllerParameterType.Bool).ToArray().Names((AnimatorControllerParameter parameter) => parameter.name);
+        this._triggerParameters = this._animatorParameters.Where(x => x.type == AnimatorControllerParameterType.Trigger).ToArray().Names((AnimatorControllerParameter parameter) => parameter.name);
+      } 
+      else
+      {
+        this._animatorParameters = null;
+        this._animatorParameterNames = this._floatParameters = this._intParameters = this._triggerParameters = null;
       }
     }
 

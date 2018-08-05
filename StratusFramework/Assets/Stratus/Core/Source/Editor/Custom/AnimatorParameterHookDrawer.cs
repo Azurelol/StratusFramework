@@ -18,23 +18,29 @@ namespace Stratus.Gameplay
 
     protected override void DrawProperty(Rect position, SerializedProperty property)
     {
-      // Member
-      //EditorGUI.BeginChangeCheck();
-      //{
-        SerializedProperty memberProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorParameterHook.member));
-        EditorGUI.PropertyField(position, memberProperty);
-        position.y += lineHeight * 2f;
-      //}
-      //if (EditorGUI.EndChangeCheck())
-      //{
-      //  SerializedProperty parameterTypeProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorParameterHook.parameterType));
-      //  //if (member)
-      //  parameterTypeProperty.intValue = 
-      //}
+      // Special case if it's being used by the character animator
+      CharacterAnimator characterAnimator = target as CharacterAnimator;
+      bool hasParameters = characterAnimator != null && characterAnimator.animator != null && characterAnimator.hasParameters;
 
+      // Member
+      SerializedProperty memberProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorParameterHook.member));
+      EditorGUI.PropertyField(position, memberProperty);
+      position.y += lineHeight * 2f;
+            
       // Parameter 
+      //AnimatorControllerParameterType parameterType = (AnimatorControllerParameterType)parameterTypeProperty.intValue;
       SerializedProperty parameterNameProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorParameterHook.parameterName));
-      EditorGUI.PropertyField(position, parameterNameProperty);
+      if (hasParameters)
+      {
+        DrawPopup(position, parameterNameProperty, characterAnimator.animatorParameterNames);
+        //int index = characterAnimator.animatorParameterNames.FindIndex(parameterNameProperty.stringValue);
+        //index = EditorGUI.Popup(position, index, characterAnimator.animatorParameterNames);
+        //parameterNameProperty.stringValue = characterAnimator.animatorParameterNames.AtIndexOrDefault(index, string.Empty);
+      }
+      else
+      {
+        EditorGUI.PropertyField(position, parameterNameProperty);
+      }
     }
 
   }

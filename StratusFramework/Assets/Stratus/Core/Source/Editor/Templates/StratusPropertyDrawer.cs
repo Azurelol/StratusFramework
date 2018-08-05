@@ -21,6 +21,40 @@ namespace Stratus
       Dynamic
     }
 
+    public class DrawCommand
+    {
+      public SerializedProperty property;
+      public bool drawContent;
+
+      public DrawCommand(SerializedProperty property)
+      {
+        this.property = property;
+      }
+
+      public virtual void Draw(Rect position)
+      {
+        if (drawContent)
+          EditorGUI.PropertyField(position, property);
+        else
+          EditorGUI.PropertyField(position, property, GUIContent.none);
+      }
+    }
+
+    public class PopUpParameters : DrawCommand
+    { 
+      public string[] values;
+
+      public PopUpParameters(SerializedProperty property, string[] values) : base(property)
+      {
+        this.values = values;
+      }
+
+      public override void Draw(Rect position)
+      {
+        DrawPopup(position, property, values);
+      }
+    }
+
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
@@ -56,6 +90,10 @@ namespace Stratus
     /// The parent property in an array
     /// </summary>
     protected SerializedProperty parent{ get; private set; }
+    /// <summary>
+    /// The inspected object that this property belongs to
+    /// </summary>
+    protected Object target { get; private set; }
 
     //------------------------------------------------------------------------/
     // Messages
@@ -101,6 +139,8 @@ namespace Stratus
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
       //isArray = property.name != fieldInfo.Name;
+
+      target = property.serializedObject.targetObject;
       isArray = property.isArray;
       propertyHeight = 0f;
       
@@ -210,6 +250,24 @@ namespace Stratus
         EditorGUI.PropertyField(position, property, GUIContent.none);
         position.x += position.width;
       }
+    }
+
+    public static void DrawPropertiesInSingleLine(Rect position, DrawCommand[] drawCommands)
+    {
+      int n = drawCommands.Length;
+      position.width /= n;
+      for (int p = 0; p < n; ++p)
+      {
+        drawCommands[p].Draw(position);
+        position.x += position.width;
+      }
+    }
+
+    public static void DrawPopup(Rect position, SerializedProperty stringProperty, string[] values)
+    {
+      int index = values.FindIndex(stringProperty.stringValue);
+      index = EditorGUI.Popup(position, index, values);
+      stringProperty.stringValue = values.AtIndexOrDefault(index, string.Empty);
     }
 
     public static IEnumerable<SerializedProperty> GetChildren(SerializedProperty property)
