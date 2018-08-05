@@ -8,16 +8,11 @@ using System;
 namespace Stratus.Gameplay
 {
   [DisallowMultipleComponent]
-  public class CharacterMovement : StratusBehaviour
+  public class CharacterMovement : ManagedBehaviour
   {
     //--------------------------------------------------------------------------------------------/
     // Declarations
     //--------------------------------------------------------------------------------------------/
-    public class MovementPreset
-    {
-    }
-
-
     public enum Action
     {
       Move,
@@ -179,7 +174,7 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
-    private void Awake()
+    protected internal override void OnBehaviourAwake()
     {
       inertiaTimer = new Countdown(0.05f);
       jumpTimer = new Countdown(jumpApex);
@@ -190,16 +185,18 @@ namespace Stratus.Gameplay
       navMeshAgent = GetComponent<NavMeshAgent>();
       characterController = gameObject.GetComponent<CharacterController>();
 
+      Trace.Script("Boop");
+
       SetGroundDetection();
       Subscribe();
     }
 
-    private void Update()
+    protected internal override void OnUpdate()
     {
       UpdateTimers();
     }
 
-    private void FixedUpdate()
+    protected internal override void OnFixedUpdate()
     {
       if (turning)
         ApplyTurn();
@@ -208,15 +205,9 @@ namespace Stratus.Gameplay
         ApplyMovement();
       else if (!grounded)
         ApplyFall();
-
-      //if (jumping)
-      //  ApplyJump();
-      //
-      //if (falling)
-      //  ApplyFall();
     }
 
-    private void LateUpdate()
+    protected internal override void OnLateUpdate()
     {
       CheckMovement();
 

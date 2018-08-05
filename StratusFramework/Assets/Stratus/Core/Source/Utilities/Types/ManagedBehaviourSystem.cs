@@ -7,21 +7,28 @@ namespace Stratus
   [Singleton(instantiate = true)]
   public class ManagedBehaviourSystem : Singleton<ManagedBehaviourSystem>
   {
+    //--------------------------------------------------------------------------------------------/
+    // Fields
+    //--------------------------------------------------------------------------------------------/
     private static List<ManagedBehaviour> behaviours = new List<ManagedBehaviour>();
-    
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void OnSceneLoaded()
-    {
-      Instantiate();
-      ManagedBehaviour[] behaviours = FindObjectsOfType<ManagedBehaviour>();
-      Trace.Script($"Adding {behaviours.Length} behaviours");
-      behaviours.AddRange(behaviours);
-    }
 
+    //--------------------------------------------------------------------------------------------/
+    // Static Methods
+    //--------------------------------------------------------------------------------------------/
+    //[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    //private static void OnSceneLoaded()
+    //{
+    //  Instantiate();
+    //}
+
+    //--------------------------------------------------------------------------------------------/
+    // Messages
+    //--------------------------------------------------------------------------------------------/
     protected override void OnAwake()
     {
-      foreach (var behaviour in behaviours)
-        behaviour.OnAwake();
+      //AddCurrentBehaviours();
+      //foreach (var behaviour in behaviours)
+      //  behaviour.OnBehaviourAwake();
     }
 
     private void Start()
@@ -33,23 +40,36 @@ namespace Stratus
     private void Update()
     {
       foreach (var behaviour in behaviours)
-        behaviour.OnUpdate();
+      {
+        if (behaviour.enabled)
+          behaviour.OnUpdate();
+      }
     }
 
     private void FixedUpdate()
     {
       foreach (var behaviour in behaviours)
-        behaviour.OnFixedUpdate();
+      {
+        if (behaviour.enabled)
+          behaviour.OnFixedUpdate();
+      }
     }
 
     private void LateUpdate()
     {
       foreach (var behaviour in behaviours)
-        behaviour.OnLateUpdate();
+      {
+        if (behaviour.enabled)
+          behaviour.OnLateUpdate();
+      }
     }
 
+    //--------------------------------------------------------------------------------------------/
+    // Methods
+    //--------------------------------------------------------------------------------------------/
     public static void Add(ManagedBehaviour behaviour)
     {
+      Instantiate();
       behaviours.Add(behaviour);
     }
 
@@ -57,6 +77,15 @@ namespace Stratus
     {
       behaviours.Remove(behaviour);
     }
+
+    private static void AddCurrentBehaviours()
+    {
+      ManagedBehaviour[] behaviours = Scene.GetComponentsInAllActiveScenes<ManagedBehaviour>();
+      Trace.Script($"Adding {behaviours.Length} behaviours");
+      ManagedBehaviourSystem.behaviours.AddRange(behaviours);
+    }
+
+
 
 
   }

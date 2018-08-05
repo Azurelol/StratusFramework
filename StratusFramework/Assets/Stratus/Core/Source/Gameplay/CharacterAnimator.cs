@@ -13,7 +13,7 @@ namespace Stratus.Gameplay
   /// A component for generically managing animations in a character
   /// </summary>
   [DisallowMultipleComponent]
-  public abstract class CharacterAnimator : StratusBehaviour
+  public abstract class CharacterAnimator : ManagedBehaviour
   {
     //------------------------------------------------------------------------/
     // Event Declarations
@@ -224,18 +224,17 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
-    private void Awake()
+    protected internal override void OnBehaviourAwake()
     {
-      onUpdate = new OnUpdate(()=> { });
+      onUpdate = new OnUpdate(() => { });
       SetHooks();
       Subscribe();
     }
 
-    private void FixedUpdate()
+    protected internal override void OnFixedUpdate()
     {
       UpdateParameters();
       onUpdate();
-      //OnUpdate();
     }
 
     private void Reset()
@@ -360,6 +359,11 @@ namespace Stratus.Gameplay
     {
       foreach(var hook in animatorTriggers)
       {
+        if (hook.onEvent.Type == null || hook.parameterName == null)
+        {
+          Trace.Error($"An animator trigger has not been set properly!", this);
+          continue;
+        }
         animatorEventTriggers.Add(hook.onEvent, hook.parameterName);
         gameObject.Connect(OnEvent, hook.onEvent);
         
@@ -367,6 +371,12 @@ namespace Stratus.Gameplay
 
       foreach (var hook in animatorParameters)
       {
+        if (!hook.member.isAssigned)
+        {
+          Trace.Error($"An animator parameter has not been set properly!", this);
+          continue;
+        }
+
         hook.DeduceParameterType();
       }
     }
@@ -375,6 +385,8 @@ namespace Stratus.Gameplay
     {
       foreach (var parameter in animatorParameters)
       {
+
+
         if (parameter.isAssigned)
           parameter.Update(this);
       }

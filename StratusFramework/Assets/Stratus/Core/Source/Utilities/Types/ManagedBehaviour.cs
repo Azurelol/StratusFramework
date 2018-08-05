@@ -9,12 +9,34 @@ namespace Stratus
   /// </summary>
   public abstract class ManagedBehaviour : StratusBehaviour
   {
-    protected internal virtual void OnAwake() { }
-    protected internal virtual void OnStart() { }
-    protected internal virtual void OnUpdate() { }
-    protected internal virtual void OnFixedUpdate() { }
-    protected internal virtual void OnLateUpdate() { }
+    //--------------------------------------------------------------------------------------------/
+    // Messages
+    //--------------------------------------------------------------------------------------------/
+    protected internal virtual void OnBehaviourAwake() {}
+    protected internal virtual void OnBehaviourDestroy() {}
+    protected internal virtual void OnStart() {}
+    protected internal virtual void OnUpdate() {}
+    protected internal virtual void OnFixedUpdate() {}
+    protected internal virtual void OnLateUpdate() {}
 
+    //--------------------------------------------------------------------------------------------/
+    // Methods
+    //--------------------------------------------------------------------------------------------/
+    private void Awake()
+    {
+      ManagedBehaviourSystem.Add(this);
+      this.OnBehaviourAwake();
+    }
+
+    private void OnDestroy()
+    {
+      ManagedBehaviourSystem.Remove(this);
+      this.OnBehaviourDestroy();
+    }
+
+    //--------------------------------------------------------------------------------------------/
+    // Static Methods
+    //--------------------------------------------------------------------------------------------/
     /// <summary>
     /// Instantiates this behaviour at runtime, adding it to the managed behaviour system
     /// </summary>
