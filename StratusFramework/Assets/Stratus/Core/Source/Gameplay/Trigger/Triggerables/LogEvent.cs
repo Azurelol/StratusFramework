@@ -10,7 +10,7 @@ using Stratus;
 using System;
 using Stratus.Dependencies.Ludiq.Reflection;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Simple event that logs a message to the console when triggered.

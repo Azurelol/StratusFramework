@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   public abstract class StateDrivenChangeStateEvent<State> : Triggerable where State : struct, IConvertible
   {

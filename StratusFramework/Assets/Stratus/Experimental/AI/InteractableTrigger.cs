@@ -7,6 +7,7 @@
 /******************************************************************************/
 using UnityEngine;
 using System;
+using Stratus.Gameplay;
 
 namespace Stratus.AI
 {

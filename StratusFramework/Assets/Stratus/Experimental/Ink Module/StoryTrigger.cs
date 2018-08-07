@@ -9,7 +9,7 @@ namespace Stratus
       /// <summary>
       /// A trigger which reacts to events in the Stratus Ink story reader
       /// </summary>
-      public class StoryTrigger : Trigger
+      public class StoryTrigger : Gameplay.Trigger
       {
         [Tooltip("The scope of the event to listen to")]
         public Event.Scope eventScope = Event.Scope.GameObject;

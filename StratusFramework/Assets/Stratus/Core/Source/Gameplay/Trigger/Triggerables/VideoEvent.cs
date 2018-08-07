@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Plays a video on the specified RawImage using the VideoPlayer

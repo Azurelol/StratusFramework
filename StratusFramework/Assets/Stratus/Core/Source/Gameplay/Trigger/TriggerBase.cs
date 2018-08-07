@@ -1,7 +1,10 @@
 using Stratus.Interfaces;
 using UnityEngine;
 
-namespace Stratus
+/// <summary>
+/// A collection of generic gameplay components, used for composition behaviour
+/// </summary>
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Base class for all trigger-related components in the Stratus Trigger framework

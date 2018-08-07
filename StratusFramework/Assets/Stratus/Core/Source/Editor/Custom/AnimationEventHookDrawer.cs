@@ -6,7 +6,7 @@ using UnityEngine.Animations;
 
 namespace Stratus.Gameplay
 {
-  [CustomPropertyDrawer(typeof(CharacterAnimator.AnimatorEventHook))]
+  [CustomPropertyDrawer(typeof(AnimatorEventHook))]
   public class AnimatorEventHookDrawer : StratusPropertyDrawer
   {
     private const float lines = 2f;
@@ -23,48 +23,88 @@ namespace Stratus.Gameplay
       bool hasParameters = characterAnimator != null && characterAnimator.animator != null && characterAnimator.hasParameters;
 
       // Event
-      SerializedProperty onEventProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorEventHook.onEvent));
+      SerializedProperty onEventProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.onEvent));
       EditorGUI.PropertyField(position, onEventProperty);
       position.y += lineHeight;
 
-      // Parameter 
-      SerializedProperty parameterTypeProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorEventHook.parameterType));
-      SerializedProperty parameterNameProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorEventHook.parameterName));
-
-      // Paramater - Value
+      // Parameter: Type
+      SerializedProperty parameterTypeProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.parameterType));
+      
+      // Paramater: Name, Value
+      SerializedProperty parameterNameProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.parameterName));
       SerializedProperty parameterValueProperty = null;
       AnimatorControllerParameterType parameterType = (AnimatorControllerParameterType)parameterTypeProperty.intValue;
-      switch (parameterType)
+
+      if (hasParameters)
       {
-        case AnimatorControllerParameterType.Float:          
-          parameterValueProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorEventHook.floatValue));          
-          break;
+        string[] parameters = null;
+        switch (parameterType)
+        {
+          case AnimatorControllerParameterType.Float:
+            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.floatValue));
+            parameters = characterAnimator.floatParameters;
+            break;
 
-        case AnimatorControllerParameterType.Int:
-          parameterValueProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorEventHook.intValue));          
-          break;
+          case AnimatorControllerParameterType.Int:
+            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.intValue));
+            parameters = characterAnimator.intParameters;
+            break;
 
-        case AnimatorControllerParameterType.Bool:
-          parameterValueProperty = property.FindPropertyRelative(nameof(CharacterAnimator.AnimatorEventHook.boolValue));          
-          break;
+          case AnimatorControllerParameterType.Bool:
+            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.boolValue));
+            parameters = characterAnimator.boolParameters;
+            break;
+
+          case AnimatorControllerParameterType.Trigger:
+            parameters = characterAnimator.triggerParameters;
+            break;
+        }
+
+        // Draw parameters in a single line
+        DrawCommand drawType = new DrawCommand(parameterTypeProperty);
+        DrawCommand drawName = new DrawPopUp(parameterNameProperty, parameters);
+        switch (parameterType)
+        {
+          case AnimatorControllerParameterType.Float:
+          case AnimatorControllerParameterType.Int:
+          case AnimatorControllerParameterType.Bool:
+            DrawPropertiesInSingleLine(position, new DrawCommand[] { drawType, drawName, new DrawCommand(parameterValueProperty) });
+            break;
+          case AnimatorControllerParameterType.Trigger:
+            DrawPropertiesInSingleLine(position, new DrawCommand[] { drawType, drawName });
+            break;
+        }
       }
-
-      // Draw parameters in a single line
-      SerializedProperty[] parameterProperties = null;
-      switch (parameterType)
+      else
       {
-        case AnimatorControllerParameterType.Float:
-        case AnimatorControllerParameterType.Int:
-        case AnimatorControllerParameterType.Bool:
-          parameterProperties = new SerializedProperty[] { parameterTypeProperty, parameterNameProperty, parameterValueProperty };
-          break;
-        case AnimatorControllerParameterType.Trigger:
-          parameterProperties = new SerializedProperty[] { parameterTypeProperty, parameterNameProperty };
-          break;
-      }
+        switch (parameterType)
+        {
+          case AnimatorControllerParameterType.Float:
+            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.floatValue));            
+            break;
 
-      // Now draw the properties
-      DrawPropertiesInSingleLine(position, parameterProperties); 
+          case AnimatorControllerParameterType.Int:
+            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.intValue));
+            break;
+
+          case AnimatorControllerParameterType.Bool:
+            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.boolValue));
+            break;
+        }
+
+        switch (parameterType)
+        {
+          case AnimatorControllerParameterType.Float:
+          case AnimatorControllerParameterType.Int:
+          case AnimatorControllerParameterType.Bool:
+            DrawPropertiesInSingleLine(position, parameterTypeProperty, parameterNameProperty, parameterValueProperty);
+            break;
+          case AnimatorControllerParameterType.Trigger:
+            DrawPropertiesInSingleLine(position, parameterTypeProperty, parameterNameProperty);
+            break;
+        }
+
+      }
     }
 
   }

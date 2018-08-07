@@ -7,7 +7,7 @@ using UnityEngine.AI;
 using Stratus.Interfaces;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// A gameplay episode system, consisting of multiple segments

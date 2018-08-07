@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// A trigger that is a composition of many other triggers. It will observe a list

@@ -17,7 +17,7 @@ namespace Stratus
     /// <summary>
     /// An event for windows
     /// </summary>
-    public class WindowEvent : Triggerable
+    public class WindowEvent : Gameplay.Triggerable
     {
       public Window.EventType Type = Window.EventType.Open;
       public Window Target;

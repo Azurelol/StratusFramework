@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(EpisodeTrigger))]
   public class EpisodeTriggerEditor : BehaviourEditor<EpisodeTrigger>

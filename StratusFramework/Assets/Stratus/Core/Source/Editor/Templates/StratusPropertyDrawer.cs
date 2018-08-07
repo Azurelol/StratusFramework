@@ -40,11 +40,11 @@ namespace Stratus
       }
     }
 
-    public class PopUpParameters : DrawCommand
+    public class DrawPopUp : DrawCommand
     { 
       public string[] values;
 
-      public PopUpParameters(SerializedProperty property, string[] values) : base(property)
+      public DrawPopUp(SerializedProperty property, string[] values) : base(property)
       {
         this.values = values;
       }
@@ -234,13 +234,22 @@ namespace Stratus
       return value;
     }
 
+    /// <summary>
+    ///  Doesn't work for flags apparently
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="enumProperty"></param>
+    /// <returns></returns>
     public T GetEnumValue<T>(SerializedProperty enumProperty)
     {
-      T value = (T)(object)enumProperty.enumValueIndex;
-      return value;
+      bool isFlag = typeof(T).IsDefined(typeof(System.FlagsAttribute), inherit: false);
+      if (isFlag)
+        return (T)(object)enumProperty.intValue;
+
+      return (T)(object)enumProperty.enumValueIndex;
     }
 
-    public static void DrawPropertiesInSingleLine(Rect position, SerializedProperty[] children)
+    public static void DrawPropertiesInSingleLine(Rect position, params SerializedProperty[] children)
     {
       int n = children.Length;
       position.width /= n;
@@ -252,7 +261,7 @@ namespace Stratus
       }
     }
 
-    public static void DrawPropertiesInSingleLine(Rect position, DrawCommand[] drawCommands)
+    public static void DrawPropertiesInSingleLine(Rect position, params DrawCommand[] drawCommands)
     {
       int n = drawCommands.Length;
       position.width /= n;

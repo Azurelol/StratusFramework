@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Stratus.AI;
 
-namespace Stratus.AI
+namespace Stratus.Gameplay
 {
   public class AgentEvent : Triggerable
   {

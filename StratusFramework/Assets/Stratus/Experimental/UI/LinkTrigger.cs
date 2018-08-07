@@ -15,7 +15,7 @@ namespace Stratus
   /// <summary>
   /// An event for links
   /// </summary>
-  public class LinkTrigger : Trigger
+  public class LinkTrigger : Gameplay.Trigger
   {
     public Link.EventType Type = Link.EventType.Confirm;
     

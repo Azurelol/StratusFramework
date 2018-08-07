@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(EpisodeEvent))]
   public class EpisodeEventEditor : TriggerableEditor<EpisodeEvent>

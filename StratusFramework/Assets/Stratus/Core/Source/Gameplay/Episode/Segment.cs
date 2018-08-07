@@ -14,7 +14,7 @@ using Stratus.Interfaces;
 //
 //note: triggers, objectives, and triggerables don't need to know what segment they are in. segments are just starting points or jump points
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Handles the logic for a gameplay segment in Trappist Landing

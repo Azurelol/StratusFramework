@@ -5,7 +5,7 @@ using UnityEditor;
 using Rotorz.ReorderableList;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(TriggerSystem))]
   public partial class TriggerSystemEditor : BehaviourEditor<TriggerSystem>

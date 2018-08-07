@@ -5,7 +5,7 @@ using UnityEditor;
 using Stratus.Experimental;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(SceneLinkerEvent))]
   public class SceneLinkerEventEditor : TriggerableEditor<SceneLinkerEvent>

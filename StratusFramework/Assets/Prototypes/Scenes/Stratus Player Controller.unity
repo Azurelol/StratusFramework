@@ -1104,20 +1104,21 @@ MonoBehaviour:
   animator: {fileID: 1099526892}
   rootTransform: {fileID: 1099526891}
   animatorEventHooks:
-  - onEvent:
+  - parameterName: 
+    parameterType: 4
+    onEvent:
       _classRef: 
-    parameterType: 1
-    parameterName: 
     boolValue: 0
     intValue: 0
     floatValue: 0
   animatorParameterHooks:
-  - member:
+  - parameterName: Speed
+    parameterType: 1
+    member:
       _parameterTypes: []
-      _target: {fileID: 0}
-      _component: 
-      _name: 
-    parameterName: Move
+      _target: {fileID: 752326147}
+      _component: CharacterControllerMovement
+      _name: accelerationProgress
   _animatorParameterNames:
   - Move
   - Jumping
@@ -1261,9 +1262,9 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
+  near clip plane: 0.15
   far clip plane: 5000
-  field of view: 40
+  field of view: 75
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -1287,8 +1288,8 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 776468811}
-  m_LocalRotation: {x: 0.7009093, y: 0, z: 0, w: 0.7132504}
-  m_LocalPosition: {x: -0.35, y: 13.997716, z: -8.261784}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.35, y: 0.5, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

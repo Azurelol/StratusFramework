@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// An event that handles transitions between segments within an episode

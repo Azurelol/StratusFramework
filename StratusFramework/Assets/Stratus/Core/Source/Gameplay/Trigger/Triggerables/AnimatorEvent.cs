@@ -13,7 +13,7 @@ using Stratus;
 using System;
 using UnityEngine.Serialization;
 
-namespace Stratus 
+namespace Stratus.Gameplay
 {
   public class AnimatorEvent : Triggerable
   {

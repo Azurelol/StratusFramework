@@ -10,7 +10,7 @@ using Stratus;
 using UnityEngine.Events;
 using System.Collections.Generic;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// A component that triggers a selected triggerable when the specified condition is met.
@@ -161,7 +161,7 @@ namespace Stratus
 
         else if (scope == Scope.Component)
         {
-          target.Trigger();
+          target.Activate();
         }
       }      
 

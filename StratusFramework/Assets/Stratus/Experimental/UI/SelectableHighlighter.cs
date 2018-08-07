@@ -8,7 +8,7 @@ namespace Stratus.Experimental
   public class SelectableHighlighter : StratusBehaviour
   {
     public Selectable selectable;
-    public ImageEffectEvent imageEffect;
+    public Gameplay.ImageEffectEvent imageEffect;
     public bool selectOnHighlight;
 
     private SelectableProxy proxy;
@@ -34,7 +34,7 @@ namespace Stratus.Experimental
     public void Highlight(bool highlight)
     {
       imageEffect.alpha = highlight ? 1f : 0f;
-      imageEffect.Trigger();
+      imageEffect.Activate();
     }
 
 

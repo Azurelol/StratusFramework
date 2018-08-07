@@ -4,7 +4,7 @@ using UnityEngine;
 using Stratus;
 using UnityEditor;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [LayoutViewDisplayAttribute("Episodes", 225f, 150f, StratusGUI.Anchor.BottomRight, StratusGUI.Dimensions.Absolute)]
   public class EpisodeSceneDisplay : MultitonSceneViewDisplay<Episode>

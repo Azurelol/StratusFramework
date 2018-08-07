@@ -10,7 +10,7 @@ using Stratus;
 using System;
 using UnityEngine.Events;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Invokes a method when triggered.

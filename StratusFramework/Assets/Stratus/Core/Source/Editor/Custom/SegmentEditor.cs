@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(Segment))]
   public class SegmentEditor : BehaviourEditor<Segment>

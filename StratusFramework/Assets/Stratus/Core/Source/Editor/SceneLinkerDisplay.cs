@@ -2,10 +2,8 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
-  namespace Experimental
-  {
     [LayoutViewDisplayAttribute("Scene Linker", 225f, 200f, StratusGUI.Anchor.TopLeft, StratusGUI.Dimensions.Absolute)]
     public class SceneLinkerDisplay : SingletonSceneViewDisplay<SceneLinker> 
     {
@@ -117,7 +115,6 @@ namespace Stratus
 
 
 
-    } 
-  }
+    }  
 
 }

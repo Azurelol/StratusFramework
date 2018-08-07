@@ -18,7 +18,7 @@ namespace Stratus
     /// <summary>
     /// Trigger for a Window-related event.
     /// </summary>
-    public class WindowEventTrigger : Trigger
+    public class WindowEventTrigger : Gameplay.Trigger
     {
       public enum TriggerType { Opened, Closed }
       public TriggerType Type;

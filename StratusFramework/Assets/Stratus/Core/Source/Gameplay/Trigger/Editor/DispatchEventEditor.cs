@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(DispatchEvent))]
   public class DispatchEventEditor : TriggerableEditor<DispatchEvent>

@@ -3,7 +3,7 @@ using System;
 using Stratus.Dependencies.TypeReferences;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// A trigger that is activated when a specified stratus event is received.

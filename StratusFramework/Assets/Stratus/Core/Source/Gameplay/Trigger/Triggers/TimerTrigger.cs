@@ -10,7 +10,7 @@ using Stratus;
 using System;
 using Stratus.Utilities;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// After a specified amount of time, triggers the event

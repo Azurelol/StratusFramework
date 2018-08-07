@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   public partial class TriggerSystemEditor : BehaviourEditor<TriggerSystem>
   {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(TriggerBase), true), CanEditMultipleObjects]
   public abstract class TriggerBaseEditor<T> : BehaviourEditor<T> where T : TriggerBase

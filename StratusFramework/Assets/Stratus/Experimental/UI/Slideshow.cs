@@ -10,7 +10,7 @@ using Stratus;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Presents a series of Graphical objects in sequence, using events

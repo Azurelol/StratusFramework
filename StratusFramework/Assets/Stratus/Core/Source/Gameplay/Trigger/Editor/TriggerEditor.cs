@@ -6,7 +6,7 @@ using Stratus.Utilities;
 using System.Reflection;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(Trigger), true), CanEditMultipleObjects]
   public class TriggerEditor : TriggerBaseEditor<Trigger>

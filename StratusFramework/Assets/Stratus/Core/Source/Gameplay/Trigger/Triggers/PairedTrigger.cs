@@ -2,7 +2,7 @@
 using Stratus;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// A trigger that pairs itself to another trigger. When that one is activated,

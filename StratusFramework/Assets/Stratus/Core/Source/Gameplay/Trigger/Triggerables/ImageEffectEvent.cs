@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Affects an image

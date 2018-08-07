@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Provides common operations on a Transform

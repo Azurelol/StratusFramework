@@ -11,7 +11,7 @@ using System;
 using Stratus;
 using UnityEngine.Serialization;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Enables a specified GameObject.

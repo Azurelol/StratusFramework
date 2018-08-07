@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Stratus
+namespace Stratus.Gameplay
 { 
-
   public class SceneEvent : Triggerable
   {
     public enum Type

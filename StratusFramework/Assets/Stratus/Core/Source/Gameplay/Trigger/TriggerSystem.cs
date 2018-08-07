@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Stratus.Interfaces;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [ExecuteInEditMode]
   [DisallowMultipleComponent]

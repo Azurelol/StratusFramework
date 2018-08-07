@@ -10,7 +10,7 @@ using System;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Triggers an event when its (trigger) collider collides with a GameObject with the

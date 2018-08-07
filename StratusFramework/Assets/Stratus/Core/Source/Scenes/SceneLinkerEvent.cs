@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// When triggered, makes sure the selected scenes are loaded

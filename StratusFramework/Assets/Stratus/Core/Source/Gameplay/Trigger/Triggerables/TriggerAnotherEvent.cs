@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Triggers another event dispatcher
@@ -12,11 +12,11 @@ namespace Stratus
   {
     [Header("Targeting")]
     [Tooltip("What component to send the trigger event to")]
-    public Triggerable Target;
+    public Triggerable target;
     [Tooltip("Whether the trigger will be sent to the GameObject as an event or invoked directly on the dispatcher component")]
-    public Trigger.Scope Delivery = Stratus.Trigger.Scope.GameObject;
+    public Trigger.Scope delivery = Trigger.Scope.GameObject;
     [Tooltip("Whether it should also trigger all of the object's children")]
-    public bool Recursive = false;
+    public bool recursive = false;
 
     protected override void OnAwake()
     {      
@@ -29,25 +29,25 @@ namespace Stratus
 
     protected override void OnTrigger()
     {
-      if (this.Delivery == Stratus.Trigger.Scope.GameObject)
+      if (this.delivery == Trigger.Scope.GameObject)
       {
-        if (!this.Target)
+        if (!this.target)
         {          
         }
 
-        this.Target.gameObject.Dispatch(new Trigger.TriggerEvent());
-        if (this.Recursive)
+        this.target.gameObject.Dispatch(new Trigger.TriggerEvent());
+        if (this.recursive)
         {
-          foreach (var child in this.Target.gameObject.Children())
+          foreach (var child in this.target.gameObject.Children())
           {
             child.Dispatch(new Trigger.TriggerEvent());
           }
         }
       }
 
-      else if (this.Delivery == Stratus.Trigger.Scope.Component)
+      else if (this.delivery == Trigger.Scope.Component)
       {
-        this.Target.Trigger();
+        this.target.Activate();
       }
     }
   }

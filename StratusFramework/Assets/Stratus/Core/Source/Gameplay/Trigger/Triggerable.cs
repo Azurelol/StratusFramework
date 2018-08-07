@@ -10,7 +10,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// A component that when triggered will perform a specific action.
@@ -84,7 +84,7 @@ namespace Stratus
     /// <summary>
     /// Activates this triggerable
     /// </summary>
-    public void Trigger()
+    public void Activate()
     {
       if (!enabled)
         return;

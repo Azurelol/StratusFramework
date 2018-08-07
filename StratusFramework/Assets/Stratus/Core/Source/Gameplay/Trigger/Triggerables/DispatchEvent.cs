@@ -4,7 +4,7 @@ using UnityEngine;
 using Stratus.Dependencies.TypeReferences;
 using System;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   public class DispatchEvent : Triggerable
   {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(CompositeTrigger))]
   public class CompositeTriggerEditor : TriggerEditor<CompositeTrigger>

@@ -10,7 +10,7 @@ using UnityEngine;
 using Stratus;
 using System;
 
-namespace Stratus 
+namespace Stratus.Gameplay
 {
   public class InputTrigger : Trigger
   {

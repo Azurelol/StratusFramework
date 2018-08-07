@@ -11,7 +11,7 @@ namespace Stratus
       /// <summary>
       /// Observers a variable insided an ink story
       /// </summary>
-      public class StoryObserver : Triggerable
+      public class StoryObserver : Gameplay.Triggerable
       {
         public enum Type { Observe, Retrieve };
 

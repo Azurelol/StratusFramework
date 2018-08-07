@@ -4,7 +4,7 @@ using UnityEngine;
 using Stratus.Dependencies.Ludiq.Reflection;
 using Stratus.Types;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Provides the ability to provide changes to a specified MonoBehaviour's properties at runtime

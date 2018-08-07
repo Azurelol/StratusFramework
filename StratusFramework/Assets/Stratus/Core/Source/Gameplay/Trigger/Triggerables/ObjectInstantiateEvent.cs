@@ -8,7 +8,7 @@
 using UnityEngine;
 using Stratus;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Instantiates a prefab when triggered
