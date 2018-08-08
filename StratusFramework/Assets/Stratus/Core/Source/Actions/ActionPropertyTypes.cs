@@ -22,10 +22,10 @@ namespace Stratus
     public ActionPropertyFloat(object target, FieldInfo field, float endValue, float duration, Ease ease)
       : base(target, field, endValue, duration, ease) { }
 
-    public override void ComputeDifference() { this.Difference = this.EndValue - this.InitialValue; }
+    public override void ComputeDifference() { this.difference = this.endValue - this.initialValue; }
     public override float ComputeCurrentValue(float easeVal)
     {
-      var currentVal = this.InitialValue + this.Difference * easeVal;
+      var currentVal = this.initialValue + this.difference * easeVal;
       //Stratus.Trace.Script("currentVal = " + currentVal);
       return currentVal;
     }
@@ -42,11 +42,11 @@ namespace Stratus
     public ActionPropertyVector2(object target, FieldInfo field, Vector2 endValue, float duration, Ease ease)
       : base(target, field, endValue, duration, ease) { }
 
-    public override void ComputeDifference() { this.Difference = this.EndValue - this.InitialValue; }
+    public override void ComputeDifference() { this.difference = this.endValue - this.initialValue; }
 
     public override Vector2 ComputeCurrentValue(float easeVal)
     {
-      return this.InitialValue + this.Difference * easeVal;
+      return this.initialValue + this.difference * easeVal;
     }
 
   }
@@ -62,11 +62,11 @@ namespace Stratus
     public ActionPropertyVector3(object target, FieldInfo field, Vector3 endValue, float duration, Ease ease)
       : base(target, field, endValue, duration, ease) { }
 
-    public override void ComputeDifference() { this.Difference = this.EndValue - this.InitialValue; }
+    public override void ComputeDifference() { this.difference = this.endValue - this.initialValue; }
 
     public override Vector3 ComputeCurrentValue(float easeVal)
     {
-      return this.InitialValue + this.Difference * easeVal;
+      return this.initialValue + this.difference * easeVal;
     }
   }
 
@@ -81,11 +81,11 @@ namespace Stratus
     public ActionPropertyVector4(object target, FieldInfo field, Vector4 endValue, float duration, Ease ease)
       : base(target, field, endValue, duration, ease) { }
 
-    public override void ComputeDifference() { this.Difference = this.EndValue - this.InitialValue; }
+    public override void ComputeDifference() { this.difference = this.endValue - this.initialValue; }
 
     public override Vector4 ComputeCurrentValue(float easeVal)
     {
-      return this.InitialValue + this.Difference * easeVal;
+      return this.initialValue + this.difference * easeVal;
     }
   }
 
@@ -101,12 +101,12 @@ namespace Stratus
       : base(target, field, endValue, duration, ease) { }
 
     public override void ComputeDifference() {
-      this.Difference = this.EndValue - this.InitialValue;      
+      this.difference = this.endValue - this.initialValue;      
     }
 
     public override Color ComputeCurrentValue(float easeVal)
     {
-      return this.InitialValue + this.Difference * easeVal;
+      return this.initialValue + this.difference * easeVal;
     }
   }
 
@@ -126,12 +126,12 @@ namespace Stratus
     public override void SetCurrent()
     {
       //Debug.Log("Setting!");
-      Set(Quaternion.Lerp(InitialValue, EndValue, Time.time * Time.deltaTime));
+      Set(Quaternion.Lerp(initialValue, endValue, Time.time * Time.deltaTime));
     }
 
     public override void SetLast()
     {
-      Set(EndValue);
+      Set(endValue);
     }
   }
 
@@ -165,11 +165,11 @@ namespace Stratus
     public ActionPropertyInt(object target, FieldInfo field, int endValue, float duration, Ease ease)
       : base(target, field, endValue, duration, ease) { }
 
-    public override void ComputeDifference() { this.Difference = this.EndValue - this.InitialValue; }
+    public override void ComputeDifference() { this.difference = this.endValue - this.initialValue; }
 
     public override int ComputeCurrentValue(float easeVal)
     {
-      this.CurrentValue = this.InitialValue + this.Difference * easeVal;
+      this.CurrentValue = this.initialValue + this.difference * easeVal;
       return Mathf.CeilToInt(this.CurrentValue);
     }
 

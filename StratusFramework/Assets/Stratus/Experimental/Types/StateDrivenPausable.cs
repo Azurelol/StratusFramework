@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// Upon being notified of a specific state change, pauses/unpauses the object

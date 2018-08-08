@@ -139,7 +139,6 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     protected internal override void OnBehaviourAwake()
     {
-      Trace.Script(string.Join(",", animator.parameters.Names((AnimatorControllerParameter param) => param.name)));
       onUpdate = new UpdateFunction(() => { });
       SetHooks();
       Subscribe();

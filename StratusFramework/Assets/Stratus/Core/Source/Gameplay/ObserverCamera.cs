@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   /// A simple observer camera controller for navigating a scene at runtime

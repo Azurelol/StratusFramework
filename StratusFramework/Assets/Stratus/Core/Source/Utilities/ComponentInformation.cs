@@ -249,7 +249,7 @@ namespace Stratus
           this.fieldValues[f] = this.GetValue(this.fields[f]);
           this.fieldValueStrings[f] = value.ToString();
         }
-        catch (Exception e)
+        catch
         {
         }
       }
@@ -262,7 +262,7 @@ namespace Stratus
           this.propertyValues[p] = value;
           this.propertyValueStrings[p] = value.ToString();
         }
-        catch (Exception e)
+        catch
         {
         }
       }

@@ -749,7 +749,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 476469930}
   m_LocalRotation: {x: 0.7009093, y: -0, z: -0, w: 0.7132504}
-  m_LocalPosition: {x: -0.35, y: 13.997716, z: -8.261784}
+  m_LocalPosition: {x: 0, y: 14.997716, z: -0.2617836}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1282170581}
@@ -773,7 +773,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 0}
+  m_Follow: {fileID: 752326152}
   m_PositionBlending: 0
   m_Lens:
     FieldOfView: 40
@@ -1026,10 +1026,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 752326152}
+  - component: {fileID: 752326154}
   - component: {fileID: 752326151}
   - component: {fileID: 752326150}
   - component: {fileID: 752326149}
   - component: {fileID: 752326148}
+  - component: {fileID: 752326155}
+  - component: {fileID: 752326153}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1079,7 +1082,7 @@ MonoBehaviour:
   additional: []
   changeCamera:
     _type: 0
-    key: 0
+    key: 99
     mouseButton: 0
     axis: 
   presets:
@@ -1087,6 +1090,13 @@ MonoBehaviour:
     camera: {fileID: 952091469}
     horizontalOffset: 3
     verticalOffset: 1
+    cursorLock: 1
+    turn: 1
+    synchronizeForward: 0
+  - label: Top Down
+    camera: {fileID: 476469932}
+    horizontalOffset: 3
+    verticalOffset: 2
     cursorLock: 1
     turn: 1
     synchronizeForward: 0
@@ -1103,22 +1113,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1099526892}
   rootTransform: {fileID: 1099526891}
-  animatorEventHooks:
-  - parameterName: 
-    parameterType: 4
-    onEvent:
-      _classRef: 
-    boolValue: 0
-    intValue: 0
-    floatValue: 0
+  animatorEventHooks: []
   animatorParameterHooks:
+  - parameterName: Move
+    parameterType: 4
+    member:
+      _parameterTypes: []
+      _target: {fileID: 752326147}
+      _component: CharacterControllerMovement
+      _name: moving
+  - parameterName: Jumping
+    parameterType: 4
+    member:
+      _parameterTypes: []
+      _target: {fileID: 752326147}
+      _component: CharacterControllerMovement
+      _name: jumping
   - parameterName: Speed
     parameterType: 1
     member:
       _parameterTypes: []
       _target: {fileID: 752326147}
       _component: CharacterControllerMovement
-      _name: accelerationProgress
+      _name: speed
   _animatorParameterNames:
   - Move
   - Jumping
@@ -1143,36 +1160,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be8242489e67b6545aec937d32584ba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  locomotion: 0
-  speed: 10
-  accelerationCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  locomotion: 2
+  movementSpeed: 4
+  accelerationCurve: 0
   accelerationRampUp: 1
   movementThreshold: 0.2
   sprintMuiltiplier: 2
-  turningSpeed: 1
-  turningThreshold: 180
+  turningSpeed: 6
+  turningThreshold: 90
   faceDirection: 1
   jumpSpeed: 5
-  jumpCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  fallCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  jumpCurve: 1
+  fallCurve: 3
   jumpApex: 0.5
-  groundDetection: 0
-  groundCollider: {fileID: 0}
+  groundDetection: 2
+  groundCollider: {fileID: 752326154}
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -1193,7 +1195,7 @@ MonoBehaviour:
   - {fileID: 752326149}
   - {fileID: 752326150}
   - {fileID: 752326148}
-  selectedExtensionTypeIndex: 0
+  selectedExtensionTypeIndex: 2
   debug: 0
 --- !u!4 &752326152
 Transform:
@@ -1209,6 +1211,2098 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!143 &752326153
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 752326147}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!136 &752326154
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 752326147}
+  m_Material: {fileID: 13400000, guid: 27b4183a1f514e345b1c54a7b3a043fe, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &752326155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 752326147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9984fa7532209b64989107fc67e20fa4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _information:
+    target: {fileID: 752326147}
+    components:
+    - component: {fileID: 752326152}
+      alphabeticalSorted: 0
+      memberReferences:
+      - name: <hierarchyCount>k__BackingField
+        type: 4
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: position
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: localPosition
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: eulerAngles
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: localEulerAngles
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: right
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: up
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: forward
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 0
+      - name: rotation
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 0
+      - name: localRotation
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 0
+      - name: rotationOrder
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 0
+      - name: localScale
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: parent
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: parentInternal
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
+      - name: worldToLocalMatrix
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: localToWorldMatrix
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: root
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 0
+      - name: childCount
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: lossyScale
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: hasChanged
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: hierarchyCapacity
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 19
+        isWatched: 0
+      - name: hierarchyCount
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 20
+        isWatched: 0
+      - name: transform
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 21
+        isWatched: 0
+      - name: gameObject
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 22
+        isWatched: 0
+      - name: tag
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 23
+        isWatched: 0
+      - name: rigidbody
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 24
+        isWatched: 0
+      - name: rigidbody2D
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 25
+        isWatched: 0
+      - name: camera
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 26
+        isWatched: 0
+      - name: light
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 27
+        isWatched: 0
+      - name: animation
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 28
+        isWatched: 0
+      - name: constantForce
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 29
+        isWatched: 0
+      - name: renderer
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 30
+        isWatched: 0
+      - name: audio
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 31
+        isWatched: 0
+      - name: guiText
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 32
+        isWatched: 0
+      - name: networkView
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 33
+        isWatched: 0
+      - name: guiElement
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 34
+        isWatched: 0
+      - name: guiTexture
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 35
+        isWatched: 0
+      - name: collider
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 36
+        isWatched: 0
+      - name: collider2D
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 37
+        isWatched: 0
+      - name: hingeJoint
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 38
+        isWatched: 0
+      - name: particleEmitter
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 39
+        isWatched: 0
+      - name: particleSystem
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 40
+        isWatched: 0
+      - name: name
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 41
+        isWatched: 0
+      - name: hideFlags
+        type: 16
+        componentName: Transform
+        gameObjectName: Player
+        memberIndex: 42
+        isWatched: 0
+    - component: {fileID: 752326154}
+      alphabeticalSorted: 0
+      memberReferences:
+      - name: center
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: radius
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: height
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: direction
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: enabled
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: attachedRigidbody
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: isTrigger
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 0
+      - name: contactOffset
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 0
+      - name: bounds
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 0
+      - name: sharedMaterial
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 0
+      - name: material
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: transform
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: gameObject
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
+      - name: tag
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: rigidbody
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: rigidbody2D
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 0
+      - name: camera
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: light
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: animation
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: constantForce
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 19
+        isWatched: 0
+      - name: renderer
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 20
+        isWatched: 0
+      - name: audio
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 21
+        isWatched: 0
+      - name: guiText
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 22
+        isWatched: 0
+      - name: networkView
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 23
+        isWatched: 0
+      - name: guiElement
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 24
+        isWatched: 0
+      - name: guiTexture
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 25
+        isWatched: 0
+      - name: collider
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 26
+        isWatched: 0
+      - name: collider2D
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 27
+        isWatched: 0
+      - name: hingeJoint
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 28
+        isWatched: 0
+      - name: particleEmitter
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 29
+        isWatched: 0
+      - name: particleSystem
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 30
+        isWatched: 0
+      - name: name
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 31
+        isWatched: 0
+      - name: hideFlags
+        type: 16
+        componentName: CapsuleCollider
+        gameObjectName: Player
+        memberIndex: 32
+        isWatched: 0
+    - component: {fileID: 752326151}
+      alphabeticalSorted: 0
+      memberReferences:
+      - name: debug
+        type: 4
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: extensionBehaviours
+        type: 4
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: selectedExtensionTypeIndex
+        type: 4
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: extensions
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: hasExtensions
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: useGUILayout
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: runInEditMode
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: enabled
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: isActiveAndEnabled
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: transform
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 0
+      - name: gameObject
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 0
+      - name: tag
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 0
+      - name: rigidbody
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 0
+      - name: rigidbody2D
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: camera
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: light
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
+      - name: animation
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: constantForce
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: renderer
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 0
+      - name: audio
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: guiText
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: networkView
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: guiElement
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 19
+        isWatched: 0
+      - name: guiTexture
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 20
+        isWatched: 0
+      - name: collider
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 21
+        isWatched: 0
+      - name: collider2D
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 22
+        isWatched: 0
+      - name: hingeJoint
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 23
+        isWatched: 0
+      - name: particleEmitter
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 24
+        isWatched: 0
+      - name: particleSystem
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 25
+        isWatched: 0
+      - name: name
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 26
+        isWatched: 0
+      - name: hideFlags
+        type: 16
+        componentName: StratusCharacterController
+        gameObjectName: Player
+        memberIndex: 27
+        isWatched: 0
+    - component: {fileID: 752326150}
+      alphabeticalSorted: 0
+      memberReferences:
+      - name: <extensible>k__BackingField
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: locomotion
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: accelerationCurve
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: accelerationRampUp
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: movementThreshold
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: sprintMuiltiplier
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 0
+      - name: turningSpeed
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 0
+      - name: turningThreshold
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 0
+      - name: faceDirection
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 0
+      - name: jumpSpeed
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: jumpCurve
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: fallCurve
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
+      - name: jumpApex
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: groundDetection
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: groundCollider
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 0
+      - name: groundLayer
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: groundCastFrequency
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: airControl
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: extensible
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: rigidbody
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: navMeshAgent
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: characterController
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: moving
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 1
+      - name: turning
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 1
+      - name: sprinting
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 1
+      - name: jumping
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 1
+      - name: falling
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 1
+      - name: grounded
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 1
+      - name: receivedInput
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: heading
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: velocity
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 1
+      - name: currentSpeed
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: maximumSpeed
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: velocityRatio
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: checkingMovement
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: accelerationProgress
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: useGUILayout
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 19
+        isWatched: 0
+      - name: runInEditMode
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 20
+        isWatched: 0
+      - name: enabled
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 21
+        isWatched: 0
+      - name: isActiveAndEnabled
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 22
+        isWatched: 0
+      - name: transform
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 23
+        isWatched: 0
+      - name: gameObject
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 24
+        isWatched: 0
+      - name: tag
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 25
+        isWatched: 0
+      - name: rigidbody
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 26
+        isWatched: 0
+      - name: rigidbody2D
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 27
+        isWatched: 0
+      - name: camera
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 28
+        isWatched: 0
+      - name: light
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 29
+        isWatched: 0
+      - name: animation
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 30
+        isWatched: 0
+      - name: constantForce
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 31
+        isWatched: 0
+      - name: renderer
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 32
+        isWatched: 0
+      - name: audio
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 33
+        isWatched: 0
+      - name: guiText
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 34
+        isWatched: 0
+      - name: networkView
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 35
+        isWatched: 0
+      - name: guiElement
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 36
+        isWatched: 0
+      - name: guiTexture
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 37
+        isWatched: 0
+      - name: collider
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 38
+        isWatched: 0
+      - name: collider2D
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 39
+        isWatched: 0
+      - name: hingeJoint
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 40
+        isWatched: 0
+      - name: particleEmitter
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 41
+        isWatched: 0
+      - name: particleSystem
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 42
+        isWatched: 0
+      - name: name
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 43
+        isWatched: 0
+      - name: hideFlags
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 44
+        isWatched: 0
+      - name: movementSpeed
+        type: 4
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: speed
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 1
+    - component: {fileID: 752326149}
+      alphabeticalSorted: 0
+      memberReferences:
+      - name: <extensible>k__BackingField
+        type: 4
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: <movement>k__BackingField
+        type: 4
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: animator
+        type: 4
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: rootTransform
+        type: 4
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: animatorEventHooks
+        type: 4
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: animatorParameterHooks
+        type: 4
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: extensible
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: movement
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: currentState
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: previousTrigger
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: debug
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: hasParameters
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: animatorParameterNames
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 0
+      - name: floatParameters
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 0
+      - name: intParameters
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 0
+      - name: boolParameters
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 0
+      - name: triggerParameters
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: onUpdate
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: useGUILayout
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
+      - name: runInEditMode
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: enabled
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: isActiveAndEnabled
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 0
+      - name: transform
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: gameObject
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: tag
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: rigidbody
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 19
+        isWatched: 0
+      - name: rigidbody2D
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 20
+        isWatched: 0
+      - name: camera
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 21
+        isWatched: 0
+      - name: light
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 22
+        isWatched: 0
+      - name: animation
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 23
+        isWatched: 0
+      - name: constantForce
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 24
+        isWatched: 0
+      - name: renderer
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 25
+        isWatched: 0
+      - name: audio
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 26
+        isWatched: 0
+      - name: guiText
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 27
+        isWatched: 0
+      - name: networkView
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 28
+        isWatched: 0
+      - name: guiElement
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 29
+        isWatched: 0
+      - name: guiTexture
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 30
+        isWatched: 0
+      - name: collider
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 31
+        isWatched: 0
+      - name: collider2D
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 32
+        isWatched: 0
+      - name: hingeJoint
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 33
+        isWatched: 0
+      - name: particleEmitter
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 34
+        isWatched: 0
+      - name: particleSystem
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 35
+        isWatched: 0
+      - name: name
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 36
+        isWatched: 0
+      - name: hideFlags
+        type: 16
+        componentName: CharacterControllerAnimator
+        gameObjectName: Player
+        memberIndex: 37
+        isWatched: 0
+    - component: {fileID: 752326148}
+      alphabeticalSorted: 0
+      memberReferences:
+      - name: camera
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: mode
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: horizontal
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: vertical
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: sprint
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: jump
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: mouseMovement
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 0
+      - name: moveButton
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 0
+      - name: additional
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 0
+      - name: changeCamera
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 0
+      - name: presets
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: cameraNavigation
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: cameraTransform
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
+      - name: presetsMap
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: <movementOffset>k__BackingField
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: <extensible>k__BackingField
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 0
+      - name: <movement>k__BackingField
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: <currentPreset>k__BackingField
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: movementOffset
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: extensible
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: movement
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: axis
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: currentPreset
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: hasCameras
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: useGUILayout
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 0
+      - name: runInEditMode
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 0
+      - name: enabled
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 0
+      - name: isActiveAndEnabled
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 0
+      - name: transform
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: gameObject
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: tag
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
+      - name: rigidbody
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: rigidbody2D
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: camera
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 0
+      - name: light
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: animation
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: constantForce
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: renderer
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 19
+        isWatched: 0
+      - name: audio
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 20
+        isWatched: 0
+      - name: guiText
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 21
+        isWatched: 0
+      - name: networkView
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 22
+        isWatched: 0
+      - name: guiElement
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 23
+        isWatched: 0
+      - name: guiTexture
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 24
+        isWatched: 0
+      - name: collider
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 25
+        isWatched: 0
+      - name: collider2D
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 26
+        isWatched: 0
+      - name: hingeJoint
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 27
+        isWatched: 0
+      - name: particleEmitter
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 28
+        isWatched: 0
+      - name: particleSystem
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 29
+        isWatched: 0
+      - name: name
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 30
+        isWatched: 0
+      - name: hideFlags
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 31
+        isWatched: 0
+    - component: {fileID: 752326155}
+      alphabeticalSorted: 0
+      memberReferences:
+      - name: _information
+        type: 4
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: information
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: get
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: label
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: useGUILayout
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: runInEditMode
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: enabled
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: isActiveAndEnabled
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 0
+      - name: transform
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 0
+      - name: gameObject
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 0
+      - name: tag
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 0
+      - name: rigidbody
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: rigidbody2D
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: camera
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
+      - name: light
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: animation
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: constantForce
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 0
+      - name: renderer
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: audio
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: guiText
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: networkView
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 19
+        isWatched: 0
+      - name: guiElement
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 20
+        isWatched: 0
+      - name: guiTexture
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 21
+        isWatched: 0
+      - name: collider
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 22
+        isWatched: 0
+      - name: collider2D
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 23
+        isWatched: 0
+      - name: hingeJoint
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 24
+        isWatched: 0
+      - name: particleEmitter
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 25
+        isWatched: 0
+      - name: particleSystem
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 26
+        isWatched: 0
+      - name: name
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 27
+        isWatched: 0
+      - name: hideFlags
+        type: 16
+        componentName: GameObjectBookmark
+        gameObjectName: Player
+        memberIndex: 28
+        isWatched: 0
+    - component: {fileID: 752326153}
+      alphabeticalSorted: 0
+      memberReferences:
+      - name: velocity
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
+      - name: isGrounded
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 1
+        isWatched: 0
+      - name: collisionFlags
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 2
+        isWatched: 0
+      - name: radius
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 3
+        isWatched: 0
+      - name: height
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 4
+        isWatched: 0
+      - name: center
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 5
+        isWatched: 0
+      - name: slopeLimit
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 6
+        isWatched: 0
+      - name: stepOffset
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 7
+        isWatched: 0
+      - name: skinWidth
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 8
+        isWatched: 0
+      - name: minMoveDistance
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 9
+        isWatched: 0
+      - name: detectCollisions
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 10
+        isWatched: 0
+      - name: enableOverlapRecovery
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: enabled
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
+      - name: attachedRigidbody
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: isTrigger
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 14
+        isWatched: 0
+      - name: contactOffset
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 15
+        isWatched: 0
+      - name: bounds
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: sharedMaterial
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 17
+        isWatched: 0
+      - name: material
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: transform
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 19
+        isWatched: 0
+      - name: gameObject
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 20
+        isWatched: 0
+      - name: tag
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 21
+        isWatched: 0
+      - name: rigidbody
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 22
+        isWatched: 0
+      - name: rigidbody2D
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 23
+        isWatched: 0
+      - name: camera
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 24
+        isWatched: 0
+      - name: light
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 25
+        isWatched: 0
+      - name: animation
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 26
+        isWatched: 0
+      - name: constantForce
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 27
+        isWatched: 0
+      - name: renderer
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 28
+        isWatched: 0
+      - name: audio
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 29
+        isWatched: 0
+      - name: guiText
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 30
+        isWatched: 0
+      - name: networkView
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 31
+        isWatched: 0
+      - name: guiElement
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 32
+        isWatched: 0
+      - name: guiTexture
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 33
+        isWatched: 0
+      - name: collider
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 34
+        isWatched: 0
+      - name: collider2D
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 35
+        isWatched: 0
+      - name: hingeJoint
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 36
+        isWatched: 0
+      - name: particleEmitter
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 37
+        isWatched: 0
+      - name: particleSystem
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 38
+        isWatched: 0
+      - name: name
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 39
+        isWatched: 0
+      - name: hideFlags
+        type: 16
+        componentName: CharacterController
+        gameObjectName: Player
+        memberIndex: 40
+        isWatched: 0
+    fieldCount: 47
+    propertyCount: 186
 --- !u!1 &776468811
 GameObject:
   m_ObjectHideFlags: 0
@@ -1289,7 +3383,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 776468811}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.35, y: 0.5, z: -8}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1469,8 +3563,8 @@ MonoBehaviour:
   m_LockStageInInspector: 
   m_StreamingVersion: 20170927
   m_Priority: 10
-  m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 0}
+  m_LookAt: {fileID: 752326152}
+  m_Follow: {fileID: 752326152}
   m_PositionBlending: 0
   m_CommonLens: 1
   m_Lens:
@@ -1538,7 +3632,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 952091468}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.35, y: 1.5, z: -13}
+  m_LocalPosition: {x: 0, y: 2.5, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 183990515}
@@ -1681,7 +3775,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1068359153}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.35, y: 0.5, z: -8}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 866823311}
@@ -1705,7 +3799,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 0}
+  m_Follow: {fileID: 752326152}
   m_PositionBlending: 0
   m_Lens:
     FieldOfView: 75
@@ -1792,7 +3886,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1231410947}
-  m_LocalRotation: {x: 0.12473881, y: -0, z: -0, w: 0.99218965}
+  m_LocalRotation: {x: 0.1247384, y: -0, z: -0, w: 0.9921897}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2675,7 +4769,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 0}
+  m_Follow: {fileID: 752326152}
   m_PositionBlending: 0
   m_Lens:
     FieldOfView: 40
@@ -2691,7 +4785,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1697494667}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.35, y: -0.9272058, z: -18}
+  m_LocalPosition: {x: 0, y: 0.0727942, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1585778500}

@@ -215,7 +215,7 @@ namespace Stratus
 
     private void OnGameObjectInformationChanged(GameObjectInformation information, GameObjectInformation.Change change)
     {
-      Trace.Script($"Information changed for {information.target.name}, change = {change}");
+      //Trace.Script($"Information changed for {information.target.name}, change = {change}");
 
       if (change == GameObjectInformation.Change.ComponentsAndWatchList)
         GameObjectBookmark.UpdateWatchList();
@@ -429,7 +429,7 @@ namespace Stratus
       }
       else
       {
-        Trace.Script($"Set tree view with ({members.Count - 1}) members");
+        //Trace.Script($"Set tree view with ({members.Count - 1}) members");
         this.memberInspector.SetTree(members);
       }
 

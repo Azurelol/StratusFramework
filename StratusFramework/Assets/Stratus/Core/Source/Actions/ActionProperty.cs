@@ -55,7 +55,7 @@ namespace Stratus
       return Types.None;
     }
 
-    protected Ease EaseType;
+    protected Ease easeType;
     
     /// <summary>
     /// Constructor
@@ -65,7 +65,7 @@ namespace Stratus
     public ActionProperty(float duration, Ease ease) : base("ActionProperty")
     {
       this.duration = duration;
-      EaseType = ease;
+      easeType = ease;
     }
     
     /// <summary>
@@ -88,14 +88,14 @@ namespace Stratus
   /**************************************************************************/
   public abstract class ActionPropertyBase<T> : ActionProperty
   {
-    protected T Difference;
-    protected T InitialValue;
-    protected T EndValue;
-    private bool Initialized = false;
+    protected T difference;
+    protected T initialValue;
+    protected T endValue;
+    private bool initialized = false;
 
-    protected object Target;
-    protected PropertyInfo Property;
-    protected FieldInfo Field;
+    protected object target;
+    protected PropertyInfo property;
+    protected FieldInfo field;
 
     /**************************************************************************/
     /*!
@@ -105,11 +105,11 @@ namespace Stratus
     public ActionPropertyBase(object target, PropertyInfo property, T endValue, float duration, Ease ease)
   : base(duration, ease)
     {
-      Target = target;
-      Property = property;    
-      EndValue = endValue;
+      this.target = target;
+      this.property = property;    
+      this.endValue = endValue;
       base.duration = duration;
-      EaseType = ease;
+      easeType = ease;
     }
 
     /**************************************************************************/
@@ -120,11 +120,11 @@ namespace Stratus
     public ActionPropertyBase(object target, FieldInfo field, T endValue, float duration, Ease ease)
   : base(duration, ease)
     {
-      Target = target;
-      Field = field;   
-      EndValue = endValue;
+      this.target = target;
+      this.field = field;   
+      this.endValue = endValue;
       base.duration = duration;
-      EaseType = ease;
+      easeType = ease;
     }
 
     /**************************************************************************/
@@ -136,7 +136,7 @@ namespace Stratus
     /**************************************************************************/
     public override float Interpolate(float dt)
     {
-      if (!Initialized)
+      if (!initialized)
         Initialize();
 
       this.elapsed += dt;
@@ -163,21 +163,21 @@ namespace Stratus
     /**************************************************************************/
     public void Initialize()
     {
-      if (Property != null)
-        InitialValue = (T)Property.GetValue(Target, null);
-      else if (Field != null)
-        InitialValue = (T)Field.GetValue(Target);
+      if (property != null)
+        initialValue = (T)property.GetValue(target, null);
+      else if (field != null)
+        initialValue = (T)field.GetValue(target);
       else
         throw new System.Exception("Couldn't set initial value!");
 
       // Now we can compute the difference
       ComputeDifference();
 
-      if (Tracing) Trace.Script("InitialValue = '" + InitialValue 
-                                + "', EndValue = '" + EndValue + "'"
-                                + "' Difference = '" + Difference + "'");
+      if (Tracing) Trace.Script("InitialValue = '" + initialValue 
+                                + "', EndValue = '" + endValue + "'"
+                                + "' Difference = '" + difference + "'");
 
-      Initialized = true;
+      initialized = true;
     }
 
     /**************************************************************************/
@@ -187,7 +187,7 @@ namespace Stratus
     /**************************************************************************/
     public virtual void SetCurrent()
     {
-      var easeVal = Easing.Calculate((this.elapsed / this.duration), this.EaseType);
+      var easeVal = this.easeType.Evaluate(this.elapsed / this.duration);
       var currentValue = this.ComputeCurrentValue((easeVal));
       if (Tracing) Trace.Script("CurrentValue = '" + currentValue + "'");
       this.Set(currentValue);
@@ -200,7 +200,7 @@ namespace Stratus
     /**************************************************************************/
     public virtual void SetLast()
     {
-      this.Set(this.EndValue);
+      this.Set(this.endValue);
     }
 
     /**************************************************************************/
@@ -210,13 +210,13 @@ namespace Stratus
     /**************************************************************************/
     public void Set(T val)
     {
-      if (this.Property != null)
+      if (this.property != null)
       {
-        Property.SetValue(Target, val, null);
+        property.SetValue(target, val, null);
       }
       else
       {
-        Field.SetValue(Target, val);
+        field.SetValue(target, val);
       }
     }
 

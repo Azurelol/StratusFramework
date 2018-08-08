@@ -20,7 +20,7 @@ namespace Stratus
     CubicOut,
     CubicInOut,
     ExponentialIn,
-    ExponetialOut,
+    ExponentialOut,
     ExponentialInOut,
     SineIn,
     SineOut,
@@ -73,9 +73,34 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     // Properties
     //--------------------------------------------------------------------------------------------/
+    private static Dictionary<Ease, EaseFunction> easingFunctions { get; set; } = new Dictionary<Ease, EaseFunction>();
     public static float tMinimum { get; } = 0f;
     public static float tMax { get; } = 1f;
     private static Dictionary<float, Dictionary<float, float>> exponentCache { get; set; } = new Dictionary<float, Dictionary<float, float>>();
+
+    //--------------------------------------------------------------------------------------------/
+    // CTOR
+    //--------------------------------------------------------------------------------------------/
+    static Easing()
+    {
+      easingFunctions.Add(Ease.Linear, Linear);
+      easingFunctions.Add(Ease.CubicIn, CubicIn);
+      easingFunctions.Add(Ease.CubicInOut, CubicInOut);
+      easingFunctions.Add(Ease.CubicOut, CubicOut);
+      easingFunctions.Add(Ease.QuadraticIn, QuadIn);
+      easingFunctions.Add(Ease.QuadraticOut, QuadOut);
+      easingFunctions.Add(Ease.QuadraticInOut, QuadInOut);
+      easingFunctions.Add(Ease.ExponentialIn, ExponentialIn);
+      easingFunctions.Add(Ease.ExponentialOut, ExponentialOut);
+      easingFunctions.Add(Ease.ExponentialInOut, ExponentialInOut);
+      easingFunctions.Add(Ease.ElasticIn, ElasticIn);
+      easingFunctions.Add(Ease.ElasticOut, ElasticOut);
+      easingFunctions.Add(Ease.ElasticInOut, ElasticInOut);
+      easingFunctions.Add(Ease.SineIn, SineIn);
+      easingFunctions.Add(Ease.SineOut, SineOut);
+      easingFunctions.Add(Ease.SineInOut, SineInOut);
+      easingFunctions.Add(Ease.Smoothstep, Smoothstep);
+    }
 
     //--------------------------------------------------------------------------------------------/
     // Ease Functions
@@ -91,7 +116,6 @@ namespace Stratus
     }
 
     // - Powers
-
     // General Power
     public static float PowerIn(float t, float exponent)
     {
@@ -111,7 +135,6 @@ namespace Stratus
     }
 
     // Quadratic
-
     public static float QuadIn(float t)
     {
       return t * t;
@@ -131,7 +154,6 @@ namespace Stratus
     }
 
     // Cubic
-
     public static float CubicIn(float t)
     {
       return t * t * t;
@@ -150,7 +172,6 @@ namespace Stratus
     }
 
     // Sine
-
     public static float SineIn(float t)
     {
       return 1f - Mathf.Cos(t * Mathf.PI / 2f);
@@ -167,7 +188,6 @@ namespace Stratus
     }
 
     // Exponential
-
     public static float ExponentialIn(float t)
     {
       return t == 0f ? 0f : Power(1024f, t - 1f);
@@ -187,7 +207,6 @@ namespace Stratus
     }
 
     // Elastic
-
     public static float ElasticIn(float t)
     {
       if (t == 0) return 0;
@@ -209,7 +228,6 @@ namespace Stratus
     }
 
     // Smoothstep
-
     public static float Smoothstep(float t)
     {
       return t * t * (3 - 2 * t);
@@ -224,18 +242,14 @@ namespace Stratus
     /// <param name="t"></param>
     /// <param name="ease"></param>
     /// <returns></returns>
-    public static float Calculate(float t, Ease ease)
-    {
-      EaseFunction function = ease.GetFunction();
-      return function(t);
-    }
+    public static float Calculate(Ease ease, float t) => easingFunctions[ease](t);
 
     /// <summary>
     /// Returns the function used for this ease
     /// </summary>
     /// <param name="ease"></param>
     /// <returns></returns>
-    public static EaseFunction GetFunction(this Ease ease)
+    public static EaseFunction ToFunction(this Ease ease)
     {
       switch (ease)
       {
@@ -265,7 +279,7 @@ namespace Stratus
 
         case Ease.ExponentialIn:
           return ExponentialIn;
-        case Ease.ExponetialOut:
+        case Ease.ExponentialOut:
           return ExponentialOut;
         case Ease.ExponentialInOut:
           return ExponentialInOut;
@@ -283,6 +297,8 @@ namespace Stratus
 
       throw new System.Exception($"No function found for the ease {ease}");
     }
+
+    public static float Evaluate(this Ease ease, float t) => easingFunctions[ease](t);
 
     /// <summary>
     /// Returns the specified number raised to a specified power

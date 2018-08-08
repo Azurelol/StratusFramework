@@ -22,7 +22,7 @@ namespace Stratus
     public static IEnumerator Interpolate(float initialValue, float finalValue, float duration, System.Action<float> setter, Ease ease = Ease.Linear, System.Action onFinished = null, TimeScale timeScale = TimeScale.Delta)
     {
       float diff = finalValue - initialValue;
-      Easing.EaseFunction easeFunc = ease.GetFunction();
+      Easing.EaseFunction easeFunc = ease.ToFunction();
 
       System.Action<float> lerp = (float t) =>
       {
@@ -38,7 +38,7 @@ namespace Stratus
     public static IEnumerator Interpolate(int initialValue, int finalValue, float duration, System.Action<int> setter, Ease ease = Ease.Linear, System.Action onFinished = null, TimeScale timeScale = TimeScale.Delta)
     {
       float diff = finalValue - initialValue;
-      Easing.EaseFunction easeFunc = ease.GetFunction();
+      Easing.EaseFunction easeFunc = ease.ToFunction();
 
       System.Action<float> lerp = (float t) =>
       {
@@ -61,7 +61,7 @@ namespace Stratus
     public static IEnumerator Interpolate(Vector2 initialValue, Vector2 finalValue, float duration, System.Action<Vector2> setter, Ease ease = Ease.Linear, System.Action onFinished = null, TimeScale timeScale = TimeScale.Delta)
     {
       Vector2 diff = finalValue - initialValue;
-      Easing.EaseFunction easeFunc = ease.GetFunction();
+      Easing.EaseFunction easeFunc = ease.ToFunction();
 
       System.Action<float> lerp = (float t) =>
       {
@@ -77,7 +77,7 @@ namespace Stratus
     public static IEnumerator Interpolate(Vector3 initialValue, Vector3 finalValue, float duration, System.Action<Vector3> setter, Ease ease = Ease.Linear, System.Action onFinished = null, TimeScale timeScale = TimeScale.Delta)
     {
       Vector3 diff = finalValue - initialValue;
-      Easing.EaseFunction easeFunc = ease.GetFunction();
+      Easing.EaseFunction easeFunc = ease.ToFunction();
 
       System.Action<float> lerp = (float t) =>
       {
@@ -93,7 +93,7 @@ namespace Stratus
     public static IEnumerator Interpolate(Vector4 initialValue, Vector4 finalValue, float duration, System.Action<Vector4> setter, Ease ease = Ease.Linear, System.Action onFinished = null, TimeScale timeScale = TimeScale.Delta)
     {
       Vector4 diff = finalValue - initialValue;
-      Easing.EaseFunction easeFunc = ease.GetFunction();
+      Easing.EaseFunction easeFunc = ease.ToFunction();
 
       System.Action<float> lerp = (float t) =>
       {
@@ -109,7 +109,7 @@ namespace Stratus
     public static IEnumerator Interpolate(Color initialValue, Color finalValue, float duration, System.Action<Color> setter, Ease ease = Ease.Linear, System.Action onFinished = null, TimeScale timeScale = TimeScale.Delta)
     {
       Color diff = finalValue - initialValue;
-      Easing.EaseFunction easeFunc = ease.GetFunction();
+      Easing.EaseFunction easeFunc = ease.ToFunction();
 
       System.Action<float> lerp = (float t) =>
       {

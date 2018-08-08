@@ -11,7 +11,7 @@ using Stratus;
 using System.Collections.Generic;
 using UnityEngine.AI;
 
-namespace Stratus 
+namespace Stratus.Gameplay 
 {
   public class Checkpoint : Multiton<Checkpoint> 
   {

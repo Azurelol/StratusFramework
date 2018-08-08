@@ -94,7 +94,7 @@ namespace Stratus.Gameplay
     public bool restart = true;
 
     [Tooltip("The list of checkpoints within this segment")]
-    public List<Stratus.Checkpoint> checkpoints = new List<Stratus.Checkpoint>();
+    public List<Checkpoint> checkpoints = new List<Checkpoint>();
     [Tooltip("Objects to be toggled on and off by this segment")]
     public List<GameObject> toggledObjects = new List<GameObject>();
 
@@ -129,7 +129,7 @@ namespace Stratus.Gameplay
     /// <summary>
     /// The initial checkpoint for this segment
     /// </summary>
-    public Stratus.Checkpoint initialCheckpoint => checkpoints[0];
+    public Checkpoint initialCheckpoint => checkpoints[0];
     /// <summary>
     /// All currently active segments, indexed by their labels
     /// </summary>

@@ -94,17 +94,7 @@ namespace Stratus
           return (T)extension;
       }
       return default(T);
-      //if (!extensionsMap.ContainsKey(type))
-      //  Trace.Error($"The extension of type {type} is not present!", this);
-      //return (T)extensionsMap[type];
     }
-
-    ///// <summary>
-    ///// Retrieves the extension of the given type, if its present
-    ///// </summary>
-    ///// <typeparam name="T"></typeparam>
-    ///// <returns></returns>
-    //public bool HasExtension(Type type) => this.extensionBehaviours.Contains((MonoBehaviour)behaviour);
 
     /// <summary>
     /// Retrieves the extension of the given type, if its present
@@ -116,16 +106,6 @@ namespace Stratus
       return this.extensionBehaviours.Contains((MonoBehaviour)behaviour);
       //return this.HasExtension(behaviour.GetType());
     }
-
-    ///// <summary>
-    ///// Retrieves the extension of the given type, if its present
-    ///// </summary>
-    ///// <typeparam name="T"></typeparam>
-    ///// <returns></returns>
-    //public bool HasExtension<T>() where T : IExtensionBehaviour
-    //{
-    //  return this.GetExtension<T>() != null;
-    //}
 
 
     /// Retrieves the extensible that the extension is for
@@ -204,11 +184,6 @@ namespace Stratus
   /// Interface type used to validate all extensible behaviours
   /// </summary>
   public interface IExtensible { }
-
-  ///// <summary>
-  ///// Interface type used to validate all extensible behaviours
-  ///// </summary>
-  //public interface IExtensibleBehaviour { }
 
   /// <summary>
   /// Interface type a behaviours that is an extension of another

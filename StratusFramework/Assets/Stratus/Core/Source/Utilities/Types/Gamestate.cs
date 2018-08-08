@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Gameplay
 {
   /// <summary>
   ///  An abstract template for setting up a Gamestate class for your project

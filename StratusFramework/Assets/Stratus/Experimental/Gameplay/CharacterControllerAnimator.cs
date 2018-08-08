@@ -18,7 +18,7 @@ namespace Stratus.Gameplay
     }
 
     public void OnExtensibleStart()
-    {      
+    {
     }
 
   }

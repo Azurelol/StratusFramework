@@ -8,7 +8,7 @@ namespace Stratus.Gameplay
 {
   [RequireComponent(typeof(CharacterControllerMovement))]
   [CustomExtensionAttribute(typeof(StratusCharacterController))]
-  public class CharacterControllerInput : StratusBehaviour, IExtensionBehaviour<StratusCharacterController>
+  public class CharacterControllerInput : ManagedBehaviour, IExtensionBehaviour<StratusCharacterController>
   {
     //--------------------------------------------------------------------------------------------/
     // Declarations
@@ -170,7 +170,6 @@ namespace Stratus.Gameplay
 
     public void OnExtensibleStart()
     {
-
     }
 
     private void Reset()
@@ -178,10 +177,10 @@ namespace Stratus.Gameplay
       this.camera = Camera.main;
     }
 
-    private void Update()
+    protected internal override void OnUpdate()
     {
       PollInput();
-    }
+    }   
 
     //--------------------------------------------------------------------------------------------/
     // Methods
