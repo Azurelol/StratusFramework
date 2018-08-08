@@ -128,6 +128,7 @@ namespace Stratus.Gameplay
     public CharacterController characterController { get; private set; }
     private CollisionProxy collisionProxy { get; set; }
 
+    public static Vector3 gravity => Physics.gravity;
     public bool moving { get; private set; }
     public bool turning { get; private set; }
     public bool sprinting { get; private set; }
@@ -170,8 +171,8 @@ namespace Stratus.Gameplay
     private bool turnOverThreshold { get; set; }
     private bool applyMovement { get; set; }
     public float accelerationProgress => accelerationTimer.inverseNormalizedProgress;
-    private float jumpProgress => jumpTimer.inverseNormalizedProgress;
-    private float fallProgress => fallTimer.inverseNormalizedProgress;
+    public float jumpProgress => jumpTimer.inverseNormalizedProgress;
+    public float fallProgress => fallTimer.inverseNormalizedProgress;
 
 
     //--------------------------------------------------------------------------------------------/
@@ -205,7 +206,7 @@ namespace Stratus.Gameplay
       if (turning)
         ApplyTurn();
 
-      if (applyMovement || jumping || falling)
+      if (applyMovement || jumping ||  falling)
         ApplyMovement();
       else if (!grounded)
         ApplyFall();
@@ -319,7 +320,7 @@ namespace Stratus.Gameplay
             break;
         }
       }
-      else if (falling)
+      else if (!grounded)
       {
         float t = ComputeInterpolant(fallCurve, fallProgress);
         switch (locomotion)
@@ -328,7 +329,7 @@ namespace Stratus.Gameplay
           case LocomotionMode.Force:
             break;
           case LocomotionMode.CharacterController:
-            verticalSpeed = fallCurve.Evaluate(t) * -jumpSpeed;
+            verticalSpeed = fallCurve.Evaluate(t) * gravity.y;
             break;
           case LocomotionMode.NavMeshAgent:
             break;
@@ -424,7 +425,7 @@ namespace Stratus.Gameplay
         if (jumpTimer.isFinished)
         {
           jumping = false;
-          falling = true;
+          this.OnFall();
         }
       }
 
@@ -467,7 +468,12 @@ namespace Stratus.Gameplay
       grounded = false;
       jumping = true;
       falling = false;
-      jumpTimer.Reset();
+      jumpTimer.Reset();      
+    }
+
+    protected void OnFall()
+    {
+      falling = true;
       fallTimer.Reset();
     }
 
