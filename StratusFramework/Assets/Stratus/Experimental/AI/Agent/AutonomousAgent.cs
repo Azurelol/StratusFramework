@@ -15,7 +15,6 @@ namespace Stratus
 {
   namespace AI
   {
-
     /// <summary>
     /// An autonomous agent is driven by a set of heuristics and preset behaviours
     /// </summary>

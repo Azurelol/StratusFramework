@@ -79,6 +79,10 @@ namespace Stratus
     /// </summary>
     public float lineHeight => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
     /// <summary>
+    /// Standard vertical spacing betwween controls
+    /// </summary>
+    public float verticalSpacing => EditorGUIUtility.standardVerticalSpacing;
+    /// <summary>
     /// Whether this property has multiple values
     /// </summary>
     public bool hasMultipleFields { get; private set; }   
@@ -103,17 +107,19 @@ namespace Stratus
       isArray = property.name != fieldInfo.Name;
 
       float height = 0f;
+      height += verticalSpacing;
 
       if (isArray)
       {
-        //fields = fieldInfo.FieldType.GetFields();
-        //fieldCount = fields.Length;
-        //hasMultipleFields = fieldCount > 1;
-
         foreach(var child in GetChildren(property))
         {
           height += GetPropertyHeight(child);
         }
+
+        //fields = fieldInfo.FieldType.GetFields();
+        //fieldCount = fields.Length;
+        //hasMultipleFields = fieldCount > 1;
+
 
         //height = EditorGUI.GetPropertyHeight(property);
         //for (int c = 0; c < property.; ++c)
@@ -143,8 +149,8 @@ namespace Stratus
       target = property.serializedObject.targetObject;
       isArray = property.isArray;
       propertyHeight = 0f;
-      
 
+      position.y += verticalSpacing;
       position.height = EditorGUIUtility.singleLineHeight;
       label = EditorGUI.BeginProperty(position, label, property);
       {

@@ -77,9 +77,6 @@ namespace Stratus.Gameplay
     /// </summary>
     public class JumpEvent : Stratus.Event { }
 
-    public class DidSomethingEvent : ActionEvent<DidSomethingEvent> { }
-
-
     //--------------------------------------------------------------------------------------------/
     // Fields
     //--------------------------------------------------------------------------------------------/
