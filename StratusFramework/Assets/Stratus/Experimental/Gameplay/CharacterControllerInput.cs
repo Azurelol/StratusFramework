@@ -274,9 +274,18 @@ namespace Stratus.Gameplay
       foreach(var preset in this.presets)
       {
         preset.camera.Follow = this.targetTransform;
-        preset.camera.LookAt = this.targetTransform;
-        //bool hasLookAt = preset.camera is CinemachineFreeLook;
-        //if (hasLookAt)
+        bool setLookAt = true;
+
+        CinemachineVirtualCamera asVirtualCamera = (preset.camera as CinemachineVirtualCamera);
+        if (asVirtualCamera != null)
+        {
+          bool hasTransposer = asVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>() != null;
+          if (hasTransposer)
+            setLookAt = false;
+        }
+
+        if (setLookAt)
+          preset.camera.LookAt = this.targetTransform;
       }
     }
 

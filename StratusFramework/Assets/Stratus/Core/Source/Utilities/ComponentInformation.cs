@@ -41,7 +41,7 @@ namespace Stratus
       /// <summary>
       /// The name of the GameObject for the component this member is a part of 
       /// </summary>
-      public string gameObjectName;
+      public string gameObjectName => componentInfo.gameObject.name;
       /// <summary>
       /// THe index to this member for either the fields or properties of the component
       /// </summary>
@@ -70,10 +70,9 @@ namespace Stratus
       {
         this.name = member.Name;
         this.componentName = componentInfo.name;
-        this.gameObjectName = componentInfo.gameObject.name;
+        //this.gameObjectName = componentInfo.gameObject.name;
         this.type = member.MemberType;
         this.memberIndex = index;
-
         this.Initialize(componentInfo);
       }
 
@@ -87,7 +86,7 @@ namespace Stratus
       /// <param name="componentInfo"></param>
       public void Initialize(ComponentInformation componentInfo)
       {
-        this.componentInfo = componentInfo;
+        this.componentInfo = componentInfo;        
         this.initialized = true;
       }
 
