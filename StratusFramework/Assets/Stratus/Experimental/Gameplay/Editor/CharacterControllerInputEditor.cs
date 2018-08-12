@@ -22,10 +22,10 @@ namespace Stratus.Gameplay
         nameof(CharacterControllerInput.mouseMovement),
         nameof(CharacterControllerInput.moveButton));
 
+      AddPropertyChangeCallback(nameof(CharacterControllerInput.target), ()=> target.ChangeTarget(this.target.target));
+
       AddArea(AddTemplate);
     }
-
-
 
     private void AddTemplate(Rect rect)
     {

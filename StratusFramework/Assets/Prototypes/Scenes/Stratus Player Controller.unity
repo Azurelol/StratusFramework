@@ -772,7 +772,7 @@ MonoBehaviour:
   m_LockStageInInspector: 
   m_StreamingVersion: 20170927
   m_Priority: 10
-  m_LookAt: {fileID: 0}
+  m_LookAt: {fileID: 752326152}
   m_Follow: {fileID: 752326152}
   m_PositionBlending: 0
   m_Lens:
@@ -1051,6 +1051,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d8cf9fdfd0479b4687fb7794694aa03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 752326150}
   camera: {fileID: 776468814}
   mode: 0
   horizontal:
@@ -1122,13 +1123,6 @@ MonoBehaviour:
       _target: {fileID: 752326147}
       _component: CharacterControllerMovement
       _name: moving
-  - parameterName: Jumping
-    parameterType: 4
-    member:
-      _parameterTypes: []
-      _target: {fileID: 752326147}
-      _component: CharacterControllerMovement
-      _name: jumping
   - parameterName: Speed
     parameterType: 1
     member:
@@ -1161,25 +1155,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   locomotion: 2
-  movementSpeed: 4
-  accelerationCurve: 16
+  movementSpeed: 3
+  accelerationCurve: 0
   accelerationRampUp: 1
   movementThreshold: 0.2
   sprintMuiltiplier: 2
   turningSpeed: 6
   turningThreshold: 90
   faceDirection: 1
-  jumpSpeed: 5
+  jumpSpeed: 10
   jumpCurve: 1
   fallCurve: 3
-  jumpApex: 0.5
+  jumpApex: 1
   groundDetection: 2
   groundCollider: {fileID: 752326154}
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
   groundCastFrequency: 0.1
-  airControl: 1
+  airControl: 0
 --- !u!114 &752326151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1195,7 +1189,7 @@ MonoBehaviour:
   - {fileID: 752326149}
   - {fileID: 752326150}
   - {fileID: 752326148}
-  selectedExtensionTypeIndex: 2
+  selectedExtensionTypeIndex: 1
   debug: 0
 --- !u!4 &752326152
 Transform:
@@ -2058,7 +2052,7 @@ MonoBehaviour:
         componentName: CharacterControllerMovement
         gameObjectName: Player
         memberIndex: 5
-        isWatched: 1
+        isWatched: 0
       - name: sprinting
         type: 16
         componentName: CharacterControllerMovement
@@ -2093,85 +2087,85 @@ MonoBehaviour:
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 11
+        memberIndex: 14
         isWatched: 0
       - name: velocity
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 12
+        memberIndex: 15
         isWatched: 1
       - name: currentSpeed
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 13
+        memberIndex: 17
         isWatched: 0
       - name: maximumSpeed
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 14
+        memberIndex: 18
         isWatched: 0
       - name: velocityRatio
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 16
+        memberIndex: 20
         isWatched: 0
       - name: checkingMovement
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 17
+        memberIndex: 21
         isWatched: 0
       - name: accelerationProgress
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 18
+        memberIndex: 22
         isWatched: 0
       - name: useGUILayout
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 21
+        memberIndex: 25
         isWatched: 0
       - name: runInEditMode
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 22
+        memberIndex: 26
         isWatched: 0
       - name: enabled
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 23
+        memberIndex: 27
         isWatched: 0
       - name: isActiveAndEnabled
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 24
+        memberIndex: 28
         isWatched: 0
       - name: transform
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 25
+        memberIndex: 29
         isWatched: 0
       - name: gameObject
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 26
+        memberIndex: 30
         isWatched: 0
       - name: tag
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 27
+        memberIndex: 31
         isWatched: 0
       - name: rigidbody
         type: 16
@@ -2183,109 +2177,109 @@ MonoBehaviour:
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 29
+        memberIndex: 33
         isWatched: 0
       - name: camera
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 30
+        memberIndex: 34
         isWatched: 0
       - name: light
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 31
+        memberIndex: 35
         isWatched: 0
       - name: animation
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 32
+        memberIndex: 36
         isWatched: 0
       - name: constantForce
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 33
+        memberIndex: 37
         isWatched: 0
       - name: renderer
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 34
+        memberIndex: 38
         isWatched: 0
       - name: audio
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 35
+        memberIndex: 39
         isWatched: 0
       - name: guiText
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 36
+        memberIndex: 40
         isWatched: 0
       - name: networkView
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 37
+        memberIndex: 41
         isWatched: 0
       - name: guiElement
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 38
+        memberIndex: 42
         isWatched: 0
       - name: guiTexture
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 39
+        memberIndex: 43
         isWatched: 0
       - name: collider
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 40
+        memberIndex: 44
         isWatched: 0
       - name: collider2D
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 41
+        memberIndex: 45
         isWatched: 0
       - name: hingeJoint
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 42
+        memberIndex: 46
         isWatched: 0
       - name: particleEmitter
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 43
+        memberIndex: 47
         isWatched: 0
       - name: particleSystem
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 44
+        memberIndex: 48
         isWatched: 0
       - name: name
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 45
+        memberIndex: 49
         isWatched: 0
       - name: hideFlags
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 46
+        memberIndex: 50
         isWatched: 0
       - name: movementSpeed
         type: 4
@@ -2297,20 +2291,44 @@ MonoBehaviour:
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 15
+        memberIndex: 19
         isWatched: 1
       - name: jumpProgress
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 19
+        memberIndex: 23
         isWatched: 0
       - name: fallProgress
         type: 16
         componentName: CharacterControllerMovement
         gameObjectName: Player
-        memberIndex: 20
+        memberIndex: 24
         isWatched: 1
+      - name: nextVelocity
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 16
+        isWatched: 0
+      - name: hasGroundCast
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 13
+        isWatched: 0
+      - name: supportsJump
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 11
+        isWatched: 0
+      - name: supportsWaypoints
+        type: 16
+        componentName: CharacterControllerMovement
+        gameObjectName: Player
+        memberIndex: 12
+        isWatched: 0
     - component: {fileID: 752326149}
       alphabeticalSorted: 0
       memberReferences:
@@ -2585,99 +2603,93 @@ MonoBehaviour:
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 0
+        memberIndex: 1
         isWatched: 0
       - name: mode
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 1
+        memberIndex: 2
         isWatched: 0
       - name: horizontal
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 2
+        memberIndex: 3
         isWatched: 0
       - name: vertical
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 3
+        memberIndex: 4
         isWatched: 0
       - name: sprint
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 4
+        memberIndex: 5
         isWatched: 0
       - name: jump
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 5
+        memberIndex: 6
         isWatched: 0
       - name: mouseMovement
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 6
+        memberIndex: 7
         isWatched: 0
       - name: moveButton
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 7
+        memberIndex: 8
         isWatched: 0
       - name: additional
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 8
+        memberIndex: 9
         isWatched: 0
       - name: changeCamera
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 9
+        memberIndex: 10
         isWatched: 0
       - name: presets
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 10
+        memberIndex: 11
         isWatched: 0
       - name: cameraNavigation
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 11
+        memberIndex: 12
         isWatched: 0
       - name: cameraTransform
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 12
+        memberIndex: 13
         isWatched: 0
       - name: presetsMap
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 13
+        memberIndex: 14
         isWatched: 0
       - name: <movementOffset>k__BackingField
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 14
-        isWatched: 0
-      - name: <extensible>k__BackingField
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
         memberIndex: 15
         isWatched: 0
-      - name: <movement>k__BackingField
+      - name: <extensible>k__BackingField
         type: 4
         componentName: CharacterControllerInput
         gameObjectName: Player
@@ -2701,29 +2713,23 @@ MonoBehaviour:
         gameObjectName: Player
         memberIndex: 1
         isWatched: 0
-      - name: movement
+      - name: axis
         type: 16
         componentName: CharacterControllerInput
         gameObjectName: Player
         memberIndex: 2
         isWatched: 0
-      - name: axis
+      - name: currentPreset
         type: 16
         componentName: CharacterControllerInput
         gameObjectName: Player
         memberIndex: 3
         isWatched: 0
-      - name: currentPreset
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 4
-        isWatched: 0
       - name: hasCameras
         type: 16
         componentName: CharacterControllerInput
         gameObjectName: Player
-        memberIndex: 5
+        memberIndex: 4
         isWatched: 0
       - name: useGUILayout
         type: 16
@@ -2875,11 +2881,29 @@ MonoBehaviour:
         gameObjectName: Player
         memberIndex: 30
         isWatched: 0
+      - name: target
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 0
+        isWatched: 0
       - name: hideFlags
         type: 16
         componentName: CharacterControllerInput
         gameObjectName: Player
         memberIndex: 31
+        isWatched: 0
+      - name: <targetTransform>k__BackingField
+        type: 4
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 18
+        isWatched: 0
+      - name: targetTransform
+        type: 16
+        componentName: CharacterControllerInput
+        gameObjectName: Player
+        memberIndex: 5
         isWatched: 0
     - component: {fileID: 752326155}
       alphabeticalSorted: 0
@@ -3810,7 +3834,7 @@ MonoBehaviour:
   m_LockStageInInspector: 
   m_StreamingVersion: 20170927
   m_Priority: 10
-  m_LookAt: {fileID: 0}
+  m_LookAt: {fileID: 752326152}
   m_Follow: {fileID: 752326152}
   m_PositionBlending: 0
   m_Lens:
@@ -3898,7 +3922,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1231410947}
-  m_LocalRotation: {x: 0.1247382, y: -0, z: -0, w: 0.9921897}
+  m_LocalRotation: {x: 0.124738455, y: -0, z: -0, w: 0.9921897}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

@@ -88,7 +88,7 @@ namespace Stratus.Gameplay
 
     [Header("Movement")]
     [Tooltip("The maximum speed at which the character will move")]
-    public float movementSpeed = 10f;
+    public float movementSpeed = 3f;
     [Tooltip("The curve of determining how the character ramps up in speed")]
     public Ease accelerationCurve = Ease.Linear;
     [Tooltip("How long it takes the character to ramp up to full speed"), Range(0f, 1f)]
@@ -119,6 +119,8 @@ namespace Stratus.Gameplay
     //private static Ray groundCastRay = new Ray();
     //private static RaycastHit[] groundCast = new RaycastHit[50];
     private Countdown inertiaTimer, accelerationTimer, groundCastTimer, jumpTimer, fallTimer;
+    private float nextSpeedSquared;
+    private Vector3 _nextVelocity;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -137,9 +139,16 @@ namespace Stratus.Gameplay
     public bool grounded { get; private set; } = true;
     private bool movingTo { get; set; }
     public bool receivedInput => !inertiaTimer.isFinished;
+    /// <summary>
+    /// Whether jump is enabled for this character
+    /// </summary>
+    public bool supportsJump => locomotion != LocomotionMode.NavMeshAgent;
+    /// <summary>
+    /// Whether waypoints are enabled for this character
+    /// </summary>
+    public bool supportsWaypoints => locomotion == LocomotionMode.NavMeshAgent;
+    public bool hasGroundCast => groundDetection != GroundDetection.Collision;
 
-    private Vector3 nextVelocity;
-    private float nextSpeedSquared;
     public Vector3 heading { get; private set; }
     public Vector3 velocity
     {
@@ -158,6 +167,15 @@ namespace Stratus.Gameplay
         throw new NotImplementedException("Missing locomotion mode");
       }
     }
+    public Vector3 nextVelocity
+    {
+      get { return this._nextVelocity; }
+      set
+      {
+        //Trace.Script($"Setting next velocity to {value}");
+        this._nextVelocity = value;
+      }
+    }
     public float currentSpeed { get { Vector3 horizontalVelocity = velocity; horizontalVelocity.y = 0f; return horizontalVelocity.magnitude; } }
     public float maximumSpeed => sprinting ? movementSpeed * sprintMuiltiplier : movementSpeed;
     /// <summary>
@@ -173,7 +191,6 @@ namespace Stratus.Gameplay
     public float accelerationProgress => accelerationTimer.inverseNormalizedProgress;
     public float jumpProgress => jumpTimer.inverseNormalizedProgress;
     public float fallProgress => fallTimer.inverseNormalizedProgress;
-
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -206,8 +223,9 @@ namespace Stratus.Gameplay
       if (turning)
         ApplyTurn();
 
-      if (applyMovement || jumping ||  falling)
+      if (applyMovement || jumping || falling)
         ApplyMovement();
+
       else if (!grounded)
         ApplyFall();
     }
@@ -232,7 +250,8 @@ namespace Stratus.Gameplay
     {
       gameObject.Connect<MoveEvent>(OnMoveEvent);
       gameObject.Connect<MoveToEvent>(OnMoveToEvent);
-      gameObject.Connect<JumpEvent>(OnJumpEvent);
+      if (this.supportsJump)
+        gameObject.Connect<JumpEvent>(OnJumpEvent);
     }
 
     private void OnMoveEvent(MoveEvent e)
@@ -243,7 +262,10 @@ namespace Stratus.Gameplay
 
       // Don't move while jumping if there's no air control set
       if (jumping && !airControl)
+      {
+        //Trace.Script("No air control!", this);
         return;
+      }
 
       if (e.turn)
         Turn(e.direction);
@@ -303,63 +325,19 @@ namespace Stratus.Gameplay
 
     private void ApplyMovement()
     {
-      float verticalSpeed = 0f;
-      if (jumping)
-      {
-        float t = ComputeInterpolant(jumpCurve, jumpProgress);
-        switch (locomotion)
-        {
-          case LocomotionMode.Velocity:
-          case LocomotionMode.Force:
-            verticalSpeed = jumpSpeed * jumpCurve.Evaluate(t);
-            break;
-          case LocomotionMode.CharacterController:
-            verticalSpeed = jumpSpeed * jumpCurve.Evaluate(t);
-            break;
-          case LocomotionMode.NavMeshAgent:
-            break;
-        }
-      }
-      else if (!grounded)
-      {
-        float t = ComputeInterpolant(fallCurve, fallProgress);
-        switch (locomotion)
-        {
-          case LocomotionMode.Velocity:
-          case LocomotionMode.Force:
-            break;
-          case LocomotionMode.CharacterController:
-            verticalSpeed = fallCurve.Evaluate(t) * gravity.y;
-            break;
-          case LocomotionMode.NavMeshAgent:
-            break;
-        }
-      }
-      else
-      {
-        verticalSpeed = Physics.gravity.y * deltaTime;
-      }
+      _nextVelocity.y = CalculateVerticalSpeed();
 
-      //Trace.Script($"Vertical speed = {verticalSpeed}");
-      nextVelocity.y = verticalSpeed;
-      //Trace.Script($"Next velocity = {nextVelocity}");
-
-      //if (!applyMovement)
-      //  nextVelocity = Vector3.zero;
-      
       switch (locomotion)
       {
         case LocomotionMode.Velocity:
-          //nextVelocity.y = rigidbody.velocity.y;
           rigidbody.velocity = nextVelocity;
-          nextVelocity = Vector3.zero;
           applyMovement = false;
           break;
 
         case LocomotionMode.Force:
           if (rigidbody.velocity.sqrMagnitude >= nextSpeedSquared)
           {
-            nextVelocity = Vector3.zero;
+            //nextVelocity = Vector3.zero;
             applyMovement = false;
           }
           else
@@ -373,17 +351,17 @@ namespace Stratus.Gameplay
           CollisionFlags flags = characterController.Move(nextVelocity * deltaTime);
           if (!flags.HasFlag(CollisionFlags.CollidedBelow))
             grounded = false;
-
-          nextVelocity = Vector3.zero;
           applyMovement = false;
           break;
 
         case LocomotionMode.NavMeshAgent:
           navMeshAgent.Move(nextVelocity * deltaTime);
-          nextVelocity = Vector3.zero;
           applyMovement = false;
           break;
       }
+
+      if (!jumping && !falling)
+        nextVelocity = Vector3.zero;
     }
 
     protected void MoveTo(Vector3 position)
@@ -460,6 +438,7 @@ namespace Stratus.Gameplay
           break;
       }
 
+      Trace.Script($"Started jump at velocity = {nextVelocity}", this);
       OnJump();
     }
 
@@ -468,7 +447,7 @@ namespace Stratus.Gameplay
       grounded = false;
       jumping = true;
       falling = false;
-      jumpTimer.Reset();      
+      jumpTimer.Reset();
     }
 
     protected void OnFall()
@@ -477,28 +456,69 @@ namespace Stratus.Gameplay
       fallTimer.Reset();
     }
 
-    protected void ApplyJump()
+    protected float CalculateVerticalSpeed()
     {
-
-      float t = ComputeInterpolant(jumpCurve, jumpProgress);
-      Vector3 newVelocity = velocity;
-
-      switch (locomotion)
+      float verticalSpeed = 0f;
+      if (jumping)
       {
-        case LocomotionMode.Velocity:
-        case LocomotionMode.Force:
-          newVelocity.y = jumpSpeed * jumpCurve.Evaluate(t);
-          rigidbody.velocity = newVelocity;
-          break;
-        case LocomotionMode.CharacterController:
-          newVelocity = Vector3.up * jumpSpeed * jumpCurve.Evaluate(t) * deltaTime;
-          characterController.Move(newVelocity);
-          break;
-        case LocomotionMode.NavMeshAgent:
-          break;
+        float t = ComputeInterpolant(jumpCurve, jumpProgress);
+        switch (locomotion)
+        {
+          case LocomotionMode.Velocity:
+          case LocomotionMode.Force:
+            verticalSpeed = jumpSpeed * jumpCurve.Evaluate(t);
+            break;
+          case LocomotionMode.CharacterController:
+            verticalSpeed = jumpSpeed * jumpCurve.Evaluate(t);
+            break;
+          case LocomotionMode.NavMeshAgent:
+            break;
+        }
       }
-      //Trace.Script($"Applying jump velocity ({t}) = {newVelocity}");
+      else if (!grounded)
+      {
+        float t = ComputeInterpolant(fallCurve, fallProgress);
+        switch (locomotion)
+        {
+          case LocomotionMode.Velocity:
+          case LocomotionMode.Force:
+            break;
+          case LocomotionMode.CharacterController:
+            verticalSpeed = fallCurve.Evaluate(t) * gravity.y;
+            break;
+          case LocomotionMode.NavMeshAgent:
+            break;
+        }
+      }
+      else
+      {
+        verticalSpeed = Physics.gravity.y * deltaTime;
+      }
+      return verticalSpeed;
     }
+
+    //protected void ApplyJump()
+    //{
+    //
+    //  float t = ComputeInterpolant(jumpCurve, jumpProgress);
+    //  Vector3 newVelocity = velocity;
+    //
+    //  switch (locomotion)
+    //  {
+    //    case LocomotionMode.Velocity:
+    //    case LocomotionMode.Force:
+    //      newVelocity.y = jumpSpeed * jumpCurve.Evaluate(t);
+    //      rigidbody.velocity = newVelocity;
+    //      break;
+    //    case LocomotionMode.CharacterController:
+    //      newVelocity = Vector3.up * jumpSpeed * jumpCurve.Evaluate(t) * deltaTime;
+    //      characterController.Move(newVelocity);
+    //      break;
+    //    case LocomotionMode.NavMeshAgent:
+    //      break;
+    //  }
+    //  //Trace.Script($"Applying jump velocity ({t}) = {newVelocity}");
+    //}
 
     protected void ApplyFall()
     {
@@ -508,15 +528,15 @@ namespace Stratus.Gameplay
         case LocomotionMode.Force:
           break;
         case LocomotionMode.CharacterController:
-          characterController.Move(Physics.gravity * deltaTime);
+          characterController.Move(Physics.gravity * Time.fixedDeltaTime);
           //float t = ComputeInterpolant(fallCurve, fallProgress);
           //characterController.Move(fallCurve.Evaluate(t) * );
           break;
         case LocomotionMode.NavMeshAgent:
           break;
       }
-
     }
+
 
     //--------------------------------------------------------------------------------------------/
     // Methods: Utility

@@ -11,7 +11,7 @@ namespace Stratus.Gameplay
     protected override void OnStratusEditorEnable()
     {
       //AddConstraint(nameof(Segment.onRestarted), () => target.restart);
-      AddConstraint(nameof(Segment.toggledObjects), () => target.toggleObjects);
+      AddConstraint(() => target.toggleObjects, nameof(Segment.toggledObjects));
     }
   }
 

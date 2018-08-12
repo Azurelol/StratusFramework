@@ -71,9 +71,7 @@ namespace Stratus.Gameplay
         {
           case Template.FirstPerson:
             preset.label = "First Person";
-            //preset.horizontal = Coordinates.Axis.X;
             preset.horizontalOffset = MovementOffset.CameraRight;
-            //preset.vertical = Coordinates.Axis.Z;
             preset.verticalOffset = MovementOffset.CameraForward;
             preset.synchronizeForward = true;
             preset.turn = false;
@@ -82,9 +80,7 @@ namespace Stratus.Gameplay
 
           case Template.ThirdPerson:
             preset.label = "Third Person";
-            //preset.horizontal = Coordinates.Axis.X;
             preset.horizontalOffset = MovementOffset.CameraRight;
-            //preset.vertical = Coordinates.Axis.Z;
             preset.verticalOffset = MovementOffset.CameraForward;
             preset.turn = true;
             preset.cursorLock = CursorLockMode.Locked;
@@ -92,9 +88,7 @@ namespace Stratus.Gameplay
 
           case Template.TopDown:
             preset.label = "Top Down";
-            //preset.horizontal = Coordinates.Axis.X;
             preset.horizontalOffset = MovementOffset.CameraRight;
-            //preset.vertical = Coordinates.Axis.Z;
             preset.verticalOffset = MovementOffset.CameraUp;
             preset.turn = true;
             preset.cursorLock = CursorLockMode.Locked;
@@ -102,9 +96,7 @@ namespace Stratus.Gameplay
 
           case Template.SideView:
             preset.label = "Side View";
-            //preset.horizontal = Coordinates.Axis.X;
             preset.horizontalOffset = MovementOffset.CameraRight;
-            //preset.vertical = preset.vertical.UnsetAll();
             preset.turn = true;
             preset.cursorLock = CursorLockMode.Locked;
             break;
@@ -117,6 +109,9 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Fields
     //--------------------------------------------------------------------------------------------/
+    [Tooltip("The character being controlled from this input")]
+    public CharacterControllerMovement target;
+    [Tooltip("The camera being used for input")]
     public new Camera camera;
     public InputMode mode = InputMode.Controller;
 
@@ -148,10 +143,11 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     public MovementOffset movementOffset { get; set; } = MovementOffset.PlayerForward;
     public StratusCharacterController extensible { get; set; }
-    public CharacterControllerMovement movement { get; set; }
+    //public CharacterControllerMovement movement { get; set; }
     public Vector2 axis => new Vector2(horizontal.value, vertical.value);
     public Preset currentPreset { get; private set; }
     public bool hasCameras => presets.NotEmpty();
+    private Transform targetTransform { get; set; }
 
     //--------------------------------------------------------------------------------------------/
     // Messages
@@ -160,12 +156,11 @@ namespace Stratus.Gameplay
     {
       this.extensible = (StratusCharacterController)extensible;
       cameraTransform = camera.transform;
-      movement = GetComponent<CharacterControllerMovement>();
       cameraNavigation = new ArrayNavigator<Preset>(presets.ToArray(), true);
       cameraNavigation.onIndexChanged = ChangeCamera;
       presetsMap.AddRange(presets, (Preset preset) => preset.label);
       ChangeCamera(presets[0]);
-
+      this.OnTargetChanged();
     }
 
     public void OnExtensibleStart()
@@ -175,15 +170,36 @@ namespace Stratus.Gameplay
     private void Reset()
     {
       this.camera = Camera.main;
+      this.target = GetComponent<CharacterControllerMovement>();
     }
 
     protected internal override void OnUpdate()
     {
       PollInput();
-    }   
+    }
 
     //--------------------------------------------------------------------------------------------/
     // Methods
+    //--------------------------------------------------------------------------------------------/
+    public void ChangeTarget(CharacterControllerMovement target)
+    {
+      this.target = target;
+      this.OnTargetChanged();
+    }
+
+    public void ChangeCamera(string label)
+    {
+      Preset preset = presetsMap.TryGetValue(label);
+      ChangeCamera(preset);
+    }
+
+    public void NextCamera()
+    {
+      cameraNavigation.Navigate(ArrayNavigatorBase.Direction.Right);
+    }
+
+    //--------------------------------------------------------------------------------------------/
+    // Procedures
     //--------------------------------------------------------------------------------------------/
     private void PollInput()
     {
@@ -206,15 +222,15 @@ namespace Stratus.Gameplay
 
     private void PollController()
     {
-      if (jump.isDown && !movement.jumping)
-        movement.gameObject.Dispatch<CharacterMovement.JumpEvent>(jumpEvent);
+      if (jump.isDown && !target.jumping)
+        target.gameObject.Dispatch<CharacterMovement.JumpEvent>(jumpEvent);
 
       if (!horizontal.isNeutral || !vertical.isNeutral)
       {
         moveEvent.sprint = sprint.isPressed;
         moveEvent.turn = currentPreset.turn;
         moveEvent.direction = CalculateDirection(axis, currentPreset);
-        movement.gameObject.Dispatch<CharacterMovement.MoveEvent>(moveEvent);
+        target.gameObject.Dispatch<CharacterMovement.MoveEvent>(moveEvent);
       }
 
       if (currentPreset.synchronizeForward)
@@ -234,7 +250,7 @@ namespace Stratus.Gameplay
           {
             moveEvent.sprint = sprint.isPressed;
             moveEvent.direction = CalculateMouseDirection(camera);
-            movement.gameObject.Dispatch<CharacterMovement.MoveEvent>(moveEvent);
+            target.gameObject.Dispatch<CharacterMovement.MoveEvent>(moveEvent);
           }
           break;
 
@@ -242,9 +258,21 @@ namespace Stratus.Gameplay
           if (moveButton.isDown)
           {
             moveToEvent.position = CalculateMousePosition(camera);
-            movement.gameObject.Dispatch<CharacterMovement.MoveToEvent>(moveToEvent);
+            target.gameObject.Dispatch<CharacterMovement.MoveToEvent>(moveToEvent);
           }
           break;
+      }
+    }
+
+    private void OnTargetChanged()
+    {
+      this.targetTransform = this.target != null ? this.target.transform : null;
+      foreach(var preset in this.presets)
+      {
+        preset.camera.Follow = this.targetTransform;
+        preset.camera.LookAt = this.targetTransform;
+        //bool hasLookAt = preset.camera is CinemachineFreeLook;
+        //if (hasLookAt)
       }
     }
 
@@ -291,16 +319,8 @@ namespace Stratus.Gameplay
       direction.y = 0;
       return direction.normalized;
     }
+    
 
-    public static Vector3 CalculateMousePosition(Camera camera)
-    {
-      return camera.MouseCastGetPosition();
-    }
-
-    public void NextCamera()
-    {
-      cameraNavigation.Navigate(ArrayNavigatorBase.Direction.Right);
-    }
 
     //--------------------------------------------------------------------------------------------/
     // Methods: Utility
@@ -317,11 +337,14 @@ namespace Stratus.Gameplay
       currentPreset = preset;
     }
 
-    public void ChangeCamera(string label)
+    public static Vector3 CalculateMousePosition(Camera camera)
     {
-      Preset preset = presetsMap.TryGetValue(label);
-      ChangeCamera(preset);
+      return camera.MouseCastGetPosition();
     }
+
+
+
+
 
 
   }

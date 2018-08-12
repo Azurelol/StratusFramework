@@ -17,7 +17,7 @@ namespace Stratus.Gameplay
 
     protected override void OnTriggerableEditorEnable()
     {
-      AddConstraint(nameof(DispatchEvent.targets), () => triggerable.eventScope == Event.Scope.GameObject);
+      AddConstraint(() => triggerable.eventScope == Event.Scope.GameObject, nameof(DispatchEvent.targets));
       eventDataProperty = serializedObject.FindProperty("eventData");
       drawGroupRequests.Add(new DrawGroupRequest(SetMembers, () => triggerable.hasType && serializedEvent != null && serializedEvent.isDrawable));
       propertyChangeCallbacks.Add(propertyMap[nameof(DispatchEvent.type)], OnEventChanged);

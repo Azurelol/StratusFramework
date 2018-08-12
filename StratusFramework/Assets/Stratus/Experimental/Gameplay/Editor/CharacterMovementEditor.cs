@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.AI;
+using System;
 
 namespace Stratus.Gameplay
 {
@@ -11,8 +12,22 @@ namespace Stratus.Gameplay
   {
     protected override void OnStratusEditorEnable()
     {
-      AddConstraint(nameof(CharacterMovement.groundCollider), () => target.groundDetection != CharacterMovement.GroundDetection.Collision);
-      AddConstraint(nameof(CharacterMovement.groundCastFrequency), () => target.groundDetection != CharacterMovement.GroundDetection.Collision);
+      // Whether to show jump properties
+      string[] jumpProperties = new string[]
+      {
+        nameof(CharacterMovement.jumpSpeed),
+        nameof(CharacterMovement.jumpCurve),
+        nameof(CharacterMovement.fallCurve),
+        nameof(CharacterMovement.jumpApex),
+        nameof(CharacterMovement.groundDetection),
+        nameof(CharacterMovement.groundLayer),
+        nameof(CharacterMovement.airControl),
+      };
+      AddConstraint(()=> target.supportsJump, jumpProperties);
+      AddConstraint(() => target.supportsJump && target.hasGroundCast, 
+        nameof(CharacterMovement.groundCollider), 
+        nameof(CharacterMovement.groundCastFrequency));
+
       AddPropertyChangeCallback(nameof(CharacterMovement.locomotion), OnLocomotionChange);
     }
 

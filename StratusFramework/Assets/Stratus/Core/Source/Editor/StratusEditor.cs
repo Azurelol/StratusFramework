@@ -685,34 +685,27 @@ namespace Stratus
       drawGroupRequests.Add(new DrawGroupRequest(drawFunction, validateFunction));
     }
 
-    /// <summary>
-    /// Adds a constraint that decides whether a given property is drawn
-    /// </summary>
-    /// <param name="propertyName"></param>
-    /// <param name="constraint"></param>
-    protected void AddConstraint(string propertyName, System.Func<bool> constraint)
-    {
-      propertyConstraints.Add(propertyMap[propertyName], constraint);
-    }
+    ///// <summary>
+    ///// Adds a constraint that decides whether a given property is drawn
+    ///// </summary>
+    ///// <param name="propertyName"></param>
+    ///// <param name="constraint"></param>
+    //protected void AddConstraint(string propertyName, System.Func<bool> constraint)
+    //{
+    //  propertyConstraints.Add(propertyMap[propertyName], constraint);
+    //}
 
     /// <summary>
     /// Adds a constraint that decides whether a given property is drawn
     /// </summary>
     /// <param name="propertyName"></param>
     /// <param name="constraint"></param>
-    protected void AddConstraint(SerializedProperty property, System.Func<bool> constraint)
+    protected void AddConstraint(System.Func<bool> constraint, params SerializedProperty[] properties)
     {
-      propertyConstraints.Add(property, constraint);
-    }
-
-    /// <summary>
-    /// Adds a constraint that decides whether a given property is drawn
-    /// </summary>
-    /// <param name="propertyName"></param>
-    /// <param name="constraint"></param>
-    protected void RemoveConstraint(string propertyName)
-    {
-      propertyConstraints.Remove(propertyMap[propertyName]);
+      foreach(var property in properties)
+      {
+        propertyConstraints.Add(property, constraint);
+      }
     }
 
     /// <summary>
@@ -727,6 +720,18 @@ namespace Stratus
         propertyConstraints.Add(propertyMap[propertyName], constraint);
       }
     }
+
+    /// <summary>
+    /// Adds a constraint that decides whether a given property is drawn
+    /// </summary>
+    /// <param name="propertyName"></param>
+    /// <param name="constraint"></param>
+    protected void RemoveConstraint(string propertyName)
+    {
+      propertyConstraints.Remove(propertyMap[propertyName]);
+    }
+
+
 
     /// <summary>
     /// Adds a constraint that decides whether a given group of properties is drawn
@@ -770,7 +775,7 @@ namespace Stratus
     /// <param name="propertyName"></param>
     public void HideProperty(string propertyName)
     {
-      AddConstraint(propertyName, False);
+      AddConstraint(False, propertyName);
     }
 
     /// <summary>

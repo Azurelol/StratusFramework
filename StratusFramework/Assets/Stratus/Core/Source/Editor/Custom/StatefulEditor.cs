@@ -10,8 +10,8 @@ namespace Stratus
   {
     protected override void OnStratusEditorEnable()
     {
-      AddConstraint(nameof(Stateful.onInitialState), () => target.initialStateConfiguration == Stateful.InitialStateConfiguration.OnCallbackFinished);
-      AddConstraint(nameof(Stateful.delay), () => target.initialStateConfiguration == Stateful.InitialStateConfiguration.OnDelay);
+      AddConstraint(() => target.initialStateConfiguration == Stateful.InitialStateConfiguration.OnCallbackFinished, nameof(Stateful.onInitialState));
+      AddConstraint(() => target.initialStateConfiguration == Stateful.InitialStateConfiguration.OnDelay, nameof(Stateful.delay));
     }
   }
 

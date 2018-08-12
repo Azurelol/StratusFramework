@@ -12,8 +12,8 @@ namespace Stratus.Gameplay
 
     protected override void OnStratusEditorEnable()
     {
-      AddConstraint(nameof(Episode.targetTransform), () => jumpMechanism == Episode.JumpMechanism.Translate);
-      AddConstraint(nameof(Episode.onJump), () => jumpMechanism == Episode.JumpMechanism.Callback);
+      AddConstraint(() => jumpMechanism == Episode.JumpMechanism.Translate, nameof(Episode.targetTransform));
+      AddConstraint(() => jumpMechanism == Episode.JumpMechanism.Callback, nameof(Episode.onJump));
 
       AddConstraint(() => target.debugNavigation, 
         nameof(Episode.windowAnchor), 
