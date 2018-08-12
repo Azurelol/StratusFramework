@@ -564,7 +564,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &382751413
 GameObject:
@@ -922,7 +922,7 @@ Transform:
   - {fileID: 47716555}
   - {fileID: 410439893}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &636629638
 GameObject:
@@ -1011,7 +1011,7 @@ RectTransform:
   m_Children:
   - {fileID: 74665541}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1030,77 +1030,15 @@ GameObject:
   - component: {fileID: 752326151}
   - component: {fileID: 752326150}
   - component: {fileID: 752326149}
-  - component: {fileID: 752326148}
   - component: {fileID: 752326155}
   - component: {fileID: 752326153}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Player Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &752326148
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 752326147}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d8cf9fdfd0479b4687fb7794694aa03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 752326150}
-  camera: {fileID: 776468814}
-  mode: 0
-  horizontal:
-    _type: 2
-    key: 41
-    mouseButton: 0
-    axis: Horizontal
-  vertical:
-    _type: 2
-    key: 0
-    mouseButton: 0
-    axis: Vertical
-  sprint:
-    _type: 2
-    key: 0
-    mouseButton: 0
-    axis: Sprint
-  jump:
-    _type: 2
-    key: 0
-    mouseButton: 0
-    axis: Jump
-  mouseMovement: 0
-  moveButton:
-    _type: 1
-    key: 0
-    mouseButton: 1
-    axis: 
-  additional: []
-  changeCamera:
-    _type: 0
-    key: 99
-    mouseButton: 0
-    axis: 
-  presets:
-  - label: Third Person
-    camera: {fileID: 952091469}
-    horizontalOffset: 3
-    verticalOffset: 1
-    cursorLock: 1
-    turn: 1
-    synchronizeForward: 0
-  - label: Top Down
-    camera: {fileID: 476469932}
-    horizontalOffset: 3
-    verticalOffset: 2
-    cursorLock: 1
-    turn: 1
-    synchronizeForward: 0
 --- !u!114 &752326149
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1188,8 +1126,7 @@ MonoBehaviour:
   extensionBehaviours:
   - {fileID: 752326149}
   - {fileID: 752326150}
-  - {fileID: 752326148}
-  selectedExtensionTypeIndex: 1
+  selectedExtensionTypeIndex: 2
   debug: 0
 --- !u!4 &752326152
 Transform:
@@ -1203,7 +1140,7 @@ Transform:
   m_Children:
   - {fileID: 1099526891}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &752326153
 CharacterController:
@@ -2596,315 +2533,6 @@ MonoBehaviour:
         gameObjectName: Player
         memberIndex: 37
         isWatched: 0
-    - component: {fileID: 752326148}
-      alphabeticalSorted: 0
-      memberReferences:
-      - name: camera
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 1
-        isWatched: 0
-      - name: mode
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 2
-        isWatched: 0
-      - name: horizontal
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 3
-        isWatched: 0
-      - name: vertical
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 4
-        isWatched: 0
-      - name: sprint
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 5
-        isWatched: 0
-      - name: jump
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 6
-        isWatched: 0
-      - name: mouseMovement
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 7
-        isWatched: 0
-      - name: moveButton
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 8
-        isWatched: 0
-      - name: additional
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 9
-        isWatched: 0
-      - name: changeCamera
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 10
-        isWatched: 0
-      - name: presets
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 11
-        isWatched: 0
-      - name: cameraNavigation
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 12
-        isWatched: 0
-      - name: cameraTransform
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 13
-        isWatched: 0
-      - name: presetsMap
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 14
-        isWatched: 0
-      - name: <movementOffset>k__BackingField
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 15
-        isWatched: 0
-      - name: <extensible>k__BackingField
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 16
-        isWatched: 0
-      - name: <currentPreset>k__BackingField
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 17
-        isWatched: 0
-      - name: movementOffset
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 0
-        isWatched: 0
-      - name: extensible
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 1
-        isWatched: 0
-      - name: axis
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 2
-        isWatched: 0
-      - name: currentPreset
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 3
-        isWatched: 0
-      - name: hasCameras
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 4
-        isWatched: 0
-      - name: useGUILayout
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 6
-        isWatched: 0
-      - name: runInEditMode
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 7
-        isWatched: 0
-      - name: enabled
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 8
-        isWatched: 0
-      - name: isActiveAndEnabled
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 9
-        isWatched: 0
-      - name: transform
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 10
-        isWatched: 0
-      - name: gameObject
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 11
-        isWatched: 0
-      - name: tag
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 12
-        isWatched: 0
-      - name: rigidbody
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 13
-        isWatched: 0
-      - name: rigidbody2D
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 14
-        isWatched: 0
-      - name: camera
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 15
-        isWatched: 0
-      - name: light
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 16
-        isWatched: 0
-      - name: animation
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 17
-        isWatched: 0
-      - name: constantForce
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 18
-        isWatched: 0
-      - name: renderer
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 19
-        isWatched: 0
-      - name: audio
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 20
-        isWatched: 0
-      - name: guiText
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 21
-        isWatched: 0
-      - name: networkView
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 22
-        isWatched: 0
-      - name: guiElement
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 23
-        isWatched: 0
-      - name: guiTexture
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 24
-        isWatched: 0
-      - name: collider
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 25
-        isWatched: 0
-      - name: collider2D
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 26
-        isWatched: 0
-      - name: hingeJoint
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 27
-        isWatched: 0
-      - name: particleEmitter
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 28
-        isWatched: 0
-      - name: particleSystem
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 29
-        isWatched: 0
-      - name: name
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 30
-        isWatched: 0
-      - name: target
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 0
-        isWatched: 0
-      - name: hideFlags
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 31
-        isWatched: 0
-      - name: <targetTransform>k__BackingField
-        type: 4
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 18
-        isWatched: 0
-      - name: targetTransform
-        type: 16
-        componentName: CharacterControllerInput
-        gameObjectName: Player
-        memberIndex: 5
-        isWatched: 0
     - component: {fileID: 752326155}
       alphabeticalSorted: 0
       memberReferences:
@@ -3392,9 +3020,9 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.15
+  near clip plane: 0.1
   far clip plane: 5000
-  field of view: 75
+  field of view: 40
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -3419,7 +3047,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 776468811}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0.0727942, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3922,7 +3550,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1231410947}
-  m_LocalRotation: {x: 0.124738455, y: -0, z: -0, w: 0.9921897}
+  m_LocalRotation: {x: 0.12473883, y: -0, z: -0, w: 0.99218965}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4021,7 +3649,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1267894159
 Prefab:
@@ -4173,8 +3801,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1456404618}
+  - component: {fileID: 1456404619}
   m_Layer: 0
-  m_Name: Cameras
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4197,6 +3826,67 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1456404619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1456404617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8cf9fdfd0479b4687fb7794694aa03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 752326150}
+  camera: {fileID: 776468814}
+  mode: 0
+  horizontal:
+    _type: 2
+    key: 41
+    mouseButton: 0
+    axis: Horizontal
+  vertical:
+    _type: 2
+    key: 0
+    mouseButton: 0
+    axis: Vertical
+  sprint:
+    _type: 2
+    key: 0
+    mouseButton: 0
+    axis: Sprint
+  jump:
+    _type: 2
+    key: 0
+    mouseButton: 0
+    axis: Jump
+  mouseMovement: 0
+  moveButton:
+    _type: 1
+    key: 0
+    mouseButton: 1
+    axis: 
+  additional: []
+  changeCamera:
+    _type: 0
+    key: 99
+    mouseButton: 0
+    axis: 
+  presets:
+  - label: Third Person
+    camera: {fileID: 952091469}
+    horizontalOffset: 3
+    verticalOffset: 1
+    cursorLock: 1
+    turn: 1
+    synchronizeForward: 0
+  - label: Top Down
+    camera: {fileID: 476469932}
+    horizontalOffset: 3
+    verticalOffset: 2
+    cursorLock: 1
+    turn: 1
+    synchronizeForward: 0
 --- !u!1 &1585778499
 GameObject:
   m_ObjectHideFlags: 3
@@ -4386,7 +4076,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1867566672}
-  m_LocalRotation: {x: 0.104281634, y: -0, z: -0, w: 0.99454784}
+  m_LocalRotation: {x: 0.104281455, y: -0, z: -0, w: 0.99454784}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

@@ -6,7 +6,6 @@ using Cinemachine;
 
 namespace Stratus.Gameplay
 {
-  [RequireComponent(typeof(CharacterControllerMovement))]
   [CustomExtensionAttribute(typeof(StratusCharacterController))]
   public class CharacterControllerInput : ManagedBehaviour, IExtensionBehaviour<StratusCharacterController>
   {
@@ -155,12 +154,17 @@ namespace Stratus.Gameplay
     public void OnExtensibleAwake(ExtensibleBehaviour extensible)
     {
       this.extensible = (StratusCharacterController)extensible;
+
+    }
+
+    protected internal override void OnBehaviourAwake()
+    {
+      this.OnTargetChanged();
       cameraTransform = camera.transform;
       cameraNavigation = new ArrayNavigator<Preset>(presets.ToArray(), true);
       cameraNavigation.onIndexChanged = ChangeCamera;
       presetsMap.AddRange(presets, (Preset preset) => preset.label);
       ChangeCamera(presets[0]);
-      this.OnTargetChanged();
     }
 
     public void OnExtensibleStart()
@@ -295,7 +299,7 @@ namespace Stratus.Gameplay
       switch (offset)
       {
         case MovementOffset.PlayerForward:
-          return transform.forward;
+          return targetTransform.forward;
 
         case MovementOffset.CameraForward:
           return cameraTransform.forward;
@@ -315,7 +319,7 @@ namespace Stratus.Gameplay
     protected Vector3 CalculateMouseDirection(Camera camera)
     {
       Vector3 mousePosition = CalculateMousePosition(camera);
-      Vector3 direction = mousePosition - transform.position;
+      Vector3 direction = mousePosition - targetTransform.position;
       direction.y = 0;
       return direction.normalized;
     }
@@ -327,8 +331,8 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     private void ChangeCamera(Preset preset)
     {
-      if (extensible.debug)
-        Trace.Script($"Switching to {preset.camera.name}");
+      //if (extensible.debug)
+      //  Trace.Script($"Switching to {preset.camera.name}");
 
       cameraNavigation.previous.camera.Priority = 10;
       preset.camera.Priority = 15;
