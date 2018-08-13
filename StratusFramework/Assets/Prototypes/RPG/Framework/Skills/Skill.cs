@@ -16,54 +16,72 @@ namespace Prototype
   [CreateAssetMenu(fileName = "Skill", menuName = "Prototype/Skill")]
   [Serializable]
   public partial class Skill : ScriptableObject
-  { 
-    public enum AnimationType { Swing, Defensive, Spell }
-
-
-    
+  {
     //------------------------------------------------------------------------/
-    // Properties
+    // Declarations
+    //------------------------------------------------------------------------/
+    /// <summary>
+    /// Base class for skill events
+    /// </summary>
+    public class BaseSkillEvent : Stratus.Event
+    {
+      public Skill skill { get; set; }
+    }
+
+    /// <summary>
+    /// A query to determine whether this skill can be used
+    /// </summary>
+    public class IsAvailableEvent : BaseSkillEvent
+    {
+      public bool available { get; set; } = false;
+    }
+
+    /// <summary>
+    /// Signals that the skill has been used
+    /// </summary>
+    public class UsedEvent : BaseSkillEvent
+    {
+    }
+
+    //------------------------------------------------------------------------/
+    // Fields
     //------------------------------------------------------------------------/
     [Header("Description")]
     /// <summary>
-    /// The full name of the skill
-    /// </summary>
-    public string Name;
-    /// <summary>
     /// A short description of the skill
     /// </summary>
-    public string Description;
+    public string description;
     /// <summary>
     /// A small graphical icon representing the skill.
     /// </summary>
-    public Sprite Icon;
+    public Sprite icon;
 
     [Header("Targeting Parameters")]
     /// <summary>
     /// The targeting parameters of the skill (Self, Ally, Enemy)
     /// </summary>
-    public CombatController.TargetingParameters Targeting = CombatController.TargetingParameters.Enemy;
+    public Combat.TargetingParameters targeting = Combat.TargetingParameters.Enemy;
     /// <summary>
     /// The scope of the skill (single, aoe, all)
     /// </summary>
-    public TargetingScope Scope = new TargetingScope();
+    public TargetingScope scope = new TargetingScope();
 
     [Header("Costs")]
     /// <summary>
-    /// The cost, in stamina, of the skill.
+    /// The cost, in raw value, of the skill.
     /// </summary>
-    [Tooltip("The cost, in stamina, of the skill")]
-    [Range(0, 100)] public int Cost = 5;
+    [Tooltip("The cost of the skill")]
+    [Range(0, 100)] public int cost = 5;
     /// <summary>
     /// Time required before the skill can be used again after activation
     /// </summary>
     [Tooltip("Time required before the skill can be used again after activation")]
-    [Range(0.0f, 10.0f)] public float Cooldown = 0.0f;
+    [Range(0.0f, 10.0f)] public float cooldown = 0.0f;
     /// <summary>
     /// "Range required for casting the skill
     /// </summary>
     [Tooltip("Range required for casting the skill")]
-    [Range(1.0f, 50.0f)] public float Range = 3.0f;
+    [Range(1.0f, 50.0f)] public float range = 3.0f;
 
     [Header("Phases")]
     [Tooltip("Specific timings for the skill's action")]
@@ -74,13 +92,13 @@ namespace Prototype
     /// Whether the skill is telegraphed
     /// </summary>
     [Tooltip("Whether the skill is telegraphed")]
-    public bool IsTelegraphed = true;
+    public bool telegraphed = true;
     /// <summary>
     /// How the skill is telegraphed.
     /// </summary>
     [Tooltip("How the skill is telegraphed")]
     //[DrawIf("IsTelegraphed", true, ComparisonType.Equals, PropertyDrawingType.DontDraw)]
-    public Telegraph.Configuration Telegraphing;
+    public Telegraph.Configuration telegraph;
      
 
     [Header("Trigger Settings")]
@@ -88,12 +106,12 @@ namespace Prototype
     /// Trigger used by the caster when using this skill
     /// </summary>
     [Tooltip("Trigger used by the caster when using this skill")]
-    public CombatTrigger OnCast;
+    public CombatTrigger onCast;
     /// <summary>
     /// Trigger used by the target when receiving this skill
     /// </summary>
     [Tooltip("Trigger used by the caster when defending from this skill")]
-    public CombatTrigger OnDefend;
+    public CombatTrigger onDefend;
 
     [Header("Special Effects")]
     /// <summary>
@@ -105,9 +123,16 @@ namespace Prototype
     /// <summary>
     /// Whether this skill has triggers set
     /// </summary>
-    public bool IsTriggered { get { return (OnCast.Enabled || OnDefend.Enabled); } }
+    /// 
+    public bool isTriggered { get { return (onCast.Enabled || onDefend.Enabled); } }
+    /// <summary>
+    /// Effects this skill has
+    /// </summary>
+    [HideInInspector]
+    public List<EffectAttribute> effects = new List<EffectAttribute>();
 
-    [HideInInspector] public List<EffectAttribute> Effects = new List<EffectAttribute>();
+    //------------------------------------------------------------------------/
+    // Methods
     //------------------------------------------------------------------------/
     /// <summary>
     /// Casts the skill on the target.
@@ -119,17 +144,17 @@ namespace Prototype
       // If the skill is cast directly..      
       
       if (user.logging)
-        Trace.Script("Casting '" + Name + "'", user);
+        Trace.Script("Casting '" + name + "'", user);
 
       CombatController[] targets = null;
 
-      if (IsTelegraphed)
+      if (telegraphed)
       {
         var availableTargets = telegraph.FindTargetsWithinBoundary();
-        targets = TargetingScope.FilterTargets(user, availableTargets, Targeting);
+        targets = TargetingScope.FilterTargets(user, availableTargets, targeting);
       }
       else {
-        targets = this.Scope.FindTargets(user, target, Targeting);
+        targets = this.scope.FindTargets(user, target, targeting);
       }
 
       Apply(user, targets, this);
@@ -154,7 +179,7 @@ namespace Prototype
       foreach (var eligibleTarget in targets)
       {
         //Trace.Script("Casting '" + skill.Name + "' on <i>" + eligibleTarget + "</i>", user);
-        foreach (var effect in skill.Effects)
+        foreach (var effect in skill.effects)
         {
           effect.Apply(user, eligibleTarget);
         }
@@ -203,10 +228,10 @@ namespace Prototype
     public string Describe()
     {
       var builder = new StringBuilder();
-      builder.AppendLine("Name: " +  Name);
-      builder.AppendLine("Description: " + Description);
-      builder.AppendLine("Cost: " + Cost);
-      builder.AppendLine("Cooldown: " + Cooldown);
+      builder.AppendLine("Name: " +  name);
+      builder.AppendLine("Description: " + description);
+      builder.AppendLine("Cost: " + cost);
+      builder.AppendLine("Cooldown: " + cooldown);
       return builder.ToString();
     }   
     

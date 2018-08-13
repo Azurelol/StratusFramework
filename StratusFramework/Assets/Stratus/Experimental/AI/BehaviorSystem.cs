@@ -6,7 +6,7 @@ namespace Stratus
 {
   namespace AI
   {
-    public abstract class BehaviorSystem : ScriptableObject
+    public abstract class BehaviorSystem : StratusScriptable
     {
       //------------------------------------------------------------------------/
       // Fields
@@ -15,19 +15,17 @@ namespace Stratus
       /// <summary>
       /// Whether this system will print debug output
       /// </summary>
-      public bool Tracing = false;
+      public bool debug = false;
 
       /// <summary>
       /// A short description of what this system does
       /// </summary>
-      public string Description;
+      public string description;
 
       /// <summary>
-      /// The blackboard asset this system will use
+      /// The blackboard the blackboard is using.
       /// </summary>
-      [SerializeField]
-      public Blackboard BlackboardAsset;
-
+      public Blackboard blackboard;
 
       //------------------------------------------------------------------------/
       // Properties
@@ -35,28 +33,26 @@ namespace Stratus
       /// <summary>
       /// Whether this behavior system is currently running
       /// </summary>
-      public bool Active { protected set; get; }
+      public bool active { protected set; get; }
 
       /// <summary>
       /// The agent this system is using
       /// </summary>
-      public Agent Agent { private set; get; }
-
-      /// <summary>
-      /// The blackboard this agent is using.
-      /// </summary>
-      public Blackboard Blackboard { private set; get; }
+      public Agent agent { private set; get; }
 
       /// <summary>
       /// The sensor the agent is using
       /// </summary>
-      protected Sensor Sensor { private set; get; }
+      protected Sensor sensor { private set; get; }
 
       /// <summary>
       /// The current behavior being run by this system
       /// </summary>
-      protected Behavior CurrentBehavior { set; get; }
+      protected Behavior currentBehavior { set; get; }
 
+      //----------------------------------------------------------------------/
+      // Properties: Static
+      //----------------------------------------------------------------------/
 
 
       //------------------------------------------------------------------------/
@@ -83,9 +79,8 @@ namespace Stratus
       public T Instantiate<T>(Agent agent) where T : BehaviorSystem
       {
         var instance = Instantiate(this) as T;
-        instance.Agent = agent;
-        instance.Blackboard = this.BlackboardAsset.Instantiate();
-        instance.Sensor = agent.sensor;
+        instance.agent = agent;
+        instance.sensor = agent.sensor;
         return instance;
       }
 
@@ -102,7 +97,7 @@ namespace Stratus
       /// Updates this behavior system.
       /// </summary>
       /// <param name="dt"></param>
-      public void Tick(float dt)
+      public void UpdateSystem(float dt)
       {
         this.OnUpdate(dt);
       }

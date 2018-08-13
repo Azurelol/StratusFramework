@@ -7,10 +7,31 @@ namespace Prototype
 {
   public abstract class Ability
   {
-    public class ActivatedEvent : Stratus.Event
+    /// <summary>
+    /// Base class for skill events
+    /// </summary>
+    public class BaseEvent : Stratus.Event
     {
+      public Ability ability { get; set; }
+    }
+
+    /// <summary>
+    /// A query to determine whether this skill can be used
+    /// </summary>
+    public class IsAvailabilityEvent : BaseEvent
+    {
+      public bool available { get; set; } = false;
+    }
+
+    /// <summary>
+    /// Signals that the skill has been used
+    /// </summary>
+    public class UsedEvent : Stratus.Event
+    {
+      public Ability ability;
       public AudioClip clip;
     }
+
   }
 
   public abstract class Ability<T> : Ability
@@ -23,10 +44,7 @@ namespace Prototype
     /// </summary>
     public class ActivateEvent : Stratus.Event
     {
-      // @TODO: wtf is this doing here
-      public float BuildTime;
-      public Camera Camera;
-      public Vector3 Direction;
+      public float build;
     }
 
     /// <summary>
@@ -55,13 +73,13 @@ namespace Prototype
     /// </summary>
     [Tooltip("How much stamina the ability costs")]
     [Range(0.0f, 100.0f)]
-    public float Cost = 20.0f;
+    public float cost = 20.0f;
     /// <summary>
     /// Time required before the skill can be used again after activation
     /// </summary>
     [Tooltip("Time required before the skill can be used again after activation, in seconds")]
     [Range(0.0f, 5.0f)]
-    public float Cooldown = 1.0f;
+    public float cooldown = 1.0f;
     /// <summary>
     /// The sound effect played when this ability is activated
     /// </summary>
@@ -95,8 +113,9 @@ namespace Prototype
           return false;
         }
 
-        // If the caster does not have stamina to cast it...
-        if (owner.stamina.current < Cost)
+        // If the caster does not have enough resources to cast it
+        //  owner.stamina.current < cost
+        if (owner.IsAvailable(this))
         {
           //Trace.Script("Not enough stamina to cast! ");
           return false;
@@ -143,7 +162,7 @@ namespace Prototype
     public void Initialize(CombatController owner)
     {
       this.owner = owner;
-      cooldownTimer = new Cooldown(this.Cooldown);
+      cooldownTimer = new Cooldown(this.cooldown);
       this.OnInitialize();
     }
 
@@ -174,13 +193,10 @@ namespace Prototype
       {
         // Put it on cooldown
         cooldownTimer.Activate();
-        // Consume stamina
-        var consumeStamina = new CombatController.ConsumeStaminaEvent();
-        consumeStamina.Value = this.Cost;
-        owner.gameObject.Dispatch<CombatController.ConsumeStaminaEvent>(consumeStamina);
+        // Note that the ability has been activated
+        owner.gameObject.Dispatch<UsedEvent>(new UsedEvent() { ability = this });
         // Play effects
         //AudioVisualEffect.Spawn(this.SFX, this.Owner.transform.position);
-        owner.gameObject.Dispatch<ActivatedEvent>(false);
         return true;
       }
 

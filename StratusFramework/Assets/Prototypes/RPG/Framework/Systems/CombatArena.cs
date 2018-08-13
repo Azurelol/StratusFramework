@@ -107,18 +107,18 @@ namespace Prototype
     /// <param name="e"></param>
     void OnCombatControllerSpawnEvent(CombatController.SpawnEvent e)
     {
-      Combatants[e.Controller.Character.Faction].Add(e.Controller);
-      AllCombatControllers.Add(e.Controller);
+      Combatants[e.controller.character.Faction].Add(e.controller);
+      AllCombatControllers.Add(e.controller);
 
       if (Tracing)
       {
-        if (e.Controller.Character.Faction == CombatController.Faction.Player)
+        if (e.controller.character.Faction == CombatController.Faction.Player)
         {
-          Trace.Script(e.Controller.gameObject.name + " has registered as FRIENDLY");
+          Trace.Script(e.controller.gameObject.name + " has registered as FRIENDLY");
         }
         else
         {
-          Trace.Script(e.Controller.gameObject.name + " has registered as HOSTILE");
+          Trace.Script(e.controller.gameObject.name + " has registered as HOSTILE");
         }
       }      
     }
@@ -265,10 +265,10 @@ namespace Prototype
     {
       var combatController = CombatController.Construct(character);
       combatController.transform.parent = transform;
-      combatController.transform.position = AvailableSpawnPositions[combatController.Character.Faction].Pop();
+      combatController.transform.position = AvailableSpawnPositions[combatController.character.Faction].Pop();
       // Announce that it has been spawwned (this event will be first received by this arena immediately)
       var spawnEvent = new CombatController.SpawnEvent();
-      spawnEvent.Controller = combatController;
+      spawnEvent.controller = combatController;
       Scene.Dispatch<CombatController.SpawnEvent>(spawnEvent);
     }
 

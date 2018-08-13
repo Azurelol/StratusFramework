@@ -22,7 +22,7 @@ namespace Prototype
   [CreateAssetMenu(fileName = "Weapon", menuName = "Prototype/Weapon")]
   public class Weapon : Equipment
   {
-    public override Category Type { get { return Category.Weapon; } }
+    public override Category type { get { return Category.Weapon; } }
     public float Damage = 1.0f;
     public float Range = 2.0f;
     public float Speed = 1.0f;

@@ -53,7 +53,7 @@ namespace Prototype
     /// <param name="target"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    public CombatController[] FindTargets(CombatController caster, CombatController target, CombatController.TargetingParameters type)
+    public CombatController[] FindTargets(CombatController caster, CombatController target, Combat.TargetingParameters type)
     {
       //Trace.Script("Primary target = " + target.Name + " with scope = " + Scope, caster);
       var targets = new CombatController[0];
@@ -88,53 +88,53 @@ namespace Prototype
     /// <param name="availableTargets"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    public static CombatController[] FilterTargets(CombatController caster, CombatController[] availableTargets, CombatController.TargetingParameters type)
+    public static CombatController[] FilterTargets(CombatController caster, CombatController[] availableTargets, Combat.TargetingParameters type)
     {
       CombatController[] targets = null;
 
       // SELF
-      if (type == CombatController.TargetingParameters.Self)
+      if (type == Combat.TargetingParameters.Self)
       {
         targets = new CombatController[1] { caster }; //.Add(caster);
       }
       // ALLIES
-      else if (type == CombatController.TargetingParameters.Ally)
+      else if (type == Combat.TargetingParameters.Ally)
       {
-        switch (caster.Character.Faction)
+        switch (caster.faction)
         {
           case CombatController.Faction.Player:
-            targets = (from CombatController target in availableTargets where target.party == CombatController.Faction.Player select target).ToArray();
+            targets = (from CombatController target in availableTargets where target.faction == CombatController.Faction.Player select target).ToArray();
             break;
 
           case CombatController.Faction.Hostile:
-            targets = (from CombatController target in availableTargets where target.party == CombatController.Faction.Hostile select target).ToArray();
+            targets = (from CombatController target in availableTargets where target.faction == CombatController.Faction.Hostile select target).ToArray();
             break;
           case CombatController.Faction.Neutral:
-            targets = (from CombatController target in availableTargets where target.party == CombatController.Faction.Neutral select target).ToArray();
+            targets = (from CombatController target in availableTargets where target.faction == CombatController.Faction.Neutral select target).ToArray();
             break;
         }
       }
       // ENEMIES
-      else if (type == CombatController.TargetingParameters.Enemy)
+      else if (type == Combat.TargetingParameters.Enemy)
       {
-        switch (caster.Character.Faction)
+        switch (caster.faction)
         {
           case CombatController.Faction.Player:
-            targets = (from CombatController target in availableTargets where target.party == CombatController.Faction.Hostile select target).ToArray();
+            targets = (from CombatController target in availableTargets where target.faction == CombatController.Faction.Hostile select target).ToArray();
             break;
 
           case CombatController.Faction.Hostile:
-            targets = (from CombatController target in availableTargets where target.party == CombatController.Faction.Player select target).ToArray();
+            targets = (from CombatController target in availableTargets where target.faction == CombatController.Faction.Player select target).ToArray();
             break;
           case CombatController.Faction.Neutral:
             targets = (from CombatController target in availableTargets
-                       where (target.party == CombatController.Faction.Player || target.party == CombatController.Faction.Hostile) 
+                       where (target.faction == CombatController.Faction.Player || target.faction == CombatController.Faction.Hostile) 
                        select target).ToArray();
             break;
 
         }
       }
-      else if (type == CombatController.TargetingParameters.Any)
+      else if (type == Combat.TargetingParameters.Any)
       {
         targets = availableTargets;
       }

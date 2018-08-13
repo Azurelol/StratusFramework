@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   FlatDamageEffect.cs
-@author Christian Sagel
-@par    email: ckpsm\@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
@@ -17,17 +10,13 @@ namespace Prototype
   public class FlatDamageEffect : FlatHealthModificationEffectAttribute
   {
     //------------------------------------------------------------------------/
-    // Properties
-    //------------------------------------------------------------------------/
-
-    //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
     protected override void OnApply(CombatController caster, CombatController target)
     {
-      var damageEvent = new CombatController.DamageEvent();
+      var damageEvent = new Combat.DamageEvent();
       damageEvent.value = (int)this.Value;
-      target.gameObject.Dispatch<CombatController.DamageEvent>(damageEvent);
+      target.gameObject.Dispatch<Combat.DamageEvent>(damageEvent);
     }
   }
 

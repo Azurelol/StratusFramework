@@ -23,7 +23,7 @@ namespace Prototype
     /// <summary>
     /// The selected skill
     /// </summary>
-    public Skills.EquippedSkill Skill;
+    public SkillModule.SkillInstance Skill;
     /// <summary>
     /// The active instance of the telegraph
     /// </summary>
@@ -42,15 +42,15 @@ namespace Prototype
     /// <param name="skill"></param>
     /// <param name="user"></param>
     /// <param name="target"></param>
-    public CombatActionSkill(Skills.EquippedSkill skill, CombatController user, CombatController target)
-  : base(user, target, skill.Data.Range, skill.Data.Timings)
+    public CombatActionSkill(SkillModule.SkillInstance skill, CombatController user, CombatController target)
+  : base(user, target, skill.data.range, skill.data.Timings)
     {
       this.Skill = skill;
     }
 
-    public override string description { get { return this.Skill.Name; } }
+    public override string description { get { return this.Skill.name; } }
 
-    public override string name { get { return this.Skill.Name; } }
+    public override string name { get { return this.Skill.name; } }
     /// <summary>
     /// Starts casting the skill
     /// </summary>
@@ -58,7 +58,7 @@ namespace Prototype
     /// <param name="target"></param>
     protected override void OnStart(CombatController user, CombatController target)
     {
-      if (!Skill.Data.IsTelegraphed)
+      if (!Skill.data.telegraphed)
         return;
       
       this.StartTelegraph();
@@ -96,7 +96,7 @@ namespace Prototype
     protected override void OnExecute(CombatController user, CombatController target)
     {
       if (Skill != null)
-        this.Skill.Cast(user, target, this.Telegraph);
+        this.Skill.Use(user, target, this.Telegraph);
 
       this.SpawnParticles();
     }
@@ -131,7 +131,7 @@ namespace Prototype
     //------------------------------------------------------------------------/
     void StartTelegraph()
     {
-      Telegraph = Telegraph.Construct(this.Skill.Data.Telegraphing, CalculatePlacement());
+      Telegraph = Telegraph.Construct(this.Skill.data.telegraph, CalculatePlacement());
       Telegraph.Start(this.Timers.Cast);
       //Trace.Script("Starting telegraph");
     }

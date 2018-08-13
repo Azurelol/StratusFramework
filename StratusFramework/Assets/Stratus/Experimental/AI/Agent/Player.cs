@@ -8,7 +8,7 @@ namespace Stratus
   /// <summary>
   /// Base class for the player' avatar logic
   /// </summary>
-  public abstract class Player<T> : Agent where T : MonoBehaviour
+  public abstract class Player<T> : CombatAgent where T : MonoBehaviour
   {
     //--------------------------------------------------------------------------------------------/
     // Event Declarations
@@ -33,26 +33,7 @@ namespace Stratus
       public class EndedEvent : Stratus.Event { }
     }
 
-    /// <summary>
-    /// Signals that the player has been revived
-    /// </summary>
-    public class ReviveEvent : Stratus.Event
-    {
-    }
 
-    /// <summary>
-    ///  Signals that the player has entered combat
-    /// </summary>
-    public class EnterCombatEvent : Stratus.Event
-    {
-    }
-
-    /// <summary>
-    /// Signals that hte player has ended combat
-    /// </summary>
-    public class ExitCombatEvent : Stratus.Event
-    {
-    }
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -65,14 +46,10 @@ namespace Stratus
     /// Container for all players
     /// </summary>
     public static List<T> all { get; set; } = new List<T>();
-    
-    public override Blackboard blackboard { get { throw new NotImplementedException("The player does not use a blackboard!"); } }
-
 
     //--------------------------------------------------------------------------------------------/
     // Events
     //--------------------------------------------------------------------------------------------/
-    protected abstract void OnRevive();
     protected abstract void OnPlayerAwake();
 
     //--------------------------------------------------------------------------------------------/
@@ -89,26 +66,11 @@ namespace Stratus
       all.Remove(this as T);
     }
 
-    protected override void OnCombatEnter()
-    {
-      //Trace.Script("Entered combat!", this);
-      Scene.Dispatch<EnterCombatEvent>(new EnterCombatEvent());
-    }
-    protected override void OnCombatExit()
-    {
-      //Trace.Script("Exited combat!", this);
-      Scene.Dispatch<ExitCombatEvent>(new ExitCombatEvent());
-    }
-
     protected override void OnSubscribe()
-    {
-      this.gameObject.Connect<ReviveEvent>(this.OnReviveEvent);
+    {      
     }
 
-    void OnReviveEvent(ReviveEvent e)
-    {
-      this.OnRevive();
-    }
+
 
 
   }

@@ -48,9 +48,9 @@ namespace Prototype
     /// <returns>True if the status has ended, false otherwise. </returns>
     public void Apply(CombatController caster, CombatController target)
     {      
-      var applyEvent = new CombatController.StatusEvent();
+      var applyEvent = new CombatController.StatusAppliedEvent();
       applyEvent.Status = new Instance(this, caster, target);
-      target.gameObject.Dispatch<CombatController.StatusEvent>(applyEvent);
+      target.gameObject.Dispatch<CombatController.StatusAppliedEvent>(applyEvent);
     }
     
     /// <summary>

@@ -34,7 +34,7 @@ namespace Stratus
     private void Start()
     {
       foreach (var behaviour in behaviours)
-        behaviour.OnStart();
+        behaviour.OnManagedStart();
     }
 
     private void Update()
@@ -42,7 +42,7 @@ namespace Stratus
       foreach (var behaviour in behaviours)
       {
         if (behaviour.enabled)
-          behaviour.OnUpdate();
+          behaviour.OnManagedUpdate();
       }
     }
 
@@ -51,7 +51,7 @@ namespace Stratus
       foreach (var behaviour in behaviours)
       {
         if (behaviour.enabled)
-          behaviour.OnFixedUpdate();
+          behaviour.OnManagedFixedUpdate();
       }
     }
 
@@ -60,7 +60,7 @@ namespace Stratus
       foreach (var behaviour in behaviours)
       {
         if (behaviour.enabled)
-          behaviour.OnLateUpdate();
+          behaviour.OnManagedLateUpdate();
       }
     }
 

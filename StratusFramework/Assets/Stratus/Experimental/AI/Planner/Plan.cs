@@ -87,12 +87,12 @@ namespace Stratus
                              where action.ContextPrecondition && !currentState.Satisfies(action.Effects)
                              select action).ToArray();
 
-        if (planner.Tracing)
+        if (planner.debug)
         {
-          Trace.Script("Making plan to satisfy the goal '" + goal.Name + "' with preconditions:" + goal.DesiredState.ToString(), planner.Agent);
-          Trace.Script("Actions available:", planner.Agent);
+          Trace.Script("Making plan to satisfy the goal '" + goal.Name + "' with preconditions:" + goal.DesiredState.ToString(), planner.agent);
+          Trace.Script("Actions available:", planner.agent);
           foreach (var action in usableActions)
-            Trace.Script("- " + action.Description, planner.Agent);
+            Trace.Script("- " + action.Description, planner.agent);
         }
 
         // The path of actions
@@ -101,7 +101,7 @@ namespace Stratus
         if (Plan.UseAstar)
         {
           Search search = new Search(currentState, goal.DesiredState, usableActions);
-          search.Tracing = planner.Tracing;
+          search.Tracing = planner.debug;
           search.Initialize();
           path = search.FindSolution();
         }
@@ -116,7 +116,7 @@ namespace Stratus
           // If the path has not been found
           if (!hasFoundPath)
           {
-            if (planner.Tracing) Trace.Script("No plan could be formulated!", planner.Agent);
+            if (planner.debug) Trace.Script("No plan could be formulated!", planner.agent);
             return new Plan();
           }
         }
@@ -145,14 +145,14 @@ namespace Stratus
         bool solutionFound = false;
         Search.Node cheapestNode = null;
 
-        if (planner.Tracing) Trace.Script("Looking to fulfill the preconditions:" + parent.State.ToString());
+        if (planner.debug) Trace.Script("Looking to fulfill the preconditions:" + parent.State.ToString());
 
         // Look for actions that fulfill the preconditions
         foreach (var action in actions)
         {
           if (action.Effects.Satisfies(parent.State))
           {
-            if (planner.Tracing) Trace.Script(action.Description + " satisfies the preconditions");
+            if (planner.debug) Trace.Script(action.Description + " satisfies the preconditions");
 
             // Create a new node
             var node = new Search.Node(parent, parent.Cost + action.Cost, action.Preconditions, action);
@@ -163,7 +163,7 @@ namespace Stratus
           }
           else
           {
-            if (planner.Tracing) Trace.Script(action.Description + " does not satisfy the preconditions");
+            if (planner.debug) Trace.Script(action.Description + " does not satisfy the preconditions");
           }
         }
 
@@ -173,13 +173,13 @@ namespace Stratus
           // If the current state is already fulfilling this condition, we are done!
           if (planner.State.Satisfies(parent.State)) return true;
           // Otherwise, no valid solution could be found
-          if (planner.Tracing) Trace.Script("No actions could fulfill these preconditions");
+          if (planner.debug) Trace.Script("No actions could fulfill these preconditions");
           return false;
         }
 
         // Add the cheapest node to the path
         path.Add(cheapestNode.Action);
-        if (planner.Tracing) Trace.Script("Adding " + cheapestNode.Action.Description + " to the path");
+        if (planner.debug) Trace.Script("Adding " + cheapestNode.Action.Description + " to the path");
 
         // If this action has no more preconditions left to fulfill
         if (cheapestNode.Action.Preconditions.isEmpty)

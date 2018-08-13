@@ -52,15 +52,15 @@ namespace Prototype
       // Draw attributes with a remove button below each one:
       //////////////////////////////////////////////////////////
       int indexToRemove = -1;
-      for (int i = 0; i < consumable.Effects.Count; i++)
+      for (int i = 0; i < consumable.effects.Count; i++)
       {
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        EditorGUILayout.LabelField(consumable.Effects[i].GetType().Name, EditorStyles.boldLabel);
-        if (consumable.Effects[i] != null)
+        EditorGUILayout.LabelField(consumable.effects[i].GetType().Name, EditorStyles.boldLabel);
+        if (consumable.effects[i] != null)
         {
-          consumable.Effects[i].Modifier = (EffectAttribute.TargetingModifier)UnityEditor.EditorGUILayout.EnumPopup("Modifier",
-                                       consumable.Effects[i].Modifier);
-          consumable.Effects[i].OnInspect();
+          consumable.effects[i].Modifier = (EffectAttribute.TargetingModifier)UnityEditor.EditorGUILayout.EnumPopup("Modifier",
+                                       consumable.effects[i].Modifier);
+          consumable.effects[i].OnInspect();
         }
         if (GUILayout.Button("Remove")) indexToRemove = i;
         EditorGUILayout.EndVertical();
@@ -69,7 +69,7 @@ namespace Prototype
       //////////////////////////////////////////////////////////
       // If something has been tagged for removal...
       //////////////////////////////////////////////////////////
-      if (indexToRemove > -1) consumable.Effects.RemoveAt(indexToRemove);
+      if (indexToRemove > -1) consumable.effects.RemoveAt(indexToRemove);
 
       //////////////////////////////////////////////////////////
       // Draw a popup and a button to add new attributes
@@ -87,7 +87,7 @@ namespace Prototype
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         // Oh jesus what was that
-        consumable.Effects.Add(newAttribute);
+        consumable.effects.Add(newAttribute);
 
         //EditorUtility.SetDirty(skill);
         //AssetDatabase.SaveAssets();
@@ -98,7 +98,7 @@ namespace Prototype
       // Allow clearing of all effects
       if (GUILayout.Button("Clear"))
       {
-        consumable.Effects.Clear();
+        consumable.effects.Clear();
       }
 
       if (UnityEngine.GUI.changed) EditorUtility.SetDirty(consumable);

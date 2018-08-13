@@ -19,7 +19,7 @@ namespace Prototype
   [CreateAssetMenu(fileName = "Armor", menuName = "Prototype/Armor")]
   public class Armor : Equipment
   {
-    public override Category Type { get { return Category.Armor; } }
+    public override Category type { get { return Category.Armor; } }
     public float Defense = 0.0f;
 
     public override string Describe()

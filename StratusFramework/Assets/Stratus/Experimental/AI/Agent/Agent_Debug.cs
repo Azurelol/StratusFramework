@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Agent_Debug.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,7 +5,7 @@ namespace Stratus
 {
   namespace AI
   {
-    public abstract partial class Agent : StratusBehaviour
+    public abstract partial class Agent : ManagedBehaviour
     {
       private void OnDrawGizmos()
       {

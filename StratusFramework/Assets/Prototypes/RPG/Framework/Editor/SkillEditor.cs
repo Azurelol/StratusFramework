@@ -44,13 +44,13 @@ namespace Prototype
       // Draw attributes with a remove button below each one:
       //////////////////////////////////////////////////////////
       int indexToRemove = -1;
-      for (int i = 0; i < skill.Effects.Count; i++)
+      for (int i = 0; i < skill.effects.Count; i++)
       {
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        EditorGUILayout.LabelField(skill.Effects[i].GetType().Name, EditorStyles.boldLabel);
-        if (skill.Effects[i] != null)
+        EditorGUILayout.LabelField(skill.effects[i].GetType().Name, EditorStyles.boldLabel);
+        if (skill.effects[i] != null)
         {
-          skill.Effects[i].Inspect();
+          skill.effects[i].Inspect();
         }
         if (GUILayout.Button("Remove")) indexToRemove = i;
         EditorGUILayout.EndVertical();
@@ -59,7 +59,7 @@ namespace Prototype
       //////////////////////////////////////////////////////////
       // If something has been tagged for removal...
       //////////////////////////////////////////////////////////
-      if (indexToRemove > -1) skill.Effects.RemoveAt(indexToRemove);
+      if (indexToRemove > -1) skill.effects.RemoveAt(indexToRemove);
 
       //////////////////////////////////////////////////////////
       // Draw a popup and a button to add new attributes
@@ -77,14 +77,14 @@ namespace Prototype
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         // Oh jesus what was that
-        skill.Effects.Add(newAttribute);
+        skill.effects.Add(newAttribute);
       }
       EditorGUILayout.EndHorizontal();
 
       // Allow clearing of all effects
       if (GUILayout.Button("Clear"))
       {
-        skill.Effects.Clear();
+        skill.effects.Clear();
       }
 
       if (UnityEngine.GUI.changed) EditorUtility.SetDirty(skill);

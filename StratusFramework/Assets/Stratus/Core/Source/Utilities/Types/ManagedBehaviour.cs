@@ -12,12 +12,12 @@ namespace Stratus
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
-    protected internal virtual void OnBehaviourAwake() {}
-    protected internal virtual void OnBehaviourDestroy() {}
-    protected internal virtual void OnStart() {}
-    protected internal virtual void OnUpdate() {}
-    protected internal virtual void OnFixedUpdate() {}
-    protected internal virtual void OnLateUpdate() {}
+    protected internal virtual void OnManagedAwake() {}
+    protected internal virtual void OnManagedDestroy() {}
+    protected internal virtual void OnManagedStart() {}
+    protected internal virtual void OnManagedUpdate() {}
+    protected internal virtual void OnManagedFixedUpdate() {}
+    protected internal virtual void OnManagedLateUpdate() {}
 
     //--------------------------------------------------------------------------------------------/
     // Methods
@@ -25,13 +25,13 @@ namespace Stratus
     private void Awake()
     {
       ManagedBehaviourSystem.Add(this);
-      this.OnBehaviourAwake();
+      this.OnManagedAwake();
     }
 
     private void OnDestroy()
     {
       ManagedBehaviourSystem.Remove(this);
-      this.OnBehaviourDestroy();
+      this.OnManagedDestroy();
     }
 
     //--------------------------------------------------------------------------------------------/

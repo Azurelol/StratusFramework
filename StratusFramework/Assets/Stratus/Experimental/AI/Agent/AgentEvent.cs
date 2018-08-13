@@ -7,9 +7,16 @@ namespace Stratus.Gameplay
 {
   public class AgentEvent : Triggerable
   {
+    public enum EventType
+    {
+      Move,
+      Death,
+      Revive
+    }      
+
     public Agent agent;
-    public Agent.Event eventType;
-    [DrawIf(nameof(AgentEvent.eventType), Agent.Event.Move, ComparisonType.Equals)]
+    public EventType eventType;
+    [DrawIf(nameof(AgentEvent.eventType), EventType.Move, ComparisonType.Equals)]
     public PositionField position = new PositionField();
 
     public override string automaticDescription
@@ -35,11 +42,11 @@ namespace Stratus.Gameplay
     {
       switch (eventType)
       {
-        case Agent.Event.Move:
+        case EventType.Move:
           agent.gameObject.Dispatch<Agent.MoveEvent>(new Agent.MoveEvent(position));
           break;
-        case Agent.Event.Death:
-          agent.gameObject.Dispatch<Agent.DeathEvent>(new Agent.DeathEvent());
+        case EventType.Death:
+          agent.gameObject.Dispatch<CombatAgent.DeathEvent>(new CombatAgent.DeathEvent());
           break;
         default:
           break;

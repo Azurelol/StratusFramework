@@ -54,7 +54,7 @@ namespace Prototype
       {
         Item = item;
         Count = count;
-        Charges = item.Charges;
+        Charges = item.charges;
       }
 
       /// <summary>
@@ -63,7 +63,7 @@ namespace Prototype
       /// <returns></returns>
       public bool Validate()
       {
-        if (Item.Persistent)
+        if (Item.persistent)
         {
           if (Charges > 1)
             return true;
@@ -83,12 +83,12 @@ namespace Prototype
       {
         Item.Use(user, target);
         // If the item is persistent, consume a charge
-        if (Item.Persistent)
+        if (Item.persistent)
         {
           Charges--;
         }
         // Otherwise, remove one
-        else if (!Item.Persistent)
+        else if (!Item.persistent)
         {
           Count--;
         }
@@ -110,7 +110,7 @@ namespace Prototype
       /// </summary>
       public void Reset()
       {
-        Charges = Item.Charges;
+        Charges = Item.charges;
       }
     }
 

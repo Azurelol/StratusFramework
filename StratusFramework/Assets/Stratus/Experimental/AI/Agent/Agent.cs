@@ -21,21 +21,28 @@ namespace Stratus.AI
   /// which observes through sensors and acts upon an environment using actuators 
   /// and directs its activity towards achieving goals.
   /// </summary>
-  public abstract partial class Agent : StratusBehaviour, Interfaces.Debuggable
+  public abstract partial class Agent : ManagedBehaviour, Interfaces.Debuggable
   {
+    //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/
+    /// <summary>
+    /// The agent's base states
+    /// </summary>
     public enum State
     {
+      /// <summary>
+      /// The agent is idle, performing no actions
+      /// </summary>
       Idle,
+      /// <summary>
+      /// The agent is moving towards its target destination
+      /// </summary>
       Moving,
-      Engaged,
-      Acting,
-      Inactive
-    }
-
-    public enum Event
-    {
-      Move,
-      Death
+      /// <summary>
+      /// The agent is performing an action
+      /// </summary>
+      Action
     }
 
     public enum Control
@@ -44,10 +51,69 @@ namespace Stratus.AI
       Automatic
     }
 
+    /// <summary>
+    /// Base class for all status events
+    /// </summary>
+    public abstract class StatusEvent : Stratus.Event
+    {
+      public Agent agent { get; internal set; }
+    }
+    /// <summary>
+    /// Signals that the agent has spawned
+    /// </summary>
+    public class SpawnEvent : StatusEvent { }
+    /// <summary>
+    /// Signals the agent to start considering its next action
+    /// </summary>
+    public class AssessEvent : StatusEvent { }
+    /// <summary>
+    /// Signals to the agent that it should be disabled for a set amount of time
+    /// </summary>
+    public class DisableEvent : Stratus.Event
+    {
+      public float duration = 0f;
+      public DisableEvent(float duration) { this.duration = duration; }
+    }
+    /// <summary>
+    /// Signals that the agent should stop its current action
+    /// </summary>
+    public class StopEvent : Stratus.Event { }
+
+    /// <summary>
+    /// Signals the agent to move to a specified position
+    /// </summary>
+    public class MoveEvent : StatusEvent
+    {
+      public PositionField position;
+      public MoveEvent(Vector3 point) { position.Set(point); }
+    }
+
+    /// <summary>
+    /// Signals the agent that the given object can be interacted with. 
+    /// </summary>
+    public class InteractionAvailableEvent : Stratus.Event
+    {
+      public InteractableTrigger interactive;
+      public string context;
+    }
+
+
     //------------------------------------------------------------------------/
     // Fields: Public
     //------------------------------------------------------------------------/
     [Header("Status")]
+    /// <summary>
+    /// How the agent is currently controlled
+    /// </summary>
+    public Control control;
+    /// <summary>
+    /// The blackboard this agent is using
+    /// </summary>
+    public Blackboard blackboard;
+    /// <summary>
+    /// The collection of behaviors to run on this agent (a behavior system such as a BT, Planner, etc)
+    /// </summary>
+    public BehaviorSystem behavior;
     /// <summary>
     /// Whether this agent is active
     /// </summary>
@@ -64,22 +130,6 @@ namespace Stratus.AI
     /// The NavMeshAgent component used by this agent
     /// </summary>
     public NavMeshAgent navigation { get; private set; }
-    /// <summary>
-    /// Whether the agent is currently targetable
-    /// </summary>
-    public bool targetable { get; private set; } = true;
-    /// <summary>
-    /// The blackboard this agent is using
-    /// </summary>
-    public abstract Blackboard blackboard { get; }
-    /// <summary>
-    /// The agent's current target
-    /// </summary>
-    public Agent target { get; protected set; }
-    /// <summary>
-    /// A list of all the agents engaged to this one
-    /// </summary>
-    public Agent[] engagements { get { return currentEngagements.ToArray(); } }
     /// <summary>
     /// The current state of this agent
     /// </summary>
@@ -99,96 +149,68 @@ namespace Stratus.AI
     /// <summary>
     /// The rigidbody component used by this component
     /// </summary>
-    public Rigidbody rigidBody { get; private set; }
+    public new Rigidbody rigidbody { get; private set; }
 
     //------------------------------------------------------------------------/
     // Fields: Private
     //------------------------------------------------------------------------/
-
     /// <summary>
     /// The currently running steering routine
     /// </summary>
     private IEnumerator steeringRoutine;
-    /// <summary>
-    /// The list of targets currently engaged to this agent
-    /// </summary>
-    private List<Agent> currentEngagements = new List<Agent>();
 
     //------------------------------------------------------------------------/
     // Interface
     //------------------------------------------------------------------------/
     protected abstract void OnAgentAwake();
     protected abstract void OnAgentDestroy();
-    protected abstract void OnStart();
+    protected abstract void OnAgentStart();
     protected abstract void OnSubscribe();
-    protected abstract void OnUpdate();
-    protected virtual void OnEngage(Agent target) { }
-    protected virtual void OnDisengage() { }
-    protected virtual void OnDisengaged(Agent agent) { }
-    protected virtual void OnCombatEnter() { }
-    protected virtual void OnCombatExit() { }
-    protected abstract void OnDeath();
+    protected abstract void OnAgentUpdate();
+    protected abstract void OnStop();
     protected virtual void OnInteractScan(bool hasFoundInteractions) { }
-    protected virtual bool OnMoveTo(NavMeshPath path) { return false; }
-    protected virtual void OnMovementStarted() { }
-    protected virtual void OnMovementEnded() { }
-
-    protected virtual void OnPause() { }
-    protected virtual void OnResume() { }
+    protected virtual bool OnAgentMoveTo(NavMeshPath path) { return false; }
+    protected virtual void OnAgentMovementStarted() { }
+    protected virtual void OnAgentMovementEnded() { }
+    protected virtual void OnAgentPause() { }
+    protected virtual void OnAgentResume() { }
 
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
-    private void Awake()
+    protected internal override void OnManagedAwake()
     {
       // Cache the main components, ho!
       this.navigation = GetComponent<NavMeshAgent>(); ;
       this.sensor = GetComponent<Sensor>();
-      this.rigidBody = GetComponent<Rigidbody>();
-
+      this.rigidbody = GetComponent<Rigidbody>();
       // Subscribe to events
       this.Subscribe();
-
       // Inform the agent is up
-      OnAgentAwake();
+      this.OnAgentAwake();
       Scene.Dispatch<SpawnEvent>(new SpawnEvent() { agent = this });
     }
 
-    private void OnDestroy()
-    {
-      OnAgentDestroy();
-    }
-
-    /// <summary>
-    /// Initializes this agent
-    /// </summary>
-    void Start()
+    protected internal override void OnManagedStart()
     {
       if (this.debug) this.AddLineRenderer();
-      this.OnStart();
+      this.OnAgentStart();
       currentState = State.Idle;
     }
 
-    //void OnEnable()
-    //{
-    //  this.navigation = GetComponent<NavMeshAgent>(); ;
-    //  this.sensor = GetComponent<Sensor>();
-    //  this.rigidbody = GetComponent<Rigidbody>();
-    //}
-
-    /// <summary>
-    /// Updates this agent
-    /// </summary>
-    void FixedUpdate()
+    protected internal override void OnManagedDestroy()
     {
-      if (!active)
+      this.OnAgentDestroy();
+    }
+
+    protected internal override void OnManagedUpdate()
+    {
+      if (!this.active)
         return;
 
-      //if (this.logging)
-      //  this.Debug();
-
-      this.OnUpdate();
-    }
+      this.behavior.UpdateSystem(Time.deltaTime);
+      this.OnAgentUpdate();
+    }        
 
     private void OnDisable()
     {
@@ -203,7 +225,7 @@ namespace Stratus.AI
     {
       this.navigation = GetComponent<NavMeshAgent>(); ;
       this.sensor = GetComponent<Sensor>();
-      this.rigidBody = GetComponent<Rigidbody>();
+      this.rigidbody = GetComponent<Rigidbody>();
 
       if (this.steeringRoutine != null)
       {
@@ -227,33 +249,13 @@ namespace Stratus.AI
     protected virtual void Subscribe()
     {
       this.gameObject.Connect<Sensor.InteractEvent>(this.OnInteractEvent);
-      this.gameObject.Connect<Sensor.DetectionResultEvent>(this.OnInteractScanResultEvent);
-      this.gameObject.Connect<DeathEvent>(this.OnDeathEvent);
+      this.gameObject.Connect<Sensor.DetectionResultEvent>(this.OnInteractScanResultEvent);      
       this.gameObject.Connect<MoveEvent>(this.OnMoveToEvent);
-      this.gameObject.Connect<EngageTargetEvent>(this.OnEngageTargetEvent);
-      this.gameObject.Connect<EngagedEvent>(this.OnEngagedEvent);
-      this.gameObject.Connect<DisengagedEvent>(this.OnDisengagedEvent);
-      this.gameObject.Connect<SwitchTargetEvent>(this.OnSwitchTargetEvent);
       this.gameObject.Connect<DisableEvent>(this.OnDisableEvent);
       this.gameObject.Connect<StopEvent>(this.OnStopEvent);
       this.OnSubscribe();
     }
 
-    /// <summary>
-    /// Received when this agent has been marked as dead
-    /// </summary>
-    /// <param name="e"></param>
-    void OnDeathEvent(DeathEvent e)
-    {
-      targetable = false;
-      if (this.debug) Trace.Script("This agent has been killed.", this);
-      this.Stop();
-      this.OnDeath();
-
-      // Inform the scene
-      e.agent = this;
-      Scene.Dispatch<DeathEvent>(e);
-    }
     void OnInteractEvent(Sensor.InteractEvent e)
     {
       if (this.sensor.closestInteractable)
@@ -273,49 +275,13 @@ namespace Stratus.AI
     void OnMoveToEvent(MoveEvent e)
     {
       MoveTo(e.position);
-
-      // Inform the scene
       e.agent = this;
       Scene.Dispatch<MoveEvent>(e);
     }
 
-    void OnEngageTargetEvent(EngageTargetEvent e)
-    {
-      this.target = e.Target;
-      this.OnEngage(e.Target);
-    }
-
-    void OnSwitchTargetEvent(SwitchTargetEvent e)
-    {
-      //Trace.Script("Now switching target to " + e.Target);
-      this.target = e.Target;
-    }
-
-    void OnEngagedEvent(EngagedEvent e)
-    {
-      //Trace.Script(e.Agent + " is engaged to me!", this);
-      currentEngagements.Add(e.agent);
-      // This agent has just entered combat
-      if (currentEngagements.Count == 1)
-        this.OnCombatEnter();
-    }
-
-    void OnDisengagedEvent(DisengagedEvent e)
-    {
-      //Trace.Script(e.Agent + " has disengaged from me!", this);
-      OnDisengaged(e.agent);
-
-      // This agent is no longer in combat
-      if (currentEngagements.Count == 0)
-        this.OnCombatExit();
-
-      currentEngagements.Remove(e.agent);
-    }
-
     void OnDisableEvent(DisableEvent e)
     {
-      this.Disable(e.Duration);
-      //this.Interrupt(e.Duration);
+      this.Disable(e.duration);
     }
 
     void OnStopEvent(StopEvent e)
@@ -343,7 +309,7 @@ namespace Stratus.AI
       {
         //if (this.logging) PrintPath(path);
         // If the path is not modified by a subclass, use it
-        if (!this.OnMoveTo(path))
+        if (!this.OnAgentMoveTo(path))
           navigation.SetPath(path);
       }
       else
@@ -379,52 +345,6 @@ namespace Stratus.AI
       StartCoroutine(steeringRoutine);
     }
 
-
-    /// <summary>
-    /// Engages the specified target
-    /// </summary>
-    /// <param name="target"></param>
-    public void Engage(Agent target)
-    {
-      if (debug)
-        Trace.Script("Now engaging " + target.name, this);
-
-      if (this.target)
-        Disengage();
-
-      // Inform the target that it's been engaged on
-      this.target = target;
-      SignalEngagement<EngagedEvent>(this.target);
-
-      this.OnEngage(target);
-      this.currentState = State.Engaged;
-    }
-
-    /// <summary>
-    /// Disengages from the current target, stopping navigation and setting the state to idle
-    /// </summary>
-    public void Disengage()
-    {
-      if (debug)
-        Trace.Script("Disengaging!", this);
-
-      // Inform that we have disengaged from the target
-      if (this.target)
-      {
-        SignalEngagement<DisengagedEvent>(this.target);
-        this.target = null;
-      }
-
-      if (this.navigation.isOnNavMesh)
-      {
-        this.navigation.isStopped = true;
-        this.navigation.ResetPath();
-      }
-
-      this.OnDisengage();
-      this.currentState = State.Idle;
-    }
-
     /// <summary>
     /// Stops all of the agent's current actions
     /// </summary>
@@ -433,9 +353,9 @@ namespace Stratus.AI
       if (this.debug)
         Trace.Script("The agent has been stopped.", this);
 
-      this.Disengage();
+      
+      this.OnStop();
       this.StopAllCoroutines();
-      //if (SteeringRoutine != null) StopCoroutine(SteeringRoutine);
     }
 
     /// <summary>
@@ -450,7 +370,7 @@ namespace Stratus.AI
       if (this.navigation.isOnNavMesh)
         this.navigation.isStopped = true;
       this.navigation.enabled = false;
-      OnPause();
+      OnAgentPause();
     }
 
     /// <summary>
@@ -464,7 +384,7 @@ namespace Stratus.AI
       this.navigation.enabled = true;
       if (this.navigation.isOnNavMesh)
         this.navigation.isStopped = false;
-      OnResume();
+      OnAgentResume();
     }
 
     /// <summary>
@@ -479,18 +399,7 @@ namespace Stratus.AI
       Actions.Call(seq, () => { this.active = true; });
     }
 
-    /// <summary>
-    /// Informs the enemy agent that it has been engaged upon by this agent
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="target"></param>
-    public void SignalEngagement<T>(Agent target) where T : EngagementEvent, new()
-    {
-      var e = new T();
-      e.agent = this;
-      target.gameObject.Dispatch<T>(e);
-      Scene.Dispatch<T>(e);
-    }
+
 
 
   }

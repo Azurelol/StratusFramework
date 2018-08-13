@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   FEAgentDriver.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using System;
 using Stratus.Prototyping;
@@ -18,7 +11,7 @@ namespace Stratus
       public class AgentController : MouseDrivenController
       {
         [Tooltip("The agent to send commands to")]
-        public Agent Agent;
+        public Agent agent;
 
         /// <summary>
         /// Selects an agent to control
@@ -29,8 +22,8 @@ namespace Stratus
           var target = hit.transform.GetComponent<Agent>();
           if (target)
           {
-            this.Agent = target;
-            Trace.Script("Now controlling " + this.Agent);
+            this.agent = target;
+            Trace.Script("Now controlling " + this.agent);
             //this.RepositionOnAgent();
           }
         }
@@ -41,7 +34,7 @@ namespace Stratus
         /// <param name="hit"></param>
         protected override void OnMiddleMouseButtonDown(RaycastHit hit)
         {
-          this.Agent.Stop();
+          this.agent.Stop();
         }
 
         /// <summary>
@@ -50,35 +43,35 @@ namespace Stratus
         /// <param name="hit"></param>
         protected override void OnRightMouseButtonDown(RaycastHit hit)
         {
-          if (!this.Agent)
+          if (!this.agent)
             return;
 
-          var target = hit.transform.GetComponent<Agent>();
-          if (target && target != this.Agent)
+          var combatAgent = hit.transform.GetComponent<CombatAgent>();
+          if (combatAgent && combatAgent != this.agent)
           {
-            this.Agent.Engage(target);
+            combatAgent.Engage(combatAgent);
           }
           else
           {
-            this.Agent.MoveTo(hit.point);
+            this.agent.MoveTo(hit.point);
           }
         }
 
         void RepositionOnAgent()
         {
-          if (!this.Agent)
+          if (!this.agent)
             return;
 
           // Find this in a better way?
           //this.transform.SetParent(this.Agent.transform);
           var offSet = 3f;
-          var newPos = new Vector3(this.Agent.transform.position.x, offSet, this.Agent.transform.position.z);
+          var newPos = new Vector3(this.agent.transform.position.x, offSet, this.agent.transform.position.z);
           this.transform.position = newPos;
         }
 
         private void OnValidate()
         {
-          if (this.Agent)
+          if (this.agent)
           {
             this.RepositionOnAgent();
           }

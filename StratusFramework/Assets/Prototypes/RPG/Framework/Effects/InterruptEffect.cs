@@ -19,7 +19,7 @@ namespace Prototype
     protected override void OnChance(CombatController caster, CombatController target)
     {
       // Interrupt the target's current action
-      if (target.IsCasting)
+      if (target.isActing)
       {
         Trace.Script("Sending interrupt event");
         target.gameObject.Dispatch<CombatAction.CancelEvent>(new CombatAction.CancelEvent());

@@ -27,9 +27,9 @@ namespace Prototype
     {
       float heal = (this.Percentage / 100.0f) * target.health.maximum;
       //Trace.Script("Sending heal event with value of " + heal);
-      var healEvent = new CombatController.HealEvent();
+      var healEvent = new Combat.HealEvent();
       healEvent.value = heal;
-      target.gameObject.Dispatch<CombatController.HealEvent>(healEvent);
+      target.gameObject.Dispatch<Combat.HealEvent>(healEvent);
 
     }
   }

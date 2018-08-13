@@ -30,7 +30,7 @@ namespace Prototype
     {
       // Grab a list of all enemy characters
       var characters = Resources.FindObjectsOfTypeAll<Character>() ;
-      EnemyCharacters = (from Character character in characters where character.Faction == CombatController.Faction.Hostile select character).ToArray();
+      EnemyCharacters = (from Character character in characters where character.faction == CombatController.Faction.Hostile select character).ToArray();
       // this is hella cool
       EnemyCharactersNames = (from Character character in EnemyCharacters select character.name).ToArray();
     }

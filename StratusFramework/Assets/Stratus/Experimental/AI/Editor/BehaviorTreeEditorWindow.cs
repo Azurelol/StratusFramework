@@ -108,7 +108,7 @@ namespace Stratus
       void OpenTree(BehaviorTree tree)
       {
         BehaviorTree = tree;
-        Blackboard = tree.BlackboardAsset;
+        Blackboard = tree.blackboard;
         ChangeTitle(BehaviorTree.name);
       }
 

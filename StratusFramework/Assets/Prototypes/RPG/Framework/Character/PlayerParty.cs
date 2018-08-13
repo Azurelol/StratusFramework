@@ -35,7 +35,7 @@ namespace Prototype
     /// <summary>
     /// Represents an instance of a character that's been instantiated
     /// for combat and progression.
-    /// </summary>
+    /// </summary> 
     [Serializable]
     public class PartyMember : StratusSerializable
     {

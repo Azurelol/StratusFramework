@@ -192,7 +192,7 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
-    protected internal override void OnBehaviourAwake()
+    protected internal override void OnManagedAwake()
     {
       inertiaTimer = new Countdown(0.05f);
       jumpTimer = new Countdown(jumpApex);
@@ -210,12 +210,12 @@ namespace Stratus.Gameplay
       CheckGrounded();
     }
 
-    protected internal override void OnUpdate()
+    protected internal override void OnManagedUpdate()
     {
       UpdateTimers();
     }
 
-    protected internal override void OnFixedUpdate()
+    protected internal override void OnManagedFixedUpdate()
     {
       if (turning)
         ApplyTurn();
@@ -227,7 +227,7 @@ namespace Stratus.Gameplay
         ApplyFall();
     }
 
-    protected internal override void OnLateUpdate()
+    protected internal override void OnManagedLateUpdate()
     {
       CheckMovement();
 

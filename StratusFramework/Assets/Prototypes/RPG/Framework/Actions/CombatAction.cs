@@ -253,7 +253,7 @@ namespace Prototype
 
       // Inform the user that we have picked this target
       var targetEvent = new CombatController.TargetEvent();
-      targetEvent.Target = target;
+      targetEvent.target = target;
       user.gameObject.Dispatch<CombatController.TargetEvent>(targetEvent);
 
       // Inform the user to approach the target

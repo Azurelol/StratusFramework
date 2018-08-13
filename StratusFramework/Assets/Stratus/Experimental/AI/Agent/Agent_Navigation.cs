@@ -13,7 +13,7 @@ namespace Stratus
 {
   namespace AI
   {
-    public abstract partial class Agent : StratusBehaviour
+    public abstract partial class Agent : ManagedBehaviour
     {
       /// <summary>
       /// Used to temporarily set, then revert navigation settings
@@ -67,8 +67,8 @@ namespace Stratus
         }
 
         ~PathDisplay()
-        {
-          Destroy(this.Renderer);
+        {          
+          Object.Destroy(this.Renderer);
         }
       }
 
@@ -84,7 +84,7 @@ namespace Stratus
         navSettings.Set(speed, acceleration, stoppingDistance);
 
         //Trace.Script("Will now approach " + target.name + " up until " + stoppingDistance + " units at " + speed + " speed!", this);
-        this.OnMovementStarted();
+        this.OnAgentMovementStarted();
 
         // While we are not within range of the target, keep making paths to it
         while (Vector3.Distance(transform.position, target.position) > stoppingDistance)
@@ -102,7 +102,7 @@ namespace Stratus
         navSettings.Revert();
         this.steeringRoutine = null;
 
-        this.OnMovementEnded();        
+        this.OnAgentMovementEnded();        
       }
 
       //protected void FollowPath(Vector3[] points, float speed, float acceleration, float stoppingDistance)
@@ -121,7 +121,7 @@ namespace Stratus
         var navSettings = new NavigationSettings(this.navigation);
         navSettings.Set(speed, acceleration, stoppingDistance);
 
-        this.OnMovementStarted();
+        this.OnAgentMovementStarted();
 
         // Create a new line renderer to draw this path
         //PathDisplay pathDisplay;
@@ -155,7 +155,7 @@ namespace Stratus
         }
 
 
-        this.OnMovementEnded();
+        this.OnAgentMovementEnded();
         this.navigation.isStopped = true;
         navSettings.Revert();
 

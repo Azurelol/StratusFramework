@@ -26,7 +26,7 @@ namespace Prototype
     public bool Unique;
     public Sprite Icon;
     public GameObject Model;
-    public abstract Category Type { get; }
+    public abstract Category type { get; }
 
     /// <summary>
     /// Provides a short description of this item.

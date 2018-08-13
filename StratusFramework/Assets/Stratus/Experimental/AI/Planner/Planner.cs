@@ -63,7 +63,7 @@ namespace Stratus
 
       protected override void OnSubscribe()
       {
-        this.Agent.gameObject.Connect<WorldState.ModifySymbolEvent>(this.OnModifySymbolEvent);
+        this.agent.gameObject.Connect<WorldState.ModifySymbolEvent>(this.OnModifySymbolEvent);
       }
 
       public override void OnAssess()
@@ -75,7 +75,7 @@ namespace Stratus
 
       protected override void OnUpdate(float dt)
       {
-        CurrentBehavior.Execute(dt);        
+        currentBehavior.Execute(dt);        
       }
 
       public override void OnBehaviorStarted(Behavior behavior)
@@ -123,14 +123,14 @@ namespace Stratus
         if (CurrentPlan.IsFinished)
         {
           this.Goal.Complete(this);
-          this.Agent.gameObject.Dispatch<Plan.ExecutedEvent>(new Plan.ExecutedEvent());
+          this.agent.gameObject.Dispatch<Plan.ExecutedEvent>(new Plan.ExecutedEvent());
           //if (Tracing) Trace.Script("The plan for " + this.CurrentGoal.Name + " has been fulfilled!", this);
           //this.gameObject.Dispatch<Agent.>
           return;
         }
 
         this.CurrentAction = CurrentPlan.Next();
-        this.CurrentAction.Initialize(this.Agent);
+        this.CurrentAction.Initialize(this.agent);
       }
 
       /// <summary>
@@ -138,20 +138,20 @@ namespace Stratus
       /// </summary>
       public void FormulatePlan()
       {
-        this.Sensor.Scan();
+        this.sensor.Scan();
         this.CurrentPlan = Plan.Formulate(this, this.AvailableActions, this.State, this.Goal);
 
         if (this.CurrentPlan != null)
         {
           //if (Tracing)
-            Trace.Script("Executing new plan!", this.Agent);
-          this.Agent.gameObject.Dispatch<Plan.FormulatedEvent>(new Plan.FormulatedEvent(this.CurrentPlan));
+            Trace.Script("Executing new plan!", this.agent);
+          this.agent.gameObject.Dispatch<Plan.FormulatedEvent>(new Plan.FormulatedEvent(this.CurrentPlan));
           this.ContinuePlan();
         }
         else
         {
           //if (Tracing)
-            Trace.Script("The plan could not be formulated!", this.Agent);
+            Trace.Script("The plan could not be formulated!", this.agent);
         }
       }
 

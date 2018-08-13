@@ -102,7 +102,7 @@ namespace Prototype
     /// <param name="e"></param>
     void OnCombatControllerSpawnEvent(CombatController.SpawnEvent e)
     {
-      OnCombatControllerSpawn(e.Controller);
+      OnCombatControllerSpawn(e.controller);
     }      
 
     /// <summary>
@@ -111,7 +111,7 @@ namespace Prototype
     /// <param name="e">The controller which has gone inactive. </param>
     void OnCombatControllerDeathEvent(CombatController.DeathEvent e)
     {
-      OnCombatControllerDeath(e.Controller);
+      OnCombatControllerDeath(e.controller);
     }
 
     void OnCombatRetryEvent(RetryEvent e)
