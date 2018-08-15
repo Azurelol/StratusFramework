@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   LaunchEffect.cs
-@author Christian Sagel
-@par    email: ckpsm\@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;

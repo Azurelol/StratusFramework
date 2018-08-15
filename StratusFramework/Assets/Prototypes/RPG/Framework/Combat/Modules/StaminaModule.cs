@@ -30,16 +30,14 @@ namespace Prototype
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
-    protected override void OnSubscribe()
+    protected override void OnInitialize()
     {
       this.gameObject.Connect<Stamina.ModifiedEvent.GainEvent>(this.OnGainStaminaEvent);
       this.gameObject.Connect<Stamina.ModifiedEvent.LossEvent>(this.OnConsumeStaminaEvent);
+      this.gameObject.Connect<Skill.ValidateEvent>(this.OnSkillValidateEvent);
+      this.gameObject.Connect<Skill.ActivationEvent>(this.OnSkillActivationEvent);
       this.controller.onRestore += () => this.stamina.value.Reset();
-      this.controller.canSkillBeUsed = this.HasEnoughStamina;
-    }
 
-    protected override void OnInitialize()
-    {
       this.staminaRecoveryCooldown = new Cooldown(this.stamina.recoveryDelay);
     }
 
@@ -68,6 +66,25 @@ namespace Prototype
     private void OnGainStaminaEvent(Stamina.ModifiedEvent.GainEvent e)
     {
       this.Gain(e.value);
+    }
+
+    /// <summary>
+    /// Received when a skill is being validated (if it can be performed)
+    /// </summary>
+    /// <param name="e"></param>
+    private void OnSkillValidateEvent(Skill.ValidateEvent e)
+    {
+      if (this.stamina.value.current > e.skill.cost)
+        e.valid = true;
+    }
+
+    /// <summary>
+    /// Received wwhen a skill has been activated
+    /// </summary>
+    /// <param name="e"></param>
+    private void OnSkillActivationEvent(Skill.ActivationEvent e)
+    {
+      this.stamina.value.Reduce(e.skill.cost);
     }
 
     //------------------------------------------------------------------------/

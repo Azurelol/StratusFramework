@@ -25,7 +25,7 @@ namespace Prototype
     //------------------------------------------------------------------------/
     protected override void OnApply(CombatController caster, CombatController target)
     {
-      float heal = (this.Percentage / 100.0f) * target.health.maximum;
+      float heal = (this.Percentage / 100.0f) * target.GetPotency(this.type); // target.health.maximum;
       //Trace.Script("Sending heal event with value of " + heal);
       var healEvent = new Combat.HealEvent();
       healEvent.value = heal;

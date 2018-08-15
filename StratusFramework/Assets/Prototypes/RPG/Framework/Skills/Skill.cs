@@ -31,15 +31,15 @@ namespace Prototype
     /// <summary>
     /// A query to determine whether this skill can be used
     /// </summary>
-    public class IsAvailableEvent : BaseSkillEvent
+    public class ValidateEvent : BaseSkillEvent
     {
-      public bool available { get; set; } = false;
+      public bool valid { get; set; } = false;
     }
 
     /// <summary>
     /// Signals that the skill has been used
     /// </summary>
-    public class UsedEvent : BaseSkillEvent
+    public class ActivationEvent : BaseSkillEvent
     {
     }
 
@@ -141,8 +141,7 @@ namespace Prototype
     /// <param name="target">The target of this skill.</param>
     public void Cast(CombatController user, CombatController target, Telegraph telegraph)
     {
-      // If the skill is cast directly..      
-      
+      // If the skill is cast directly
       if (user.logging)
         Trace.Script("Casting '" + name + "'", user);
 

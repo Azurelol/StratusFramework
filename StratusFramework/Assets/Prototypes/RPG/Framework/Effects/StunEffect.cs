@@ -1,21 +1,9 @@
-/******************************************************************************/
-/*!
-@file   StunEffect.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
 
 namespace Prototype
 {
-  /**************************************************************************/
-  /*!
-  @class StunEffect 
-  */
-  /**************************************************************************/
   public class StunEffect : PersistentEffectAttribute
   {
 

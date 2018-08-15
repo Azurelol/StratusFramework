@@ -16,7 +16,6 @@ namespace Prototype
     // Virtual
     //------------------------------------------------------------------------/
     protected abstract void OnInitialize();
-    protected abstract void OnSubscribe();
     public abstract void OnTimeStep(float step);
 
     //------------------------------------------------------------------------/
@@ -26,7 +25,6 @@ namespace Prototype
     {
       this.controller = controller;
       this.gameObject = controller.gameObject;
-      this.OnSubscribe();
       this.OnInitialize();
     }
   }

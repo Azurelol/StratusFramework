@@ -58,11 +58,9 @@ namespace Prototype
         //Trace.Script("Casting + " + Skill.Name);
         this.cooldown.Activate();
 
-        Skill.UsedEvent skillUsed = Stratus.Event.Cache<Skill.UsedEvent>();
+        Skill.ActivationEvent skillUsed = Stratus.Event.Cache<Skill.ActivationEvent>();
         skillUsed.skill = data;
-        user.gameObject.Dispatch<Skill.UsedEvent>(skillUsed);
-
-        //caster.onSkillUsed(this.data);
+        user.gameObject.Dispatch<Skill.ActivationEvent>(skillUsed);
         data.Cast(user, target, telegraph);
       }
 
@@ -72,7 +70,7 @@ namespace Prototype
     // Fields
     //----------------------------------------------------------------------/
     private Dictionary<Skill, SkillInstance> skillsMap = new Dictionary<Skill, SkillInstance>();
-    private static Skill.IsAvailableEvent isAvailableEvent = new Skill.IsAvailableEvent();
+    private static Skill.ValidateEvent validationEvent = new Skill.ValidateEvent();
 
     //----------------------------------------------------------------------/
     // Properties
@@ -83,12 +81,6 @@ namespace Prototype
     //----------------------------------------------------------------------/
     // Messages
     //----------------------------------------------------------------------/
-    protected override void OnSubscribe()
-    {
-      //controller.onSkillUsed += (Skill skill)
-    }
-
-
     public override void OnTimeStep(float step)
     {
       foreach (var skill in this.skills)
@@ -98,10 +90,8 @@ namespace Prototype
     }
 
     protected override void OnInitialize()
-    {
-      
+    {      
     }
-
 
     //----------------------------------------------------------------------/
     // Methods
@@ -151,10 +141,10 @@ namespace Prototype
 
       // Now check whether the user can use the skill, by dispatching an event
       // If there's something to validate that it can be used, it will be changed      
-      isAvailableEvent.available = false;
-      this.controller.gameObject.Dispatch<Skill.IsAvailableEvent>(isAvailableEvent);
+      validationEvent.valid = false;
+      this.controller.gameObject.Dispatch<Skill.ValidateEvent>(validationEvent);
       // By this point the listener will have changed this value (design patterns ho!)
-      return isAvailableEvent.available;
+      return validationEvent.valid;
     }
     
 

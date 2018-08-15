@@ -20,20 +20,30 @@ namespace Prototype
   public class CombatArena : MonoBehaviour
   {
     //------------------------------------------------------------------------/
-    public abstract class ArenaEvent : Stratus.Event { public CombatEncounter Encounter; }
-    public class InitializedEvent : ArenaEvent { public CombatArena Arena; }
+    // Declarations
+    //------------------------------------------------------------------------/
+    public abstract class ArenaEvent : Stratus.Event { public CombatEncounter encounter; }
+    public class InitializedEvent : ArenaEvent { public CombatArena arena; }
     public class ResetEvent : ArenaEvent { }
     public class AllSpawnedEvent : ArenaEvent { }
-    //------------------------------------------------------------------------/    
-    public static CombatArena Current;
-    [HideInInspector] public Dictionary<CombatController.Faction, List<CombatController>> Combatants;
-    [HideInInspector] public List<CombatController> AllCombatControllers;
-    public bool Tracing = false;        
-    //------------------------------------------------------------------------/
-    Dictionary<CombatController.Faction, Stack<Vector3>> AvailableSpawnPositions;
-    public CombatEncounter Encounter;
-    //Events.Setup Setup = new Events.Setup(this);
 
+    //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
+    public bool debug = false;
+    public CombatEncounter encounter;
+    [HideInInspector] public Dictionary<CombatController.Faction, List<CombatController>> combatantsByFaction;
+    [HideInInspector] public List<CombatController> combatants;
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public static CombatArena current { get; private set; }
+    private Dictionary<CombatController.Faction, Stack<Vector3>> availableSpawnPositions { get; set; }
+
+    //------------------------------------------------------------------------/
+    // Messages
+    //------------------------------------------------------------------------/
     /// <summary>
     /// Constructs a combat arena of the specified size at the given position.
     /// </summary>
@@ -55,24 +65,22 @@ namespace Prototype
     /// </summary>
     void Awake()
     {
-      Current = this;
+      current = this;
 
-      Combatants = new Dictionary<CombatController.Faction, List<CombatController>>();
-      Combatants.Add(CombatController.Faction.Player, new List<CombatController>());
-      Combatants.Add(CombatController.Faction.Hostile, new List<CombatController>());
+      combatantsByFaction = new Dictionary<CombatController.Faction, List<CombatController>>();
+      combatantsByFaction.Add(CombatController.Faction.Player, new List<CombatController>());
+      combatantsByFaction.Add(CombatController.Faction.Hostile, new List<CombatController>());
 
       // Subscribe to events
       this.gameObject.Connect<ResetEvent>(this.OnResetEvent);
       this.gameObject.Connect<Combat.StartedEvent>(this.OnCombatStartedEvent);
       Scene.Connect<Combat.EndedEvent>(this.OnCombatEndedEvent);
       Scene.Connect<CombatController.SpawnEvent>(this.OnCombatControllerSpawnEvent);
-
-      // Announce that the arena has been initialized
-      //var initEvent = new InitializedEvent();
-      //initEvent.
-
     }
 
+    //------------------------------------------------------------------------/
+    // Events
+    //------------------------------------------------------------------------/
     /// <summary>
     /// Invoked when combat is to be restarted.
     /// </summary>
@@ -107,12 +115,12 @@ namespace Prototype
     /// <param name="e"></param>
     void OnCombatControllerSpawnEvent(CombatController.SpawnEvent e)
     {
-      Combatants[e.controller.character.Faction].Add(e.controller);
-      AllCombatControllers.Add(e.controller);
+      combatantsByFaction[e.controller.faction].Add(e.controller);
+      combatants.Add(e.controller);
 
-      if (Tracing)
+      if (debug)
       {
-        if (e.controller.character.Faction == CombatController.Faction.Player)
+        if (e.controller.faction == CombatController.Faction.Player)
         {
           Trace.Script(e.controller.gameObject.name + " has registered as FRIENDLY");
         }
@@ -146,7 +154,7 @@ namespace Prototype
     /// <param name="encounter"></param>
     public void Initialize(CombatEncounter encounter)
     {
-      Encounter = encounter;      
+      this.encounter = encounter;      
       this.Begin();
     }
     
@@ -156,7 +164,7 @@ namespace Prototype
     void Begin()
     {
       // Start playing the combat theme
-      if (Encounter.Theme)
+      if (encounter.Theme)
       {
         throw new System.NotImplementedException("Hey man, do the audio right!");
         //var settings = new Audio.PlaybackSettings();
@@ -183,7 +191,7 @@ namespace Prototype
       // Remove all remaining CombatControllers
       Clear();
 
-      Current = null;
+      current = null;
 
       // Destroy this object
       Destroy(this.gameObject);
@@ -219,14 +227,14 @@ namespace Prototype
     void Clear()
     {
       //Trace.Script("Clearing all combat controllers");
-      foreach (var controller in AllCombatControllers)
+      foreach (var controller in combatants)
       {
         DestroyImmediate(controller.gameObject);
       }
 
-      AllCombatControllers.Clear();
-      Combatants[CombatController.Faction.Player].Clear();
-      Combatants[CombatController.Faction.Hostile].Clear();
+      combatants.Clear();
+      combatantsByFaction[CombatController.Faction.Player].Clear();
+      combatantsByFaction[CombatController.Faction.Hostile].Clear();
     }
 
     /// <summary>
@@ -240,7 +248,7 @@ namespace Prototype
         Spawn(member.character);
       }
       // Spawn all enemy actors around the encounter's actor
-      this.Spawn(this.Encounter.Group);
+      this.Spawn(this.encounter.Group);
       // Announce that all CombatControllers have been spawned into the arena
       Scene.Dispatch<AllSpawnedEvent>(new AllSpawnedEvent());
     }
@@ -265,7 +273,7 @@ namespace Prototype
     {
       var combatController = CombatController.Construct(character);
       combatController.transform.parent = transform;
-      combatController.transform.position = AvailableSpawnPositions[combatController.character.Faction].Pop();
+      combatController.transform.position = availableSpawnPositions[combatController.faction].Pop();
       // Announce that it has been spawwned (this event will be first received by this arena immediately)
       var spawnEvent = new CombatController.SpawnEvent();
       spawnEvent.controller = combatController;
@@ -277,12 +285,12 @@ namespace Prototype
     /// </summary>
     void CalculateSpawnPositions()
     {
-      AvailableSpawnPositions = new Dictionary<CombatController.Faction, Stack<Vector3>>();
-      AvailableSpawnPositions.Add(CombatController.Faction.Player, new Stack<Vector3>());
-      AvailableSpawnPositions.Add(CombatController.Faction.Hostile, new Stack<Vector3>());
+      availableSpawnPositions = new Dictionary<CombatController.Faction, Stack<Vector3>>();
+      availableSpawnPositions.Add(CombatController.Faction.Player, new Stack<Vector3>());
+      availableSpawnPositions.Add(CombatController.Faction.Hostile, new Stack<Vector3>());
       
       this.CalculatePositionsAround(PlayerParty.current.transform.position, CombatController.Faction.Player);
-      this.CalculatePositionsAround(Encounter.gameObject.transform.position, CombatController.Faction.Hostile);
+      this.CalculatePositionsAround(encounter.gameObject.transform.position, CombatController.Faction.Hostile);
     }
     
     /// <summary>
@@ -294,17 +302,17 @@ namespace Prototype
     {
       var margin = 3f;
       // 1 2 3
-      AvailableSpawnPositions[faction].Push(new Vector3(position.x - margin, position.y, position.z - margin));
-      AvailableSpawnPositions[faction].Push(new Vector3(position.x, position.y, position.z - margin));
-      AvailableSpawnPositions[faction].Push(new Vector3(position.x + margin, position.y, position.z - margin));
+      availableSpawnPositions[faction].Push(new Vector3(position.x - margin, position.y, position.z - margin));
+      availableSpawnPositions[faction].Push(new Vector3(position.x, position.y, position.z - margin));
+      availableSpawnPositions[faction].Push(new Vector3(position.x + margin, position.y, position.z - margin));
       // 4 5 6
-      AvailableSpawnPositions[faction].Push(new Vector3(position.x - margin, position.y, position.z));
-      AvailableSpawnPositions[faction].Push(position);
-      AvailableSpawnPositions[faction].Push(new Vector3(position.x + margin, position.y, position.z));
+      availableSpawnPositions[faction].Push(new Vector3(position.x - margin, position.y, position.z));
+      availableSpawnPositions[faction].Push(position);
+      availableSpawnPositions[faction].Push(new Vector3(position.x + margin, position.y, position.z));
       // 7 8 9
-      AvailableSpawnPositions[faction].Push(new Vector3(position.x - margin, position.y, position.z + margin));
-      AvailableSpawnPositions[faction].Push(new Vector3(position.x, position.y, position.z + margin));
-      AvailableSpawnPositions[faction].Push(new Vector3(position.x + margin, position.y, position.z + margin));
+      availableSpawnPositions[faction].Push(new Vector3(position.x - margin, position.y, position.z + margin));
+      availableSpawnPositions[faction].Push(new Vector3(position.x, position.y, position.z + margin));
+      availableSpawnPositions[faction].Push(new Vector3(position.x + margin, position.y, position.z + margin));
     }
     
     /// <summary>
@@ -316,7 +324,7 @@ namespace Prototype
     List<CombatController> getTargets(CombatController.Faction faction)
     {
       var targets = new List<CombatController>();
-      foreach (var CombatControllerGroup in Combatants)
+      foreach (var CombatControllerGroup in combatantsByFaction)
       {
         if (CombatControllerGroup.Key != faction)
         {

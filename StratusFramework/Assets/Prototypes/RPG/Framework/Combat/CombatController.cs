@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Stratus;
+using System;
 
 namespace Prototype
 {
-  public class CombatController<CharacterType, AttributesType> : CombatController 
-    where AttributesType : Attributes
+  public abstract class CombatController<CharacterType, AttributesType> : CombatController 
+    where AttributesType : Character.Attributes
     where CharacterType : Character<AttributesType>
   {
     //------------------------------------------------------------------------/
-    // Public Fields
+    // Fields
     //------------------------------------------------------------------------/
     /// <summary>
     /// The character used by this controller
@@ -49,16 +50,6 @@ namespace Prototype
     /// Represents the range of this character's default attack
     /// </summary>
     public AttributeInstance range { get; private set; }
-
-
-
-    public override bool isActing
-    {
-      get
-      {
-        throw new System.NotImplementedException();
-      }
-    }
 
     //------------------------------------------------------------------------/
     // Messages
@@ -130,6 +121,17 @@ namespace Prototype
         this.defense.SetModifier(1000);
       else
         this.defense.ClearModifiers();
+    }
+
+    // Example
+    public override float GetPotency(Type type)
+    {
+      float potency = 0;
+      if (type == typeof(DamageEffect))
+      {
+        potency = this.attack.current;
+      }
+      return potency;
     }
 
   }

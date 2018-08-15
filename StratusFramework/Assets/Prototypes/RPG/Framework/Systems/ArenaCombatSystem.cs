@@ -69,7 +69,7 @@ namespace Prototype
 
       // Now announce that combat has started to the space!
       var combatStarted = new Combat.StartedEvent();
-      combatStarted.Encounter = Arena.Encounter;
+      combatStarted.Encounter = Arena.encounter;
       Scene.Dispatch<Combat.StartedEvent>(combatStarted);
     }
 
@@ -80,7 +80,7 @@ namespace Prototype
     /// </summary>
     void ConfigureCombatControllers()
     {
-      foreach (var CombatController in CombatArena.Current.AllCombatControllers)
+      foreach (var CombatController in CombatArena.current.combatants)
       {
         OnConfigureCombatController(CombatController);
       }

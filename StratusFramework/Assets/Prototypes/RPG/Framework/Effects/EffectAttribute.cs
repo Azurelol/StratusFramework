@@ -1,31 +1,74 @@
-/******************************************************************************/
-/*!
-@file   EffectAttribute.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System.Collections.Generic;
 using System;
 
+//public class Cache<T>
+//{
+//  private T item;
+//  private 
+//
+//  public static implicit operator T(Cache<T> cache)
+//  {
+//    if (cache.item)
+//    return cache.item;
+//  }  
+//}
+
 namespace Prototype
 {
-  /**************************************************************************/
-  /*!
-  @class EffectAttribute 
-  */
-  /**************************************************************************/
   [Serializable]
   public abstract class EffectAttribute : ScriptableObject
-  {    
-    public enum TargetingModifier { None, Self, Allies, Enemies, All }
+  {
     //------------------------------------------------------------------------/
-    public TargetingModifier Modifier = TargetingModifier.None;
+    // Declarations
     //------------------------------------------------------------------------/
-    protected abstract void OnApply(CombatController caster, CombatController target);
+    /// <summary>
+    /// If this effect has any modifiers, such that it affects additional targets, etc
+    /// </summary>
+    public enum TargetingModifier
+    {
+      None,
+      Self,
+      Allies,
+      Enemies,
+      All
+    }
+
+    public enum Classification
+    {
+      Damage,
+      Healing,
+
+    }
+
+    //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
+    public TargetingModifier modifier = TargetingModifier.None;
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public System.Type type
+    {
+      get
+      {
+        if (_type == null)
+          _type = this.GetType();
+        return _type;
+      }
+    }          
+    private System.Type _type;
+
+    //------------------------------------------------------------------------/
+    // Virtual
+    //------------------------------------------------------------------------/
+    protected abstract void OnApply(CombatController user, CombatController target);
     public abstract void OnInspect();
+
+    //------------------------------------------------------------------------/
+    // Methods
     //------------------------------------------------------------------------/
     /// <summary>
     /// Inspects this Effect. (Used by the Editor)
@@ -33,7 +76,7 @@ namespace Prototype
     public void Inspect()
     {
       this.OnInspect();
-      Modifier = EditorBridge.Enum<TargetingModifier>("Modifier", Modifier); 
+      modifier = EditorBridge.Enum<TargetingModifier>("Modifier", modifier); 
     }
 
     /// <summary>
@@ -47,7 +90,7 @@ namespace Prototype
       // on the target
 
       // Otherwise, apply it right away
-      switch(this.Modifier)
+      switch(this.modifier)
       {
         case TargetingModifier.None:
           OnApply(caster, target);
@@ -67,6 +110,16 @@ namespace Prototype
           //break;
 
       }
+    }
+
+    /// <summary>
+    /// Calculates the potency based from this type
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    protected float GetPotency(CombatController target)
+    {
+      return target.GetPotency(this.type);
     }
     
   }

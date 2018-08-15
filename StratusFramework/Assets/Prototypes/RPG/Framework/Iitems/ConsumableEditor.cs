@@ -58,8 +58,8 @@ namespace Prototype
         EditorGUILayout.LabelField(consumable.effects[i].GetType().Name, EditorStyles.boldLabel);
         if (consumable.effects[i] != null)
         {
-          consumable.effects[i].Modifier = (EffectAttribute.TargetingModifier)UnityEditor.EditorGUILayout.EnumPopup("Modifier",
-                                       consumable.effects[i].Modifier);
+          consumable.effects[i].modifier = (EffectAttribute.TargetingModifier)UnityEditor.EditorGUILayout.EnumPopup("Modifier",
+                                       consumable.effects[i].modifier);
           consumable.effects[i].OnInspect();
         }
         if (GUILayout.Button("Remove")) indexToRemove = i;

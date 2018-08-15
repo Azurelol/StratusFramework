@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   CombatController.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System.Collections.Generic;
@@ -136,7 +129,6 @@ namespace Prototype
     /// </summary>
     public Callback onRestore { get; set; }
 
-
     ///// <summary>
     ///// Callback for when the character has used a skill
     ///// </summary>
@@ -157,8 +149,8 @@ namespace Prototype
     protected abstract void OnHeal(float value);
     protected abstract void OnRestore();
     protected abstract void OnInvulnerable(bool toggle);
-
-    // Skills, Abilities
+    public abstract float GetPotency(Enum enumeratedType);
+    public abstract float GetPotency(Type type);
     public abstract bool IsAvailable(Ability ability);
 
 
