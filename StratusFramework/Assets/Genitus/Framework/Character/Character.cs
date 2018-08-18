@@ -15,16 +15,14 @@ namespace Genitus
     // Declarations
     //------------------------------------------------------------------------/  
     /// <summary>
-    /// How the character is controlled.
+    /// How the character is controlled
     /// </summary>
     public enum ControlMode { Manual, Automatic }
 
     /// <summary>
-    /// Basic attributes for a character
+    /// Defines the combat attributes of a character
     /// </summary>    
-    public abstract class AttributeModel : StratusSerializable
-    {
-    }
+    public abstract class AttributeModel : StratusSerializable {}
 
     /// <summary>
     /// Defines how a character makes progression
@@ -58,6 +56,8 @@ namespace Genitus
     /// </summary>
     public abstract class EquipmentModel {}
 
+
+
     /// <summary>
     /// Parameters determine how a character performs in combat
     /// </summary>
@@ -68,31 +68,36 @@ namespace Genitus
 
     //------------------------------------------------------------------------/
     // Fields
-    //------------------------------------------------------------------------/  
-    /// <summary>
-    /// A portrait for this character
-    /// </summary>
-    public Sprite portrait;
-    /// <summary>
-    /// The faction this character belogns to
-    /// </summary>
-    public CombatController.Faction faction;
+    //------------------------------------------------------------------------/
   }
 
   /// <summary>
   /// Data about a given character, ranging from attributes to equipped skills, etc
   /// </summary>
   //[CreateAssetMenu(fileName = "Character", menuName = "Prototype/Character")]
-  public class Character<Progression, Attributes, Resource, Skill, Equipment> : Character
+  public class Character<Description, Progression, Attributes, Resource, Skills, Equipment> : Character
+    where Description : DescriptionModel
     where Progression : Character.ProgressionModel
     where Attributes : Character.AttributeModel
     where Resource : Character.ResourceModel
-    where Skill : Skill<Resource>
+    where Skills : Skill 
     where Equipment : Character.EquipmentModel
   {
     //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/ 
+    public class Instance
+    {
+    }
+
+    //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/  
+    /// <summary>
+    /// How the character is described
+    /// </summary>
+    [Tooltip("How the character is described")]
+    public Description description;
     /// <summary>
     /// Progression attribute for this character
     /// </summary>
@@ -102,22 +107,13 @@ namespace Genitus
     /// </summary>
     public Attributes attributes;
     /// <summary>
-    /// Combat resources for the character, consumed by skills and abilities
-    /// </summary>
-    //public Resource resources;
-    /// <summary>
     /// Progression attribute for this character
     /// </summary>
     public Equipment equipment;
     /// <summary>
-    /// The default attack skill.
-    /// </summary>
-    [Tooltip("The default attack skill")]
-    [HideInInspector] public Skill defaultSkill;
-    /// <summary>
     /// The character's equipped skills
     /// </summary>
-    public List<Skill> skills = new List<Skill>();
+    public List<Skills> skills = new List<Skills>();
 
     //------------------------------------------------------------------------/
     // Methods

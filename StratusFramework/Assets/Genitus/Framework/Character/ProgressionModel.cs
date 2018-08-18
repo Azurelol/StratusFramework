@@ -88,7 +88,7 @@ namespace Genitus.Models
   /// is increased exponentially
   /// </summary>
   [Serializable]
-  public class LevelExponentialProgressionModel : LevelProgressionModel
+  public class LevelExponentialProgression : LevelProgressionModel
   {
     private float experienceExponent = 1.5f;
 

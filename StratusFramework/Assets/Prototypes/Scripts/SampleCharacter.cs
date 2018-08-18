@@ -9,11 +9,12 @@ using Stratus;
 namespace Prototype
 {
   [CreateAssetMenu(fileName = "Sample Character", menuName = "Prototype/Sample Character")]
-  public class StandardCharacter : Character<LevelExponentialProgressionModel,
-                                             StandardAttributeModel,
+  public class StandardCharacter : Character<StandardDescription,
+                                             LevelExponentialProgression,
+                                             StandardAttributes,
                                              ManaModel,
                                              ManaSkill,
-                                             StandardEquipmentModel>, 
+                                             StandardEquipment>, 
                                              StandardParameterModel
   {
     public VariableAttribute hitpoints => attributes.hitpoints;

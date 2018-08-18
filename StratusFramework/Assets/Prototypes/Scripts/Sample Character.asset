@@ -11,8 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: Sample Character
   m_EditorClassIdentifier: Assembly-CSharp:Prototype:StandardCharacter
-  portrait: {fileID: 0}
-  faction: 0
+  description:
+    description: 
+    icon: {fileID: 0}
   progression:
     level: 0
     experienceToNextLevel: 0
@@ -62,5 +63,4 @@ MonoBehaviour:
     weapon: {fileID: 0}
     armor: {fileID: 0}
   defaultSkill: {fileID: 0}
-  skills:
-  - {fileID: 0}
+  skills: []

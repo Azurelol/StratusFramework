@@ -6,7 +6,7 @@ using System;
 namespace Genitus.Models
 {
   [Serializable]
-  public class StandardEquipmentModel : Character.EquipmentModel
+  public class StandardEquipment : Character.EquipmentModel
   {
     public Weapon weapon;
     public Armor armor;

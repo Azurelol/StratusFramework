@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   InventoryTypes.cs
-@author Christian Sagel
-@par    email: ckpsm\@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System.Collections.Generic;
@@ -12,9 +5,6 @@ using System;
 
 namespace Genitus
 {
-  /// <summary>
-  /// 
-  /// </summary>
   public partial class Inventory : MonoBehaviour
   {
     [Serializable]
@@ -79,9 +69,10 @@ namespace Genitus
       /// </summary>
       /// <param name="user"></param>
       /// <param name="target"></param>
-      public void Use(CombatController user, CombatController target)
+      public void Use(CombatController user, CombatController[] targets)
       {
-        Item.Use(user, target);
+        Item.Use(user, targets);
+
         // If the item is persistent, consume a charge
         if (Item.persistent)
         {

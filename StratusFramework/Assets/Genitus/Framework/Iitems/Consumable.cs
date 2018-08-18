@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Consumable.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
@@ -13,24 +6,30 @@ using System.Text;
 
 namespace Genitus
 {
-  /// <summary>
-  /// Consumables are items used in combat.
-  /// </summary>
-  /// 
   [CreateAssetMenu(fileName = "Consumable", menuName = "Prototype/Consumable")]
   public class Consumable : Item
   {
-    public override Category type { get { return Category.Consumable; } }
+    //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/
     public enum PersistenceType { Expendable, Persistent }
+
+    //------------------------------------------------------------------------/
+    // Fields
     //------------------------------------------------------------------------/
     /// <summary>
-    /// The targeting parameters of the skill (Self, Ally, Enemy)
+    /// The skill used by this consumable
     /// </summary>
-    public Combat.TargetingParameters target = Combat.TargetingParameters.Enemy;
-    /// <summary>
-    /// The scope of the item (single, aoe, all)
-    /// </summary>
-    public TargetingScope scope = new TargetingScope();
+    public Skill skill;
+
+    ///// <summary>
+    ///// The targeting parameters of the skill (Self, Ally, Enemy)
+    ///// </summary>
+    //public Combat.TargetingParameters target = Combat.TargetingParameters.Enemy;
+    ///// <summary>
+    ///// The scope of the item (single, aoe, all)
+    ///// </summary>
+    //public TargetingModel scope;
     /// <summary>
     /// Does the item persist after its charges have run out? Can it be refilled?
     /// </summary>
@@ -39,28 +38,37 @@ namespace Genitus
     /// How many times can this item be used in combat, if persistent.
     /// </summary>
     public int charges = 1;
-    /// <summary>
-    /// The effects this item carries.
-    /// </summary>
-    [HideInInspector] public List<EffectAttribute> effects = new List<EffectAttribute>();
+    ///// <summary>
+    ///// The effects this item carries.
+    ///// </summary>
+    //[HideInInspector] public List<EffectAttribute> effects = new List<EffectAttribute>();
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public override Category type => Category.Consumable; 
+
+    //------------------------------------------------------------------------/
+    // Methods
     //------------------------------------------------------------------------/
     /// <summary>
     /// Uses the consumable on the target.
     /// </summary>
     /// <param name="user"></param>
     /// <param name="target"></param>
-    public void Use(CombatController user, CombatController target)
+    public void Use(CombatController user, CombatController[] targets)
     {
-      var targets = this.scope.FindTargets(user, target, this.target);      
-
-      // For each target, apply every effect
-      foreach (var eligibleTargets in targets)
-      {
-        foreach (var effect in effects)
-        {
-          effect.Apply(user, eligibleTargets);
-        }
-      }     
+      skill.Cast(user, targets);
+      //var targets = this.scope.EvaluateTargets(user, target, this.target);      
+      //
+      //// For each target, apply every effect
+      //foreach (var eligibleTargets in targets)
+      //{
+      //  foreach (var effect in effects)
+      //  {
+      //    effect.Apply(user, eligibleTargets);
+      //  }
+      //}     
     }
 
     public override string Describe()

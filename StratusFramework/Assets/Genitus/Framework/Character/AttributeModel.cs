@@ -7,7 +7,7 @@ using Stratus;
 namespace Genitus.Models
 {
   [Serializable]
-  public class StandardAttributeModel : Character.AttributeModel
+  public class StandardAttributes : Character.AttributeModel
   {
     public VariableAttribute hitpoints;
     public VariableAttribute mana;

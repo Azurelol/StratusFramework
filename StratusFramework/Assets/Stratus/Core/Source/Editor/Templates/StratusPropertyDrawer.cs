@@ -267,6 +267,18 @@ namespace Stratus
       }
     }
 
+    public static void DrawPropertiesInSingleLineLabeled(Rect position, params SerializedProperty[] children)
+    {
+      int n = children.Length;
+      position.width /= n;
+      for (int p = 0; p < n; ++p)
+      {
+        SerializedProperty property = children[p];
+        EditorGUI.PropertyField(position, property);
+        position.x += position.width;
+      }
+    }
+
     public static void DrawPropertiesInSingleLine(Rect position, params DrawCommand[] drawCommands)
     {
       int n = drawCommands.Length;

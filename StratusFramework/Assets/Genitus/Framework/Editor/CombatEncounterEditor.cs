@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   CombatEncounterEditor.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using System.Collections;
 using Stratus;
@@ -14,25 +7,17 @@ using System.Linq;
 
 namespace Genitus
 {
-  /**************************************************************************/
-  /*!
-  @class CombatEncounterEditor 
-  */
-  /**************************************************************************/
   [CustomEditor(typeof(CombatEncounter))]
   public class CombatEncounterEditor : Editor
   {
-    Character[] EnemyCharacters = new Character[0];
-    string[] EnemyCharactersNames = new string[0];
-    int EnemyCharacterIndex = 0;
+    Character[] enemyCharacters = new Character[0];
+    string[] enemyCharactersNames = new string[0];
+    int enemyCharacterIndex = 0;
 
     void OnEnable()
     {
-      // Grab a list of all enemy characters
-      var characters = Resources.FindObjectsOfTypeAll<Character>() ;
-      EnemyCharacters = (from Character character in characters where character.faction == CombatController.Faction.Hostile select character).ToArray();
-      // this is hella cool
-      EnemyCharactersNames = (from Character character in EnemyCharacters select character.name).ToArray();
+      enemyCharacters = Resources.FindObjectsOfTypeAll<Character>();
+      enemyCharactersNames = enemyCharacters.Names();
     }
 
     public override void OnInspectorGUI()
@@ -59,10 +44,10 @@ namespace Genitus
       // Add new foes
       //EditorGUILayout.LabelField("Add")
       EditorGUILayout.BeginHorizontal();
-      EnemyCharacterIndex = EditorGUILayout.Popup(EnemyCharacterIndex, EnemyCharactersNames);
+      enemyCharacterIndex = EditorGUILayout.Popup(enemyCharacterIndex, enemyCharactersNames);
       if (GUILayout.Button("Add"))
       {
-        encounter.Group.Add(EnemyCharacters[EnemyCharacterIndex]);
+        encounter.Group.Add(enemyCharacters[enemyCharacterIndex]);
       }
       EditorGUILayout.EndHorizontal();
 
