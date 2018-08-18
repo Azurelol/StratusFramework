@@ -254,6 +254,7 @@ namespace Stratus
     public virtual void OnBaseEditorGUI()
     {
       bool propertiesChanged = false;
+
       // Reverse order: Draw all the types up until the most-derived
       for (int i = 0; i < propertyGroups.Count - 1; i++)
       {
@@ -575,18 +576,23 @@ namespace Stratus
       // For every type, starting from the most derived up to the base, get its serialized properties      
       Type declaredType = target.GetType();
       Type currentType = declaredType;
+      Type previousType = null;
+      //SerializedProperty[] properties = null;
+
       while (currentType != baseType)
       {
         //Trace.Script($"Adding properties for {currentType.Name}");
         // Add the properties onto the map
+        // If the previous type was generic, add those properties onto the instantiated type
         SerializedProperty[] properties = GetSerializedProperties(serializedObject, currentType);
+        //bool isGeneric = currentType.IsGenericType;
         //FieldInfo[] objectFields = target.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         foreach (var property in properties)
         {
           // Record this property
           if (property == null)
-            Debug.LogError($"A property was found to not be serialized properly while inspecting {target.name}");
+            Debug.LogError($"A property was found to not be serialized properly while inspecting {target.name}. Did you forget a [Serializable] attribute on a class definition?");
 
           propertyMap.Add(property.name, property);
 
@@ -610,12 +616,27 @@ namespace Stratus
         }
 
         // Add all the properties for this type into the property map by type        
-        propertiesByType.Add(currentType, properties);
-        propertyGroups.Add(new Tuple<Type, SerializedProperty[]>(currentType, properties));
+        if (!currentType.IsGenericType)
+        {
+          propertiesByType.Add(currentType, properties);
+          propertyGroups.Add(new Tuple<Type, SerializedProperty[]>(currentType, properties));
+        }
+        else
+        {
+          SerializedProperty[] joinedProperties = propertiesByType[previousType].Concat(properties);
+          var lastGroup = propertyGroups.Last();
+          propertyGroups.RemoveLast();
+
+          propertyGroups.Add(new Tuple<Type, SerializedProperty[]>(previousType, joinedProperties));
+          propertiesByType[previousType] = joinedProperties;
+
+        }
 
         // Move on to the parent type (if any)
+        previousType = currentType;
         currentType = currentType.BaseType;
       }
+      
 
       propertyGroups.Reverse();
     }

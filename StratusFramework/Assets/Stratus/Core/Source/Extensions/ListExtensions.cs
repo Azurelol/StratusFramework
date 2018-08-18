@@ -131,6 +131,16 @@ namespace Stratus
       return list[list.Count - 1];
     }
 
+
+    public static void RemoveLast<T>(this List<T> list)
+    {
+      if (list.NotEmpty())
+      {
+        list.RemoveAt(list.Count - 1);
+      }
+
+    }
+
     public static T First<T>(this List<T> list)
     {
       return list[0];
@@ -291,20 +301,20 @@ namespace Stratus
       list.AddRange(array.Where(x => !list.Contains(x)));
     }
 
-    public static void AddRange<T>(this IList<T> list, IEnumerable<T> items)
-    {
-      if (list is List<T>)
-      {
-        (list as List<T>)?.AddRange(items);
-      }
-      else
-      {
-        foreach (var item in items)
-        {
-          list.Add(item);
-        }
-      }
-    }
+    //public static void AddRange<T>(this IList<T> list, IEnumerable<T> items)
+    //{
+    //  if (list is List<T>)
+    //  {
+    //    (list as List<T>)?.AddRange(items);
+    //  }
+    //  else
+    //  {
+    //    foreach (var item in items)
+    //    {
+    //      list.Add(item);
+    //    }
+    //  }
+    //}
 
     //public static bool Contains<T>(this IList<T> list, Func<T, bool> predicate)
     //{
@@ -316,15 +326,27 @@ namespace Stratus
     //  return false;
     //}
 
+    ///// <summary>
+    ///// Adds all elements not already present into the given list
+    ///// </summary>
+    ///// <typeparam name="T"></typeparam>
+    ///// <param name="list"></param>
+    ///// <param name="array"></param>
+    //public static void AddRangeUnique<T>(this IList<T> list, T[] array)
+    //{
+    //  list.AddRange(array.Where(x => !list.Contains(x)));
+    //}
+       
     /// <summary>
-    /// Adds all elements not already present into the given list
+    /// Returns a new array concantenating both arrays
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
-    /// <param name="array"></param>
-    public static void AddRangeUnique<T>(this IList<T> list, T[] array)
+    /// <param name="first"></param>
+    /// <param name="second"></param>
+    /// <returns></returns>
+    public static T[] Concat<T>(this T[] first, T[] second)
     {
-      list.AddRange(array.Where(x => !list.Contains(x)));
+      return Enumerable.Concat(first, second).ToArray();
     }
 
     /// <summary>

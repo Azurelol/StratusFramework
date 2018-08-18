@@ -17,6 +17,7 @@ namespace Stratus
       public TagField tagField = new TagField();
       public FloatRange floatRange = new FloatRange();
       public IntegerRange intRange = new IntegerRange();
+      public VariableAttribute variable = new VariableAttribute();
 
       [InvokeMethodButton(typeof(TypesExample), "TryLayer")]
       public LayerField layer = new LayerField(); 

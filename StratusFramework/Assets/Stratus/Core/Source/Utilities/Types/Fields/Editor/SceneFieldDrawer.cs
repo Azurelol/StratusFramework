@@ -16,7 +16,7 @@ namespace Stratus
   {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-      SerializedProperty sceneAssetProp = property.FindPropertyRelative("SceneAsset");
+      SerializedProperty sceneAssetProp = property.FindPropertyRelative(nameof(SceneField.sceneAsset));
 
       EditorGUI.BeginProperty(position, label, sceneAssetProp);
       EditorGUI.PropertyField(position, sceneAssetProp, label);

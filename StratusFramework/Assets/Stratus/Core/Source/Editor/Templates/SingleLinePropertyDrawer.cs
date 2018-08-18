@@ -11,11 +11,25 @@ namespace Stratus
   /// </summary>
   public abstract class SingleLinePropertyDrawer : StratusPropertyDrawer 
   {
+
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
       return EditorGUIUtility.singleLineHeight;
     }  
+  }
 
+  /// <summary>
+  /// Draws a single child property from the given SerializedProperty
+  /// </summary>
+  public abstract class SinglePropertyDrawer : StratusPropertyDrawer
+  {
+    protected abstract string childPropertyName { get; }
+
+    protected override void DrawProperty(Rect position, SerializedProperty property)
+    {
+      SerializedProperty memberProperty = property.FindPropertyRelative(childPropertyName);
+      EditorGUI.PropertyField(position, memberProperty, GUIContent.none);
+    }
   }
 
   //public abstract class SingleLineVariablePropertyDrawer<EnumType>: SingleLinePropertyDrawer where EnumType : struct

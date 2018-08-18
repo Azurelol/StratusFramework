@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using Stratus;
 using Stratus.UI;
 
-namespace Altostratus 
+namespace Genitus 
 {
   [RequireComponent(typeof(Window))]
   [RequireComponent(typeof(Animator))]

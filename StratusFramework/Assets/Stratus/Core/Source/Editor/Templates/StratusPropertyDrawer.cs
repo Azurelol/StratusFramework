@@ -171,10 +171,10 @@ namespace Stratus
       EditorGUI.EndProperty();
     }
 
-    protected virtual void DrawProperty(Rect position, SerializedProperty property)
-    {
-      EditorGUI.PropertyField(position, property);
-    }
+    protected abstract void DrawProperty(Rect position, SerializedProperty property);
+    //{
+    //  EditorGUI.PropertyField(position, property);
+    //}
 
     protected virtual float GetPropertyHeight(SerializedProperty property)
     {

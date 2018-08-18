@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Sample Character
+  m_EditorClassIdentifier: Assembly-CSharp:Prototype:StandardCharacter
+  portrait: {fileID: 0}
+  faction: 0
+  progression:
+    level: 0
+    experienceToNextLevel: 0
+    currentExperience: 0
+  attributes:
+    hitpoints:
+      baseValue: 0
+      minimumValue: 0
+      modifierValue: 0
+      currentValue: 0
+    mana:
+      baseValue: 0
+      minimumValue: 0
+      modifierValue: 0
+      currentValue: 0
+    attack:
+      baseValue: 0
+      minimumValue: 0
+      modifierValue: 0
+      currentValue: 0
+    defense:
+      baseValue: 0
+      minimumValue: 0
+      modifierValue: 0
+      currentValue: 0
+    magic:
+      baseValue: 0
+      minimumValue: 0
+      modifierValue: 0
+      currentValue: 0
+    resistance:
+      baseValue: 0
+      minimumValue: 0
+      modifierValue: 0
+      currentValue: 0
+    dexterity:
+      baseValue: 0
+      minimumValue: 0
+      modifierValue: 0
+      currentValue: 0
+    agility:
+      baseValue: 0
+      minimumValue: 0
+      modifierValue: 0
+      currentValue: 0
+  equipment:
+    weapon: {fileID: 0}
+    armor: {fileID: 0}
+  defaultSkill: {fileID: 0}
+  skills:
+  - {fileID: 0}
