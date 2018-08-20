@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   CombatControllerRoutines.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
@@ -34,7 +27,7 @@ namespace Genitus
     protected void Pause()
     {
       this.Cancel();
-      this.currentState = State.Stunned;
+      this.currentState = State.Inactive;
     }
 
     /// <summary>

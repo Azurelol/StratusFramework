@@ -18,14 +18,14 @@ namespace Stratus.Gameplay
     protected override bool DrawDeclaredProperties()
     {
       bool changed = false;
-      changed |= DrawSerializedProperty(declaredProperties.Item2[0], serializedObject);
+      changed |= DrawSerializedProperty(declaredProperties.Item2[0].unitySerialized, serializedObject);
       if (sceneEvent.type == SceneEvent.Type.Load || sceneEvent.type == SceneEvent.Type.Unload)
       {
-        changed |= DrawSerializedProperty(declaredProperties.Item2[1], serializedObject);
+        changed |= DrawSerializedProperty(declaredProperties.Item2[1].unitySerialized, serializedObject);
       }
       if (sceneEvent.type == SceneEvent.Type.Load)
       {
-        changed |= DrawSerializedProperty(declaredProperties.Item2[2], serializedObject);
+        changed |= DrawSerializedProperty(declaredProperties.Item2[2].unitySerialized, serializedObject);
       }
       return changed;
     }

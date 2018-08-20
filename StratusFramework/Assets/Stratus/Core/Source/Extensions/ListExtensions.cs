@@ -1,12 +1,4 @@
-﻿/******************************************************************************/
-/*!
-@file   ListExtensions.cs
-@author Christian Sagel
-@par    email: c.sagel\@digipen.edu
-@par    DigiPen login: c.sagel
-*/
-/******************************************************************************/
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;

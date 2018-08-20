@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using UnityEditor.AnimatedValues;
 using Rotorz.ReorderableList;
+using OdinSerializer;
 
 namespace Stratus
 {
@@ -526,6 +527,21 @@ namespace Stratus
       if (!typeDrawers.ContainsKey(type))
         typeDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
       return typeDrawers[type].DrawEditorGUILayout(field);
+    }
+
+    /// <summary>
+    /// Draws a field using EditorGUILayout based on its members,
+    /// (without using SerializedProperty)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="field"></param>
+    /// <returns>True if the field was changed</returns>
+    public static bool DrawField(FieldInfo field, object target)
+    {
+      Type type = field.GetType();
+      if (!typeDrawers.ContainsKey(type))
+        typeDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
+      return typeDrawers[type].DrawEditorGUILayout(target);
     }
 
     public static void DrawAligned(System.Action drawFunction, TextAlignment alignment)

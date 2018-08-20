@@ -186,7 +186,7 @@ namespace Stratus.Gameplay
       selectedEditor = UnityEditor.Editor.CreateEditor(trigger) as StratusEditor;
       selectedEditor.backgroundStyle = EditorStyles.helpBox;
 
-      var baseTriggerProperties = selectedEditor.propertiesByType[typeof(Trigger)];
+      var baseTriggerProperties = selectedEditor.GetSerializedPropertiesOfType(typeof(Trigger));
       foreach (var property in baseTriggerProperties)
       {
         // We still want to select persistence

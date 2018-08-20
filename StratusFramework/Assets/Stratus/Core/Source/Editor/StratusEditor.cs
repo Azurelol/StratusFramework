@@ -5,6 +5,9 @@ using System.Reflection;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
+using OdinSerializer;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Stratus
 {
@@ -19,6 +22,7 @@ namespace Stratus
     /// <summary>
     /// Maps serialized properties to validating functions
     /// </summary>
+    /// 
     public class PropertyConstraintMap : Dictionary<SerializedProperty, Func<bool>> { }
     /// <summary>
     /// Used to encapsulate the drawing of a particular group
@@ -36,6 +40,55 @@ namespace Stratus
       }
 
       public bool isValid => onValidate != null ? onValidate() : true;
+    }
+
+    /// <summary>
+    /// Manages a property serialized by Odin
+    /// </summary>
+    public class OdinSerializedProperty
+    {
+      public FieldInfo field;
+      public object target;
+
+      public OdinSerializedProperty(FieldInfo field, object target)
+      {
+        this.field = field;
+        this.target = target;
+      }
+
+      public void DrawEditorGUILayout(object target)
+      {
+        StratusEditorUtility.DrawField(this.field, target);
+      }
+    }
+
+    /// <summary>
+    /// A request to draw a serialized property
+    /// </summary>
+    public class SerializedPropertyModel
+    {
+      public enum Type
+      {
+        Unity,
+        Odin
+      }
+
+      public Type type { get; private set; }
+      public SerializedProperty unitySerialized { get; private set; }
+      public OdinSerializedProperty odinSerializedProperty { get; private set; }
+
+      public SerializedPropertyModel(SerializedProperty serializedProperty)
+      {
+        this.unitySerialized = serializedProperty;
+        this.type = Type.Unity;
+      }
+
+      public SerializedPropertyModel(OdinSerializedProperty serializedProperty)
+      {
+        this.odinSerializedProperty = serializedProperty;
+        this.type = Type.Odin;
+      }
+
     }
 
     //------------------------------------------------------------------------/
@@ -68,15 +121,23 @@ namespace Stratus
     /// <summary>
     /// The set of properties of the most-derived class
     /// </summary>
-    public Tuple<Type, SerializedProperty[]> declaredProperties => propertyGroups.Last();
+    public Tuple<Type, SerializedPropertyModel[]> declaredProperties => propertyGroups.Last();
     /// <summary>
     /// A map of all property groups by the type
     /// </summary>
-    public Dictionary<Type, SerializedProperty[]> propertiesByType { get; set; } = new Dictionary<Type, SerializedProperty[]>();
+    public Dictionary<Type, SerializedPropertyModel[]> propertiesByType { get; set; } = new Dictionary<Type, SerializedPropertyModel[]>();
+    /// <summary>
+    /// A map of all property groups by the type
+    /// </summary>
+    private Dictionary<Type, SerializedProperty[]> unityPropertiesByType { get; set; } = new Dictionary<Type, SerializedProperty[]>();
     /// <summary>
     /// A list of all different property groups, starting from the base class to the most-derived class
     /// </summary>
-    public List<Tuple<Type, SerializedProperty[]>> propertyGroups { get; set; } = new List<Tuple<Type, SerializedProperty[]>>();
+    public List<Tuple<Type, SerializedPropertyModel[]>> propertyGroups { get; set; } = new List<Tuple<Type, SerializedPropertyModel[]>>();
+    /// <summary>
+    /// A list of properties serialized by Odin, starting from the base class to the most derived class
+    /// </summary>
+    public List<Tuple<Type, OdinSerializedProperty[]>> odinSerializedProperties { get; set; } = new List<Tuple<Type, OdinSerializedProperty[]>>();
     /// <summary>
     /// Whether to draw labels for types above property groups
     /// </summary>
@@ -336,28 +397,59 @@ namespace Stratus
     /// <param name="obj"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    public static SerializedProperty[] GetSerializedProperties(SerializedObject serializedObject, Type type)
+    public static Tuple<SerializedProperty[], OdinSerializedProperty[]> GetSerializedProperties(SerializedObject serializedObject, Type type)
     {
       FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-      List<SerializedProperty> properties = new List<SerializedProperty>();
+
+      List<SerializedProperty> serializedProperties = new List<SerializedProperty>();
+      List<OdinSerializedProperty> odinSerializedProperties = new List<OdinSerializedProperty>();
 
       for (int i = 0; i < fields.Length; i++)
       {
         FieldInfo field = fields[i];
         if (field != null && (field.Attributes != FieldAttributes.NotSerialized))
         {
-          //Trace.Script($"- {field.Name}");
-          //bool serializedbyOdin = OdinSerializer.UnitySerializationUtility.OdinWillSerialize(field, true);
-          //bool serializedByUnity = OdinSerializer.UnitySerializationUtility.GuessIfUnityWillSerialize(field);
-          
+          bool serializedbyOdin = OdinSerializer.UnitySerializationUtility.OdinWillSerialize(field, true);
+          bool serializedByUnity = OdinSerializer.UnitySerializationUtility.GuessIfUnityWillSerialize(field);         
 
-          SerializedProperty property = serializedObject.FindProperty(field.Name);
-          if (property != null)
-            properties.Add(property);
+          // Odin
+          if (serializedbyOdin && !serializedByUnity)
+          {
+            OdinSerializedProperty property = new OdinSerializedProperty(field, serializedObject.targetObject);
+            odinSerializedProperties.Add(property);
+          }
+          // Unity
+          else
+          {
+            SerializedProperty property = serializedObject.FindProperty(field.Name);
+            if (property != null)
+              serializedProperties.Add(property);
+          }
         }
       }
 
-      return properties.ToArray(); ;
+      return new Tuple<SerializedProperty[], OdinSerializedProperty[]>(serializedProperties.ToArray(), odinSerializedProperties.ToArray());
+    }
+
+    public static SerializedPropertyModel[] GetSerializedPropertyDrawers(SerializedObject serializedObject, Type type)
+    {
+      var properties = GetSerializedProperties(serializedObject, type);
+      List<SerializedPropertyModel> serializedPropertyDrawRequests = new List<SerializedPropertyModel>();
+      foreach(SerializedProperty property in properties.Item1)
+        serializedPropertyDrawRequests.Add(new SerializedPropertyModel(property));
+      foreach (OdinSerializedProperty property in properties.Item2)
+        serializedPropertyDrawRequests.Add(new SerializedPropertyModel(property));
+      return serializedPropertyDrawRequests.ToArray();
+    }
+
+    public static SerializedPropertyModel[] GetSerializedPropertyDrawers(SerializedProperty[] serializedProperties, OdinSerializedProperty[] odinSerializedProperties)
+    {
+      List<SerializedPropertyModel> serializedPropertyDrawRequests = new List<SerializedPropertyModel>();
+      foreach (SerializedProperty property in serializedProperties)
+        serializedPropertyDrawRequests.Add(new SerializedPropertyModel(property));
+      foreach (OdinSerializedProperty property in odinSerializedProperties)
+        serializedPropertyDrawRequests.Add(new SerializedPropertyModel(property));
+      return serializedPropertyDrawRequests.ToArray();
     }
 
     public static SerializedProperty[] GetSerializedProperties(SerializedObject serializedObject)
@@ -540,20 +632,30 @@ namespace Stratus
     /// Draws the given set of properties according to any present constraints in the editor
     /// </summary>
     /// <param name="properties"></param>
-    private bool DrawProperties(SerializedProperty[] properties)
+    private bool DrawProperties(SerializedPropertyModel[] properties)
     {
       bool propertiesChanged = false;
       foreach (var prop in properties)
       {
-        bool hasConstraint = propertyConstraints.ContainsKey(prop);
-        if (hasConstraint)
+        switch (prop.type)
         {
-          bool canBeDrawn = propertyConstraints[prop].Invoke();
-          if (!canBeDrawn)
-            continue;
+          case SerializedPropertyModel.Type.Unity:
+            bool hasConstraint = propertyConstraints.ContainsKey(prop.unitySerialized);
+            if (hasConstraint)
+            {
+              bool canBeDrawn = propertyConstraints[prop.unitySerialized].Invoke();
+              if (!canBeDrawn)
+                continue;
+            }
+            propertiesChanged |= DrawSerializedProperty(prop.unitySerialized, serializedObject);
+            break;
+
+          case SerializedPropertyModel.Type.Odin:
+            propertiesChanged |= StratusEditorUtility.DrawField(prop.odinSerializedProperty.field, this.target);
+            break;
         }
 
-        propertiesChanged |= DrawSerializedProperty(prop, serializedObject);
+
       }
       return propertiesChanged;
     }
@@ -583,11 +685,12 @@ namespace Stratus
       while (currentType != baseType)
       {
         //Trace.Script($"Adding properties for {currentType.Name}");
-        // Add the properties onto the map
-        // If the previous type was generic, add those properties onto the instantiated type
-        SerializedProperty[] properties = GetSerializedProperties(serializedObject, currentType);
-        //bool isGeneric = currentType.IsGenericType;
-        //FieldInfo[] objectFields = target.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+        //SerializedProperty[] serializedProperties = properties.Item1;
+
+        // Serialized Properties
+        var propertiesSplit = GetSerializedProperties(serializedObject, currentType);
+        var properties = GetSerializedPropertyDrawers(propertiesSplit.Item1, propertiesSplit.Item2);
 
         foreach (var property in properties)
         {
@@ -598,24 +701,29 @@ namespace Stratus
             //continue;
           }
 
-          propertyMap.Add(property.name, property);
+          if (property.type != SerializedPropertyModel.Type.Unity)
+            continue;
 
+
+          SerializedProperty serializedProperty = property.unitySerialized;          
+          // Map the property
+          propertyMap.Add(serializedProperty.name, serializedProperty);
           // Record the attributes for this property
-          Attribute[] attributes = property.GetFieldAttributes();
-          propertyAttributes.Add(property, attributes);
-          propertyAttributesMap.AddIfMissing(property, new Dictionary<Type, Attribute>());
+          Attribute[] attributes = serializedProperty.GetFieldAttributes();
+          propertyAttributes.Add(serializedProperty, attributes);
+          propertyAttributesMap.AddIfMissing(serializedProperty, new Dictionary<Type, Attribute>());
           foreach (var attr in attributes)
           {
-            propertyAttributesMap[property].AddIfMissing(attr.GetType(), attr);
+            propertyAttributesMap[serializedProperty].AddIfMissing(attr.GetType(), attr);
             //Trace.Script($"{property.displayName} has the attribute '{attr.GetType().Name}'");
           }
-          OnPropertyAttributesAdded(property);
+          OnPropertyAttributesAdded(serializedProperty);
 
           // Check whether this property is an array
-          if (property.isArray && property.propertyType != SerializedPropertyType.String)
+          if (serializedProperty.isArray && serializedProperty.propertyType != SerializedPropertyType.String)
           {
-            ReorderableList list = GetListWithFoldout(serializedObject, property, true, true, true, true);
-            reorderableLists.Add(property, list);
+            ReorderableList list = GetListWithFoldout(serializedObject, serializedProperty, true, true, true, true);
+            reorderableLists.Add(serializedProperty, list);
           }
         }
 
@@ -623,17 +731,21 @@ namespace Stratus
         if (!currentType.IsGenericType)
         {
           propertiesByType.Add(currentType, properties);
-          propertyGroups.Add(new Tuple<Type, SerializedProperty[]>(currentType, properties));
+          unityPropertiesByType.Add(currentType, propertiesSplit.Item1);
+          propertyGroups.Add(new Tuple<Type, SerializedPropertyModel[]>(currentType, properties));
         }
         else
         {
-          SerializedProperty[] joinedProperties = propertiesByType[previousType].Concat(properties);
+          // Unity
+          SerializedProperty[] joinedUnityProperties = unityPropertiesByType[previousType].Concat(propertiesSplit.Item1);
+          unityPropertiesByType[previousType] = joinedUnityProperties;
+          // Combined
+          SerializedPropertyModel[] joinedProperties = propertiesByType[previousType].Concat(properties);
+          propertiesByType[previousType] = joinedProperties;
+          // Concat property groups
           var lastGroup = propertyGroups.Last();
           propertyGroups.RemoveLast();
-
-          propertyGroups.Add(new Tuple<Type, SerializedProperty[]>(previousType, joinedProperties));
-          propertiesByType[previousType] = joinedProperties;
-
+          propertyGroups.Add(new Tuple<Type, SerializedPropertyModel[]>(previousType, joinedProperties));
         }
 
         // Move on to the parent type (if any)
@@ -645,7 +757,10 @@ namespace Stratus
       propertyGroups.Reverse();
     }
 
-
+    public SerializedProperty[] GetSerializedPropertiesOfType(Type type)
+    {
+      return unityPropertiesByType[type];
+    }
 
     /// <summary>
     /// Checks whether all the properties are under constraints. Returns false if none
@@ -653,11 +768,14 @@ namespace Stratus
     /// </summary>
     /// <param name="properties"></param>
     /// <returns></returns>
-    private bool ValidateConstraints(SerializedProperty[] properties)
+    private bool ValidateConstraints(SerializedPropertyModel[] properties)
     {
-      foreach (var prop in properties)
+      foreach (var property in properties)
       {
-        bool foundConstraint = propertyConstraints.ContainsKey(prop);
+        if (property.type != SerializedPropertyModel.Type.Unity)
+          continue;
+
+        bool foundConstraint = propertyConstraints.ContainsKey(property.unitySerialized);
 
         // If no constraint was found for this property, it means 
         // that at least one property can be drawn
@@ -666,7 +784,7 @@ namespace Stratus
         // If the property was found and validated, it means we can draw it
         else
         {
-          bool validated = propertyConstraints[prop]();
+          bool validated = propertyConstraints[property.unitySerialized]();
           if (validated)
             return true;
         }
