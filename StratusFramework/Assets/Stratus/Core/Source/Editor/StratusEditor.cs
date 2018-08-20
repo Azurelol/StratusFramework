@@ -1,14 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using System.Reflection;
-using System;
 using Rotorz.ReorderableList;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEditor;
 using UnityEditorInternal;
-using Stratus.Interfaces;
-using System.Linq;
-using UnityEngine.Serialization;
+using UnityEngine;
 
 namespace Stratus
 {
@@ -351,8 +347,13 @@ namespace Stratus
         if (field != null && (field.Attributes != FieldAttributes.NotSerialized))
         {
           //Trace.Script($"- {field.Name}");
+          //bool serializedbyOdin = OdinSerializer.UnitySerializationUtility.OdinWillSerialize(field, true);
+          //bool serializedByUnity = OdinSerializer.UnitySerializationUtility.GuessIfUnityWillSerialize(field);
+          
+
           SerializedProperty property = serializedObject.FindProperty(field.Name);
-          properties.Add(property);
+          if (property != null)
+            properties.Add(property);
         }
       }
 
@@ -592,7 +593,10 @@ namespace Stratus
         {
           // Record this property
           if (property == null)
+          {
             Debug.LogError($"A property was found to not be serialized properly while inspecting {target.name}. Did you forget a [Serializable] attribute on a class definition?");
+            //continue;
+          }
 
           propertyMap.Add(property.name, property);
 
@@ -674,12 +678,9 @@ namespace Stratus
 
     protected void DrawEditor(UnityEditor.Editor editor, string header, int headerSize = 12)
     {      
-      EditorGUILayout.Space();
-      EditorGUILayout.BeginHorizontal();
-      {        
-        EditorGUILayout.InspectorTitlebar(false, editor.target, false);
-      }
-      EditorGUILayout.EndHorizontal();
+      EditorGUILayout.Space();      
+      EditorGUILayout.InspectorTitlebar(false, editor.target, false);
+
       EditorGUI.indentLevel = 1;
       editor.OnInspectorGUI();
       EditorGUI.indentLevel = 0;

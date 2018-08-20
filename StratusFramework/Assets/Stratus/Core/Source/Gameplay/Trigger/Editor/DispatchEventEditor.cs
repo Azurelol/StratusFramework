@@ -19,7 +19,7 @@ namespace Stratus.Gameplay
     {
       AddConstraint(() => triggerable.eventScope == Event.Scope.GameObject, nameof(DispatchEvent.targets));
       eventDataProperty = serializedObject.FindProperty("eventData");
-      drawGroupRequests.Add(new DrawGroupRequest(SetMembers, () => triggerable.hasType && serializedEvent != null && serializedEvent.isDrawable));
+      drawGroupRequests.Add(new DrawGroupRequest(SetMembers, () => triggerable.hasType && serializedEvent != null && serializedEvent.drawer.isDrawable));
       propertyChangeCallbacks.Add(propertyMap[nameof(DispatchEvent.type)], OnEventChanged);
 
       if (triggerable.hasType)
@@ -31,7 +31,7 @@ namespace Stratus.Gameplay
       EditorGUILayout.Space();
       EditorGUILayout.LabelField($"{type.Name}", EditorStyles.boldLabel);
 
-      if (serializedEvent.DrawFields())
+      if (serializedEvent.Draw())
         serializedEvent.Serialize(target, eventDataProperty);
     }
 

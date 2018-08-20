@@ -1,89 +1,44 @@
-//#if UNITY_EDITOR
-//using UnityEngine;
-//using Stratus.Utilities;
-//using UnityEditor;
+using UnityEngine;
+using Stratus.Utilities;
+using UnityEditor;
+using Stratus;
 
-//namespace Genitus
-//{
-//  /// <summary>
-//  /// Editor for the Skill class.
-//  /// </summary>
-//  [CustomEditor(typeof(Skill))]
-//  public class SkillEditor : Editor
-//  {
-//    private string[] EffectAttributeNames = new string[0];
-//    private int EffectAttributeIndex = -1;
-//    /**************************************************************************/
-//    /*!
-//    @brief  Initializes the SkillEditor.
-//    */
-//    /**************************************************************************/
-//    void OnEnable()
-//    {
-//      EffectAttributeNames = Reflection.GetSubclassNames<EffectAttribute>();
-//    }
+namespace Genitus
+{
+  [CustomEditor(typeof(Skill), true)]
+  public class SkillEditor : ScriptableEditor<Skill>
+  {
+    private TypeSelector effectTypes;
 
-//    public override void OnInspectorGUI()
-//    {
-//      base.OnInspectorGUI();
-//      var skill = target as Skill;
-//      EditorGUILayout.LabelField("Effects", EditorStyles.centeredGreyMiniLabel);
-//      ModifyEffects(skill);
-//    }
+    protected override void OnStratusEditorEnable()
+    {
+      effectTypes = new TypeSelector(typeof(EffectAttribute), true);
+      AddArea(this.ModifyEffects);
+    }
 
-//    void ModifyEffects(Skill skill)
-//    {
-//      //////////////////////////////////////////////////////////
-//      // Draw attributes with a remove button below each one:
-//      //////////////////////////////////////////////////////////
-//      int indexToRemove = -1;
-//      for (int i = 0; i < skill.effects.Count; i++)
-//      {
-//        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-//        EditorGUILayout.LabelField(skill.effects[i].GetType().Name, EditorStyles.boldLabel);
-//        if (skill.effects[i] != null)
-//        {
-//          skill.effects[i].Inspect();
-//        }
-//        if (GUILayout.Button("Remove")) indexToRemove = i;
-//        EditorGUILayout.EndVertical();
-//      }
+    void ModifyEffects(Rect rect)
+    {
+      EditorGUILayout.BeginHorizontal();
+      effectTypes.GUILayoutPopup();
+      if (GUILayout.Button("Add", EditorStyles.miniButtonRight))
+      {
+        // A little tricky because we need to record it in the asset database as well        
+        var newAttribute = CreateInstance(effectTypes.selectedClass) as EffectAttribute;
+        newAttribute.hideFlags = HideFlags.HideInHierarchy;
+        AssetDatabase.AddObjectToAsset(newAttribute, target);
+        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(newAttribute));
+        AssetDatabase.SaveAssets();
+        // Oh jesus what was that
+        target.effects.Add(newAttribute);
+      }
+      EditorGUILayout.EndHorizontal();
 
-//      //////////////////////////////////////////////////////////
-//      // If something has been tagged for removal...
-//      //////////////////////////////////////////////////////////
-//      if (indexToRemove > -1) skill.effects.RemoveAt(indexToRemove);
+      if (StratusEditorUtility.DrawPolymorphicList(target.effects, "Effects"))
+        this.Repaint();
+    }
 
-//      //////////////////////////////////////////////////////////
-//      // Draw a popup and a button to add new attributes
-//      //////////////////////////////////////////////////////////
-//      EditorGUILayout.BeginHorizontal();
-//      EffectAttributeIndex = EditorGUILayout.Popup(EffectAttributeIndex, EffectAttributeNames);
-//      if (GUILayout.Button("Add"))
-//      {
-//        //var newAttribute = Activator.CreateInstance(EffectAttributes[EffectAttributeIndex]) as EffectAttribute;
-//        // A little tricky because we need to record it in the asset database as well
-//        var newAttribute = CreateInstance(EffectAttributeNames[EffectAttributeIndex]) as EffectAttribute;
-//        newAttribute.hideFlags = HideFlags.HideInHierarchy;
-//        AssetDatabase.AddObjectToAsset(newAttribute, skill);
-//        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(newAttribute));
-//        AssetDatabase.SaveAssets();
-//        AssetDatabase.Refresh();
-//        // Oh jesus what was that
-//        skill.effects.Add(newAttribute);
-//      }
-//      EditorGUILayout.EndHorizontal();
 
-//      // Allow clearing of all effects
-//      if (GUILayout.Button("Clear"))
-//      {
-//        skill.effects.Clear();
-//      }
 
-//      if (UnityEngine.GUI.changed) EditorUtility.SetDirty(skill);
-//    }
 
-//  }
-
-//} 
-//#endif
+  }
+}

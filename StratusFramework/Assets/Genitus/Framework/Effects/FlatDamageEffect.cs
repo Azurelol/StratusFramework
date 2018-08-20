@@ -2,7 +2,7 @@ using UnityEngine;
 using Stratus;
 using System;
 
-namespace Genitus
+namespace Genitus.Effects
 {
   /// <summary>
   /// Applies a flat amount of damage to the target
@@ -15,7 +15,7 @@ namespace Genitus
     protected override void OnApply(CombatController caster, CombatController target)
     {
       var damageEvent = new Combat.DamageEvent();
-      damageEvent.value = (int)this.Value;
+      damageEvent.value = (int)this.value;
       target.gameObject.Dispatch<Combat.DamageEvent>(damageEvent);
     }
   }

@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Effects.cs
-@author Christian Sagel
-@par    email: ckpsm\@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System.Collections.Generic;
@@ -14,23 +7,24 @@ namespace Genitus
   /// <summary>
   /// The collection of all active effects on a combat controller
   /// </summary>
-  public class Effects
+  public class EffectsModule : CombatControllerModule
   {
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    List<Status.Instance> Statuses = new List<Status.Instance>();
+    List<Status.Instance> statuses = new List<Status.Instance>();
 
     //------------------------------------------------------------------------/
-    // Methods
+    // Messages
     //------------------------------------------------------------------------/
-    /// <summary>
-    /// Updates all active effects.
-    /// </summary>
-    /// <param name="step"></param>
-    public void Update(float step)
+    protected override void OnInitialize()
     {
-      foreach(var status in Statuses)
+      
+    }
+
+    public override void OnTimeStep(float step)
+    {
+      foreach (var status in statuses)
       {
         // If the status has run its duration...
         if (status.Persist(step))
@@ -44,6 +38,14 @@ namespace Genitus
       }
     }
 
+    void OnStatusEvent(Status.StartedEvent e)
+    {
+      statuses.Add(e.status);
+    }
+
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
     /// <summary>
     /// Adds the status. If it is already present, it will follow whatever
     /// rules for stackability/diminishing returns it has.
@@ -57,11 +59,11 @@ namespace Genitus
       newStatus.Start();
 
       // Check whether an instance of the status is already present
-      var presentStatus = Find(newStatus.Status);
+      var presentStatus = Find(newStatus.status);
       if (presentStatus != null)
       {
         // Determine whether to stack it
-        if (presentStatus.Status.IsStackable)
+        if (presentStatus.status.IsStackable)
         {
           presentStatus.Stack();
         }
@@ -71,7 +73,7 @@ namespace Genitus
       // If not present, add it
       else
       {
-        Statuses.Add(newStatus);             
+        statuses.Add(newStatus);
       }
     }
 
@@ -84,11 +86,11 @@ namespace Genitus
     public void Remove(Status.Instance status)
     {
       // Announce the status has been removed
-      var endedEvent = new CombatController.StatusEndedEvent();
-      endedEvent.Status = status;
-      status.Target.gameObject.Dispatch<CombatController.StatusEndedEvent>(endedEvent);
+      var endedEvent = new Status.EndedEvent();
+      endedEvent.status = status;
+      status.target.gameObject.Dispatch<Status.EndedEvent>(endedEvent);
       // Now remove it
-      Statuses.Remove(status);
+      statuses.Remove(status);
     }
 
     /// <summary>
@@ -108,7 +110,7 @@ namespace Genitus
     /// <returns></returns>
     public Status.Instance Find(Status status)
     {
-      return (Statuses.Find(x => x.Status == status));
+      return (statuses.Find(x => x.status == status));
     }
 
 

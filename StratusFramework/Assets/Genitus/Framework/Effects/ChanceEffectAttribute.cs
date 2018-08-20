@@ -1,14 +1,7 @@
-/******************************************************************************/
-/*!
-@file   ChanceEffectAttribute.cs
-@author Christian Sagel
-@par    email: ckpsm\@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 
-namespace Genitus
+namespace Genitus.Effects
 {
   /// <summary>
   /// Applies the effect on a percentage-based chance.
@@ -24,11 +17,6 @@ namespace Genitus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    public override void OnInspect()
-    {
-      this.Chance = EditorBridge.Field("Chance", this.Chance);
-    }
-
     protected override void OnApply(CombatController caster, CombatController target)
     {
       // Roll to see whether the effect should be applied or not

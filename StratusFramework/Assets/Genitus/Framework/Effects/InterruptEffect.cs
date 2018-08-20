@@ -1,15 +1,8 @@
-/******************************************************************************/
-/*!
-@file   InterruptEffect.cs
-@author Christian Sagel
-@par    email: ckpsm\@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
 
-namespace Genitus
+namespace Genitus.Effects
 {
   /// <summary>
   /// Interrupts an action that is currently being cast.

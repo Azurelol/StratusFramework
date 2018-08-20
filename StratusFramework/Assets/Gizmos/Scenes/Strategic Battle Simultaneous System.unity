@@ -194,6 +194,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffafab3d05ae4a945abd26ca749bd66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   animator: {fileID: 1108919081}
   rootTransform: {fileID: 1108919080}
   animatorEventHooks: []
@@ -236,6 +245,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be8242489e67b6545aec937d32584ba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   locomotion: 3
   movementSpeed: 3
   accelerationCurve: 0
@@ -267,10 +285,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80e5ad6c5e2cb5742a13736783cf10ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   extensionBehaviours:
   - {fileID: 72464443}
   - {fileID: 72464444}
-  selectedExtensionTypeIndex: 2
+  selectedExtensionTypeIndex: 0
   debug: 0
 --- !u!136 &72464446
 CapsuleCollider:
@@ -365,6 +392,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffafab3d05ae4a945abd26ca749bd66b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   animator: {fileID: 835440269}
   rootTransform: {fileID: 835440268}
   animatorEventHooks: []
@@ -407,6 +443,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be8242489e67b6545aec937d32584ba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   locomotion: 3
   movementSpeed: 3
   accelerationCurve: 0
@@ -438,6 +483,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80e5ad6c5e2cb5742a13736783cf10ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   extensionBehaviours:
   - {fileID: 73531565}
   - {fileID: 73531566}
@@ -1027,6 +1081,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d8cf9fdfd0479b4687fb7794694aa03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   target: {fileID: 72464444}
   camera: {fileID: 1645135145}
   mode: 0
@@ -1153,6 +1216,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c4a1243d50159c4b96ced519c152dc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   party: {fileID: 0}
   members:
   - character: {fileID: 0}

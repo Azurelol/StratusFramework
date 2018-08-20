@@ -113,7 +113,7 @@ namespace Genitus
     /// <summary>
     /// The character's equipped skills
     /// </summary>
-    public List<Skills> skills = new List<Skills>();
+    public List<Skills> skills;
 
     //------------------------------------------------------------------------/
     // Methods

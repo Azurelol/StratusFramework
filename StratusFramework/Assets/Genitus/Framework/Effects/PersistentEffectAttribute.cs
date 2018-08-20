@@ -1,30 +1,20 @@
-/******************************************************************************/
-/*!
-@file   PersistentEffectAttribute.cs
-@author Christian Sagel
-@par    email: ckpsm\@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
 
-namespace Genitus
+namespace Genitus.Effects
 {
-  /// <summary>
-  /// 
-  /// </summary>
   public abstract class PersistentEffectAttribute : EffectAttribute
   {
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    public float Duration = 1.0f;
-    public int Ticks = 1;
-    public bool Stackable = false;
-    public int Stacks = 3;
-    public bool Beneficial = false;
-    public bool Removable = true;
+    public float duration = 1.0f;
+    public int ticks = 1;
+    public bool stackable = false;
+    public int stacks = 3;
+    public bool beneficial = false;
+    public bool removable = true;
 
     //------------------------------------------------------------------------/
     // Virtual Methods
@@ -45,14 +35,6 @@ namespace Genitus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    public override void OnInspect()
-    {
-      EditorBridge.BeginHorizontal();
-      Duration = EditorBridge.Field("Duration", Duration);
-      Ticks = EditorBridge.Field("Ticks", Ticks);
-      EditorBridge.EndHorizontal();
-    }
-
     /// <summary>
     /// Applies the persistent effect to the target.
     /// </summary>
@@ -93,36 +75,45 @@ namespace Genitus
   /// </summary>
   public class PersistentEffect
   {
-    public class ApplyEvent : Stratus.Event { public PersistentEffect Effect; }
     //------------------------------------------------------------------------/
-    CombatController Caster;
-    CombatController Target;
-    PersistentEffectAttribute Effect;
-    public float Duration;
-    public int Stacks = 1;
+    // Declarations
+    //------------------------------------------------------------------------/
+    public class ApplyEvent : Stratus.Event { public PersistentEffect Effect; }
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    CombatController user;
+    CombatController target;
+    PersistentEffectAttribute effect;
+    public float duration;
+    public int stacks = 1;
+
+    //------------------------------------------------------------------------/
+    // Methods
     //------------------------------------------------------------------------/
     public PersistentEffect(PersistentEffectAttribute effect,
                             CombatController caster,
                             CombatController target)
     {
-      Effect = effect;
-      Caster = caster;
-      Target = target;
+      this.effect = effect;
+      user = caster;
+      this.target = target;
 
-      Duration = Effect.Duration;
+      this.duration = this.effect.duration;
     }
 
     public void Start()
     {
-      Effect.Started(Caster, Target);
+      effect.Started(user, target);
     }
     public void Persist()
     {
-      Effect.Persisted(Caster, Target);  
+      effect.Persisted(user, target);  
     }
     public void End()
     {
-      Effect.Ended(Caster, Target);
+      effect.Ended(user, target);
     }
 
   }

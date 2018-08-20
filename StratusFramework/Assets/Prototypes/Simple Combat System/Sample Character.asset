@@ -11,6 +11,15 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: Sample Character
   m_EditorClassIdentifier: Assembly-CSharp:Prototype:StandardCharacter
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   description:
     description: 
     icon: {fileID: 0}
@@ -62,5 +71,5 @@ MonoBehaviour:
   equipment:
     weapon: {fileID: 0}
     armor: {fileID: 0}
-  defaultSkill: {fileID: 0}
-  skills: []
+  skills:
+  - {fileID: 0}

@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   CombatControllerEvents.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 
@@ -33,8 +26,6 @@ namespace Genitus
     /// </summary>
     public class ActionSelectedEvent : CombatControllerEvent { public CombatAction action; }
     
-    // State
-
     /// <summary>
     /// Informs that this controller has just spawned
     /// </summary>
@@ -88,11 +79,6 @@ namespace Genitus
     /// Signals that the character should ignore damage events
     /// </summary>
     public class InvulnerabilityEvent : CheatEvent { }
-    ///// <summary>
-    ///// Signals the character's stamina should be immediately replenished
-    ///// </summary>
-    //public class UnlimitedStaminaEvent : CheatEvent { }
-
 
     //------------------------------------------------------------------------/
     // Damage Resolution
@@ -120,17 +106,7 @@ namespace Genitus
 
     //------------------------------------------------------------------------/
     // Stamina
-    //------------------------------------------------------------------------/        
-    // Status events: Conditions applied to the character    
-    public class StatusEvent : Stratus.Event { public Status.Instance Status; }
-    /// <summary>
-    /// Applies a status to the character.
-    /// </summary>
-    public class StatusAppliedEvent : StatusEvent {}
-    /// <summary>
-    /// Removes a status from the character.
-    /// </summary>
-    public class StatusEndedEvent : StatusEvent {}
+    //------------------------------------------------------------------------/       
     /// <summary>
     /// Signals that the character's current action should be interrupted
     /// </summary>
@@ -153,6 +129,7 @@ namespace Genitus
     protected virtual void Subscribe()
     {
       Scene.Connect<CombatSystem.TimeStepEvent>(this.OnTimeStepEvent);
+
       this.gameObject.Connect<ChangeStateEvent>(this.OnStateChangeEvent);
       // Damage events
       this.gameObject.Connect<Combat.DamageEvent>(this.OnDamageEvent);
@@ -163,9 +140,6 @@ namespace Genitus
       this.gameObject.Connect<PauseEvent>(this.OnPauseEvent);
       this.gameObject.Connect<ResumeEvent>(this.OnResumeEvent);
       this.gameObject.Connect<InterruptEvent>(this.OnInterruptEvent);
-      // Effects events
-      this.gameObject.Connect<StatusAppliedEvent>(this.OnStatusEvent);
-      this.gameObject.Connect<PersistentEffect.ApplyEvent>(this.OnPersistentEffectApplyEvent);
       // States
       this.gameObject.Connect<InvulnerabilityEvent>(this.OnInvulnerabilityEvent);
     }
@@ -207,21 +181,7 @@ namespace Genitus
     {
       this.currentTarget = e.target;
     }
-
-    /// <summary>
-    /// Received when a status is to be applied to this combat controller.
-    /// </summary>
-    /// <param name="e"></param>
-    void OnStatusEvent(StatusAppliedEvent e)
-    {
-      //Trace.Script("Now applying " + e.Status.Status.Name);
-      effects.Add(e.Status);
-    }
-
-    void OnPersistentEffectApplyEvent(PersistentEffect.ApplyEvent e)
-    {      
-    }
-
+    
     //------------------------------------------------------------------------/
     // Events: States
     //------------------------------------------------------------------------/

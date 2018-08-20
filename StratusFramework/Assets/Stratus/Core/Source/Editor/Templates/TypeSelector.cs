@@ -44,7 +44,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // CTOR
     //------------------------------------------------------------------------/
-    public TypeSelector(Type baseType, bool sortAlphabetically = false)
+    public TypeSelector(Type baseType, bool includeAbstract, bool sortAlphabetically = false)
     {
       this.baseType = baseType;
       this.subTypes = Reflection.GetSubclass(baseType);

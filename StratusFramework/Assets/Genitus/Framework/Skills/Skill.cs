@@ -3,6 +3,7 @@ using Stratus;
 using System.Collections.Generic;
 using System;
 using System.Text;
+using OdinSerializer;
 
 namespace Genitus
 {
@@ -39,8 +40,11 @@ namespace Genitus
     /// </summary>
     [HideInInspector]
     public List<EffectAttribute> effects = new List<EffectAttribute>();
-
-    //public List<SkillComponent> components = new List<SkillComponent>();
+    /// <summary>
+    /// Components used by this skill
+    /// </summary>
+    [OdinSerialize]
+    public List<SkillComponent> components = new List<SkillComponent>();
 
     //------------------------------------------------------------------------/
     // Virtual

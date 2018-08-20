@@ -23,15 +23,6 @@ namespace Stratus
     public static partial class Reflection
     {
       //----------------------------------------------------------------------/
-      // Declarations
-      //----------------------------------------------------------------------/
-      //private class InterfaceImplementation
-      //{
-      //  public Type baseType;
-      //  public Type interfaceType;
-      //}
-
-      //----------------------------------------------------------------------/
       // Properties
       //----------------------------------------------------------------------/
       private static Assembly[] _allAssemblies;
@@ -49,6 +40,7 @@ namespace Stratus
       }
 
       private static Dictionary<Type, Type[]> subclasses { get; set; } = new Dictionary<Type, Type[]>();
+      private static Dictionary<Type, Type[]> subclassesIncludeAbstract { get; set; } = new Dictionary<Type, Type[]>();
       private static Dictionary<Type, Dictionary<Type, Type[]>> interfacesImplementations { get; set; } = new Dictionary<Type, Dictionary<Type, Type[]>>();
 
       //----------------------------------------------------------------------/
@@ -454,33 +446,47 @@ namespace Stratus
       /// <returns></returns>
       public static Type[] GetSubclass(Type baseType, bool includeAbstract = false)
       {
-        if (!subclasses.ContainsKey(baseType))
-        {
-          List<Type> types = new List<Type>();
-          foreach (var assembly in allAssemblies)
-          {
-            var assemblyTypes = (from Type t
-                            in assembly.GetTypes()
-                                 where t.IsSubclassOf(baseType)
-                                 select t).ToArray();
-            types.AddRange(assemblyTypes);
-          }
-          subclasses.Add(baseType, types.ToArray());
-
-        }
-
+        // Done the first time this type is queried, in order to cache
+        // Abstract
         if (includeAbstract)
         {
-          return (from Type type
-                  in subclasses[baseType]
-                  where !type.IsAbstract
-                  select type).ToArray();
+          if (!subclassesIncludeAbstract.ContainsKey(baseType))
+          {
+            List<Type> types = new List<Type>();
+            foreach (var assembly in allAssemblies)
+            {
+              Type[] assemblyTypes = (from Type t
+                                      in assembly.GetTypes()
+                                      where t.IsSubclassOf(baseType)
+                                      select t).ToArray();              
+              types.AddRange(assemblyTypes);
+            }
+            subclassesIncludeAbstract.Add(baseType, types.ToArray());
+          }
+        }
+        // Non-Abstract
+        else
+        {
+          if (!subclasses.ContainsKey(baseType))
+          {
+            List<Type> types = new List<Type>();
+            foreach (var assembly in allAssemblies)
+            {
+              Type[] assemblyTypes = (from Type t
+                                      in assembly.GetTypes()
+                                      where t.IsSubclassOf(baseType) && !t.IsAbstract
+                                      select t).ToArray();
+              
+              types.AddRange(assemblyTypes);
+            }
+            subclasses.Add(baseType, types.ToArray());
+          }
         }
 
-        return subclasses[baseType];
-
-        //return (from Type type in Assembly.GetAssembly(baseType).GetTypes() where type.IsSubclassOf(baseType) && !type.IsAbstract select type).ToArray();
+        return includeAbstract ? subclassesIncludeAbstract[baseType] : subclasses[baseType];
       }
+
+      
 
       /// <summary>
       /// Get an array of types of all the classes derived from the given one

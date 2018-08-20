@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   StatusEffect.cs
-@author Christian Sagel
-@par    email: ckpsm\@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
@@ -17,14 +10,6 @@ namespace Genitus
   public class StatusEffect : EffectAttribute
   {
     public Status Status;
-
-    public override void OnInspect()
-    {
-      #if UNITY_EDITOR
-      Status = UnityEditor.EditorGUILayout.ObjectField("Status", Status, typeof(Status), true) as Status;
-      #endif
-      //Status = EditorHelper.Object<Status>("Status", Status);
-    }
 
     protected override void OnApply(CombatController caster, CombatController target)
     {

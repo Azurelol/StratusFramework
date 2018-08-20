@@ -25,11 +25,6 @@ namespace Genitus
 
     }
 
-    public override void OnInspect()
-    {
-      this.radius = EditorBridge.Field("Radius", this.radius);
-    }
-
   }
 
 }

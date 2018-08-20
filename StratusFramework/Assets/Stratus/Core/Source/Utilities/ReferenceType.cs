@@ -26,11 +26,11 @@ namespace Stratus
     }
   }
 
-  public class Integer : ReferenceType<int>
+  public class IntegerReference : ReferenceType<int>
   {
-    public Integer(int val) : base(val) {}
-    public static implicit operator Integer(int val) { return new Integer(val); }
-    public static implicit operator int(Integer refType) { return refType.Value; }
+    public IntegerReference(int val) : base(val) {}
+    public static implicit operator IntegerReference(int val) { return new IntegerReference(val); }
+    public static implicit operator int(IntegerReference refType) { return refType.Value; }
   }
 
   public class Real :  ReferenceType<float>

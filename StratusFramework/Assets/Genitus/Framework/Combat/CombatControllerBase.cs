@@ -8,7 +8,7 @@ using Stratus.Utilities;
 namespace Genitus
 {
   /// <summary>
-  /// The base class which acts as the driver/vehicle for combatants.
+  /// The base class which acts as the driver for combatants
   /// </summary>
   public abstract partial class CombatController : StratusBehaviour
   {
@@ -34,8 +34,6 @@ namespace Genitus
       /// </summary>
       Hostile
     }
-
-
 
     /// <summary>
     /// The current state of the controller
@@ -85,17 +83,8 @@ namespace Genitus
     public Faction faction;
 
     //------------------------------------------------------------------------/
-    // Private Fields
-    //------------------------------------------------------------------------/
-
-
-    //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    /// <summary>
-    /// The effects this character is currently under
-    /// </summary>
-    public Effects effects { get; protected set; } = new Effects();
     /// <summary>
     /// The current state of this character
     /// </summary>
@@ -129,16 +118,6 @@ namespace Genitus
     /// </summary>
     public Callback onRestore { get; set; }
 
-    ///// <summary>
-    ///// Callback for when the character has used a skill
-    ///// </summary>
-    //public System.Action<Skill> onSkillUsed { get; set; }
-
-    ///// <summary>
-    ///// Callback to check whether a skill can be used
-    ///// </summary>
-    //public System.Func<Skill, bool> canSkillBeUsed { get; set; }    
-
     //------------------------------------------------------------------------/
     // Interface
     //------------------------------------------------------------------------/        
@@ -149,26 +128,15 @@ namespace Genitus
     protected abstract void OnHeal(float value);
     protected abstract void OnRestore();
     protected abstract void OnInvulnerable(bool toggle);
-    public abstract float GetPotency(Enum enumeratedType);
-    public abstract float GetPotency(Type type);
-    public abstract bool IsAvailable(Ability ability);
-
-
-    //public abstract bool IsAvailable(Skill skill);
-    //protected abstract void OnUsed(Skill skill);
-
+    /// <summary>
+    /// Queries the specified potency of the combat controller based on its parameters and attributes
+    /// </summary>
+    public abstract float QueryPotency(EffectAttribute.PotencyQuery query);
     // Actions
+    protected abstract void OnActionStarted();
+    protected abstract void OnActionEnded();
     protected abstract void OnActionCanceled();
     protected abstract void OnActionDelay(float delay);
-
-    
-
-    
-
-    // Targeting
-    //public abstract CombatController[] FindTargetsOfType(TargetingParameters type, State state = State.Active);
-    //public abstract CombatController[] FindTargets(State state = State.Active);
-    //public abstract CombatController[] FindTargetsOfType(TargetingParameters type, float radius);
 
     //------------------------------------------------------------------------/
     // Messages
@@ -189,23 +157,8 @@ namespace Genitus
       this.OnControllerInitialize();
       // Announce the current status
       this.AnnounceStatus<ActiveEvent>();
-      // Whenever stamina is consumed, this timer is reset
       
     }
-
-
-    //private void OnValidate()
-    //{
-    //  if (!this.character)
-    //    return;
-    //
-    //  var skills = new List<Skill>();
-    //  skills.AddRange(this.character.Skills);
-    //  skills.Add(this.character.Attack);
-    //
-    //  availableSkills = (from skill in skills
-    //                     select skill).ToArray();
-    //}
 
     //------------------------------------------------------------------------/
     // Methods
@@ -216,11 +169,10 @@ namespace Genitus
     /// <param name="step"></param>
     public void TimeStep(float step)
     {
-      // Update all effects
-      effects.Update(step);
       // Update all modules
       foreach (var module in modules)
         module.OnTimeStep(step);
+
       // If inactive/incapacitated, do nothing else
       if (this.currentState == State.Stunned ||
           this.currentState == State.Inactive)

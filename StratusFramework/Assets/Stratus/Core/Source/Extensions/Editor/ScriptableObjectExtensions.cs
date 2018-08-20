@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
 using System;
-using Stratus.Utilities;
+using UnityEngine;
 
 namespace Stratus
 {

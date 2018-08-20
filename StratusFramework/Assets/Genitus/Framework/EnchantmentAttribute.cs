@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   EnchantmentAttribute.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
@@ -12,11 +5,6 @@ using System.Collections.Generic;
 
 namespace Genitus
 {
-  /**************************************************************************/
-  /*!
-  @class EnchantmentAttribute 
-  */
-  /**************************************************************************/
   [CreateAssetMenu(fileName = "Enchantment", menuName = "Prototype")]
   public class EnchantmentAttribute : ScriptableObject
   {

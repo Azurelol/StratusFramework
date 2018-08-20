@@ -1,14 +1,7 @@
-/******************************************************************************/
-/*!
-@file   FlatHealthModificationEffectAttribute.cs
-@author Christian Sagel
-@par    email: ckpsm\@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 
-namespace Genitus
+namespace Genitus.Effects
 {
   /// <summary>
   /// 
@@ -18,14 +11,7 @@ namespace Genitus
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    public float Value = 100.0f;
-    //------------------------------------------------------------------------/
-    // Methods
-    //------------------------------------------------------------------------/
-    public override void OnInspect()
-    {
-      this.Value = EditorBridge.Field("Value", this.Value);
-    }
+    public float value = 100.0f;
 
   }
 

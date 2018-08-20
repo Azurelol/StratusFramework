@@ -6,7 +6,7 @@ using System;
 
 namespace Genitus
 {
-  public abstract class CombatController<CharacterType> : CombatController 
+  public abstract partial class CombatController<CharacterType> : CombatController 
     where CharacterType : Character//<AttributesType>
   {
     //------------------------------------------------------------------------/
@@ -30,21 +30,9 @@ namespace Genitus
     /// </summary>
     public AttributeInstance health { get; private set; }
     /// <summary>
-    /// Represents the innate damage bonus the character provides to his attacks
-    /// </summary>
-    public AttributeInstance attack { get; private set; }
-    /// <summary>
     /// Represents the innate defense bonus, reducing incoming damage
     /// </summary>
     public AttributeInstance defense { get; private set; }
-    /// <summary>
-    /// Represents how quick this character can act
-    /// </summary>
-    public AttributeInstance speed { get; private set; }
-    /// <summary>
-    /// Represents the range of this character's default attack
-    /// </summary>
-    public AttributeInstance range { get; private set; }
 
     //------------------------------------------------------------------------/
     // Messages
@@ -116,17 +104,6 @@ namespace Genitus
         this.defense.SetModifier(1000);
       else
         this.defense.ClearModifiers();
-    }
-
-    // Example
-    public override float GetPotency(Type type)
-    {
-      float potency = 0;
-      if (type == typeof(DamageEffect))
-      {
-        potency = this.attack.current;
-      }
-      return potency;
     }
 
   }

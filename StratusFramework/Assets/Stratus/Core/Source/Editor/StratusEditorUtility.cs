@@ -8,34 +8,53 @@ using System.Reflection;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using UnityEditor.AnimatedValues;
+using Rotorz.ReorderableList;
 
 namespace Stratus
 {
-  public static partial class StratusEditorUtility 
+  public static partial class StratusEditorUtility
   {
-    public delegate bool DefaultPropertyFieldDelegate(Rect position, SerializedProperty property, GUIContent label);
-    public static DefaultPropertyFieldDelegate DefaultPropertyField;
-
+    //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/
     public enum ContextMenuType
     {
       Add,
       Validation,
       Options
     }
-       
 
+    public delegate bool DefaultPropertyFieldDelegate(Rect position, SerializedProperty property, GUIContent label);
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public static UnityEngine.Event currentEvent => UnityEngine.Event.current;
+    public static bool currentEventUsed => currentEvent.type == EventType.Used;
+    public static bool onRepaint => currentEvent.type == EventType.Repaint;
+    public static float lineHeight => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+    public static DefaultPropertyFieldDelegate defaultPropertyField { get; private set; }
+
+    private static Dictionary<Type, SerializedSystemObject.SystemObjectDrawer> typeDrawers { get; set; } = new Dictionary<Type, SerializedSystemObject.SystemObjectDrawer>();
+    private static Dictionary<int, float> abstractListHeights { get; set; } = new Dictionary<int, float>();
+
+
+    //------------------------------------------------------------------------/
+    // CTOR
+    //------------------------------------------------------------------------/
     static StratusEditorUtility()
     {
       var t = typeof(EditorGUI);
       var delegateType = typeof(DefaultPropertyFieldDelegate);
       var m = t.GetMethod("DefaultPropertyField", BindingFlags.Static | BindingFlags.NonPublic);
-      DefaultPropertyField = (DefaultPropertyFieldDelegate)System.Delegate.CreateDelegate(delegateType, m);
+      defaultPropertyField = (DefaultPropertyFieldDelegate)System.Delegate.CreateDelegate(delegateType, m);
     }
 
-    public static UnityEngine.Event currentEvent => UnityEngine.Event.current;
-    public static bool currentEventUsed => currentEvent.type == EventType.Used;
-    public static bool onRepaint => currentEvent.type == EventType.Repaint;
 
+
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
     public static void OnMouseClick(System.Action onLeftClick, System.Action onRightClick, System.Action onDoubleClick, bool used = false)
     {
       if (!used && !currentEvent.isMouse)
@@ -318,17 +337,19 @@ namespace Stratus
       SelectSubset(set, subset, GetName);
     }
 
+    public static void DrawHeader(string text)
+    {
+      EditorGUILayout.LabelField("Effects", StratusGUIStyles.header);
+    }
+
     private static string GetName<T>(T obj) where T : UnityEngine.Object => obj.name;
-
-
-
 
     public static bool ObjectField(FieldInfo field, object obj, GUIContent content = null)
     {
       object value = field.GetValue(obj);
       EditorGUI.BeginChangeCheck();
       {
-        string name = ObjectNames.NicifyVariableName(field.Name); 
+        string name = ObjectNames.NicifyVariableName(field.Name);
 
         if (value is UnityEngine.Object)
           field.SetValue(obj, EditorGUILayout.ObjectField(name, (UnityEngine.Object)value, field.FieldType, true));
@@ -386,7 +407,7 @@ namespace Stratus
           texture = StratusGUIStyles.optionsIcon;
           break;
       }
-      
+
       if (GUILayout.Button(texture, StratusGUIStyles.editorStyles.button, StratusGUIStyles.smallLayout))
       {
         GenericMenu menu = menuFunction();
@@ -394,13 +415,11 @@ namespace Stratus
       }
     }
 
-    private static GUIStyle fadeGroupStyle { get; } = EditorStyles.foldout;
-
     public static void DrawFadeGroup(AnimBool show, string label, System.Action drawFunction)
     {
       show.target = EditorGUILayout.Foldout(show.target, label);
       if (EditorGUILayout.BeginFadeGroup(show.faded))
-      {        
+      {
         drawFunction();
       }
       EditorGUILayout.EndFadeGroup();
@@ -430,10 +449,10 @@ namespace Stratus
       EditorGUILayout.EndFadeGroup();
     }
 
-    public static void DrawListView<T>(IEnumerable<T> list, Func<T, GUIContent> leftContent, Func<T, string> rightContent, 
+    public static void DrawListView<T>(IEnumerable<T> list, Func<T, GUIContent> leftContent, Func<T, string> rightContent,
                                        GUILayoutOption leftWidth, GUILayoutOption rightWidth, GUILayoutOption height)
     {
-      foreach(var element in list)
+      foreach (var element in list)
       {
         EditorGUILayout.BeginHorizontal();
         {
@@ -444,8 +463,73 @@ namespace Stratus
       }
     }
 
+    /// <summary>
+    /// Draws a list of elements deriving from a base class
+    /// </summary>
+    /// <returns>True if the height of the list changed, which signals a repaint event</returns>
+    public static bool DrawPolymorphicList<T>(List<T> list, string title, bool useTypeLabel = true)
+    {
+      // We need to remember this list since the height is variable depending on the
+      // amount of fields being drawn      
+      int hashCode = list.GetHashCode();
+      if (!abstractListHeights.ContainsKey(hashCode))
+        abstractListHeights.Add(hashCode, 0);              
+
+      IntegerReference maxCount = 0;
+      ReorderableListGUI.Title(title);
+      ReorderableListGUI.ListField(list, (Rect position, T value) =>
+      {
+        // Get the drawer
+        Type type = value.GetType();
+        if (!typeDrawers.ContainsKey(type))
+          typeDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
+        SerializedSystemObject.SystemObjectDrawer drawer = typeDrawers[type];
+
+        // We draw one line at a time
+        position.height = lineHeight;
+
+        // Calculate height for this type
+        int count = drawer.fieldCount;
+        if (useTypeLabel)
+        {
+          EditorGUI.LabelField(position, type.Name, EditorStyles.centeredGreyMiniLabel);
+          position.y += lineHeight;
+          count++;
+        }
+        if (count > maxCount)
+          maxCount = count;
+
+        // Draw
+        drawer.DrawEditorGUI(position, value);
+        return value;
+      }, abstractListHeights[hashCode], ReorderableListFlags.HideAddButton);
+
+      float currentHeight = maxCount * lineHeight;
+      if (abstractListHeights[hashCode] != currentHeight)
+      {
+        abstractListHeights[hashCode] = currentHeight;
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Draws a field using EditorGUILayout based on its members,
+    /// (without using SerializedProperty)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="field"></param>
+    /// <returns>True if the field was changed</returns>
+    public static bool DrawField<T>(T field)
+    {
+      Type type = field.GetType();
+      if (!typeDrawers.ContainsKey(type))
+        typeDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
+      return typeDrawers[type].DrawEditorGUILayout(field);
+    }
+
     public static void DrawAligned(System.Action drawFunction, TextAlignment alignment)
-    {      
+    {
       GUILayout.BeginHorizontal();
 
       switch (alignment)
@@ -466,7 +550,7 @@ namespace Stratus
           drawFunction();
           break;
       }
-     
+
       GUILayout.EndVertical();
     }
 

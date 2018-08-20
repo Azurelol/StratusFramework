@@ -2,11 +2,10 @@ using UnityEngine;
 using Stratus;
 using System;
 
-namespace Genitus
+namespace Genitus.Effects
 {
   public class StunEffect : PersistentEffectAttribute
   {
-
     protected override void OnStarted(CombatController caster, CombatController target)
     {
       target.gameObject.Dispatch<CombatController.PauseEvent>(new CombatController.PauseEvent());
