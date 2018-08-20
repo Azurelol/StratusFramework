@@ -8,14 +8,6 @@ namespace Prototype
 {
   public class SampleCombatController : CombatController<StandardCharacter>
   {
-    public override bool isActing
-    {
-      get
-      {
-        throw new NotImplementedException();
-      }
-    }
-
     protected override void OnControllerInitialize()
     {
       

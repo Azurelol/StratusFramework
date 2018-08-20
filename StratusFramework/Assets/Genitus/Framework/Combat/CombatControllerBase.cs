@@ -16,44 +16,44 @@ namespace Genitus
     // Declarations
     //------------------------------------------------------------------------/
     /// <summary>
-    /// The faction the controller belongs
+    /// The faction the character belongs
     /// </summary>
     [Flags]
     public enum Faction
     {
       /// <summary>
-      /// The player
+      /// Character is controlled by the player
       /// </summary>
       Player,
       /// <summary>
-      /// Agents hostile to everyone else
+      /// Character is friendly to the player
+      /// </summary>
+      Friendly,
+      /// <summary>
+      /// Character is hostile to everyone
       /// </summary>
       Neutral,
       /// <summary>
-      /// Agents hostile to the player
+      /// Character is hostile to the player
       /// </summary>
       Hostile
     }
 
     /// <summary>
-    /// The current state of the controller
+    /// The current state of the character
     /// </summary>
     public enum State
     {
       /// <summary>
-      /// The controller is taking action
+      /// The character is taking no action
+      /// </summary>
+      Idle,
+      /// <summary>
+      /// The character is taking action
       /// </summary>
       Active,
       /// <summary>
-      /// The controller is currently unable to take action
-      /// </summary>
-      Stunned,
-      /// <summary>
-      /// This character cannot be targeted at the current time
-      /// </summary>
-      Untargetable,
-      /// <summary>
-      /// The controller is unable to take action
+      /// The character is unable to take action
       /// </summary>
       Inactive
     }
@@ -112,7 +112,7 @@ namespace Genitus
     /// <summary>
     /// Whether the target is currently performing an action.
     /// </summary>
-    public abstract bool isActing { get; }
+    public bool isActing => this.currentState == State.Active;
     /// <summary>
     /// Callback for when the character is fully restored
     /// </summary>
@@ -173,9 +173,8 @@ namespace Genitus
       foreach (var module in modules)
         module.OnTimeStep(step);
 
-      // If inactive/incapacitated, do nothing else
-      if (this.currentState == State.Stunned ||
-          this.currentState == State.Inactive)
+      // If inactive, do nothing else
+      if (this.currentState == State.Inactive)
         return;
 
       // Called on the subclass
