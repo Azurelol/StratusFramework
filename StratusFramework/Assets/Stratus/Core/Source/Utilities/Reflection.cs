@@ -40,6 +40,7 @@ namespace Stratus
       }
 
       private static Dictionary<Type, Type[]> subclasses { get; set; } = new Dictionary<Type, Type[]>();
+      private static Dictionary<Type, string[]> subclassNames { get; set; } = new Dictionary<Type, string[]>();
       private static Dictionary<Type, Type[]> subclassesIncludeAbstract { get; set; } = new Dictionary<Type, Type[]>();
       private static Dictionary<Type, Dictionary<Type, Type[]>> interfacesImplementations { get; set; } = new Dictionary<Type, Dictionary<Type, Type[]>>();
 
@@ -405,10 +406,19 @@ namespace Stratus
       /// <returns></returns>
       public static string[] GetSubclassNames<ClassType>(bool includeAbstract = false)
       {
-        string[] typeNames;
-        Type[] types = Assembly.GetAssembly(typeof(ClassType)).GetTypes();
-        typeNames = (from Type type in types where type.IsSubclassOf(typeof(ClassType)) && !type.IsAbstract select type.Name).ToArray();
-        return typeNames;
+        Type baseType = typeof(ClassType);
+        return GetSubclassNames(baseType, includeAbstract);
+        //string[] typeNames;
+        //Type[] types = Assembly.GetAssembly(typeof(ClassType)).GetTypes();
+        //typeNames = (from Type type in types where type.IsSubclassOf(typeof(ClassType)) && !type.IsAbstract select type.Name).ToArray();
+        //return typeNames;
+      }
+
+      [System.Diagnostics.DebuggerHidden]
+      public static Type GetIndexedType(this ICollection poICollection)
+      {
+        PropertyInfo oPropertyInfo = poICollection == null ? null : poICollection.GetType().GetProperty("Item");
+        return oPropertyInfo == null ? null : oPropertyInfo.PropertyType;
       }
 
       /// <summary>
@@ -419,9 +429,15 @@ namespace Stratus
       public static string[] GetSubclassNames(Type baseType, bool includeAbstract = false)
       {
         string[] typeNames;
-        Type[] types = Assembly.GetAssembly(baseType).GetTypes();
-        typeNames = (from Type type in types where type.IsSubclassOf(baseType) && !type.IsAbstract select type.Name).ToArray();
-        return typeNames;
+        if (!subclassNames.ContainsKey(baseType))
+        {
+          Type[] types = GetSubclass(baseType, includeAbstract);
+          //Type[] types = Assembly.GetAssembly(baseType).GetTypes();
+          typeNames = (from Type type in types where type.IsSubclassOf(baseType) && !type.IsAbstract select type.Name).ToArray();
+          subclassNames.Add(baseType, typeNames);
+        }
+
+        return subclassNames[baseType];
       }
 
       /// <summary>

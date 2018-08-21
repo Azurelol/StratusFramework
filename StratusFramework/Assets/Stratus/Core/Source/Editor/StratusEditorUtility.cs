@@ -33,11 +33,12 @@ namespace Stratus
     public static UnityEngine.Event currentEvent => UnityEngine.Event.current;
     public static bool currentEventUsed => currentEvent.type == EventType.Used;
     public static bool onRepaint => currentEvent.type == EventType.Repaint;
+    public static Rect lastRect => GUILayoutUtility.GetLastRect();
     public static float lineHeight => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
     public static DefaultPropertyFieldDelegate defaultPropertyField { get; private set; }
 
     private static Dictionary<Type, SerializedSystemObject.SystemObjectDrawer> objectDrawers { get; set; } = new Dictionary<Type, SerializedSystemObject.SystemObjectDrawer>();
-    private static Dictionary<FieldInfo, SerializedSystemObject.FieldInfoDrawer> fieldDrawers { get; set; } = new Dictionary<FieldInfo, SerializedSystemObject.FieldInfoDrawer>();
+    private static Dictionary<FieldInfo, SerializedSystemObject.FieldDrawer> fieldDrawers { get; set; } = new Dictionary<FieldInfo, SerializedSystemObject.FieldDrawer>();
     private static Dictionary<int, float> abstractListHeights { get; set; } = new Dictionary<int, float>();
 
 
@@ -515,6 +516,11 @@ namespace Stratus
       return false;
     }
 
+    private static GUILayoutOption[] polymorphicListLayoutOptions { get; } = new GUILayoutOption[]
+    {
+      GUILayout.ExpandWidth(false)
+    };
+
     /// <summary>
     /// Draws a list of elements deriving from a base class
     /// </summary>
@@ -525,75 +531,67 @@ namespace Stratus
       // amount of fields being drawn      
       var fieldValue = field.GetValue(target);
       IList list = fieldValue as IList;
-      //int hashCode = list.GetHashCode();
-      //if (!abstractListHeights.ContainsKey(hashCode))
-      //  abstractListHeights.Add(hashCode, 0);
 
-      bool changed = false;
-      //IntegerReference maxCount = 0;
 
-      ReorderableListGUI.Title(title);
-
+      //EditorGUILayout.BeginVertical(ReorderableListStyles.Container);
+      // Draw the header
+      EditorGUILayout.BeginHorizontal(ReorderableListStyles.Title);
+      EditorGUILayout.PrefixLabel(title);
+      //ReorderableListGUI.Title(title);
+      //Rect titleRect = lastRect;
       // Instantiate polymorph type here      
+      if (GUILayout.Button("Add", polymorphicListLayoutOptions))
+      {
+        Type baseType = Utilities.Reflection.GetIndexedType(list); // list.GetType().GetElementType();
+        var menu = new GenericMenu();
+        string[] typeNames = Utilities.Reflection.GetSubclassNames(baseType);
+        menu.AddItems(typeNames, (int index) =>
+        {
+          list.Add(Utilities.Reflection.Instantiate(Utilities.Reflection.GetSubclass(baseType)[index]));
+        });
+        menu.ShowAsContext();
+      }
+
+      // Clear
+      if (GUILayout.Button("Clear", polymorphicListLayoutOptions))
+      {
+        list.Clear();
+      }
+
+      EditorGUILayout.EndHorizontal();
 
       if (list.Count == 0)
         return false;
 
+      // Draw the elements
+      bool changed = false;
+      EditorGUILayout.BeginVertical(ReorderableListStyles.Container2);
       foreach(var element in list)
       {
+        EditorGUILayout.Space();
         // Get the drawer for the type
         Type elementType = element.GetType();
         if (!objectDrawers.ContainsKey(elementType))
           objectDrawers.Add(elementType, new SerializedSystemObject.SystemObjectDrawer(elementType));
         SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[elementType];
 
-        if (!drawer.isDrawable)
-          continue;
 
-        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        drawer.DrawEditorGUILayout(element);
+        EditorGUILayout.BeginVertical(ReorderableListStyles.Container);
+        {
+          EditorGUILayout.LabelField(elementType.Name, EditorStyles.centeredGreyMiniLabel);
+          if (!drawer.isDrawable)
+            EditorGUILayout.LabelField($"There are no serialized fields for {elementType.Name}");                  
+          else
+            changed |= drawer.DrawEditorGUILayout(element);        
+        }        
         EditorGUILayout.EndVertical();
+
       }
-
-
-
-      //ReorderableListGUI.ListField(list, (Rect position, object value) =>
-      //{
-      //  // Get the drawer
-      //  Type type = value.GetType();
-      //  if (!objectDrawers.ContainsKey(type))
-      //    objectDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
-      //  SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[type];
-      //
-      //  // We draw one line at a time
-      //  position.height = lineHeight;
-      //
-      //  // Calculate height for this type
-      //  int count = drawer.fieldCount;
-      //  if (useTypeLabel)
-      //  {
-      //    EditorGUI.LabelField(position, type.Name, EditorStyles.centeredGreyMiniLabel);
-      //    position.y += lineHeight;
-      //    count++;
-      //  }
-      //  if (count > maxCount)
-      //    maxCount = count;
-      //
-      //  // Draw
-      //  drawer.DrawEditorGUI(position, value);
-      //  return value;
-      //}, abstractListHeights[hashCode], ReorderableListFlags.HideAddButton);
-      //
-      //float currentHeight = maxCount * lineHeight;
-      //if (abstractListHeights[hashCode] != currentHeight)
-      //{
-      //  abstractListHeights[hashCode] = currentHeight;
-      //  return true;
-      //}
-      //return false;
+      EditorGUILayout.Space();
+      EditorGUILayout.EndVertical();
+      //EditorGUILayout.EndVertical();
       return changed;
     }
-
 
     /// <summary>
     /// Draws a field using EditorGUILayout based on its members,
@@ -620,7 +618,7 @@ namespace Stratus
     public static bool DrawField(FieldInfo field, object target)
     {
       if (!fieldDrawers.ContainsKey(field))
-        fieldDrawers.Add(field, new SerializedSystemObject.FieldInfoDrawer(field));
+        fieldDrawers.Add(field, new SerializedSystemObject.FieldDrawer(field));
       return fieldDrawers[field].DrawEditorGUILayout(target);
     }
 

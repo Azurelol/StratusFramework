@@ -16,10 +16,15 @@ namespace Stratus
     /// <summary>
     /// Base class for all drawers
     /// </summary>
-    public class Drawer
+    public abstract class Drawer
     {
-      public string label { get; protected set; }
+      public string name { get; protected set; }
+      public string displayName { get; protected set; }
       public Type type { get; protected set; }
+      public abstract bool DrawEditorGUILayout(object target);
+      public abstract bool DrawEditorGUI(Rect position, object target);
+      public bool isDrawable { get; protected set; }
+      public bool isPrimitive { get; protected set; }
     }
 
     /// <summary>
@@ -27,32 +32,87 @@ namespace Stratus
     /// </summary>
     public class SystemObjectDrawer : Drawer
     {
-      public FieldInfoDrawer[] fieldDrawers { get; private set; }
+      public SystemObjectDrawer parent { get; private set; }
+      public Drawer[] fieldDrawers { get; private set; }
       public FieldInfo[] fields { get; private set; }
+      public Dictionary<string, FieldInfo> fieldsByName { get; private set; } = new Dictionary<string, FieldInfo>();
       public bool hasFields => fields.NotEmpty();
       public bool hasDefaultConstructor { get; private set; }
-      public bool isDrawable { get; private set; }
       public int fieldCount => fieldDrawers.Length;
       public bool isArray { get; private set; }
+      public bool isField { get; private set; }
 
-      public SystemObjectDrawer(Type type)
+      public SystemObjectDrawer(Type type, SystemObjectDrawer parent = null)
       {
         this.type = type;
-        this.fields = type.GetFields();
+        this.fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+        this.fieldsByName.AddRange(this.fields, (FieldInfo field) => field.Name);
         this.fieldDrawers = GenerateDrawers(fields);
         this.isDrawable = this.fieldDrawers.NotEmpty();
         this.hasDefaultConstructor = (type.GetConstructor(Type.EmptyTypes) != null) || type.IsValueType;
       }
 
-      public bool DrawEditorGUILayout(object target)
+      public void SetParent(SystemObjectDrawer parent, string fieldName)
+      {
+        this.parent = parent;
+        this.isField = true;
+        this.name = fieldName;
+        this.displayName = ObjectNames.NicifyVariableName(this.name);
+      }
+
+      //public static object GetDefaultValueForProperty(PropertyInfo property)
+      //{
+      //  var defaultAttr = property.GetCustomAttribute(typeof(DefaultValueAttribute));
+      //  if (defaultAttr != null)
+      //    return (defaultAttr as DefaultValueAttribute).Value;
+      //
+      //  var propertyType = property.PropertyType;
+      //  return propertyType.IsValueType ? Activator.CreateInstance(propertyType) : null;
+      //}
+
+      public override bool DrawEditorGUILayout(object target)
       {
         bool changed = false;
+
+        if (this.isField)
+        {
+          //EditorGUILayout.Space();
+          EditorGUILayout.LabelField(this.displayName);
+          EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        }
+
         foreach (var drawer in fieldDrawers)
-          changed |= drawer.DrawEditorGUILayout(target);
+        {
+          // If this is a member inside a member
+          if (this.isField)
+          {
+            FieldInfo field = this.parent.fieldsByName[this.name];            
+            // Try to get the value from the taret
+            object value;
+            value = field.GetValue(target);
+            // If the field hasn't been instantiated
+            if (value == null)
+            {
+              value = Activator.CreateInstance(this.type);
+              field.SetValue(target, value);
+            }
+            
+            changed |= drawer.DrawEditorGUILayout(value);
+          }
+          else
+          {
+            changed |= drawer.DrawEditorGUILayout(target);
+          }
+
+
+        }
+
+        if (this.isField)
+          EditorGUILayout.EndVertical();
         return changed;
       }
 
-      public bool DrawEditorGUI(Rect position, object target)
+      public override bool DrawEditorGUI(Rect position, object target)
       {
         bool changed = false;
         foreach (var drawer in fieldDrawers)
@@ -64,14 +124,30 @@ namespace Stratus
         return changed;
       }
 
-      public static FieldInfoDrawer[] GenerateDrawers(FieldInfo[] fields)
+      private Drawer[] GenerateDrawers(FieldInfo[] fields)
       {
-        List<FieldInfoDrawer> drawers = new List<FieldInfoDrawer>();
+        List<Drawer> drawers = new List<Drawer>();
         for (int i = 0; i < fields.Length; ++i)
         {
-          FieldInfoDrawer drawer = new FieldInfoDrawer(fields[i]);
-          if (drawer.isValid)
-            drawers.Add(drawer);          
+          FieldInfo field = fields[i];
+          Type fieldType = field.FieldType;
+          SerializedPropertyType serializedPropertyType = DeducePropertyType(field);
+
+          bool isUnitySupportedType = serializedPropertyType != SerializedPropertyType.Generic; //  OdinSerializer.FormatterUtilities.IsPrimitiveType(fieldType);
+          if (isUnitySupportedType)
+          {
+            FieldDrawer drawer = new FieldDrawer(field);
+            if (drawer.isDrawable)
+              drawers.Add(drawer);
+          }
+          else
+          {
+            SystemObjectDrawer drawer = new SystemObjectDrawer(fieldType);
+            drawer.SetParent(this, field.Name);
+            if (drawer.isDrawable)
+              drawers.Add(drawer);
+          }
+
         }
         return drawers.ToArray();
       }
@@ -89,7 +165,7 @@ namespace Stratus
     public SerializedSystemObject(Type type, object target)
     {
       this.drawer = new SystemObjectDrawer(type);
-      this.target = target;      
+      this.target = target;
     }
 
     public bool Draw()
@@ -126,7 +202,7 @@ namespace Stratus
     // Static Methods
     //------------------------------------------------------------------------/
     public static SerializedPropertyType DeducePropertyType(FieldInfo field)
-    {      
+    {
       Type type = field.FieldType;
       SerializedPropertyType propertyType = SerializedPropertyType.Generic;
 

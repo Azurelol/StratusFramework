@@ -9,7 +9,7 @@ namespace Genitus
   /// Base class for all additional components a skill may have
   /// </summary>
   [Serializable]
-  public abstract class SkillComponent 
+  public abstract class SkillComponent
   {
     protected abstract void OnActivation(CombatController user, CombatController target);
   }

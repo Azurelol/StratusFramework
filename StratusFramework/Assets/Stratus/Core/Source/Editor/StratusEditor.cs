@@ -493,7 +493,9 @@ namespace Stratus
       {
         // Arrays
         if (property.isArray && property.propertyType != SerializedPropertyType.String && drawReorderableLists)
+        {
           DrawReorderableList(property, property.displayName);
+        }
         // Use normal drawers
         else
         {

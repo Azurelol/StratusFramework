@@ -1,12 +1,3 @@
-/******************************************************************************/
-/*!
-@file   CombatTrigger.cs
-@author Christian Sagel
-@par    email: c.sagel\@digipen.edu
-@par    DigiPen login: c.sagel
-@date   5/25/2016
-*/
-/******************************************************************************/
 using UnityEngine;
 using System.Collections.Generic;
 using Stratus;
@@ -19,22 +10,25 @@ namespace Genitus
   public class CombatTrigger : ICloneable
   {
     //------------------------------------------------------------------------/
-    // Events
+    // Declarations
     //------------------------------------------------------------------------/
     public enum Result { Critical, Success, Failure }
     public enum Type { Attack, Defend }
+
     public abstract class TriggerEvent : Stratus.Event
     {
       public Instance Instance;
     }
-    public class StartedEvent : TriggerEvent { }
+
+    public class StartedEvent : TriggerEvent
+    {
+    }
     public class EndedEvent : TriggerEvent
     {
       public Result Result;
       public float Percentage;
     }
-    //------------------------------------------------------------------------/
-
+    
     /// <summary>
     /// Represents a trigger input.
     /// </summary>

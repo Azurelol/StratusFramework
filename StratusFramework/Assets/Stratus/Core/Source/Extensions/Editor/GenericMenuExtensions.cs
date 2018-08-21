@@ -67,7 +67,18 @@ namespace Stratus
           onSelected(index);
         });
       }
+    }
 
+    public static void AddItems(this GenericMenu menu, string[] displayedOptions, System.Action<int> onSelected)
+    {
+      for (int i = 0; i < displayedOptions.Length; ++i)
+      {
+        int index = i;
+        menu.AddItem(new GUIContent($"{displayedOptions[i]}"), false, () =>
+        {
+          onSelected(index);
+        });
+      }
     }
 
     public static MessageType Convert(this Validation.Level type)
