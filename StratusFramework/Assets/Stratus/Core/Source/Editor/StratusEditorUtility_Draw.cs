@@ -31,6 +31,14 @@ namespace Stratus
       return drawer;
     }
 
+    public static SerializedSystemObject.SystemObjectDrawer GetDrawer(Type elementType)
+    {
+      if (!objectDrawers.ContainsKey(elementType))
+        objectDrawers.Add(elementType, new SerializedSystemObject.SystemObjectDrawer(elementType));
+      SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[elementType];
+      return drawer;
+    }
+
     /// <summary>
     /// Draws a list of elements deriving from a base class
     /// </summary>
@@ -140,10 +148,10 @@ namespace Stratus
         EditorGUILayout.BeginVertical(ReorderableListStyles.Container);
         {
           EditorGUILayout.LabelField(elementType.Name, EditorStyles.centeredGreyMiniLabel);
-          if (!drawer.isDrawable)
-            EditorGUILayout.LabelField($"There are no serialized fields for {elementType.Name}");
-          else
-            changed |= drawer.DrawEditorGUILayout(element);
+          //if (!drawer.isDrawable)
+          //  EditorGUILayout.LabelField($"There are no serialized fields for {elementType.Name}");
+          //else
+          changed |= drawer.DrawEditorGUILayout(element);
         }
         EditorGUILayout.EndVertical();
 

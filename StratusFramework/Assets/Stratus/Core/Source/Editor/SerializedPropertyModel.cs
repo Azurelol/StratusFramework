@@ -66,10 +66,11 @@ namespace Stratus
     public FieldInfo field { get; private set; }
     public System.Type type { get; private set; }
     public object target { get; private set; }
-    public bool isExpanded { get; set; }
+    public bool isExpanded { get; set; } = true;
     public string displayName { get; private set; }
-    public IList list { get; private set; }
     public bool isArray { get; private set; }
+    public IList list { get; private set; }    
+    public Type listElementType { get; private set; }
 
     public OdinSerializedProperty(FieldInfo field, object target)
     {
@@ -79,7 +80,10 @@ namespace Stratus
       this.target = target;
       this.isArray = typeof(IList).IsAssignableFrom(this.type);
       if (this.isArray)
+      {
         this.list = this.field.GetValue(target) as IList;
+        this.listElementType = Utilities.Reflection.GetIndexedType(list);
+      }
     }
 
     public void DrawEditorGUILayout(object target)

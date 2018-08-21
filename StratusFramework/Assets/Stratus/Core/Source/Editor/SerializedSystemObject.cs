@@ -73,11 +73,11 @@ namespace Stratus
       public override bool DrawEditorGUILayout(object target)
       {
         bool changed = false;
+        string content = this.isDrawable ? this.displayName : $"There are no serialized fields for {type.Name}";
+        EditorGUILayout.LabelField(content);
 
         if (this.isField)
         {
-          //EditorGUILayout.Space();
-          EditorGUILayout.LabelField(this.displayName);
           EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         }
 
@@ -86,41 +86,74 @@ namespace Stratus
           // If this is a member inside a member
           if (this.isField)
           {
-            FieldInfo field = this.parent.fieldsByName[this.name];            
-            // Try to get the value from the taret
-            object value;
-            value = field.GetValue(target);
-            // If the field hasn't been instantiated
-            if (value == null)
-            {
-              value = Activator.CreateInstance(this.type);
-              field.SetValue(target, value);
-            }
-            
+            object value = GetValueOrSetDefault(target);
             changed |= drawer.DrawEditorGUILayout(value);
           }
           else
           {
             changed |= drawer.DrawEditorGUILayout(target);
           }
-
-
         }
 
         if (this.isField)
+        {
           EditorGUILayout.EndVertical();
+        }
+
         return changed;
+      }
+
+      private object GetValueOrSetDefault(object target)
+      {
+        FieldInfo field = this.parent.fieldsByName[this.name];
+        // Try to get the value from the taret
+        object value;
+        value = field.GetValue(target);
+        // If the field hasn't been instantiated
+        if (value == null)
+        {
+          value = Activator.CreateInstance(this.type);
+          field.SetValue(target, value);
+        }
+        return value;
       }
 
       public override bool DrawEditorGUI(Rect position, object target)
       {
         bool changed = false;
+        string content = this.isDrawable ? this.displayName : $"There are no serialized fields for {type.Name}";
+        EditorGUI.LabelField(position, content);
+
+        if (this.isField)
+        {
+          EditorGUI.indentLevel++;
+          //GUI.BeginGroup(position, EditorStyles.helpBox);
+        }
+
+        position.y += StratusEditorUtility.lineHeight;
+
+        // Draw all drawers
         foreach (var drawer in fieldDrawers)
         {
-          //position.height = EditorGUIUtility.singleLineHeight;
-          changed |= drawer.DrawEditorGUI(position, target);
+          // If this is a member inside a member
+          if (this.isField)
+          {
+            object value = GetValueOrSetDefault(target);
+            changed |= drawer.DrawEditorGUI(position, value);
+          }
+          else
+          {
+            changed |= drawer.DrawEditorGUI(position, target);
+          }
           position.y += StratusEditorUtility.lineHeight;
         }
+
+        if (this.isField)
+        {
+          EditorGUI.indentLevel--;
+          //GUI.EndGroup();
+        }
+
         return changed;
       }
 

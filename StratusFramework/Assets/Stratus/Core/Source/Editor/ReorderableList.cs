@@ -63,6 +63,7 @@ namespace Stratus
       this.SetHeaderCallback(serializedProperty);
       this.SetElementDrawCallback(serializedProperty);
       this.SetElementHeightCallback(serializedProperty);
+      this.SetElementAddCallback(serializedProperty);
     }
 
     public void SetHeaderCallback(SerializedProperty serializedProperty)
@@ -79,7 +80,7 @@ namespace Stratus
       this.drawHeaderCallback = (Rect rect) =>
       {
         var newRect = new Rect(rect.x + 10, rect.y, rect.width - 10, rect.height);
-        serializedProperty.isExpanded = EditorGUI.Foldout(newRect, serializedProperty.isExpanded, serializedProperty.displayName);
+        serializedProperty.isExpanded = EditorGUI.Foldout(newRect, serializedProperty.isExpanded, $"{serializedProperty.displayName} ({serializedProperty.listElementType.Name}) ");
       };
     }
 
@@ -113,9 +114,14 @@ namespace Stratus
          
          // Get the drawer for the element type
          var element = serializedProperty.GetArrayElementAtIndex(index);
-         SerializedSystemObject.SystemObjectDrawer drawer = StratusEditorUtility.GetDrawer(element);
-         rect.y += 2;
-         drawer.DrawEditorGUILayout(serializedProperty.target);
+         Type elementType = element.GetType();
+         SerializedSystemObject.SystemObjectDrawer drawer = StratusEditorUtility.GetDrawer(elementType);
+         
+         // Draw the element
+         Rect position = new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight);
+         EditorGUI.LabelField(position, elementType.Name, EditorStyles.centeredGreyMiniLabel);
+         position.y += StratusEditorUtility.lineHeight;
+         drawer.DrawEditorGUI(position, element);
        };
     }
 
@@ -138,9 +144,26 @@ namespace Stratus
           return 0;
         else
         {
-          return 50f;
+          return 150;
         }
       };
+    }
+
+    public void SetElementAddCallback(OdinSerializedProperty serializedProperty)
+    {
+      onAddDropdownCallback = (Rect buttonRect, ReorderableList list) =>
+      {
+        Type baseType = serializedProperty.listElementType;
+        var menu = new GenericMenu();
+        string[] typeNames = Utilities.Reflection.GetSubclassNames(baseType);
+        menu.AddItems(typeNames, (int index) =>
+        {
+          serializedProperty.list.Add(Utilities.Reflection.Instantiate(Utilities.Reflection.GetSubclass(baseType)[index]));
+        });
+        menu.ShowAsContext();
+      };
+
+      this.displayAdd = true;
     }
 
 

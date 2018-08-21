@@ -26,31 +26,19 @@ MonoBehaviour:
         mscorlib
     - Name: 
       Entry: 12
-      Data: 3
+      Data: 2
     - Name: 
       Entry: 7
-      Data: 1|Genitus.SkillTrigger, Assembly-CSharp
-    - Name: onCast
-      Entry: 6
-      Data: 
-    - Name: onDefend
-      Entry: 6
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 2|Genitus.SkillTelegraph, Assembly-CSharp
+      Data: 1|Genitus.SkillTelegraph, Assembly-CSharp
     - Name: number
       Entry: 3
-      Data: 0
+      Data: 99
     - Name: telegraphed
       Entry: 5
       Data: true
     - Name: telegraph
       Entry: 7
-      Data: 3|Genitus.Telegraph+Configuration, Assembly-CSharp
+      Data: 2|Genitus.Telegraph+Configuration, Assembly-CSharp
     - Name: Prefab
       Entry: 6
       Data: 
@@ -104,7 +92,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 4|Genitus.StandardSkillVFX, Assembly-CSharp
+      Data: 3|Genitus.StandardSkillVFX, Assembly-CSharp
     - Name: particleSystem
       Entry: 6
       Data: 

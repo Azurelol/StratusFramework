@@ -517,10 +517,10 @@ namespace Stratus
         {
           this.DrawReorderableList(property);
         }
-        else
-        {
+        //else
+        //{
           changed |= StratusEditorUtility.DrawField(property.field, this.target);
-        }
+        //}
       }      
       if (EditorGUI.EndChangeCheck())
       {
