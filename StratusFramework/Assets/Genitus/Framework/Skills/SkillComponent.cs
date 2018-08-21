@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Genitus
 {
   /// <summary>
   /// Base class for all additional components a skill may have
   /// </summary>
+  [Serializable]
   public abstract class SkillComponent 
   {
     protected abstract void OnActivation(CombatController user, CombatController target);
@@ -25,6 +27,7 @@ namespace Genitus
   //  CombatController[] GetTargets(CombatController user, CombatController target);
   //}
 
+  [Serializable]
   public class StandardSkillVFX : SkillComponent
   {
     public GameObject particleSystem;
@@ -35,6 +38,7 @@ namespace Genitus
     }
   }
 
+  [Serializable]
   public class SkillTiming : SkillComponent
   {
     [Tooltip("Specific timings for the skill's action")]
@@ -45,6 +49,7 @@ namespace Genitus
     }
   }
 
+  [Serializable]
   public class SkillTrigger : SkillComponent
   {
     /// <summary>
@@ -69,8 +74,10 @@ namespace Genitus
     }
   }
   
+  [Serializable]
   public class SkillTelegraph : SkillComponent
   {
+    public int number;
     /// <summary>
     /// Whether the skill is telegraphed
     /// </summary>

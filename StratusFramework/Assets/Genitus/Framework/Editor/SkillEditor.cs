@@ -18,6 +18,18 @@ namespace Genitus
 
     void ModifyEffects(Rect rect)
     {
+      if (GUILayout.Button("Add Telegraph"))
+      {
+        this.target.components.Add(new SkillTelegraph());
+        this.RecordModification();
+      }
+
+      if (GUILayout.Button("Add Timing"))
+      {
+        this.target.components.Add(new SkillTiming());
+        this.RecordModification();
+      }
+
       EditorGUILayout.BeginHorizontal();
       effectTypes.GUILayoutPopup();
       if (GUILayout.Button("Add", EditorStyles.miniButtonRight))

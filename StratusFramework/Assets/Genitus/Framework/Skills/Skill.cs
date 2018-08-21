@@ -46,6 +46,8 @@ namespace Genitus
     [OdinSerialize]
     public List<SkillComponent> components = new List<SkillComponent>();
 
+    
+
     //------------------------------------------------------------------------/
     // Virtual
     //------------------------------------------------------------------------/

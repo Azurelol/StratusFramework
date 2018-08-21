@@ -75,7 +75,7 @@ namespace Stratus
 
       public Type type { get; private set; }
       public SerializedProperty unitySerialized { get; private set; }
-      public OdinSerializedProperty odinSerializedProperty { get; private set; }
+      public OdinSerializedProperty odinSerialized { get; private set; }
 
       public SerializedPropertyModel(SerializedProperty serializedProperty)
       {
@@ -85,7 +85,7 @@ namespace Stratus
 
       public SerializedPropertyModel(OdinSerializedProperty serializedProperty)
       {
-        this.odinSerializedProperty = serializedProperty;
+        this.odinSerialized = serializedProperty;
         this.type = Type.Odin;
       }
 
@@ -330,7 +330,7 @@ namespace Stratus
           EditorGUILayout.LabelField(properties.Item1.Name, StratusGUIStyles.headerWhite);
 
         EditorGUILayout.BeginVertical(backgroundStyle);
-        propertiesChanged |= DrawProperties(properties.Item2);
+        propertiesChanged |= DrawSerializedProperties(properties.Item2);
         EditorGUILayout.EndVertical();
       }
 
@@ -522,6 +522,29 @@ namespace Stratus
     }
 
     /// <summary>
+    /// Draws a property (really, a field) serialized by Odin Serializer
+    /// </summary>
+    /// <param name="property"></param>
+    /// <returns></returns>
+    public bool DrawSerializedProperty(OdinSerializedProperty property)
+    {
+      bool changed = false;
+      EditorGUI.BeginChangeCheck();
+      {
+        changed |= StratusEditorUtility.DrawField(property.field, this.target);
+      }      
+      if (EditorGUI.EndChangeCheck())
+      {
+        // Record change
+        Undo.RecordObject(target, property.field.Name);
+        // Apply the modified property
+        serializedObject.ApplyModifiedProperties();
+        changed = true;
+      }
+      return changed;
+    }
+
+    /// <summary>
     /// Draws a serialized property, saving any recorded changes
     /// </summary>
     /// <param name="prop"></param>
@@ -625,33 +648,33 @@ namespace Stratus
 
     protected virtual bool DrawDeclaredProperties()
     {
-      return DrawProperties(declaredProperties.Item2);
+      return DrawSerializedProperties(declaredProperties.Item2);
     }
 
     /// <summary>
     /// Draws the given set of properties according to any present constraints in the editor
     /// </summary>
     /// <param name="properties"></param>
-    private bool DrawProperties(SerializedPropertyModel[] properties)
+    private bool DrawSerializedProperties(SerializedPropertyModel[] properties)
     {
       bool propertiesChanged = false;
-      foreach (var prop in properties)
+      foreach (var property in properties)
       {
-        switch (prop.type)
+        switch (property.type)
         {
           case SerializedPropertyModel.Type.Unity:
-            bool hasConstraint = propertyConstraints.ContainsKey(prop.unitySerialized);
+            bool hasConstraint = propertyConstraints.ContainsKey(property.unitySerialized);
             if (hasConstraint)
             {
-              bool canBeDrawn = propertyConstraints[prop.unitySerialized].Invoke();
+              bool canBeDrawn = propertyConstraints[property.unitySerialized].Invoke();
               if (!canBeDrawn)
                 continue;
             }
-            propertiesChanged |= DrawSerializedProperty(prop.unitySerialized, serializedObject);
+            propertiesChanged |= DrawSerializedProperty(property.unitySerialized, serializedObject);
             break;
 
           case SerializedPropertyModel.Type.Odin:
-            propertiesChanged |= StratusEditorUtility.DrawField(prop.odinSerializedProperty.field, this.target);
+            propertiesChanged |= DrawSerializedProperty(property.odinSerialized);
             break;
         }
 
@@ -871,7 +894,11 @@ namespace Stratus
       propertyConstraints.Remove(propertyMap[propertyName]);
     }
 
-
+    protected void RecordModification(string description = null)
+    {
+      serializedObject.UpdateIfRequiredOrScript();
+      serializedObject.ApplyModifiedProperties();
+    }
 
     /// <summary>
     /// Adds a constraint that decides whether a given group of properties is drawn

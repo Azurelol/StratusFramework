@@ -36,7 +36,8 @@ namespace Stratus
     public static float lineHeight => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
     public static DefaultPropertyFieldDelegate defaultPropertyField { get; private set; }
 
-    private static Dictionary<Type, SerializedSystemObject.SystemObjectDrawer> typeDrawers { get; set; } = new Dictionary<Type, SerializedSystemObject.SystemObjectDrawer>();
+    private static Dictionary<Type, SerializedSystemObject.SystemObjectDrawer> objectDrawers { get; set; } = new Dictionary<Type, SerializedSystemObject.SystemObjectDrawer>();
+    private static Dictionary<FieldInfo, SerializedSystemObject.FieldInfoDrawer> fieldDrawers { get; set; } = new Dictionary<FieldInfo, SerializedSystemObject.FieldInfoDrawer>();
     private static Dictionary<int, float> abstractListHeights { get; set; } = new Dictionary<int, float>();
 
 
@@ -482,9 +483,9 @@ namespace Stratus
       {
         // Get the drawer
         Type type = value.GetType();
-        if (!typeDrawers.ContainsKey(type))
-          typeDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
-        SerializedSystemObject.SystemObjectDrawer drawer = typeDrawers[type];
+        if (!objectDrawers.ContainsKey(type))
+          objectDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
+        SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[type];
 
         // We draw one line at a time
         position.height = lineHeight;
@@ -515,6 +516,86 @@ namespace Stratus
     }
 
     /// <summary>
+    /// Draws a list of elements deriving from a base class
+    /// </summary>
+    /// <returns>True if the height of the list changed, which signals a repaint event</returns>
+    public static bool DrawPolymorphicList(FieldInfo field, object target, string title, bool useTypeLabel = true)
+    {
+      // We need to remember this list since the height is variable depending on the
+      // amount of fields being drawn      
+      var fieldValue = field.GetValue(target);
+      IList list = fieldValue as IList;
+      //int hashCode = list.GetHashCode();
+      //if (!abstractListHeights.ContainsKey(hashCode))
+      //  abstractListHeights.Add(hashCode, 0);
+
+      bool changed = false;
+      //IntegerReference maxCount = 0;
+
+      ReorderableListGUI.Title(title);
+
+      // Instantiate polymorph type here      
+
+      if (list.Count == 0)
+        return false;
+
+      foreach(var element in list)
+      {
+        // Get the drawer for the type
+        Type elementType = element.GetType();
+        if (!objectDrawers.ContainsKey(elementType))
+          objectDrawers.Add(elementType, new SerializedSystemObject.SystemObjectDrawer(elementType));
+        SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[elementType];
+
+        if (!drawer.isDrawable)
+          continue;
+
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        drawer.DrawEditorGUILayout(element);
+        EditorGUILayout.EndVertical();
+      }
+
+
+
+      //ReorderableListGUI.ListField(list, (Rect position, object value) =>
+      //{
+      //  // Get the drawer
+      //  Type type = value.GetType();
+      //  if (!objectDrawers.ContainsKey(type))
+      //    objectDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
+      //  SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[type];
+      //
+      //  // We draw one line at a time
+      //  position.height = lineHeight;
+      //
+      //  // Calculate height for this type
+      //  int count = drawer.fieldCount;
+      //  if (useTypeLabel)
+      //  {
+      //    EditorGUI.LabelField(position, type.Name, EditorStyles.centeredGreyMiniLabel);
+      //    position.y += lineHeight;
+      //    count++;
+      //  }
+      //  if (count > maxCount)
+      //    maxCount = count;
+      //
+      //  // Draw
+      //  drawer.DrawEditorGUI(position, value);
+      //  return value;
+      //}, abstractListHeights[hashCode], ReorderableListFlags.HideAddButton);
+      //
+      //float currentHeight = maxCount * lineHeight;
+      //if (abstractListHeights[hashCode] != currentHeight)
+      //{
+      //  abstractListHeights[hashCode] = currentHeight;
+      //  return true;
+      //}
+      //return false;
+      return changed;
+    }
+
+
+    /// <summary>
     /// Draws a field using EditorGUILayout based on its members,
     /// (without using SerializedProperty)
     /// </summary>
@@ -524,9 +605,9 @@ namespace Stratus
     public static bool DrawField<T>(T field)
     {
       Type type = field.GetType();
-      if (!typeDrawers.ContainsKey(type))
-        typeDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
-      return typeDrawers[type].DrawEditorGUILayout(field);
+      if (!objectDrawers.ContainsKey(type))
+        objectDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
+      return objectDrawers[type].DrawEditorGUILayout(field);
     }
 
     /// <summary>
@@ -538,10 +619,9 @@ namespace Stratus
     /// <returns>True if the field was changed</returns>
     public static bool DrawField(FieldInfo field, object target)
     {
-      Type type = field.GetType();
-      if (!typeDrawers.ContainsKey(type))
-        typeDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
-      return typeDrawers[type].DrawEditorGUILayout(target);
+      if (!fieldDrawers.ContainsKey(field))
+        fieldDrawers.Add(field, new SerializedSystemObject.FieldInfoDrawer(field));
+      return fieldDrawers[field].DrawEditorGUILayout(target);
     }
 
     public static void DrawAligned(System.Action drawFunction, TextAlignment alignment)

@@ -10,7 +10,9 @@ namespace Genitus
   /// </summary>
   [CreateAssetMenu(menuName = "Prototype/Mana Skill")]
   public class ManaSkill : Skill<ManaModel, RangeTargeting, StandardDescription>
-  {
+  {    
+
+    
   }
 
 }
