@@ -271,7 +271,7 @@ namespace Stratus
 
     public override void OnInspectorGUI()
     {
-      StratusGUIStyles.OverrideDefaultFont();
+      //StratusGUIStyles.OverrideDefaultFont();
 
       // Invoke the very first time
       if (!doneFirstUpdate)
@@ -305,7 +305,7 @@ namespace Stratus
         }
       }
 
-      StratusGUIStyles.RevertDefaultFont();
+      //StratusGUIStyles.RevertDefaultFont();
     }
 
     public virtual void OnBaseEditorGUI()
@@ -537,6 +537,7 @@ namespace Stratus
       }      
       if (EditorGUI.EndChangeCheck())
       {
+        EditorUtility.SetDirty(target);
         // Record change
         Undo.RecordObject(target, property.field.Name);
         // Apply the modified property

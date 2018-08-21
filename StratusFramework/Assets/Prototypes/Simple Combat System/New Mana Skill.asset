@@ -26,7 +26,94 @@ MonoBehaviour:
         mscorlib
     - Name: 
       Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 1|Genitus.SkillTrigger, Assembly-CSharp
+    - Name: onCast
+      Entry: 6
+      Data: 
+    - Name: onDefend
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 2|Genitus.SkillTelegraph, Assembly-CSharp
+    - Name: number
+      Entry: 3
       Data: 0
+    - Name: telegraphed
+      Entry: 5
+      Data: true
+    - Name: telegraph
+      Entry: 7
+      Data: 3|Genitus.Telegraph+Configuration, Assembly-CSharp
+    - Name: Prefab
+      Entry: 6
+      Data: 
+    - Name: Delivery
+      Entry: 3
+      Data: 1
+    - Name: Material
+      Entry: 6
+      Data: 
+    - Name: Color
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Scale
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 5
+    - Name: 
+      Entry: 4
+      Data: 0.5
+    - Name: 
+      Entry: 4
+      Data: 5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Damping
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 4|Genitus.StandardSkillVFX, Assembly-CSharp
+    - Name: particleSystem
+      Entry: 6
+      Data: 
+    - Name: sound
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 13
       Data: 
