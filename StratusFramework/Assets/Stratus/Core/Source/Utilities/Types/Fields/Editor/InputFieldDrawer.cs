@@ -21,8 +21,8 @@ namespace Stratus
         Rect contentPosition = EditorGUI.PrefixLabel(position, label);
         var width = contentPosition.width;
 
-        int indent = EditorGUI.indentLevel;
-        EditorGUI.indentLevel = 0;
+        //int indent = EditorGUI.indentLevel;
+        //EditorGUI.indentLevel = 0;
 
         // 1. Modify the type
         contentPosition.width = width * typeWidth;
@@ -49,7 +49,7 @@ namespace Stratus
 
         EditorGUI.EndProperty();
 
-        EditorGUI.indentLevel = indent;
+        //EditorGUI.indentLevel = indent;
 
         // 3. Save, if updated
         if (GUI.changed)

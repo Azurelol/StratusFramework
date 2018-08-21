@@ -22,6 +22,15 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
+    public static SerializedSystemObject.SystemObjectDrawer GetDrawer(object element)
+    {
+      Type elementType = element.GetType();
+      if (!objectDrawers.ContainsKey(elementType))
+        objectDrawers.Add(elementType, new SerializedSystemObject.SystemObjectDrawer(elementType));
+      SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[elementType];
+      return drawer;
+    }
+
     /// <summary>
     /// Draws a list of elements deriving from a base class
     /// </summary>
@@ -120,6 +129,7 @@ namespace Stratus
       foreach (var element in list)
       {
         EditorGUILayout.Space();
+
         // Get the drawer for the type
         Type elementType = element.GetType();
         if (!objectDrawers.ContainsKey(elementType))
@@ -145,13 +155,33 @@ namespace Stratus
     }
 
     /// <summary>
-    /// Draws a field using EditorGUILayout based on its members,
-    /// (without using SerializedProperty)
+    /// Draws a list of elements deriving from a base class
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="field"></param>
-    /// <returns>True if the field was changed</returns>
-    public static bool DrawField<T>(T field)
+    /// <returns>True if the height of the list changed, which signals a repaint event</returns>
+    public static bool DrawPolymorphicList2(FieldInfo field, object target, string title, bool useTypeLabel = true)
+    {
+      // We need to remember this list since the height is variable depending on the
+      // amount of fields being drawn      
+      var fieldValue = field.GetValue(target);
+      IList list = fieldValue as IList;
+
+      if (list.Count == 0)
+        return false;
+
+      
+      bool changed = false;
+
+      return changed;
+    }
+
+      /// <summary>
+      /// Draws a field using EditorGUILayout based on its members,
+      /// (without using SerializedProperty)
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <param name="field"></param>
+      /// <returns>True if the field was changed</returns>
+      public static bool DrawField<T>(T field)
     {
       Type type = field.GetType();
       if (!objectDrawers.ContainsKey(type))

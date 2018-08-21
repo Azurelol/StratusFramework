@@ -9,7 +9,7 @@ using Stratus.Utilities;
 namespace Stratus
 {
   [CustomPropertyDrawer(typeof(StratusSerializable), true)]
-  public class SerializableClassDrawer : PropertyDrawer
+  public class StratusSerializableDrawer : PropertyDrawer
   {
     //------------------------------------------------------------------------/
     // Properties
@@ -78,9 +78,9 @@ namespace Stratus
       {
         if (isArray)
         {
-          EditorGUI.indentLevel++;
+          //EditorGUI.indentLevel++;
           DrawArray(position, property);
-          EditorGUI.indentLevel--;
+          //EditorGUI.indentLevel--;
         }
         else
         {

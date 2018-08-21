@@ -115,28 +115,10 @@ namespace Stratus
         {
           height += GetPropertyHeight(child);
         }
-
-        //fields = fieldInfo.FieldType.GetFields();
-        //fieldCount = fields.Length;
-        //hasMultipleFields = fieldCount > 1;
-
-
-        //height = EditorGUI.GetPropertyHeight(property);
-        //for (int c = 0; c < property.; ++c)
-        //{
-        //  height += GetPropertyHeight(property.GetArrayElementAtIndex(c));
-        //}
-        //height = GetPropertyHeight(property);
       }
       else
       {
         height = GetPropertyHeight(property);
-        //fields = fieldInfo.FieldType.GetFields();
-        //fieldCount = fields.Length;
-        //property = property.serializedObject.FindProperty(fieldInfo.Name);
-        //hasMultipleFields = fieldCount > 1;
-        //height = property.isExpanded ? fieldCount + 1 : 1;
-        //height *= lineHeight;
       }
 
       return height;

@@ -42,53 +42,27 @@ namespace Stratus
       public bool isValid => onValidate != null ? onValidate() : true;
     }
 
-    /// <summary>
-    /// Manages a property serialized by Odin
-    /// </summary>
-    public class OdinSerializedProperty
+
+
+
+
+    public class ReorderableListImplementation : Malee.Editor.ReorderableList
     {
-      public FieldInfo field;
-      public object target;
-
-      public OdinSerializedProperty(FieldInfo field, object target)
+      public ReorderableListImplementation(SerializedProperty list) : base(list)
       {
-        this.field = field;
-        this.target = target;
       }
 
-      public void DrawEditorGUILayout(object target)
+      public ReorderableListImplementation(SerializedProperty list, bool canAdd, bool canRemove, bool draggable) : base(list, canAdd, canRemove, draggable)
       {
-        StratusEditorUtility.DrawField(this.field, target);
-      }
-    }
-
-    /// <summary>
-    /// A request to draw a serialized property
-    /// </summary>
-    public class SerializedPropertyModel
-    {
-      public enum Type
-      {
-        Unity,
-        Odin
       }
 
-      public Type type { get; private set; }
-      public SerializedProperty unitySerialized { get; private set; }
-      public OdinSerializedProperty odinSerialized { get; private set; }
-
-      public SerializedPropertyModel(SerializedProperty serializedProperty)
+      public ReorderableListImplementation(SerializedProperty list, bool canAdd, bool canRemove, bool draggable, ElementDisplayType elementDisplayType, string elementNameProperty, Texture elementIcon) : base(list, canAdd, canRemove, draggable, elementDisplayType, elementNameProperty, elementIcon)
       {
-        this.unitySerialized = serializedProperty;
-        this.type = Type.Unity;
       }
 
-      public SerializedPropertyModel(OdinSerializedProperty serializedProperty)
+      public ReorderableListImplementation(SerializedProperty list, bool canAdd, bool canRemove, bool draggable, ElementDisplayType elementDisplayType, string elementNameProperty, string elementNameOverride, Texture elementIcon) : base(list, canAdd, canRemove, draggable, elementDisplayType, elementNameProperty, elementNameOverride, elementIcon)
       {
-        this.odinSerialized = serializedProperty;
-        this.type = Type.Odin;
       }
-
     }
 
     //------------------------------------------------------------------------/
@@ -141,11 +115,7 @@ namespace Stratus
     /// <summary>
     /// Whether to draw labels for types above property groups
     /// </summary>
-    public virtual bool drawTypeLabels => false;
-    /// <summary>
-    /// A collection of all registered lists to be drawn with reoderable within this editor
-    /// </summary>
-    protected Dictionary<SerializedProperty, ReorderableList> reorderableLists { get; set; } = new Dictionary<SerializedProperty, ReorderableList>();
+    public virtual bool drawTypeLabels => false;    
     /// <summary>
     /// Custom draw functions to be invoked after property drawing
     /// </summary>
@@ -178,6 +148,14 @@ namespace Stratus
     /// Whether to use reorderable lists for drawing arrays and lists
     /// </summary>
     public bool drawReorderableLists { get; set; } = true;
+    /// <summary>
+    /// A collection of all registered lists to be drawn with reoderable within this editor
+    /// </summary>
+    protected Dictionary<SerializedProperty, ReorderableListImplementation> reorderableLists { get; set; } = new Dictionary<SerializedProperty, ReorderableListImplementation>();
+    /// <summary>
+    /// A collection of all registered lists to be drawn with reoderable within this editor
+    /// </summary>
+    protected Dictionary<OdinSerializedProperty, StratusReorderableList> stratusReorderableLists { get; set; } = new Dictionary<OdinSerializedProperty, StratusReorderableList>();
     /// <summary>
     /// Any requests to be processed at the end of this frame
     /// </summary>
@@ -423,7 +401,9 @@ namespace Stratus
           {
             SerializedProperty property = serializedObject.FindProperty(field.Name);
             if (property != null)
+            {
               serializedProperties.Add(property);
+            }
           }
         }
       }
@@ -533,7 +513,14 @@ namespace Stratus
       bool changed = false;
       EditorGUI.BeginChangeCheck();
       {
-        changed |= StratusEditorUtility.DrawField(property.field, this.target);
+        if (property.isArray)
+        {
+          this.DrawReorderableList(property);
+        }
+        else
+        {
+          changed |= StratusEditorUtility.DrawField(property.field, this.target);
+        }
       }      
       if (EditorGUI.EndChangeCheck())
       {
@@ -550,11 +537,11 @@ namespace Stratus
     /// <summary>
     /// Draws a serialized property, saving any recorded changes
     /// </summary>
-    /// <param name="prop"></param>
+    /// <param name="property"></param>
     /// <returns></returns>
-    public bool DrawSerializedProperty(SerializedProperty prop)
+    public bool DrawSerializedProperty(SerializedProperty property)
     {
-      return DrawSerializedProperty(prop, serializedObject);
+      return DrawSerializedProperty(property, serializedObject);
     }
 
     /// <summary>
@@ -571,14 +558,43 @@ namespace Stratus
     }
 
     /// <summary>
+    /// Adds a reorderable list drawer to the editor
+    /// </summary>
+    /// <param name="property"></param>
+    private void AddReorderableList(SerializedProperty property)
+    {
+      reorderableLists.Add(property, new ReorderableListImplementation(property));
+    }
+
+    /// <summary>
+    /// Adds a reorderable list drawer to the editor
+    /// </summary>
+    /// <param name="property"></param>
+    private void AddReorderableList(OdinSerializedProperty property)
+    {
+      stratusReorderableLists.Add(property, StratusReorderableList.PolymorphicList(property));
+    }
+
+    /// <summary>
     /// Draws the given array type using a reorderable list drawer
     /// </summary>
     /// <param name="property"></param>
     /// <param name="label"></param>
-    public static void DrawReorderableList(SerializedProperty property, string label)
+    protected void DrawReorderableList(SerializedProperty property, string label)
     {
+      //reorderableLists[property].DoLayoutList();
       ReorderableListGUI.Title(label);
       ReorderableListGUI.ListField(property);
+    }
+
+    /// <summary>
+    /// Draws the given array type using a reorderable list drawer
+    /// </summary>
+    /// <param name="property"></param>
+    /// <param name="label"></param>
+    protected void DrawReorderableList(OdinSerializedProperty property)
+    {
+      stratusReorderableLists[property].DoLayoutList();
     }
 
     /// <summary>
@@ -600,39 +616,6 @@ namespace Stratus
     public static void DrawReorderableList<T>(List<T> list, ReorderableListControl.ItemDrawer<T> drawItem)
     {
       ReorderableListGUI.ListField(list, drawItem);
-    }
-
-    public static ReorderableList GetListWithFoldout(SerializedObject serializedObject, SerializedProperty property, bool draggable, bool displayHeader, bool displayAddButton, bool displayRemoveButton)
-    {
-      var list = new ReorderableList(serializedObject, property, draggable, displayHeader, displayAddButton, displayRemoveButton);
-
-      list.drawHeaderCallback = (Rect rect) =>
-      {
-        var newRect = new Rect(rect.x + 10, rect.y, rect.width - 10, rect.height);
-        property.isExpanded = EditorGUI.Foldout(newRect, property.isExpanded, property.displayName);
-      };
-      list.drawElementCallback =
-        (Rect rect, int index, bool isActive, bool isFocused) =>
-        {
-          if (!property.isExpanded)
-          {
-            GUI.enabled = index == list.count;
-            return;
-          }
-
-          var element = list.serializedProperty.GetArrayElementAtIndex(index);
-          rect.y += 2;
-          EditorGUI.ObjectField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element, GUIContent.none);
-        };
-      list.elementHeightCallback = (int indexer) =>
-      {
-        if (!property.isExpanded)
-          return 0;
-        else
-          return list.elementHeight;
-      };
-
-      return list;
     }
 
     //------------------------------------------------------------------------/
@@ -665,7 +648,7 @@ namespace Stratus
       {
         switch (property.type)
         {
-          case SerializedPropertyModel.Type.Unity:
+          case SerializedPropertyModel.SerializationType.Unity:
             bool hasConstraint = propertyConstraints.ContainsKey(property.unitySerialized);
             if (hasConstraint)
             {
@@ -676,7 +659,7 @@ namespace Stratus
             propertiesChanged |= DrawSerializedProperty(property.unitySerialized, serializedObject);
             break;
 
-          case SerializedPropertyModel.Type.Odin:
+          case SerializedPropertyModel.SerializationType.Odin:
             propertiesChanged |= DrawSerializedProperty(property.odinSerialized);
             break;
         }
@@ -691,14 +674,6 @@ namespace Stratus
     /// </summary>
     internal void AddProperties()
     {
-      // Add all properties to the map
-      //SerializedProperty[] allProperties = GetSerializedProperties(serializedObject);
-      //foreach (var property in allProperties)
-      //{
-      //  if (!propertyMap.ContainsKey(property.name))
-      //    propertyMap.Add(property.name, property);
-      //}
-
       // Reset the number of drawn properties
       this.drawnProperties = 0;
 
@@ -712,13 +687,11 @@ namespace Stratus
       {
         //Trace.Script($"Adding properties for {currentType.Name}");
 
-        //SerializedProperty[] serializedProperties = properties.Item1;
-
         // Serialized Properties
         var propertiesSplit = GetSerializedProperties(serializedObject, currentType);
-        var properties = GetSerializedPropertyDrawers(propertiesSplit.Item1, propertiesSplit.Item2);
+        var unityProperties = GetSerializedPropertyDrawers(propertiesSplit.Item1, propertiesSplit.Item2);
 
-        foreach (var property in properties)
+        foreach (var property in unityProperties)
         {
           // Record this property
           if (property == null)
@@ -727,13 +700,14 @@ namespace Stratus
             //continue;
           }
 
-          if (property.type != SerializedPropertyModel.Type.Unity)
+          if (property.type != SerializedPropertyModel.SerializationType.Unity)
             continue;
 
-
           SerializedProperty serializedProperty = property.unitySerialized;          
+          
           // Map the property
           propertyMap.Add(serializedProperty.name, serializedProperty);
+          
           // Record the attributes for this property
           Attribute[] attributes = serializedProperty.GetFieldAttributes();
           propertyAttributes.Add(serializedProperty, attributes);
@@ -741,24 +715,30 @@ namespace Stratus
           foreach (var attr in attributes)
           {
             propertyAttributesMap[serializedProperty].AddIfMissing(attr.GetType(), attr);
-            //Trace.Script($"{property.displayName} has the attribute '{attr.GetType().Name}'");
           }
           OnPropertyAttributesAdded(serializedProperty);
 
           // Check whether this property is an array
           if (serializedProperty.isArray && serializedProperty.propertyType != SerializedPropertyType.String)
           {
-            ReorderableList list = GetListWithFoldout(serializedObject, serializedProperty, true, true, true, true);
-            reorderableLists.Add(serializedProperty, list);
+            this.AddReorderableList(serializedProperty);            
+          }
+        }
+
+        foreach(var odinProperty in propertiesSplit.Item2)
+        {
+          if (odinProperty.isArray)
+          {
+            this.AddReorderableList(odinProperty);
           }
         }
 
         // Add all the properties for this type into the property map by type        
         if (!currentType.IsGenericType)
         {
-          propertiesByType.Add(currentType, properties);
+          propertiesByType.Add(currentType, unityProperties);
           unityPropertiesByType.Add(currentType, propertiesSplit.Item1);
-          propertyGroups.Add(new Tuple<Type, SerializedPropertyModel[]>(currentType, properties));
+          propertyGroups.Add(new Tuple<Type, SerializedPropertyModel[]>(currentType, unityProperties));
         }
         else
         {
@@ -766,7 +746,7 @@ namespace Stratus
           SerializedProperty[] joinedUnityProperties = unityPropertiesByType[previousType].Concat(propertiesSplit.Item1);
           unityPropertiesByType[previousType] = joinedUnityProperties;
           // Combined
-          SerializedPropertyModel[] joinedProperties = propertiesByType[previousType].Concat(properties);
+          SerializedPropertyModel[] joinedProperties = propertiesByType[previousType].Concat(unityProperties);
           propertiesByType[previousType] = joinedProperties;
           // Concat property groups
           var lastGroup = propertyGroups.Last();
@@ -798,7 +778,7 @@ namespace Stratus
     {
       foreach (var property in properties)
       {
-        if (property.type != SerializedPropertyModel.Type.Unity)
+        if (property.type != SerializedPropertyModel.SerializationType.Unity)
           continue;
 
         bool foundConstraint = propertyConstraints.ContainsKey(property.unitySerialized);
