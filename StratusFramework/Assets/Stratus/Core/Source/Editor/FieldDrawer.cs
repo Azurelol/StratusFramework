@@ -30,6 +30,7 @@ namespace Stratus
         this.isDrawable = propertyType != SerializedPropertyType.Generic;
         this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
         this.isArray = typeof(IList).IsAssignableFrom(this.type); //this.type.IsArray || IsList(this.type);
+        this.height = StratusEditorUtility.lineHeight;
       }
 
       public FieldDrawer(FieldInfo field, SerializedPropertyType propertyType)
@@ -42,7 +43,6 @@ namespace Stratus
         this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
         this.isArray = typeof(IList).IsAssignableFrom(this.type); //this.type.IsArray || IsList(this.type);
       }
-
 
       public override bool DrawEditorGUILayout(object target)
       {

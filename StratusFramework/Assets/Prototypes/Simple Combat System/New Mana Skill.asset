@@ -26,13 +26,13 @@ MonoBehaviour:
         mscorlib
     - Name: 
       Entry: 12
-      Data: 2
+      Data: 4
     - Name: 
       Entry: 7
       Data: 1|Genitus.SkillTelegraph, Assembly-CSharp
     - Name: number
       Entry: 3
-      Data: 99
+      Data: 18
     - Name: telegraphed
       Entry: 5
       Data: true
@@ -53,13 +53,13 @@ MonoBehaviour:
       Data: UnityEngine.Color, UnityEngine.CoreModule
     - Name: 
       Entry: 4
-      Data: 1
+      Data: 0.430758268
     - Name: 
       Entry: 4
-      Data: 0
+      Data: 0.5321816
     - Name: 
       Entry: 4
-      Data: 0
+      Data: 0.754717
     - Name: 
       Entry: 4
       Data: 1
@@ -98,6 +98,60 @@ MonoBehaviour:
       Data: 
     - Name: sound
       Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 4|Genitus.SkillTiming, Assembly-CSharp
+    - Name: timings
+      Entry: 7
+      Data: 5|Genitus.CombatAction+Timings, Assembly-CSharp
+    - Name: Start
+      Entry: 4
+      Data: 0.88
+    - Name: Cast
+      Entry: 4
+      Data: 13.11
+    - Name: Trigger
+      Entry: 4
+      Data: 0
+    - Name: Execute
+      Entry: 4
+      Data: 0.25
+    - Name: End
+      Entry: 4
+      Data: 0.25
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 6|Genitus.SkillTiming, Assembly-CSharp
+    - Name: timings
+      Entry: 7
+      Data: 7|Genitus.CombatAction+Timings, Assembly-CSharp
+    - Name: Start
+      Entry: 4
+      Data: 0.1
+    - Name: Cast
+      Entry: 4
+      Data: 55
+    - Name: Trigger
+      Entry: 4
+      Data: 0
+    - Name: Execute
+      Entry: 4
+      Data: 0.25
+    - Name: End
+      Entry: 4
+      Data: 0.25
+    - Name: 
+      Entry: 8
       Data: 
     - Name: 
       Entry: 8

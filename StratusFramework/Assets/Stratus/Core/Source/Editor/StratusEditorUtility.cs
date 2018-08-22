@@ -37,8 +37,7 @@ namespace Stratus
     public static float lineHeight => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
     public static DefaultPropertyFieldDelegate defaultPropertyField { get; private set; }
 
-    private static Dictionary<Type, SerializedSystemObject.SystemObjectDrawer> objectDrawers { get; set; } = new Dictionary<Type, SerializedSystemObject.SystemObjectDrawer>();
-    private static Dictionary<FieldInfo, SerializedSystemObject.FieldDrawer> fieldDrawers { get; set; } = new Dictionary<FieldInfo, SerializedSystemObject.FieldDrawer>();
+    
     private static Dictionary<int, float> abstractListHeights { get; set; } = new Dictionary<int, float>();
 
 

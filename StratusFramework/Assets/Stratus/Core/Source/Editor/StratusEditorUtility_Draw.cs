@@ -22,22 +22,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    public static SerializedSystemObject.SystemObjectDrawer GetDrawer(object element)
-    {
-      Type elementType = element.GetType();
-      if (!objectDrawers.ContainsKey(elementType))
-        objectDrawers.Add(elementType, new SerializedSystemObject.SystemObjectDrawer(elementType));
-      SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[elementType];
-      return drawer;
-    }
 
-    public static SerializedSystemObject.SystemObjectDrawer GetDrawer(Type elementType)
-    {
-      if (!objectDrawers.ContainsKey(elementType))
-        objectDrawers.Add(elementType, new SerializedSystemObject.SystemObjectDrawer(elementType));
-      SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[elementType];
-      return drawer;
-    }
 
     /// <summary>
     /// Draws a list of elements deriving from a base class
@@ -57,9 +42,7 @@ namespace Stratus
       {
         // Get the drawer
         Type type = value.GetType();
-        if (!objectDrawers.ContainsKey(type))
-          objectDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
-        SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[type];
+        SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(type);
 
         // We draw one line at a time
         position.height = lineHeight;
@@ -140,10 +123,7 @@ namespace Stratus
 
         // Get the drawer for the type
         Type elementType = element.GetType();
-        if (!objectDrawers.ContainsKey(elementType))
-          objectDrawers.Add(elementType, new SerializedSystemObject.SystemObjectDrawer(elementType));
-        SerializedSystemObject.SystemObjectDrawer drawer = objectDrawers[elementType];
-
+        SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(elementType);
 
         EditorGUILayout.BeginVertical(ReorderableListStyles.Container);
         {
@@ -162,39 +142,18 @@ namespace Stratus
       return changed;
     }
 
+
     /// <summary>
-    /// Draws a list of elements deriving from a base class
+    /// Draws a field using EditorGUILayout based on its members,
+    /// (without using SerializedProperty)
     /// </summary>
-    /// <returns>True if the height of the list changed, which signals a repaint event</returns>
-    public static bool DrawPolymorphicList2(FieldInfo field, object target, string title, bool useTypeLabel = true)
-    {
-      // We need to remember this list since the height is variable depending on the
-      // amount of fields being drawn      
-      var fieldValue = field.GetValue(target);
-      IList list = fieldValue as IList;
-
-      if (list.Count == 0)
-        return false;
-
-      
-      bool changed = false;
-
-      return changed;
-    }
-
-      /// <summary>
-      /// Draws a field using EditorGUILayout based on its members,
-      /// (without using SerializedProperty)
-      /// </summary>
-      /// <typeparam name="T"></typeparam>
-      /// <param name="field"></param>
-      /// <returns>True if the field was changed</returns>
-      public static bool DrawField<T>(T field)
+    /// <typeparam name="T"></typeparam>
+    /// <param name="field"></param>
+    /// <returns>True if the field was changed</returns>
+    public static bool DrawField<T>(T field)
     {
       Type type = field.GetType();
-      if (!objectDrawers.ContainsKey(type))
-        objectDrawers.Add(type, new SerializedSystemObject.SystemObjectDrawer(type));
-      return objectDrawers[type].DrawEditorGUILayout(field);
+      return SerializedSystemObject.GetObjectDrawer(type).DrawEditorGUILayout(field);
     }
 
     /// <summary>
@@ -206,9 +165,7 @@ namespace Stratus
     /// <returns>True if the field was changed</returns>
     public static bool DrawField(FieldInfo field, object target)
     {
-      if (!fieldDrawers.ContainsKey(field))
-        fieldDrawers.Add(field, new SerializedSystemObject.FieldDrawer(field));
-      return fieldDrawers[field].DrawEditorGUILayout(target);
+      return SerializedSystemObject.GetFieldDrawer(field).DrawEditorGUILayout(target);
     }
   }
 }

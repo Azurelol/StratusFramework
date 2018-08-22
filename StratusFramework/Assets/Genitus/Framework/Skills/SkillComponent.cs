@@ -14,19 +14,6 @@ namespace Genitus
     protected abstract void OnActivation(CombatController user, CombatController target);
   }
 
-
-  //public interface SkillAudioVisualEffects
-  //{    
-  //}
-  //
-  ///// <summary>
-  ///// A component that handles target acquisition for a skill
-  ///// </summary>
-  //public interface SkillTargetingComponent
-  //{
-  //  CombatController[] GetTargets(CombatController user, CombatController target);
-  //}
-
   [Serializable]
   public class StandardSkillVFX : SkillComponent
   {
