@@ -18,7 +18,7 @@ namespace Stratus
     private static int hash { get; } = nameof(SearchableEnum).GetHashCode();
     private static Dictionary<Type, string[]> enumDisplayNames { get; set; } = new Dictionary<Type, string[]>();
     private static Dictionary<Type, Array> enumValues { get; set; } = new Dictionary<Type, Array>();
-    private static Rect defaultPosition => GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth, StratusEditorUtility.lineHeight);
+    
 
     //------------------------------------------------------------------------/
     // Methods
@@ -44,7 +44,7 @@ namespace Stratus
       Type enumType = selected.GetType();
       string[] displayedOptions = GetEnumDisplayNames(enumType);
       GUIContent enumValueContent = new GUIContent(selected.ToString());
-      if (DropdownButton(id, position, enumValueContent))
+      if (SearchablePopup.DropdownButton(id, position, enumValueContent))
       {
         System.Action<int> onSelectIndex = i =>
         {
@@ -74,7 +74,7 @@ namespace Stratus
       // Enum Drawer
       string[] displayedOptions = GetEnumDisplayNames(enumType);
       GUIContent enumValueContent = new GUIContent(displayedOptions[selectedIndex]);
-      if (DropdownButton(id, position, enumValueContent))
+      if (SearchablePopup.DropdownButton(id, position, enumValueContent))
       {
         System.Action<int> onSelect = i =>
         {
@@ -84,46 +84,6 @@ namespace Stratus
         };
         SearchablePopup.EditorGUI(position, selectedIndex, displayedOptions, onSelect);
       }
-    }
-
-    /// <summary>
-    /// Displays an searchable popup for a list of strings
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="label"></param>
-    /// <param name="selected"></param>
-    /// <returns></returns>
-    public static void Popup(Rect position, string label, int selectedIndex, string[] displayedOptions, System.Action<string> onSelected)
-    {
-      int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
-
-      // Prefix
-      GUIContent labelContent = new GUIContent(label);
-      position = EditorGUI.PrefixLabel(position, id, labelContent);
-
-      // Enum Drawer
-      GUIContent enumValueContent = new GUIContent(displayedOptions[selectedIndex]);
-      if (DropdownButton(id, position, enumValueContent))
-      {
-        System.Action<int> onSelect = i =>
-        {
-          string value = displayedOptions[i];
-          onSelected(value);
-        };
-        SearchablePopup.EditorGUI(position, selectedIndex, displayedOptions, onSelect);
-      }
-    }
-
-    /// <summary>
-    /// Displays an searchable popup for a list of strings
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="label"></param>
-    /// <param name="selected"></param>
-    /// <returns></returns>
-    public static void Popup(string label, int selectedIndex, string[] displayedOptions, System.Action<string> onSelected)
-    {
-      Popup(defaultPosition, label, selectedIndex, displayedOptions, onSelected);
     }
 
     /// <summary>
@@ -142,7 +102,7 @@ namespace Stratus
       // Enum Drawer
       string[] displayedOptions = property.enumDisplayNames;
       GUIContent enumValueContent = new GUIContent(displayedOptions[property.enumValueIndex]);
-      if (DropdownButton(id, position, enumValueContent))
+      if (SearchablePopup.DropdownButton(id, position, enumValueContent))
       {
         System.Action<int> onSelect = i =>
         {
@@ -174,38 +134,7 @@ namespace Stratus
     /// <param name="property"></param>
     public static void EnumPopup(SerializedProperty property)
     {
-      EnumPopup(defaultPosition, property);
-    }
-
-    /// <summary>
-    /// A custom button drawer that allows for a controlID so that we can
-    /// sync the button ID and the label ID to allow for keyboard
-    /// navigation like the built-in enum drawers.
-    /// </summary>
-    private static bool DropdownButton(int id, Rect position, GUIContent content)
-    {
-      UnityEngine.Event current = UnityEngine.Event.current;
-      switch (current.type)
-      {
-        case EventType.MouseDown:
-          if (position.Contains(current.mousePosition) && current.button == 0)
-          {
-            UnityEngine.Event.current.Use();
-            return true;
-          }
-          break;
-        case EventType.KeyDown:
-          if (GUIUtility.keyboardControl == id && current.character == '\n')
-          {
-            UnityEngine.Event.current.Use();
-            return true;
-          }
-          break;
-        case EventType.Repaint:
-          EditorStyles.popup.Draw(position, content, id, false);
-          break;
-      }
-      return false;
+      EnumPopup(SearchablePopup.defaultPosition, property);
     }
 
     private static string[] GetEnumDisplayNames(Enum value)

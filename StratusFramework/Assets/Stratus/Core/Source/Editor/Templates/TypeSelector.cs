@@ -22,10 +22,18 @@ namespace Stratus
     public Type selectedClass => subTypes[currentIndex];
     private string selectedClassName => selectedClass.Name;
     public string[] displayedOptions { get; private set; }
-    public bool showHint { get; private set; }
-    public bool isValidIndex => showHint ? selectedIndex > 0 : true;
-    public int currentIndex => showHint ? selectedIndex - 1 : selectedIndex;
-    public string selectionHint { get; private set; }
+    public bool isValidIndex => currentIndex > 0;
+    public int currentIndex
+    {
+      get
+      {
+        return selectedIndex;
+      }
+      set
+      {
+        selectedIndex = Mathf.Clamp(value, 0, subTypes.Length - 1);
+      }
+    }
     //{
     //  get { return selectionHintField; }
     //  set
@@ -113,17 +121,6 @@ namespace Stratus
       });
       return changed && isValidIndex;
     }
-
-    private void SetHint(string hint)
-    {
-      showHint = true;
-      selectionHint = hint;
-      displayedOptions = displayedOptions.AddFront(selectionHint);
-    }
-
-
-
-
 
   }
 

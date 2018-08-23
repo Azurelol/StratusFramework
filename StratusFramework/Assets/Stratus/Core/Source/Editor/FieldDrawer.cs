@@ -156,6 +156,7 @@ namespace Stratus
             break;
           case SerializedPropertyType.Enum:
             //value = EditorGUI.EnumPopup(position, name, GetValue<Enum>(target));
+            //value = SearchableEnum.EnumPopup(position, name, GetValue<Enum>(target));
             SearchableEnum.EnumPopup(position, name, GetValue<Enum>(target), (Enum selected) => SetValue(target, selected));
             break;
           case SerializedPropertyType.Vector2:
@@ -186,9 +187,9 @@ namespace Stratus
 
       public object OnFloatEditorGUI(Rect position, object target)
       {
-        EditorGUI.PrefixLabel(position, new GUIContent(name));
-        position.x += labelWidth;
-        position.width -= labelWidth;
+        position = EditorGUI.PrefixLabel(position, new GUIContent(name));
+        //position.x += labelWidth;
+        //position.width -= labelWidth;
 
         float value = GetValue<float>(target);
         if (attributesByName.ContainsKey(rangeAttributeType))
@@ -205,9 +206,9 @@ namespace Stratus
 
       public int OnIntEditorGUI(Rect position, object target)
       {
-        EditorGUI.PrefixLabel(position, new GUIContent(name));
-        position.x += labelWidth;
-        position.width -= labelWidth;
+        position = EditorGUI.PrefixLabel(position, new GUIContent(name));
+        //position.x += labelWidth;
+        //position.width -= labelWidth;
 
         int value = GetValue<int>(target);
         if (attributesByName.ContainsKey(rangeAttributeType))

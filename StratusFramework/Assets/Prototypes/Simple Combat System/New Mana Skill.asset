@@ -27,16 +27,19 @@ MonoBehaviour:
         mscorlib
     - Name: 
       Entry: 12
-      Data: 3
+      Data: 2
     - Name: 
       Entry: 7
-      Data: 1|Genitus.Effects.DamageEffect, Assembly-CSharp
+      Data: 1|Genitus.Effects.DelayEffect, Assembly-CSharp
     - Name: modifier
       Entry: 3
       Data: 0
-    - Name: potency
+    - Name: Chance
       Entry: 4
       Data: 1
+    - Name: delay
+      Entry: 4
+      Data: 0.25
     - Name: 
       Entry: 8
       Data: 
@@ -53,18 +56,6 @@ MonoBehaviour:
       Entry: 8
       Data: 
     - Name: 
-      Entry: 7
-      Data: 3|Genitus.Effects.ProportionalDamageEffect, Assembly-CSharp
-    - Name: modifier
-      Entry: 3
-      Data: 0
-    - Name: percentage
-      Entry: 3
-      Data: 100
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
       Entry: 13
       Data: 
     - Name: 
@@ -72,14 +63,14 @@ MonoBehaviour:
       Data: 
     - Name: components
       Entry: 7
-      Data: 4|System.Collections.Generic.List`1[[Genitus.SkillComponent, Assembly-CSharp]],
+      Data: 3|System.Collections.Generic.List`1[[Genitus.SkillComponent, Assembly-CSharp]],
         mscorlib
     - Name: 
       Entry: 12
       Data: 3
     - Name: 
       Entry: 7
-      Data: 5|Genitus.StandardSkillVFX, Assembly-CSharp
+      Data: 4|Genitus.StandardSkillVFX, Assembly-CSharp
     - Name: particleSystem
       Entry: 10
       Data: 0
@@ -91,10 +82,10 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 6|Genitus.SkillTiming, Assembly-CSharp
+      Data: 5|Genitus.SkillTiming, Assembly-CSharp
     - Name: timings
       Entry: 7
-      Data: 7|Genitus.CombatAction+Timings, Assembly-CSharp
+      Data: 6|Genitus.CombatAction+Timings, Assembly-CSharp
     - Name: Start
       Entry: 4
       Data: 1.5
@@ -118,7 +109,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 8|Genitus.SkillTelegraph, Assembly-CSharp
+      Data: 7|Genitus.SkillTelegraph, Assembly-CSharp
     - Name: number
       Entry: 3
       Data: 40
@@ -127,7 +118,7 @@ MonoBehaviour:
       Data: true
     - Name: telegraph
       Entry: 7
-      Data: 9|Genitus.Telegraph+Configuration, Assembly-CSharp
+      Data: 8|Genitus.Telegraph+Configuration, Assembly-CSharp
     - Name: Prefab
       Entry: 6
       Data: 

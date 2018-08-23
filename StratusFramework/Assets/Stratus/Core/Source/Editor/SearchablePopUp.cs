@@ -49,10 +49,12 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
+    public static Rect defaultPosition => GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth, StratusEditorUtility.lineHeight);
     public static GUIStyle toolbarStyle => EditorStyles.toolbar;
     public static Color selectedColor => Color.cyan;
     public static Color defaultColor => Color.white;
     public static UnityEngine.Event currentEvent => UnityEngine.Event.current;
+    private static int hash { get; } = nameof(SearchablePopup).GetHashCode();
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -225,8 +227,79 @@ namespace Stratus
       PopupWindow.Show(rect, window);
     }
 
+    /// <summary>
+    /// Displays an searchable popup for a list of strings
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="label"></param>
+    /// <param name="selected"></param>
+    /// <returns></returns>
+    public static void Popup(Rect position, string label, int selectedIndex, string[] displayedOptions, System.Action<int> onSelected)
+    {
+      int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
+
+      // Prefix
+      GUIContent labelContent = new GUIContent(label);
+      position = UnityEditor.EditorGUI.PrefixLabel(position, id, labelContent);
+
+      // Enum Drawer
+      GUIContent enumValueContent = new GUIContent(displayedOptions[selectedIndex]);
+      if (DropdownButton(id, position, enumValueContent))
+      {
+        System.Action<int> onSelect = i =>
+        {
+          onSelected(i);
+          //string value = displayedOptions[i];
+        };
+        SearchablePopup.EditorGUI(position, selectedIndex, displayedOptions, onSelect);
+      }
+    }
+
+    /// <summary>
+    /// Displays an searchable popup for a list of strings
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="label"></param>
+    /// <param name="selected"></param>
+    /// <returns></returns>
+    public static void Popup(string label, int selectedIndex, string[] displayedOptions, System.Action<int> onSelected)
+    {
+      Popup(defaultPosition, label, selectedIndex, displayedOptions, onSelected);
+    }
+
     private static void Repaint() => EditorWindow.focusedWindow.Repaint();    
     private void ResetScrollPosition() => this.scrollPosition = Vector2.zero;
+
+    /// <summary>
+    /// A custom button drawer that allows for a controlID so that we can
+    /// sync the button ID and the label ID to allow for keyboard
+    /// navigation like the built-in enum drawers.
+    /// </summary>
+    public static bool DropdownButton(int id, Rect position, GUIContent content)
+    {
+      UnityEngine.Event current = UnityEngine.Event.current;
+      switch (current.type)
+      {
+        case EventType.MouseDown:
+          if (position.Contains(current.mousePosition) && current.button == 0)
+          {
+            UnityEngine.Event.current.Use();
+            return true;
+          }
+          break;
+        case EventType.KeyDown:
+          if (GUIUtility.keyboardControl == id && current.character == '\n')
+          {
+            UnityEngine.Event.current.Use();
+            return true;
+          }
+          break;
+        case EventType.Repaint:
+          EditorStyles.popup.Draw(position, content, id, false);
+          break;
+      }
+      return false;
+    }
 
   }
 
