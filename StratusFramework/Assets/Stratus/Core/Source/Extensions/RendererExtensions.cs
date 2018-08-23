@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   RendererExtensions.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 
 namespace Stratus

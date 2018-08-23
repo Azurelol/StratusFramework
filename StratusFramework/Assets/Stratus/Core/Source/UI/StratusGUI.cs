@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Overlay.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@date   5/25/2016
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus.Utilities;
 using System;
@@ -182,6 +174,14 @@ namespace Stratus
       UnityEngine.GUILayout.BeginArea(rect, style);
       onGUI(rect);
       UnityEngine.GUILayout.EndArea();
+    }
+
+    public static void GUIBox(Rect rect, Color tint, GUIStyle style)
+    {
+      Color currentColor = GUI.color;
+      GUI.color = tint;
+      GUI.Box(rect, "", style);
+      GUI.color = currentColor;
     }
 
     /// <summary>

@@ -193,7 +193,7 @@ namespace Stratus.Gameplay
 
     public void ChangeCamera(string label)
     {
-      Preset preset = presetsMap.TryGetValue(label);
+      Preset preset = presetsMap.GetValueOrError(label);
       ChangeCamera(preset);
     }
 

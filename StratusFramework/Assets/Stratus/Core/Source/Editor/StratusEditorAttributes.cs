@@ -68,7 +68,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Unity Attributes
     //------------------------------------------------------------------------/
-    private static bool OnRangeAttribute(Attribute attribute, SerializedProperty property)
+    public static bool OnRangeAttribute(Attribute attribute, SerializedProperty property)
     {
       RangeAttribute range = attribute as RangeAttribute;
       if (property.propertyType == SerializedPropertyType.Integer)
@@ -77,6 +77,8 @@ namespace Stratus
         EditorGUILayout.Slider(property, range.min, range.max);
       return true;
     }
+
+
     //private static bool OnHideInInspector(Attribute attribute, SerializedProperty property) => true;
 
   }

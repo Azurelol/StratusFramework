@@ -6,7 +6,7 @@ using System;
 namespace Genitus
 {
   [Serializable]
-  public abstract class EffectAttribute : ScriptableObject
+  public abstract class EffectAttribute
   {
     //------------------------------------------------------------------------/
     // Declarations

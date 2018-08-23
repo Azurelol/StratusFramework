@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   TransformExtensions.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using System.Collections.Generic;
 

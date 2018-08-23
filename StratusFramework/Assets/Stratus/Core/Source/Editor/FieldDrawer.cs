@@ -17,16 +17,36 @@ namespace Stratus
     /// </summary>
     public class FieldDrawer : Drawer
     {
+      //------------------------------------------------------------------------/
+      // Properties
+      //------------------------------------------------------------------------/
       public FieldInfo field { get; private set; }
-      public SerializedPropertyType propertyType { get; private set; }      
+      public SerializedPropertyType propertyType { get; private set; }
       public bool isArray { get; private set; }
+      public Dictionary<Type, Attribute> attributesByName { get; private set; } = new Dictionary<Type, Attribute>();
 
+      //------------------------------------------------------------------------/
+      // Properties: Static
+      //------------------------------------------------------------------------/
+      public static Type attributeType { get; } = typeof(System.Attribute);
+      public static Type rangeAttributeType { get; } = typeof(RangeAttribute);
+      //private static Dictionary<Type, System.Func<Attribute, SerializedProperty, bool>> attributeFunctions { get; } = new Dictionary<Type, Func<Attribute, SerializedProperty, bool>>()
+      //{
+      //  { typeof(RangeAttribute), OnRangeAttribute},
+      //};
+
+      //------------------------------------------------------------------------/
+      // CTOR
+      //------------------------------------------------------------------------/
       public FieldDrawer(FieldInfo field)
       {
         this.field = field;
         this.type = this.field.FieldType;
         this.name = ObjectNames.NicifyVariableName(field.Name);
+
+        this.attributesByName.AddRange(this.field.GetCustomAttributes(attributeType), (Attribute attribute) => attribute.GetType());
         this.propertyType = SerializedSystemObject.DeducePropertyType(field);
+
         this.isDrawable = propertyType != SerializedPropertyType.Generic;
         this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
         this.isArray = typeof(IList).IsAssignableFrom(this.type); //this.type.IsArray || IsList(this.type);
@@ -59,7 +79,7 @@ namespace Stratus
             field.SetValue(target, EditorGUILayout.Toggle(name, GetValue<bool>(target)));
             break;
           case SerializedPropertyType.Float:
-            field.SetValue(target, EditorGUILayout.FloatField(name, GetValue<float>(target)));
+            OnFloatEditorGUILayout(target);
             break;
           case SerializedPropertyType.String:
             field.SetValue(target, EditorGUILayout.TextField(name, GetValue<string>(target)));
@@ -99,7 +119,10 @@ namespace Stratus
         }
 
         if (EditorGUI.EndChangeCheck())
+        {
+
           return true;
+        }
 
         return false;
       }
@@ -107,43 +130,44 @@ namespace Stratus
       public override bool DrawEditorGUI(Rect position, object target)
       {
         EditorGUI.BeginChangeCheck();
+        object value = null;
         switch (propertyType)
         {
           case SerializedPropertyType.ObjectReference:
-            field.SetValue(target, EditorGUI.ObjectField(position, name, GetValue<UnityEngine.Object>(target), type, true));
+            value = EditorGUI.ObjectField(position, name, GetValue<UnityEngine.Object>(target), type, true);
             break;
           case SerializedPropertyType.Integer:
-            field.SetValue(target, EditorGUI.IntField(position, name, GetValue<int>(target)));
+            value = OnIntEditorGUI(position, target);
             break;
           case SerializedPropertyType.Boolean:
-            field.SetValue(target, EditorGUI.Toggle(position, name, GetValue<bool>(target)));
+            value = EditorGUI.Toggle(position, name, GetValue<bool>(target));
             break;
           case SerializedPropertyType.Float:
-            field.SetValue(target, EditorGUI.FloatField(position, name, GetValue<float>(target)));
+            value = OnFloatEditorGUI(position, target);
             break;
           case SerializedPropertyType.String:
-            field.SetValue(target, EditorGUI.TextField(position, name, GetValue<string>(target)));
+            value = EditorGUI.TextField(position, name, GetValue<string>(target));
             break;
           case SerializedPropertyType.Color:
-            field.SetValue(target, EditorGUI.ColorField(position, name, GetValue<Color>(target)));
+            value = EditorGUI.ColorField(position, name, GetValue<Color>(target));
             break;
           case SerializedPropertyType.LayerMask:
-            field.SetValue(target, EditorGUI.LayerField(position, name, GetValue<LayerMask>(target)));
+            value = EditorGUI.LayerField(position, name, GetValue<LayerMask>(target));
             break;
           case SerializedPropertyType.Enum:
-            field.SetValue(target, EditorGUI.EnumPopup(position, name, GetValue<Enum>(target)));
+            value = EditorGUI.EnumPopup(position, name, GetValue<Enum>(target));
             break;
           case SerializedPropertyType.Vector2:
-            field.SetValue(target, EditorGUI.Vector2Field(position, name, GetValue<Vector2>(target)));
+            value = EditorGUI.Vector2Field(position, name, GetValue<Vector2>(target));
             break;
           case SerializedPropertyType.Vector3:
-            field.SetValue(target, EditorGUI.Vector3Field(position, name, GetValue<Vector3>(target)));
+            value = EditorGUI.Vector3Field(position, name, GetValue<Vector3>(target));
             break;
           case SerializedPropertyType.Vector4:
-            field.SetValue(target, EditorGUI.Vector4Field(position, name, GetValue<Vector4>(target)));
+            value = EditorGUI.Vector4Field(position, name, GetValue<Vector4>(target));
             break;
           case SerializedPropertyType.Rect:
-            field.SetValue(target, EditorGUI.RectField(position, name, GetValue<Rect>(target)));
+            value = EditorGUI.RectField(position, name, GetValue<Rect>(target));
             break;
           default:
             EditorGUI.LabelField(position, $"No supported drawer for type {type.Name}!");
@@ -151,9 +175,64 @@ namespace Stratus
         }
 
         if (EditorGUI.EndChangeCheck())
+        {
+          SetValue(target, value);
           return true;
+        }
 
         return false;
+      }
+
+      public object OnFloatEditorGUI(Rect position, object target)
+      {
+        EditorGUI.PrefixLabel(position, new GUIContent(name));
+        position.x += labelWidth;
+        position.width -= labelWidth;
+
+        float value = GetValue<float>(target);
+        if (attributesByName.ContainsKey(rangeAttributeType))
+        {
+          RangeAttribute range = attributesByName[rangeAttributeType] as RangeAttribute;
+          value = EditorGUI.Slider(position, value, range.min, range.max);
+        }
+        else
+        {
+          value = EditorGUI.FloatField(position, value);
+        }
+        return value;
+      }
+
+      public int OnIntEditorGUI(Rect position, object target)
+      {
+        EditorGUI.PrefixLabel(position, new GUIContent(name));
+        position.x += labelWidth;
+        position.width -= labelWidth;
+
+        int value = GetValue<int>(target);
+        if (attributesByName.ContainsKey(rangeAttributeType))
+        {
+          RangeAttribute range = attributesByName[rangeAttributeType] as RangeAttribute;
+          value = EditorGUI.IntSlider(position, value, (int)range.min, (int)range.max);
+        }
+        else
+        {
+          value = EditorGUI.IntField(position, value);
+        }
+        return value;
+      }
+
+      public void OnFloatEditorGUILayout(object target)
+      {
+        float value = GetValue<float>(target);
+        if (attributesByName.ContainsKey(rangeAttributeType))
+        {
+          RangeAttribute range = attributesByName[rangeAttributeType] as RangeAttribute;
+          SetValue(target, EditorGUILayout.Slider(name, value, range.min, range.max));
+        }
+        else
+        {
+          SetValue(target, EditorGUILayout.FloatField(name, GetValue<float>(target)));
+        }
       }
 
       public object GetValue(object target) => field.GetValue(target);
@@ -162,5 +241,5 @@ namespace Stratus
     }
   }
 
-  
+
 }

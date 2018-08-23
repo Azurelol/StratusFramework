@@ -1,12 +1,3 @@
-/******************************************************************************/
-/*!
-@file   CollectionsExtensions.cs
-@author Christian Sagel
-@par    email: c.sagel\@digipen.edu
-@par    DigiPen login: c.sagel
-@date   5/25/2016
-*/
-/******************************************************************************/
 using UnityEngine;
 using System.Collections.Generic;
 using Stratus;
@@ -106,10 +97,19 @@ namespace Stratus
       }
     }
 
-    public static Value TryGetValue<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, string errorMessage = null) 
+    public static Value GetValueOrError<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, string errorMessage = null) 
     {
       if (!dictionary.ContainsKey(key))
         throw new ArgumentNullException(errorMessage != null ? errorMessage  : $"The key {key} could not be found!");
+      return dictionary[key];
+    }
+
+    public static Value GetValueAddIfMissing<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, Func<Key, Value> valueFunction)
+    {
+      if (!dictionary.ContainsKey(key))
+      {
+        dictionary.Add(key, valueFunction(key));
+      }
       return dictionary[key];
     }
     

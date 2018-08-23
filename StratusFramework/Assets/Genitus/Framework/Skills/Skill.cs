@@ -38,15 +38,13 @@ namespace Genitus
     /// <summary>
     /// Effects this skill has
     /// </summary>
-    [HideInInspector]
+    [OdinSerialize]
     public List<EffectAttribute> effects = new List<EffectAttribute>();
     /// <summary>
     /// Components used by this skill
     /// </summary>
     [OdinSerialize]
     public List<SkillComponent> components = new List<SkillComponent>();
-
-    
 
     //------------------------------------------------------------------------/
     // Virtual

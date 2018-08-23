@@ -35,6 +35,8 @@ namespace Stratus
     public static bool onRepaint => currentEvent.type == EventType.Repaint;
     public static Rect lastRect => GUILayoutUtility.GetLastRect();
     public static float lineHeight => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+    public static float verticalSpacing => EditorGUIUtility.standardVerticalSpacing;
+    public static float labelWidth => EditorGUIUtility.labelWidth;
     public static DefaultPropertyFieldDelegate defaultPropertyField { get; private set; }
 
     

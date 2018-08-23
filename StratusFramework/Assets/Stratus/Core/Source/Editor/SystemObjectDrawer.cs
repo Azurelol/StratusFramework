@@ -26,8 +26,7 @@ namespace Stratus
       public bool hasDefaultConstructor { get; private set; }
       public int fieldCount => drawers.Length;
       public bool isArray { get; private set; }
-      public bool isField { get; private set; }
-      
+      public bool isField { get; private set; }      
 
       //------------------------------------------------------------------------/
       // CTOR
@@ -35,7 +34,7 @@ namespace Stratus
       public ObjectDrawer(Type type, ObjectDrawer parent = null)
       {
         this.type = type;
-        this.fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+        this.fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
         this.fieldsByName.AddRange(this.fields, (FieldInfo field) => field.Name);
         this.height = lineHeight;
         this.drawers = GenerateDrawers(fields);

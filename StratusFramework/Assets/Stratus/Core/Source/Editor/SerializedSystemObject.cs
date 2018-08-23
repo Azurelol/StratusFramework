@@ -27,6 +27,7 @@ namespace Stratus
       public bool isPrimitive { get; protected set; }
       public float height { get; protected set; }
       public static float lineHeight => StratusEditorUtility.lineHeight;
+      public static float labelWidth => StratusEditorUtility.labelWidth;
     }   
 
     //------------------------------------------------------------------------/
@@ -88,7 +89,7 @@ namespace Stratus
       Type type = field.FieldType;
       SerializedPropertyType propertyType = SerializedPropertyType.Generic;
 
-      if (type == typeof(UnityEngine.Object))
+      if (type.IsSubclassOf(typeof(UnityEngine.Object)))
         propertyType = SerializedPropertyType.ObjectReference;
       else if (type.Equals(typeof(bool)))
         propertyType = SerializedPropertyType.Boolean;

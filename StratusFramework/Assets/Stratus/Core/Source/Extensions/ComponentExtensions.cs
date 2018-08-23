@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   ComponentExtensions.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@date   5/25/2016
-*/
-/******************************************************************************/
 using UnityEngine;
 using System;
 using System.Reflection;

@@ -167,5 +167,13 @@ namespace Stratus
     {
       return SerializedSystemObject.GetFieldDrawer(field).DrawEditorGUILayout(target);
     }
+
+    public static Enum EnumPopup(Rect position, string label, Enum selected)
+    {
+      return EditorGUI.EnumPopup(position, label, selected);
+    }
+
+
+
   }
 }

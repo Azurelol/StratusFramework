@@ -14,31 +14,120 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: 1796509462004904, guid: d9fbbf25f343a8c4aa0bfb5f893ef373, type: 2}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: components
+    - Name: effects
       Entry: 7
-      Data: 0|System.Collections.Generic.List`1[[Genitus.SkillComponent, Assembly-CSharp]],
+      Data: 0|System.Collections.Generic.List`1[[Genitus.EffectAttribute, Assembly-CSharp]],
         mscorlib
     - Name: 
       Entry: 12
-      Data: 4
+      Data: 3
     - Name: 
       Entry: 7
-      Data: 1|Genitus.SkillTelegraph, Assembly-CSharp
+      Data: 1|Genitus.Effects.DamageEffect, Assembly-CSharp
+    - Name: modifier
+      Entry: 3
+      Data: 0
+    - Name: potency
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 2|Genitus.Effects.FlatDamageEffect, Assembly-CSharp
+    - Name: modifier
+      Entry: 3
+      Data: 0
+    - Name: value
+      Entry: 4
+      Data: 100
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 3|Genitus.Effects.ProportionalDamageEffect, Assembly-CSharp
+    - Name: modifier
+      Entry: 3
+      Data: 0
+    - Name: percentage
+      Entry: 3
+      Data: 100
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: components
+      Entry: 7
+      Data: 4|System.Collections.Generic.List`1[[Genitus.SkillComponent, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 5|Genitus.StandardSkillVFX, Assembly-CSharp
+    - Name: particleSystem
+      Entry: 10
+      Data: 0
+    - Name: sound
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 6|Genitus.SkillTiming, Assembly-CSharp
+    - Name: timings
+      Entry: 7
+      Data: 7|Genitus.CombatAction+Timings, Assembly-CSharp
+    - Name: Start
+      Entry: 4
+      Data: 1.5
+    - Name: Cast
+      Entry: 4
+      Data: 10
+    - Name: Trigger
+      Entry: 4
+      Data: 0
+    - Name: Execute
+      Entry: 4
+      Data: 0.25
+    - Name: End
+      Entry: 4
+      Data: 0.25
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 8|Genitus.SkillTelegraph, Assembly-CSharp
     - Name: number
       Entry: 3
-      Data: 18
+      Data: 40
     - Name: telegraphed
       Entry: 5
       Data: true
     - Name: telegraph
       Entry: 7
-      Data: 2|Genitus.Telegraph+Configuration, Assembly-CSharp
+      Data: 9|Genitus.Telegraph+Configuration, Assembly-CSharp
     - Name: Prefab
       Entry: 6
       Data: 
@@ -53,13 +142,13 @@ MonoBehaviour:
       Data: UnityEngine.Color, UnityEngine.CoreModule
     - Name: 
       Entry: 4
-      Data: 0.430758268
+      Data: 0.8584906
     - Name: 
       Entry: 4
-      Data: 0.5321816
+      Data: 0.8377826
     - Name: 
       Entry: 4
-      Data: 0.754717
+      Data: 0.238919556
     - Name: 
       Entry: 4
       Data: 1
@@ -91,79 +180,12 @@ MonoBehaviour:
       Entry: 8
       Data: 
     - Name: 
-      Entry: 7
-      Data: 3|Genitus.StandardSkillVFX, Assembly-CSharp
-    - Name: particleSystem
-      Entry: 6
-      Data: 
-    - Name: sound
-      Entry: 6
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 4|Genitus.SkillTiming, Assembly-CSharp
-    - Name: timings
-      Entry: 7
-      Data: 5|Genitus.CombatAction+Timings, Assembly-CSharp
-    - Name: Start
-      Entry: 4
-      Data: 0.88
-    - Name: Cast
-      Entry: 4
-      Data: 13.11
-    - Name: Trigger
-      Entry: 4
-      Data: 0
-    - Name: Execute
-      Entry: 4
-      Data: 0.25
-    - Name: End
-      Entry: 4
-      Data: 0.25
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 6|Genitus.SkillTiming, Assembly-CSharp
-    - Name: timings
-      Entry: 7
-      Data: 7|Genitus.CombatAction+Timings, Assembly-CSharp
-    - Name: Start
-      Entry: 4
-      Data: 0.1
-    - Name: Cast
-      Entry: 4
-      Data: 55
-    - Name: Trigger
-      Entry: 4
-      Data: 0
-    - Name: Execute
-      Entry: 4
-      Data: 0.25
-    - Name: End
-      Entry: 4
-      Data: 0.25
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
       Entry: 13
       Data: 
     - Name: 
       Entry: 8
       Data: 
   targetType: 2
-  effects: []
   description:
     description: 
     icon: {fileID: 0}
