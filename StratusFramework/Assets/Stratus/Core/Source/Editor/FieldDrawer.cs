@@ -155,7 +155,8 @@ namespace Stratus
             value = EditorGUI.LayerField(position, name, GetValue<LayerMask>(target));
             break;
           case SerializedPropertyType.Enum:
-            value = EditorGUI.EnumPopup(position, name, GetValue<Enum>(target));
+            //value = EditorGUI.EnumPopup(position, name, GetValue<Enum>(target));
+            SearchableEnum.EnumPopup(position, name, GetValue<Enum>(target), (Enum selected) => SetValue(target, selected));
             break;
           case SerializedPropertyType.Vector2:
             value = EditorGUI.Vector2Field(position, name, GetValue<Vector2>(target));

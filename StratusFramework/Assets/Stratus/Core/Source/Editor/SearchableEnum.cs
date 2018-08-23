@@ -16,8 +16,9 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/
     private static int hash { get; } = nameof(SearchableEnum).GetHashCode();
-    private static Dictionary<Type, string[]> enumDisplayNames { get; set; }
-    private static Dictionary<Type, Array> enumValues{ get; set; }
+    private static Dictionary<Type, string[]> enumDisplayNames { get; set; } = new Dictionary<Type, string[]>();
+    private static Dictionary<Type, Array> enumValues { get; set; } = new Dictionary<Type, Array>();
+    private static Rect defaultPosition => GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth, StratusEditorUtility.lineHeight);
 
     //------------------------------------------------------------------------/
     // Methods
@@ -29,7 +30,7 @@ namespace Stratus
     /// <param name="label"></param>
     /// <param name="selected"></param>
     /// <returns></returns>
-    public static Enum EnumPopup(Rect position, string label, Enum selected)
+    public static void EnumPopup(Rect position, string label, Enum selected, System.Action<Enum> onSelected)
     {
       int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
 
@@ -41,18 +42,18 @@ namespace Stratus
 
       // Enum Drawer
       Type enumType = selected.GetType();
-      string[] displayedOptions = GetEnumDisplayNames(selected);
+      string[] displayedOptions = GetEnumDisplayNames(enumType);
       GUIContent enumValueContent = new GUIContent(selected.ToString());
       if (DropdownButton(id, position, enumValueContent))
       {
-        System.Action<int> onSelect = i =>
+        System.Action<int> onSelectIndex = i =>
         {
-          index = i;
+          Enum value = GetEnumValue(enumType, i);
+          Trace.Script($"Selected {value}");
+          onSelected(value);
         };
-        SearchablePopup.EditorGUI(position, index, displayedOptions, onSelect);
+        SearchablePopup.EditorGUI(position, index, displayedOptions, onSelectIndex);
       }
-
-      return GetEnumValue(enumType, index);
     }
 
     /// <summary>
@@ -62,7 +63,7 @@ namespace Stratus
     /// <param name="label"></param>
     /// <param name="selected"></param>
     /// <returns></returns>
-    public static int EnumPopup(Rect position, string label, Type enumType, int selectedIndex)
+    public static void EnumPopup(Rect position, string label, Type enumType, int selectedIndex, System.Action<Enum> onSelected)
     {
       int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
 
@@ -77,12 +78,52 @@ namespace Stratus
       {
         System.Action<int> onSelect = i =>
         {
-          selectedIndex = i;
+          Enum value = GetEnumValue(enumType, i);
+          Trace.Script($"Selected {value}");
+          onSelected(value);
         };
         SearchablePopup.EditorGUI(position, selectedIndex, displayedOptions, onSelect);
       }
+    }
 
-      return selectedIndex;
+    /// <summary>
+    /// Displays an searchable popup for a list of strings
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="label"></param>
+    /// <param name="selected"></param>
+    /// <returns></returns>
+    public static void Popup(Rect position, string label, int selectedIndex, string[] displayedOptions, System.Action<string> onSelected)
+    {
+      int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
+
+      // Prefix
+      GUIContent labelContent = new GUIContent(label);
+      position = EditorGUI.PrefixLabel(position, id, labelContent);
+
+      // Enum Drawer
+      GUIContent enumValueContent = new GUIContent(displayedOptions[selectedIndex]);
+      if (DropdownButton(id, position, enumValueContent))
+      {
+        System.Action<int> onSelect = i =>
+        {
+          string value = displayedOptions[i];
+          onSelected(value);
+        };
+        SearchablePopup.EditorGUI(position, selectedIndex, displayedOptions, onSelect);
+      }
+    }
+
+    /// <summary>
+    /// Displays an searchable popup for a list of strings
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="label"></param>
+    /// <param name="selected"></param>
+    /// <returns></returns>
+    public static void Popup(string label, int selectedIndex, string[] displayedOptions, System.Action<string> onSelected)
+    {
+      Popup(defaultPosition, label, selectedIndex, displayedOptions, onSelected);
     }
 
     /// <summary>
@@ -92,14 +133,12 @@ namespace Stratus
     /// <param name="label"></param>
     /// <param name="selected"></param>
     /// <returns></returns>
-    public static void EnumPopup(Rect position, string label, SerializedProperty property)
+    public static void EnumPopup(Rect position, GUIContent label, SerializedProperty property)
     {
       int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
 
       // Prefix
-      GUIContent labelContent = new GUIContent(label);
-      position = EditorGUI.PrefixLabel(position, id, labelContent);
-
+      position = EditorGUI.PrefixLabel(position, id, label);
       // Enum Drawer
       string[] displayedOptions = property.enumDisplayNames;
       GUIContent enumValueContent = new GUIContent(displayedOptions[property.enumValueIndex]);
@@ -114,6 +153,29 @@ namespace Stratus
       }
     }
 
+    /// <summary>
+    /// Displays an searchable enum popup for a serialized property, wrapping it within BeginProperty
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="label"></param>
+    /// <param name="selected"></param>
+    /// <returns></returns>
+    public static void EnumPopup(Rect position, SerializedProperty property)
+    {
+      GUIContent label = new GUIContent(property.displayName);
+      label = EditorGUI.BeginProperty(position, label, property);
+      EnumPopup(position, label, property);
+      EditorGUI.EndProperty();
+    }
+
+    /// <summary>
+    /// Displays a searchable enum popup for a serialized property
+    /// </summary>
+    /// <param name="property"></param>
+    public static void EnumPopup(SerializedProperty property)
+    {
+      EnumPopup(defaultPosition, property);
+    }
 
     /// <summary>
     /// A custom button drawer that allows for a controlID so that we can

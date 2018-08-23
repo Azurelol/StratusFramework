@@ -481,7 +481,17 @@ namespace Stratus
         {
           bool overridden = false;
           if (!overridden)
-            EditorGUILayout.PropertyField(property, true);
+          {
+            // Custom enum drawer, ho!
+            if (property.propertyType == SerializedPropertyType.Enum)
+            {
+              SearchableEnum.EnumPopup(property);
+            }
+            else
+            {
+              EditorGUILayout.PropertyField(property, true);
+            }
+          }
         }
       }
 

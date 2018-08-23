@@ -18,6 +18,7 @@ namespace Stratus
       public FloatRange floatRange = new FloatRange();
       public IntegerRange intRange = new IntegerRange();
       public VariableAttribute variable = new VariableAttribute();
+      public KeyCode enumDrawer;
 
       [InvokeMethodButton(typeof(TypesExample), "TryLayer")]
       public LayerField layer = new LayerField(); 
