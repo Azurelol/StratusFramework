@@ -58,8 +58,7 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Interface
       //------------------------------------------------------------------------/
-      protected abstract void OnStart();
-      protected abstract void OnSubscribe();
+      protected abstract void OnInitialize();
       protected abstract void OnUpdate(float dt);
       protected abstract void OnPrint(StringBuilder builder);
       // Behaviors
@@ -71,26 +70,11 @@ namespace Stratus
       // Methods
       //------------------------------------------------------------------------/
       /// <summary>
-      /// Returns an instance of this behavior system to be used by a
-      /// single agent.
-      /// </summary>
-      /// <param name="agent"></param>
-      /// <returns></returns>
-      public T Instantiate<T>(Agent agent) where T : BehaviorSystem
-      {
-        var instance = Instantiate(this) as T;
-        instance.agent = agent;
-        instance.sensor = agent.sensor;
-        return instance;
-      }
-
-      /// <summary>
       /// Configures the system. In order to initialize behaviors call Assesss.
       /// </summary>
       public void Initialize()
       {
-        this.Subscribe();
-        this.OnStart();
+        this.OnInitialize();
       }
 
       /// <summary>
@@ -130,14 +114,20 @@ namespace Stratus
       }
 
       //------------------------------------------------------------------------/
-      // Methods
+      // Methods: Static
       //------------------------------------------------------------------------/
       /// <summary>
-      /// Subscribe the agent to specific events to the system
+      /// Returns an instance of this behavior system to be used by a
+      /// single agent.
       /// </summary>
-      void Subscribe()
+      /// <param name="agent"></param>
+      /// <returns></returns>
+      public T Instantiate<T>(Agent agent) where T : BehaviorSystem
       {
-        this.OnSubscribe();
+        var behaviorSystem = Instantiate(this) as T;
+        behaviorSystem.agent = agent;
+        behaviorSystem.sensor = agent.sensor;
+        return behaviorSystem;
       }
 
     }

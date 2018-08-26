@@ -70,40 +70,40 @@ namespace Stratus
         switch (propertyType)
         {
           case SerializedPropertyType.ObjectReference:
-            field.SetValue(target, EditorGUILayout.ObjectField(name, GetValue<UnityEngine.Object>(target), type, true));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.ObjectField(name, this.GetValue<UnityEngine.Object>(target), type, true));
             break;
           case SerializedPropertyType.Integer:
-            field.SetValue(target, EditorGUILayout.IntField(name, GetValue<int>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.IntField(name, this.GetValue<int>(target)));
             break;
           case SerializedPropertyType.Boolean:
-            field.SetValue(target, EditorGUILayout.Toggle(name, GetValue<bool>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.Toggle(name, this.GetValue<bool>(target)));
             break;
           case SerializedPropertyType.Float:
             OnFloatEditorGUILayout(target);
             break;
           case SerializedPropertyType.String:
-            field.SetValue(target, EditorGUILayout.TextField(name, GetValue<string>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.TextField(name, this.GetValue<string>(target)));
             break;
           case SerializedPropertyType.Color:
-            field.SetValue(target, EditorGUILayout.ColorField(name, GetValue<Color>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.ColorField(name, this.GetValue<Color>(target)));
             break;
           case SerializedPropertyType.LayerMask:
-            field.SetValue(target, EditorGUILayout.LayerField(name, GetValue<LayerMask>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.LayerField(name, this.GetValue<LayerMask>(target)));
             break;
           case SerializedPropertyType.Enum:
-            field.SetValue(target, EditorGUILayout.EnumPopup(name, GetValue<Enum>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.EnumPopup(name, this.GetValue<Enum>(target)));
             break;
           case SerializedPropertyType.Vector2:
-            field.SetValue(target, EditorGUILayout.Vector2Field(name, GetValue<Vector2>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.Vector2Field(name, this.GetValue<Vector2>(target)));
             break;
           case SerializedPropertyType.Vector3:
-            field.SetValue(target, EditorGUILayout.Vector3Field(name, GetValue<Vector3>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.Vector3Field(name, this.GetValue<Vector3>(target)));
             break;
           case SerializedPropertyType.Vector4:
-            field.SetValue(target, EditorGUILayout.Vector4Field(name, GetValue<Vector4>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.Vector4Field(name, this.GetValue<Vector4>(target)));
             break;
           case SerializedPropertyType.Rect:
-            field.SetValue(target, EditorGUILayout.RectField(name, GetValue<Rect>(target)));
+            this.field.SetValue(target, UnityEditor.EditorGUILayout.RectField(name, this.GetValue<Rect>(target)));
             break;
           default:
             if (isArray)
@@ -113,7 +113,7 @@ namespace Stratus
             }
             else
             {
-              EditorGUILayout.LabelField($"No drawer implementation for {name} of type {type.Name}");
+              UnityEditor.EditorGUILayout.LabelField($"No drawer implementation for {name} of type {type.Name}");
             }
             break;
         }
@@ -229,11 +229,11 @@ namespace Stratus
         if (attributesByName.ContainsKey(rangeAttributeType))
         {
           RangeAttribute range = attributesByName[rangeAttributeType] as RangeAttribute;
-          SetValue(target, EditorGUILayout.Slider(name, value, range.min, range.max));
+          this.SetValue(target, UnityEditor.EditorGUILayout.Slider(name, value, range.min, range.max));
         }
         else
         {
-          SetValue(target, EditorGUILayout.FloatField(name, GetValue<float>(target)));
+          this.SetValue(target, UnityEditor.EditorGUILayout.FloatField(name, this.GetValue<float>(target)));
         }
       }
 

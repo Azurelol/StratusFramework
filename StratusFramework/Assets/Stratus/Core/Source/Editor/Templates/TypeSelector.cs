@@ -34,15 +34,7 @@ namespace Stratus
         selectedIndex = Mathf.Clamp(value, 0, subTypes.Length - 1);
       }
     }
-    //{
-    //  get { return selectionHintField; }
-    //  set
-    //  {
-    //    selectionHintField = value;
-    //    if (showHint)
-    //      displayedOptions[0] = value;
-    //  }
-    // }
+    public System.Action onSelectionChanged { get; set; }
 
     //------------------------------------------------------------------------/
     // Fields
@@ -83,44 +75,65 @@ namespace Stratus
     //------------------------------------------------------------------------/
     public void ResetSelection(int index = 0)
     {
+      if (selectedIndex == index)
+        return;
+
       selectedIndex = index;
+      OnSelectionChanged();
     }
 
-    public bool GUILayoutPopup()
+    protected virtual void OnSelectionChanged()
     {
-      bool changed = StratusEditorUtility.CheckControlChange(() =>
-      {
-        selectedIndex = EditorGUILayout.Popup(selectedIndex, displayedOptions);
-      });
-      return changed && isValidIndex;
+      onSelectionChanged?.Invoke();
     }
 
-    public bool GUILayoutPopup(GUIStyle style)
+    public virtual void DrawGUILayout(string label)
     {
-      bool changed = StratusEditorUtility.CheckControlChange(() =>
-      {
-        selectedIndex = EditorGUILayout.Popup(selectedIndex, displayedOptions, style);
-      });
-      return changed && isValidIndex;
+      StratusEditorGUI.GUILayoutPopup(label, selectedIndex, displayedOptions, ResetSelection);
     }
+    
 
-    public bool GUILayoutPopup(GUIStyle style, params GUILayoutOption[] options)
-    {
-      bool changed = StratusEditorUtility.CheckControlChange(() =>
-      {
-        selectedIndex = EditorGUILayout.Popup(selectedIndex, displayedOptions, style, options);
-      });
-      return changed && isValidIndex;
-    }
+    //public virtual bool DrawGUILayout(string label)
+    //{
+    //  bool changed = StratusEditorUtility.CheckControlChange(() =>
+    //  {
+    //    selectedIndex = StratusEditorGUI.GUILayoutPopup(label, selectedIndex, displayedOptions);
+    //  });
+    //
+    //  if (changed)
+    //    OnSelectionChanged();      
+    //
+    //  return changed;
+    //}
 
-    public bool GUILayoutPopup(string label, GUIStyle style)
-    {
-      bool changed = StratusEditorUtility.CheckControlChange(() =>
-      {
-        selectedIndex = EditorGUILayout.Popup(label, selectedIndex, displayedOptions, style);
-      });
-      return changed && isValidIndex;
-    }
+
+    //
+    //public bool GUILayoutPopup(GUIStyle style)
+    //{
+    //  bool changed = StratusEditorUtility.CheckControlChange(() =>
+    //  {
+    //    selectedIndex = EditorGUILayout.Popup(selectedIndex, displayedOptions, style);
+    //  });
+    //  return changed && isValidIndex;
+    //}
+    //
+    //public bool GUILayoutPopup(GUIStyle style, params GUILayoutOption[] options)
+    //{
+    //  bool changed = StratusEditorUtility.CheckControlChange(() =>
+    //  {
+    //    selectedIndex = EditorGUILayout.Popup(selectedIndex, displayedOptions, style, options);
+    //  });
+    //  return changed && isValidIndex;
+    //}
+    //
+    //public bool GUILayoutPopup(string label, GUIStyle style)
+    //{
+    //  bool changed = StratusEditorUtility.CheckControlChange(() =>
+    //  {
+    //    selectedIndex = EditorGUILayout.Popup(label, selectedIndex, displayedOptions, style);
+    //  });
+    //  return changed && isValidIndex;
+    //}
 
   }
 

@@ -1,9 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Stratus;
+using Stratus.AI;
 
-namespace Stratus.AI
+namespace Genitus.AI
 {
+  /// <summary>
+  /// Base class for all combat-enabled agents within the Genitus framework
+  /// </summary>  
   public abstract class CombatAgent : Agent
   {
     //------------------------------------------------------------------------/
@@ -92,27 +97,45 @@ namespace Stratus.AI
     //------------------------------------------------------------------------/
     // Interface
     //------------------------------------------------------------------------/
-    protected virtual void OnCombatEnter() { }
-    protected virtual void OnCombatExit() { }
-    protected virtual void OnEngage(Agent target) { }
-    protected virtual void OnDisengage() { }
-    protected virtual void OnDisengaged(Agent agent) { }
-    protected abstract void OnDeath();
-    protected abstract void OnRevive();
+    protected abstract void OnCombatAgentAwake();
+    protected virtual void OnCombatAgentStart() {}
+    protected abstract void OnCombatEnter();
+    protected abstract void OnCombatExit();
+    protected abstract void OnEngage(Agent target);
+    protected abstract void OnDisengage();
+    protected abstract void OnDisengaged(Agent agent);
+    protected abstract void OnCombatAgentDeath();
+    protected abstract void OnCombatAgentRevive();
 
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
-    protected override void OnSubscribe()
-    {
+    protected override void OnAgentAwake()
+    { 
       this.gameObject.Connect<EngageTargetEvent>(this.OnEngageTargetEvent);
       this.gameObject.Connect<EngagedEvent>(this.OnEngagedEvent);
       this.gameObject.Connect<DisengagedEvent>(this.OnDisengagedEvent);
       this.gameObject.Connect<DeathEvent>(this.OnDeathEvent);
       this.gameObject.Connect<ReviveEvent>(this.OnReviveEvent);
+      this.OnCombatAgentAwake();
     }
 
-    protected override void OnStop()
+    protected override void OnAgentStart()
+    {
+      this.OnCombatAgentStart();
+    }
+
+    protected override void OnAgentDestroy()
+    {
+      
+    }
+
+    protected override void OnAgentUpdate()
+    {
+      
+    }
+
+    protected override void OnAgentStop()
     {
       this.Disengage();
     }
@@ -161,7 +184,7 @@ namespace Stratus.AI
       targetable = false;
       if (this.debug) Trace.Script("This agent has been killed.", this);
       this.Stop();
-      this.OnDeath();
+      this.OnCombatAgentDeath();
 
       // Inform the scene
       e.agent = this;
@@ -170,7 +193,7 @@ namespace Stratus.AI
 
     void OnReviveEvent(ReviveEvent e)
     {
-      this.OnRevive();
+      this.OnCombatAgentRevive();
     }
 
     //------------------------------------------------------------------------/
@@ -234,6 +257,28 @@ namespace Stratus.AI
       target.gameObject.Dispatch<T>(e);
       Scene.Dispatch<T>(e);
     }
+  }
+
+  /// <summary>
+  /// Base class for all combat-enabled agents within the Genitus framework,
+  /// that specifies what combat controller it uses
+  /// </summary>  
+  public abstract class CombatAgent<CombatController> : CombatAgent
+    where CombatController : Genitus.CombatController
+  {
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    /// <summary>
+    /// The controller this agent is driving
+    /// </summary>
+    public CombatController controller { get; private set; }
+
+    //------------------------------------------------------------------------/
+    // Messages
+    //------------------------------------------------------------------------/
+
+
   }
 
 }

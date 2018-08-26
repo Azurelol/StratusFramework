@@ -8,7 +8,7 @@ namespace Stratus
   public abstract class ObjectPropertySelectorDrawer<T> : StratusPropertyDrawer
   {
     protected abstract string objectPropertyName { get; }
-    protected override void DrawProperty(Rect position, SerializedProperty property)
+    protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       SerializedProperty objectProperty = property.FindPropertyRelative(objectPropertyName);
       EditorGUI.BeginChangeCheck();

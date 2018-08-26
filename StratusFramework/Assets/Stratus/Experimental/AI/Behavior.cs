@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Behavior.cs
-@author Christian Sagel
-@par    email: c.sagel\@digipen.edu
-@par    DigiPen login: c.sagel
-*/
-/******************************************************************************/
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -40,7 +32,13 @@ namespace Stratus
         /// Something apparently went wrong
         /// </summary>
         Failure,
+        /// <summary>
+        /// The behavior is currently not running, pending outside reactivation
+        /// </summary>
         Suspended,
+        /// <summary>
+        /// The behaviour is still running
+        /// </summary>
         Running
       }
       

@@ -16,7 +16,7 @@ namespace Stratus
       //return lineHeight * 4f;
     }
   
-    protected override void DrawProperty(Rect position, SerializedProperty property)
+    protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {      
       SerializedProperty inputProperty = property.FindPropertyRelative(nameof(InputAction.input));
       SerializedProperty typeProp = inputProperty.FindPropertyRelative("_type");

@@ -25,7 +25,7 @@ namespace Stratus
   {
     protected abstract string childPropertyName { get; }
 
-    protected override void DrawProperty(Rect position, SerializedProperty property)
+    protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       SerializedProperty memberProperty = property.FindPropertyRelative(childPropertyName);
       EditorGUI.PropertyField(position, memberProperty, GUIContent.none);

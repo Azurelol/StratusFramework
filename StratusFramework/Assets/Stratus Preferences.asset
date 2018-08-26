@@ -19,6 +19,7 @@ MonoBehaviour:
   - {fileID: 102900000, guid: 5311940562bbf064bb0a552d62d82096, type: 3}
   - {fileID: 102900000, guid: a4622354d12c1684ab3356cb85037ace, type: 3}
   - {fileID: 102900000, guid: 115b976e462c9fb42b6be2fa9f302fac, type: 3}
+  - {fileID: 102900000, guid: a791964cd14177c4082117cbf798354f, type: 3}
   tagColors:
     enabled: 1
     coloredTags:
@@ -41,3 +42,4 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 7c252266617aae3479272c671d225861, type: 2}
     - {fileID: 1796509462004904, guid: d9fbbf25f343a8c4aa0bfb5f893ef373, type: 2}
     - {fileID: 11400000, guid: 7dab221bce8cb9344ad16b900fe587ba, type: 2}
+    - {fileID: 11500000, guid: 3176f85ee4ec2644db0cffb44a3948ad, type: 3}

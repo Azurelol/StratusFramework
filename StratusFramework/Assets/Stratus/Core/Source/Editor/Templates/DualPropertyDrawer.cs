@@ -13,7 +13,7 @@ namespace Stratus
     protected abstract string firstProperty { get; }
     protected abstract string secondProperty { get; }
 
-    protected override void DrawProperty(Rect position, SerializedProperty property)
+    protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       SerializedProperty first = property.FindPropertyRelative(firstProperty);
       SerializedProperty second = property.FindPropertyRelative(secondProperty);
@@ -31,7 +31,7 @@ namespace Stratus
   /// </summary>
   public abstract class DualDynamicPropertyDrawer : StratusPropertyDrawer
   {
-    protected override void DrawProperty(Rect position, SerializedProperty property)
+    protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       SerializedProperty first = GetFirstProperty(property);
       SerializedProperty second = GetSecondProperty(property);

@@ -45,8 +45,7 @@ namespace Stratus.Gameplay
     //------------------------------------------------------------------------/
     protected override void OnAwake()
     {
-      eventInstance = (Stratus.Event)Utilities.Reflection.Instantiate(type);
-      JsonUtility.FromJsonOverwrite(eventData, eventInstance);
+      eventInstance = Event.Instantiate(type, eventData);
     }
 
     protected override void OnReset()

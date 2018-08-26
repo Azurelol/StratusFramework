@@ -31,7 +31,7 @@ namespace Stratus.Gameplay
       EditorGUILayout.Space();
       EditorGUILayout.LabelField($"{type.Name}", EditorStyles.boldLabel);
 
-      if (serializedEvent.Draw())
+      if (serializedEvent.DrawEditorGUILayout())
         serializedEvent.Serialize(target, eventDataProperty);
     }
 

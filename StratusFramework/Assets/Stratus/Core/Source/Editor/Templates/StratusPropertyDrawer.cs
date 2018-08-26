@@ -77,11 +77,11 @@ namespace Stratus
     /// <summary>
     /// The line height to be used
     /// </summary>
-    public float lineHeight => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+    public static float lineHeight => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
     /// <summary>
     /// Standard vertical spacing betwween controls
     /// </summary>
-    public float verticalSpacing => EditorGUIUtility.standardVerticalSpacing;
+    public static float verticalSpacing => EditorGUIUtility.standardVerticalSpacing;
     /// <summary>
     /// Whether this property has multiple values
     /// </summary>
@@ -139,13 +139,13 @@ namespace Stratus
         if (isArray)
         {
           //EditorGUI.indentLevel++;
-          DrawArray(position, property);
+          OnDrawArray(position, property);
           //EditorGUI.indentLevel--;
         }
         else
         {
           position = EditorGUI.PrefixLabel(position, label);
-          DrawProperty(position, property);
+          OnDrawProperty(position, property);
           //DrawMultipleFields(position, property, label);
         }
       }
@@ -153,11 +153,7 @@ namespace Stratus
       EditorGUI.EndProperty();
     }
 
-    protected abstract void DrawProperty(Rect position, SerializedProperty property);
-    //{
-    //  EditorGUI.PropertyField(position, property);
-    //}
-
+    protected abstract void OnDrawProperty(Rect position, SerializedProperty property);
     protected virtual float GetPropertyHeight(SerializedProperty property)
     {
       float value = 0;
@@ -175,14 +171,14 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    private void DrawArray(Rect position, SerializedProperty property)
+    private void OnDrawArray(Rect position, SerializedProperty property)
     {
       parent = property;
 
       for (int e = 0; e < property.arraySize; ++e)
       {
         SerializedProperty arrayElement = property.GetArrayElementAtIndex(e);
-        DrawProperty(position, arrayElement);
+        OnDrawProperty(position, arrayElement);
       }
       //SerializedProperty[] children = property.arr
       //EditorGUI.PropertyField(position, property, true);
@@ -211,8 +207,16 @@ namespace Stratus
     protected void DrawSingleProperty(ref Rect position, SerializedProperty property)
     {
       EditorGUI.PropertyField(position, property);
-      position.y += lineHeight;
+      float height = EditorGUI.GetPropertyHeight(property);
+      position.y += height;
+      //position.y += lineHeight;
       propertyHeight += lineHeight;
+    }
+
+    protected Rect DrawSingleProperty(Rect position, SerializedProperty property)
+    {
+      DrawSingleProperty(ref position, property);
+      return position;
     }
 
     public T GetEnumValue<T>(SerializedProperty property, string enumPropertyName)
@@ -249,6 +253,29 @@ namespace Stratus
       }
     }
 
+    public static void DrawPropertiesVertical(ref Rect position, params SerializedProperty[] children)
+    {
+      int n = children.Length;
+      for (int p = 0; p < n; ++p)
+      {
+        SerializedProperty property = children[p];
+        EditorGUI.PropertyField(position, property);
+        float height = EditorGUI.GetPropertyHeight(property);
+        position.y += height;
+      }
+    }
+
+    public static void DrawPropertiesHorizontal(Rect position, params DrawCommand[] drawCommands)
+    {
+      int n = drawCommands.Length;
+      position.width /= n;
+      for (int p = 0; p < n; ++p)
+      {
+        drawCommands[p].Draw(position);
+        position.x += position.width;
+      }
+    }
+
     public static void DrawPropertiesInSingleLineLabeled(Rect position, params SerializedProperty[] children)
     {
       int n = children.Length;
@@ -261,15 +288,9 @@ namespace Stratus
       }
     }
 
-    public static void DrawPropertiesInSingleLine(Rect position, params DrawCommand[] drawCommands)
+    protected static void AddLine(ref Rect position)
     {
-      int n = drawCommands.Length;
-      position.width /= n;
-      for (int p = 0; p < n; ++p)
-      {
-        drawCommands[p].Draw(position);
-        position.x += position.width;
-      }
+      position.y += lineHeight;
     }
 
     public static void DrawPopup(Rect position, SerializedProperty stringProperty, string[] values)

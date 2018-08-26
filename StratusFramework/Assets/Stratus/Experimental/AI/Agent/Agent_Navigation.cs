@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Agent_Navigation.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
@@ -13,62 +6,38 @@ namespace Stratus
 {
   namespace AI
   {
-    public abstract partial class Agent : ManagedBehaviour
+    public partial class Agent : ManagedBehaviour
     {
       /// <summary>
       /// Used to temporarily set, then revert navigation settings
       /// </summary>
       public struct NavigationSettings
       {
-        private NavMeshAgent Navigation;
-        private float PreviousSpeed;
-        private float PreviousAcceleration;
-        private float PreviousStoppingDistance;
+        private NavMeshAgent navigation;
+        private float previousSpeed;
+        private float previousAcceleration;
+        private float previousStoppingDistance;
 
         public NavigationSettings(NavMeshAgent agent)
         {
-          Navigation = agent;
-          PreviousSpeed = Navigation.speed;
-          PreviousAcceleration = Navigation.acceleration;
-          PreviousStoppingDistance = Navigation.stoppingDistance;
+          navigation = agent;
+          previousSpeed = navigation.speed;
+          previousAcceleration = navigation.acceleration;
+          previousStoppingDistance = navigation.stoppingDistance;
         }
 
         public void Set(float speed, float acceleration, float stoppingDistance)
         {
-          this.Navigation.speed = speed;
-          this.Navigation.acceleration = acceleration;
-          this.Navigation.stoppingDistance = stoppingDistance;
+          this.navigation.speed = speed;
+          this.navigation.acceleration = acceleration;
+          this.navigation.stoppingDistance = stoppingDistance;
         }
 
         public void Revert()
         {
-          this.Navigation.speed = PreviousSpeed;
-          this.Navigation.acceleration = PreviousAcceleration;
-          this.Navigation.stoppingDistance = PreviousStoppingDistance;
-        }
-      }
-
-      /// <summary>
-      /// Displays a path during its lifetime using a line renderer
-      /// </summary>
-      public class PathDisplay
-      {
-        LineRenderer Renderer;
-        public PathDisplay(GameObject owner, Vector3[] points, Color starting, Color ending)
-        {
-          //this.Renderer = new LineRenderer();
-          this.Renderer = owner.AddComponent<LineRenderer>();
-          this.Renderer.positionCount = points.Length;
-          this.Renderer.startWidth = 0.1f;
-          this.Renderer.endWidth = 0.1f;
-          this.Renderer.SetPositions(points);
-          this.Renderer.startColor = starting;
-          this.Renderer.endColor = ending;
-        }
-
-        ~PathDisplay()
-        {          
-          Object.Destroy(this.Renderer);
+          this.navigation.speed = previousSpeed;
+          this.navigation.acceleration = previousAcceleration;
+          this.navigation.stoppingDistance = previousStoppingDistance;
         }
       }
 
@@ -105,12 +74,6 @@ namespace Stratus
         this.OnAgentMovementEnded();        
       }
 
-      //protected void FollowPath(Vector3[] points, float speed, float acceleration, float stoppingDistance)
-      //{
-      //  if (CurrentRoutine != null) StopCoroutine(CurrentRoutine);
-      //  CurrentRoutine = FollowPathRoutine(points, speed, acceleration, stoppingDistance);
-      //  StartCoroutine(CurrentRoutine);
-      //}
 
       /// <summary>
       /// Moves this agent through a list of points.

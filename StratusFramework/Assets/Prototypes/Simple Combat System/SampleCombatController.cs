@@ -38,7 +38,7 @@ namespace Prototype
 
         case EffectAttribute.PotencyQuery.Evasion:
           potency = character.evasion;
-          break;
+          break;          
 
       }
       return potency;

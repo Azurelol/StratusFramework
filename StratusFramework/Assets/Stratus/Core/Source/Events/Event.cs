@@ -2,6 +2,7 @@ using System;
 using UnityEngine.Events;
 using System.Collections.Generic;
 using Stratus.Utilities;
+using UnityEngine;
 
 namespace Stratus
 {
@@ -54,6 +55,15 @@ namespace Stratus
         eventCache.Add(type, (T)Reflection.Instantiate(type));
       return (T)eventCache[type];
     }
+
+    public static Event Instantiate(Type type) => (Stratus.Event)Utilities.Reflection.Instantiate(type);
+    public static Event Instantiate(Type type, string data)
+    {
+      Event instance = Instantiate(type);
+      JsonUtility.FromJsonOverwrite(data, instance);
+      return instance;
+    }
+
 
   }
 

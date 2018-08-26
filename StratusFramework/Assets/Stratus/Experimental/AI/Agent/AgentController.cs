@@ -10,6 +10,7 @@ namespace Stratus
     {
       public class AgentController : MouseDrivenController
       {
+        //public EventField eventField;
         [Tooltip("The agent to send commands to")]
         public Agent agent;
 
@@ -46,10 +47,10 @@ namespace Stratus
           if (!this.agent)
             return;
 
-          var combatAgent = hit.transform.GetComponent<CombatAgent>();
-          if (combatAgent && combatAgent != this.agent)
+          var otherAgent = hit.transform.GetComponent<Agent>();
+          if (otherAgent)
           {
-            combatAgent.Engage(combatAgent);
+            this.agent.Target(otherAgent);
           }
           else
           {

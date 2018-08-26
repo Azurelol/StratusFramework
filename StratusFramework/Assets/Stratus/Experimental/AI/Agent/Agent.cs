@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Agent.cs
-@author Christian Sagel
-@par    email: c.sagel\@digipen.edu
-@par    DigiPen login: c.sagel
-*/
-/******************************************************************************/
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,7 +13,7 @@ namespace Stratus.AI
   /// which observes through sensors and acts upon an environment using actuators 
   /// and directs its activity towards achieving goals.
   /// </summary>
-  public abstract partial class Agent : ManagedBehaviour, Interfaces.Debuggable
+  public partial class Agent : ManagedBehaviour, Interfaces.Debuggable
   {
     //------------------------------------------------------------------------/
     // Declarations
@@ -127,6 +119,10 @@ namespace Stratus.AI
     // Properties: Public 
     //------------------------------------------------------------------------/
     /// <summary>
+    /// Whether this agent is being driven by a behaviour system
+    /// </summary>
+    public bool isAutomatic => this.control == Control.Automatic;
+    /// <summary>
     /// The NavMeshAgent component used by this agent
     /// </summary>
     public NavMeshAgent navigation { get; private set; }
@@ -143,10 +139,6 @@ namespace Stratus.AI
     /// </summary>
     public Sensor sensor { get; protected set; }
     /// <summary>
-    /// A renderer used for debugging purposes
-    /// </summary>
-    protected LineRenderer lineRenderer { get; set; }
-    /// <summary>
     /// The rigidbody component used by this component
     /// </summary>
     public new Rigidbody rigidbody { get; private set; }
@@ -162,12 +154,12 @@ namespace Stratus.AI
     //------------------------------------------------------------------------/
     // Interface
     //------------------------------------------------------------------------/
-    protected abstract void OnAgentAwake();
-    protected abstract void OnAgentDestroy();
-    protected abstract void OnAgentStart();
-    protected abstract void OnSubscribe();
-    protected abstract void OnAgentUpdate();
-    protected abstract void OnStop();
+    protected virtual void OnAgentAwake() {}
+    protected virtual void OnAgentDestroy() {}
+    protected virtual void OnAgentStart() {}
+    protected virtual void OnAgentUpdate() {}
+    protected virtual void OnAgentStop() {}
+    protected virtual void OnTargetAgent(Agent agent) => this.MoveTo(agent.transform.position);
     protected virtual void OnInteractScan(bool hasFoundInteractions) { }
     protected virtual bool OnAgentMoveTo(NavMeshPath path) { return false; }
     protected virtual void OnAgentMovementStarted() { }
@@ -184,8 +176,8 @@ namespace Stratus.AI
       this.navigation = GetComponent<NavMeshAgent>(); ;
       this.sensor = GetComponent<Sensor>();
       this.rigidbody = GetComponent<Rigidbody>();
-      // Subscribe to events
       this.Subscribe();
+
       // Inform the agent is up
       this.OnAgentAwake();
       Scene.Dispatch<SpawnEvent>(new SpawnEvent() { agent = this });
@@ -193,7 +185,7 @@ namespace Stratus.AI
 
     protected internal override void OnManagedStart()
     {
-      if (this.debug) this.AddLineRenderer();
+      //if (this.debug) this.AddLineRenderer();
       this.OnAgentStart();
       currentState = State.Idle;
     }
@@ -208,7 +200,9 @@ namespace Stratus.AI
       if (!this.active)
         return;
 
-      this.behavior.UpdateSystem(Time.deltaTime);
+      if (isAutomatic)
+        this.behavior.UpdateSystem(Time.deltaTime);
+
       this.OnAgentUpdate();
     }        
 
@@ -253,7 +247,6 @@ namespace Stratus.AI
       this.gameObject.Connect<MoveEvent>(this.OnMoveToEvent);
       this.gameObject.Connect<DisableEvent>(this.OnDisableEvent);
       this.gameObject.Connect<StopEvent>(this.OnStopEvent);
-      this.OnSubscribe();
     }
 
     void OnInteractEvent(Sensor.InteractEvent e)
@@ -292,6 +285,16 @@ namespace Stratus.AI
     //------------------------------------------------------------------------/
     // Methods: Public
     //------------------------------------------------------------------------/
+    /// <summary>
+    /// Targets the given agent, performing the default action on it
+    /// </summary>
+    /// <param name="agent"></param>
+    public void Target(Agent agent)
+    {
+      this.OnTargetAgent(agent);
+      
+    }
+
     /// <summary>
     /// Moves this agent to the target point
     /// </summary>
@@ -354,7 +357,7 @@ namespace Stratus.AI
         Trace.Script("The agent has been stopped.", this);
 
       
-      this.OnStop();
+      this.OnAgentStop();
       this.StopAllCoroutines();
     }
 

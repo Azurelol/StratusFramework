@@ -16,7 +16,7 @@ namespace Stratus.Gameplay
       return lineHeight * lines;
     }
 
-    protected override void DrawProperty(Rect position, SerializedProperty property)
+    protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       // Special case if it's being used by the character animator
       CharacterAnimator characterAnimator = target as CharacterAnimator;
@@ -68,10 +68,10 @@ namespace Stratus.Gameplay
           case AnimatorControllerParameterType.Float:
           case AnimatorControllerParameterType.Int:
           case AnimatorControllerParameterType.Bool:
-            DrawPropertiesInSingleLine(position, new DrawCommand[] { drawType, drawName, new DrawCommand(parameterValueProperty) });
+            DrawPropertiesHorizontal(position, new DrawCommand[] { drawType, drawName, new DrawCommand(parameterValueProperty) });
             break;
           case AnimatorControllerParameterType.Trigger:
-            DrawPropertiesInSingleLine(position, new DrawCommand[] { drawType, drawName });
+            DrawPropertiesHorizontal(position, new DrawCommand[] { drawType, drawName });
             break;
         }
       }

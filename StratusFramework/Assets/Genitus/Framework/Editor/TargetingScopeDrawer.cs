@@ -45,7 +45,7 @@ namespace Genitus.Models
     //  EditorGUI.EndProperty();
     //}
 
-    protected override void DrawProperty(Rect position, SerializedProperty property)
+    protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       var scopeProperty = property.FindPropertyRelative(nameof(ScopeTargeting.scope));
       var rangeProperty = property.FindPropertyRelative(nameof(ScopeTargeting.range));

@@ -12,7 +12,7 @@ namespace Stratus.Gameplay
       Move,
       Death,
       Revive
-    }      
+    }
 
     public Agent agent;
     public EventType eventType;
@@ -46,7 +46,7 @@ namespace Stratus.Gameplay
           agent.gameObject.Dispatch<Agent.MoveEvent>(new Agent.MoveEvent(position));
           break;
         case EventType.Death:
-          agent.gameObject.Dispatch<CombatAgent.DeathEvent>(new CombatAgent.DeathEvent());
+          //agent.gameObject.Dispatch<CombatAgent.DeathEvent>(new CombatAgent.DeathEvent());
           break;
         default:
           break;

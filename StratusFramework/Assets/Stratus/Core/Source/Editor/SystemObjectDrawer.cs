@@ -69,11 +69,11 @@ namespace Stratus
       {
         bool changed = false;
         string content = this.isDrawable ? this.displayName : $"No serialized fields available";
-        EditorGUILayout.LabelField(content);
+        UnityEditor.EditorGUILayout.LabelField(content);
 
         if (this.isField)
         {
-          EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+          UnityEditor.EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         }
 
         foreach (var drawer in drawers)
@@ -92,7 +92,7 @@ namespace Stratus
 
         if (this.isField)
         {
-          EditorGUILayout.EndVertical();
+          UnityEditor.EditorGUILayout.EndVertical();
         }
 
         return changed;

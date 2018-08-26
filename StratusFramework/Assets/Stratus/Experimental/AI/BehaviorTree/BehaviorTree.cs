@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   BehaviorTree.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
@@ -18,24 +11,37 @@ namespace Stratus
     public partial class BehaviorTree : BehaviorSystem
     {
       //------------------------------------------------------------------------/
-      // Properties
+      // Fields
       //------------------------------------------------------------------------/
       /// <summary>
       /// The root node of this behavior tree
       /// </summary>
-      public Behavior Root;      
+      public Behavior root;
+
+      //------------------------------------------------------------------------/
+      // Properties
+      //------------------------------------------------------------------------/
+      /// <summary>
+      /// The current node
+      /// </summary>
+      public Behavior current;
 
       //----------------------------------------------------------------------/
       // Interface
       //----------------------------------------------------------------------/
-      protected override void OnUpdate(float dt)
+      protected override void OnInitialize()
       {
         
       }
 
+      protected override void OnUpdate(float dt)
+      {
+
+      }
+
       protected override void OnPrint(StringBuilder builder)
       {
-        
+
       }
 
       public override void OnBehaviorStarted(Behavior behavior)
@@ -53,15 +59,8 @@ namespace Stratus
         throw new NotImplementedException();
       }
 
-      protected override void OnStart()
-      {
-        throw new NotImplementedException();
-      }
 
-      protected override void OnSubscribe()
-      {
-        throw new NotImplementedException();
-      }
+
     }
   }
 

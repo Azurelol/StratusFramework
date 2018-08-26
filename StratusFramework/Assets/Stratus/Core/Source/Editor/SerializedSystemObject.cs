@@ -51,9 +51,14 @@ namespace Stratus
       this.target = target;
     }
 
-    public bool Draw()
+    public bool DrawEditorGUILayout()
     {
       return this.drawer.DrawEditorGUILayout(this.target);
+    }
+
+    public bool DrawEditorGUI(Rect position)
+    {
+      return this.drawer.DrawEditorGUI(position, this.target);
     }
 
     public string Serialize()
@@ -72,6 +77,14 @@ namespace Stratus
       string data = JsonUtility.ToJson(target);
       stringProperty.stringValue = data;
       Undo.RecordObject(targetObject, stringProperty.displayName);
+      stringProperty.serializedObject.ApplyModifiedProperties();
+    }
+
+    public void Serialize(SerializedProperty stringProperty)
+    {
+      string data = JsonUtility.ToJson(target);
+      stringProperty.stringValue = data;
+      Undo.RecordObject(stringProperty.serializedObject.targetObject, stringProperty.displayName);
       stringProperty.serializedObject.ApplyModifiedProperties();
     }
 

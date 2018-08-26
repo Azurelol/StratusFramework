@@ -16,7 +16,7 @@ namespace Stratus.Gameplay
       return lineHeight * lines;
     }
 
-    protected override void DrawProperty(Rect position, SerializedProperty property)
+    protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       // Special case if it's being used by the character animator
       CharacterAnimator characterAnimator = target as CharacterAnimator;

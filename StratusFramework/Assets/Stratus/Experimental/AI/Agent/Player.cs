@@ -3,12 +3,12 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Stratus
+namespace Stratus.AI
 {
   /// <summary>
   /// Base class for the player' avatar logic
   /// </summary>
-  public abstract class Player<T> : CombatAgent where T : MonoBehaviour
+  public abstract class Player<T> : Agent where T : MonoBehaviour
   {
     //--------------------------------------------------------------------------------------------/
     // Event Declarations
@@ -32,8 +32,6 @@ namespace Stratus
       /// </summary>
       public class EndedEvent : Stratus.Event { }
     }
-
-
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -65,13 +63,6 @@ namespace Stratus
     {
       all.Remove(this as T);
     }
-
-    protected override void OnSubscribe()
-    {      
-    }
-
-
-
 
   }
 

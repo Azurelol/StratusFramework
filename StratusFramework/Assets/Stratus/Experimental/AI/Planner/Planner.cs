@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Planner.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@date   5/25/2016
-*/
-/******************************************************************************/
 using UnityEngine;
 using System.Text;
 using System;
@@ -57,21 +49,16 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Interface
       //------------------------------------------------------------------------/
-      protected override void OnStart()
-      {        
-      }
-
-      protected override void OnSubscribe()
+      protected override void OnInitialize()
       {
         this.agent.gameObject.Connect<WorldState.ModifySymbolEvent>(this.OnModifySymbolEvent);
       }
-
+      
       public override void OnAssess()
       {
         this.CurrentAction.Reset();
         this.FormulatePlan();
       }
-
 
       protected override void OnUpdate(float dt)
       {

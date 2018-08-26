@@ -30,7 +30,7 @@ namespace Stratus
       return height;
     }
 
-    protected override void DrawProperty(Rect position, SerializedProperty property)
+    protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       //propertyCount = 0;
       //propertyNames.Clear();
