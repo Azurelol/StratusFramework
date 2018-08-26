@@ -17,7 +17,7 @@ namespace Stratus
       public Behavior CurrentChild { private set; get; }
       public List<Behavior>.Enumerator ChildrenEnumerator;      
 
-      public override string Description
+      public override string description
       {
         get
         {

@@ -54,7 +54,7 @@ namespace Stratus
         this.agent.gameObject.Connect<WorldState.ModifySymbolEvent>(this.OnModifySymbolEvent);
       }
       
-      public override void OnAssess()
+      public override void OnReset()
       {
         this.CurrentAction.Reset();
         this.FormulatePlan();
@@ -63,6 +63,11 @@ namespace Stratus
       protected override void OnUpdate(float dt)
       {
         currentBehavior.Execute(dt);        
+      }
+
+      public override void OnBehaviorAdded(Behavior behavior)
+      {
+        throw new NotImplementedException();
       }
 
       public override void OnBehaviorStarted(Behavior behavior)
@@ -75,14 +80,14 @@ namespace Stratus
         // We already have a reference to the current action so
         // don't really use the behavior here (it wouldn't know its
         // part of a stateful action anyway)
-        this.State.Merge(CurrentAction.Effects);
+        this.State.Merge(CurrentAction.effects);
         ContinuePlan();
       }
       protected override void OnPrint(StringBuilder builder)
       {
         foreach (var action in AvailableActions)
         {
-          builder.AppendFormat(" - {0}", action.Description);
+          builder.AppendFormat(" - {0}", action.description);
         }
       }
 

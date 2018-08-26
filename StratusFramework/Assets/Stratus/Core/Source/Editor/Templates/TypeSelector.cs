@@ -18,55 +18,44 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/
     public Type baseType { get; private set; }
-    public Type[] subTypes { get; private set; }
-    public Type selectedClass => subTypes[currentIndex];
+    public DropdownList<Type> subTypes { get; private set; }
+
+    //public Type[] subTypes { get; private set; }
+    public Type selectedClass => subTypes.selected;
     private string selectedClassName => selectedClass.Name;
-    public string[] displayedOptions { get; private set; }
-    public bool isValidIndex => currentIndex > 0;
-    public int currentIndex
-    {
-      get
-      {
-        return selectedIndex;
-      }
-      set
-      {
-        selectedIndex = Mathf.Clamp(value, 0, subTypes.Length - 1);
-      }
-    }
+    public int selectedIndex => subTypes.selectedIndex;
+    public string[] displayedOptions => subTypes.displayedOptions;
+    //public string[] displayedOptions { get; private set; }
+    //public bool isValidIndex => currentIndex > 0;
     public System.Action onSelectionChanged { get; set; }
 
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    private int selectedIndex = 0;
 
     //------------------------------------------------------------------------/
     // CTOR
     //------------------------------------------------------------------------/
     public TypeSelector(Type baseType, bool includeAbstract, bool sortAlphabetically = false)
     {
-      this.baseType = baseType;
-      this.subTypes = Reflection.GetSubclass(baseType);
-      this.displayedOptions = subTypes.Names((Type type) => type.Name);
+      this.baseType = baseType;      
+      this.subTypes = new DropdownList<Type>(Reflection.GetSubclass(baseType), (Type type) => type.Name);
+      //this.displayedOptions = subTypes.Names(;
       
       if (sortAlphabetically)
       {
-        Array.Sort(displayedOptions);
-        Array.Sort(subTypes, (Type left, Type right) => { return left.Name.CompareTo(right.Name); });
+        this.subTypes.Sort();
       }
     }
 
     public TypeSelector(Type baseType, Type interfaceType, bool sortAlphabetically = false)
     {
       this.baseType = baseType;
-      this.subTypes = Reflection.GetInterfaces(baseType, interfaceType);
-      this.displayedOptions = subTypes.Names((Type type) => type.Name);
+      this.subTypes = new DropdownList<Type>(Reflection.GetInterfaces(baseType, interfaceType), (Type type) => type.Name);
 
       if (sortAlphabetically)
       {
-        Array.Sort(displayedOptions);
-        Array.Sort(subTypes, (Type left, Type right) => { return left.Name.CompareTo(right.Name); });
+        this.subTypes.Sort();
       }
     }
 
@@ -78,9 +67,11 @@ namespace Stratus
       if (selectedIndex == index)
         return;
 
-      selectedIndex = index;
+      subTypes.selectedIndex = index;
       OnSelectionChanged();
     }
+
+    public Type AtIndex(int index) => subTypes.AtIndex(index);
 
     protected virtual void OnSelectionChanged()
     {

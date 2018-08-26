@@ -8,30 +8,11 @@ namespace Stratus
   {
     public class MoveToAction : TargetAction<Vector3>
     {
+      public override string description { get; } = "Moves the agent to the target location";
 
-      public override string Description
-      {
-        get
-        {
-          return "Moves the agent to the target location";
-        }
-      }
+      protected override Vector3 target => agent.blackboard.locals.GetValue<Vector3>(Symbol.key);
 
-      protected override Vector3 Target
-      {
-        get
-        {
-          return Agent.blackboard.locals.GetValue<Vector3>(Symbol.key);
-        }
-      }
-
-      protected override Vector3 TargetPosition
-      {
-        get
-        {
-          return Target;
-        }
-      }
+      protected override Vector3 targetPosition => target;
 
       protected override void OnActionReset()
       {        
@@ -49,7 +30,7 @@ namespace Stratus
 
       protected override Status OnTargetActionUpdate(float dt)
       {
-        Trace.Script("Reached the target! ", this.Agent);
+        Trace.Script("Reached the target! ", this.agent);
         return Status.Success; 
       }
     }

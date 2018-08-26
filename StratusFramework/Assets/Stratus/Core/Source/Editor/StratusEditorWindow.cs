@@ -99,7 +99,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/    
-    protected static void OnOpen(string title = null, bool utility = false)
+    public static void OnOpen(string title = null, bool utility = false)
     {
       Type type = typeof(T);
       title = title != null ? title : type.Name;

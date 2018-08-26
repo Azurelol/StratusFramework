@@ -3,186 +3,149 @@ using Stratus;
 using UnityEditor;
 using Stratus.Editor;
 using System;
+using UnityEditor.IMGUI.Controls;
+using UnityEditor.Callbacks;
+using System.Collections.Generic;
 
 namespace Stratus
 {
   namespace AI
   {
-    public class BehaviorTreeEditorWindow : MultiColumnEditorWindow 
+    public class BehaviorTreeEditorWindow : StratusEditorWindow<BehaviorTreeEditorWindow> 
     {
       //----------------------------------------------------------------------/
-      // Properties
+      // Declarations
       //----------------------------------------------------------------------/
+      public enum Column
+      {
+        Hierarchy,
+        Inspector
+      }
+
+      public class BehaviourTreeView : HierarchicalTreeView<BehaviorTree.BehaviorNode>
+      {
+        public BehaviourTreeView(TreeViewState state, IList<BehaviorTree.BehaviorNode> data) : base(state, data)
+        {
+        }
+      }
 
       //----------------------------------------------------------------------/
       // Fields
       //----------------------------------------------------------------------/
-      const string Folder = "Stratus/Experimental/AI/";
-      const string Title = "Behavior Tree Editor";
+      [SerializeField]
+      private BehaviourTreeView treeInspector;
+      [SerializeField]
+      private TreeViewState treeViewState;
 
-      /// <summary>
-      /// The editor used to edit the behavior tree's nodes
-      /// </summary>
-      private BehaviorTreeNodeEditor NodeEditor = new BehaviorTreeNodeEditor();
+      const string folder = "Stratus/Experimental/AI/";
+      private TypeSelector behaviorSelector;
 
-      /// <summary>
-      /// The behavior tree currently being edited
-      /// </summary>
-      private BehaviorTree BehaviorTree;
-
+      //----------------------------------------------------------------------/
+      // Properties
+      //----------------------------------------------------------------------/
       /// <summary>
       /// The behavior tree currently being edited
       /// </summary>
-      private Blackboard Blackboard;
-
-      /// <summary>
-      /// The sidebar containing the node inspector and blackboard
-      /// </summary>
-      private GUISplitter SideBar;
+      private BehaviorTree behaviorTree;
 
       /// <summary>
       /// The node currently being inspected
       /// </summary>
-      private BehaviorTreeNode CurrentNode { get { return NodeEditor.SelectedNode; } }
+      private BehaviorTree.BehaviorNode currentNode { get; set; }
 
-     
       //----------------------------------------------------------------------/
-      // Methods: Static
-      //----------------------------------------------------------------------/      
-      [MenuItem(Folder + Title)]
-      private static void Open()
+      // Messages
+      //----------------------------------------------------------------------/
+      protected override void OnWindowEnable()
       {
-        Instantiate();
+        if (this.treeViewState == null)
+          this.treeViewState = new TreeViewState();
+
+        TreeBuilder<BehaviorTree.BehaviorNode, Behavior> treeBuilder = new TreeBuilder<BehaviorTree.BehaviorNode, Behavior>(null);
+        this.treeInspector = new BehaviourTreeView(treeViewState, treeBuilder.ToTree());
+        this.treeInspector.Reload();
+        this.behaviorSelector = new TypeSelector(typeof(Behavior), false);
       }
 
-      /// <summary>
-      /// Opens the behavior tree node editor, with a selected tree
-      /// </summary>
-      /// <param name="tree"></param>
+      protected override void OnWindowGUI()
+      {
+        Rect rect = currentPosition;
+
+        rect.width *= 0.5f;
+        DrawHierarchy(rect);
+
+        rect.x += rect.width;
+        DrawInspector(rect);        
+      }
+
+      //----------------------------------------------------------------------/
+      // Procedures
+      //----------------------------------------------------------------------/
+      private void DrawHierarchy(Rect rect)
+      {
+        treeInspector?.TreeViewGUI(rect);
+      }
+
+      private void DrawInspector(Rect rect)
+      {
+        EditorGUILayout.LabelField("Inspector", StratusGUIStyles.header);
+        GUI.BeginGroup(rect);
+        GUILayout.Label("Inspector", StratusGUIStyles.header);
+        //GUILayout.BeginHorizontal();
+        //{
+        //  StratusEditorGUI.GUILayoutPopup("Behaviors", behaviorSelector.subTypes);
+        //  if (GUILayout.Button("Add", EditorStyles.miniButtonRight))
+        //  {
+        //    AddNode(behaviorSelector.selectedClass);
+        //  }
+        //}
+        //GUILayout.EndHorizontal();
+        //treeInspector.GetSelection
+        GUI.EndGroup();
+      }
+
+      //----------------------------------------------------------------------/
+      // Methods: Private
+      //----------------------------------------------------------------------/
+      private void AddNode(Type type)
+      {
+        behaviorTree.AddBehaviour(type);
+      }
+
+      private void RemoveNode(BehaviorTree.BehaviorNode node)
+      {
+        //behaviorTree.AddBehaviour(type);
+      }
+
+
+      //----------------------------------------------------------------------/
+      // Methods: Static
+      //----------------------------------------------------------------------/
+      [OnOpenAsset]
+      public static bool OnOpenAsset(int instanceID, int line)
+      {
+        var myTreeAsset = EditorUtility.InstanceIDToObject(instanceID) as BehaviorTree;
+        if (myTreeAsset != null)
+        {          
+          Open(myTreeAsset);
+          return true;
+        }
+        return false; 
+      }
+      
       public static void Open(BehaviorTree tree)
       {
-        Instantiate().OpenTree(tree);
+        OnOpen("Behaviour Tree Editor");
+        instance.SetTree(tree);
       }
 
-      private static BehaviorTreeEditorWindow Instantiate()
+      public void SetTree(BehaviorTree tree)
       {
-        return GetWindow<BehaviorTreeEditorWindow>(Title);
+        this.behaviorTree = tree;
+        if (tree.nodes == null)
+          tree.nodes = new List<BehaviorTree.BehaviorNode>();
+        this.treeInspector.SetTree(tree.nodes);        
       }
-
-      //----------------------------------------------------------------------/
-      // Interface
-      //----------------------------------------------------------------------/
-      protected override void OnMultiColumnEditorEnable(MenuBar menu, GUISplitter columns)
-      {
-        // Node editor
-        var nodeSettings = new BehaviorTreeNodeEditor.Settings();
-        NodeEditor.Initialize(this, nodeSettings);
-
-        // Sidebar
-        SideBar = new GUISplitter(this, GUISplitter.OrientationType.Vertical);
-        SideBar.Add(0.5f, this.DrawInspector);
-        SideBar.Add(0.5f, this.DrawBlackboard);
-
-        // Columns
-        columns.Add(0.25f, DrawSidebar);
-        columns.Add(0.75f, DrawNodes);
-
-        // Menu
-        var file = menu.Add("File");
-        file.AddItem(new GUIContent("New Tree"), false, Dogs);
-        file.AddItem(new GUIContent("Open Tree"), false, Dogs);
-        file.AddItem(new GUIContent("Save Tree"), false, Cats);
-
-        var behaviors = menu.Add("Behaviors");
-        behaviors.AddItem(new GUIContent("Composites"), false, Dogs);
-        behaviors.AddItem(new GUIContent("Decorators"), false, Cats);
-        behaviors.AddItem(new GUIContent("Actions"), false, Cats);
-
-        var settings = menu.Add("Settings");
-        settings.AddItem(new GUIContent("Blackboard"), false, Dogs);
-      }
-
-      //----------------------------------------------------------------------/
-      // Methods: Static
-      //----------------------------------------------------------------------/
-      void OpenTree(BehaviorTree tree)
-      {
-        BehaviorTree = tree;
-        Blackboard = tree.blackboard;
-        ChangeTitle(BehaviorTree.name);
-      }
-
-      void ChangeTitle(string title)
-      {
-        titleContent = new GUIContent(Title + " - " + title);
-      }
-
-      //----------------------------------------------------------------------/
-      // Methods: Draw
-      //----------------------------------------------------------------------/
-      void DrawNodes(Rect position)
-      {
-        NodeEditor.Draw(position);
-      }      
-
-      void DrawSidebar(Rect position)
-      {        
-        SideBar.Draw(position);
-      }
-
-      //----------------------------------------------------------------------/
-      // Methods: Sidebar
-      //----------------------------------------------------------------------/
-      void DrawInspector(Rect position)
-      {
-        GUILayout.Label("Inspector", EditorStyles.boldLabel);        
-
-        if (CurrentNode == null)
-          return;
-
-
-        //EditorGUILayout.LabelField("Position");
-        CurrentNode.Name = EditorGUILayout.TextField("Name", CurrentNode.Name);
-        EditorGUILayout.RectField("Position", CurrentNode.Rect);
-      }
-
-      void DrawBlackboard(Rect position)
-      {
-        GUILayout.Label("Blackboard", EditorStyles.boldLabel);
-
-        if (Blackboard == null)
-        {
-          GUILayout.Label("No blackboard selected");
-          return;
-        }
-
-        // Show globals
-        foreach (var key in Blackboard.globals)
-        {
-          GUILayout.Label(key.key);
-        }
-
-        // Show locals
-        foreach (var key in Blackboard.globals)
-        {
-          GUILayout.Label(key.key);
-        }
-      }
-
-      //----------------------------------------------------------------------/
-      // Methods: Menu Bar
-      //----------------------------------------------------------------------/
-      void Dogs()
-      {
-        Trace.Script("Dogs");
-      }
-
-      void Cats()
-      {
-        Trace.Script("Cats");
-      }
-
-      
 
 
     }

@@ -56,7 +56,7 @@ namespace Stratus
           {
             get
             {
-              if (Action != null) return Action.Description + " (" + Cost + ")";
+              if (Action != null) return Action.description + " (" + Cost + ")";
               return null;
             }
           }
@@ -136,7 +136,7 @@ namespace Stratus
           // Make an action-effects table (Orkin, 2004)
           foreach (var action in Actions)
           {
-            ActionEffectsTable.Add(action.Effects, action);
+            ActionEffectsTable.Add(action.effects, action);
           }
         }
 
@@ -198,7 +198,7 @@ namespace Stratus
 
         static float CalculateHeuristicCost(Node node, Node target)
         {
-          return node.Action.Cost;
+          return node.Action.cost;
         }
 
         /// <summary>
@@ -264,8 +264,8 @@ namespace Stratus
             if (state.Satisfies(node.State))
             {
               if (Tracing) Trace.Script(action.Value + " satifies the condition = " + node.State.ToString());
-              var preconditions = action.Value.Preconditions;
-              neighbors.Add(new Node(node, action.Value.Cost, preconditions, action.Value));
+              var preconditions = action.Value.preconditions;
+              neighbors.Add(new Node(node, action.Value.cost, preconditions, action.Value));
             }
           }
 

@@ -20,12 +20,12 @@ namespace Stratus
 
   }
 
-  public class TreeViewWithTreeModel<T> : TreeView where T: TreeElement
+  public class TreeViewWithTreeModel<TreeElementType> : TreeView where TreeElementType: TreeElement
   {
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/ 
-    protected TreeModel<T> treeModel;
+    protected TreeModel<TreeElementType> treeModel;
     protected readonly List<TreeViewItem> rows = new List<TreeViewItem>(100);
     private const int hiddenRootDepth = -1;
     private const string genericDragId = "GenericDragColumnDragging";
@@ -35,26 +35,30 @@ namespace Stratus
     //------------------------------------------------------------------------/ 
     public event System.Action onTreeChanged;
     public event Action<IList<TreeViewItem>> onBeforeDroppingDraggedItems;
+    public SearchField search { get; protected set; }
+    public TreeAsset<TreeElementType> treeAsset { get; private set; }
 
     //------------------------------------------------------------------------/
     // CTOR
     //------------------------------------------------------------------------/ 
-    public TreeViewWithTreeModel(TreeViewState state, TreeModel<T> model) 
+    public TreeViewWithTreeModel(TreeViewState state, TreeModel<TreeElementType> model) 
       : base(state)
     {
       this.InitializeTreeViewWithModel(model);
     }
 
-    public TreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<T> model) 
+    public TreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<TreeElementType> model) 
       : base(state, multiColumnHeader)
     {
       this.InitializeTreeViewWithModel(model);
     }
 
-    protected void InitializeTreeViewWithModel(TreeModel<T> model)
+    protected void InitializeTreeViewWithModel(TreeModel<TreeElementType> model)
     {
       this.treeModel = model;
       this.treeModel.onModelChanged += this.OnModelChanged;
+      this.search = new SearchField();
+      this.search.downOrUpArrowKeyPressed += this.SetFocusAndEnsureSelectedItem;
     }
 
     //------------------------------------------------------------------------/
@@ -62,7 +66,7 @@ namespace Stratus
     //------------------------------------------------------------------------/ 
     protected override TreeViewItem BuildRoot()
     {
-      return new TreeViewItem<T>(this.treeModel.root.id, hiddenRootDepth, this.treeModel.root.name, this.treeModel.root);      
+      return new TreeViewItem<TreeElementType>(this.treeModel.root.id, hiddenRootDepth, this.treeModel.root.name, this.treeModel.root);      
     }
 
     protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
@@ -102,9 +106,68 @@ namespace Stratus
     }
 
     //------------------------------------------------------------------------/
+    // Methods: Public
+    //------------------------------------------------------------------------/ 
+    /// <summary>
+    /// Draws the multicolumn tree view GUI
+    /// </summary>
+    /// <param name="rect"></param>
+    public void TreeViewGUI(Rect rect)
+    {
+      this.searchString = this.search.OnGUI(this.GetSearchBarRect(rect), this.searchString);
+      this.OnGUI(this.GetMainRect(rect));
+    }
+
+    /// <summary>
+    /// Sets the current tree asset at runtime
+    /// </summary>
+    /// <param name="asset"></param>
+    public void SetTreeAsset(TreeAsset<TreeElementType> asset)
+    {
+      this.treeAsset = asset;
+      this.SetTree(asset.elements);
+    }
+
+    /// <summary>
+    /// Sets the data for this tree, also initializing it
+    /// </summary>
+    /// <param name="tree"></param>
+    public void SetTree(IList<TreeElementType> tree)
+    {
+      this.treeModel.SetData(tree);
+      this.Reload();
+    }
+
+    /// <summary>
+    /// Calculates the rect to be used by the search bar
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    protected virtual Rect GetSearchBarRect(Rect position)
+    {
+      return new Rect(position.x + 20f,
+                      position.y + 10f,
+                      position.width - 40f,
+                      20f);
+    }
+
+    /// <summary>
+    /// Calculates the rect to be used by the multi-column tree view
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    protected virtual Rect GetMainRect(Rect position)
+    {
+      return new Rect(position.x + 20f,
+                      position.y + 30f,
+                      position.width - 40,
+                      position.height - 60);
+    }
+
+    //------------------------------------------------------------------------/
     // Methods: Search
     //------------------------------------------------------------------------/ 
-    private void Search(T from, string search, List<TreeViewItem> result)
+    private void Search(TreeElementType from, string search, List<TreeViewItem> result)
     {
       if (string.IsNullOrEmpty(search))
         throw new ArgumentException("Invalid search: cannot be null or empty", nameof(search));
@@ -113,23 +176,23 @@ namespace Stratus
       const int kItemDepth = 0;
 
       // Search for matching elements starting from the given element
-      Stack<T> stack = new Stack<T>();
+      Stack<TreeElementType> stack = new Stack<TreeElementType>();
       foreach (var element in from.children)
-        stack.Push((T)element);
+        stack.Push((TreeElementType)element);
       while (stack.Count > 0)
       {
-        T current = stack.Pop();
+        TreeElementType current = stack.Pop();
 
         // If matches the search...
         if (current.name.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0)
         {
-          result.Add(new TreeViewItem<T>(current.id, kItemDepth, current.name, current));
+          result.Add(new TreeViewItem<TreeElementType>(current.id, kItemDepth, current.name, current));
         }
         
         if (current.hasChildren)
         {
           foreach(var element in current.children)          
-            stack.Push((T)element);          
+            stack.Push((TreeElementType)element);          
         }        
       }
 
@@ -153,11 +216,11 @@ namespace Stratus
     }
 
 
-    private void AddChildrenRecursive(T parent, int depth, IList<TreeViewItem> newRows)
+    private void AddChildrenRecursive(TreeElementType parent, int depth, IList<TreeViewItem> newRows)
     {
-      foreach(T child in parent.children)
+      foreach(TreeElementType child in parent.children)
       {
-        TreeViewItem<T> item = new TreeViewItem<T>(child.id, depth, child.name, child);
+        TreeViewItem<TreeElementType> item = new TreeViewItem<TreeElementType>(child.id, depth, child.name, child);
         newRows.Add(item);
 
         if(child.hasChildren)
@@ -211,7 +274,7 @@ namespace Stratus
             bool validDrag = ValidDrag(args.parentItem, draggedRows);
             if (args.performDrop && validDrag)
             {
-              T parentData = ((TreeViewItem<T>)args.parentItem).item;
+              TreeElementType parentData = ((TreeViewItem<TreeElementType>)args.parentItem).item;
               OnDropDraggedElementsAtIndex(draggedRows, parentData, args.insertAtIndex == -1 ? 0 : args.insertAtIndex);
             }
             return validDrag ? DragAndDropVisualMode.Move : DragAndDropVisualMode.None;
@@ -230,7 +293,7 @@ namespace Stratus
       }
     }
 
-    public virtual void OnDropDraggedElementsAtIndex(List<TreeViewItem> draggedRows, T parent, int insertIndex)
+    public virtual void OnDropDraggedElementsAtIndex(List<TreeViewItem> draggedRows, TreeElementType parent, int insertIndex)
     {
       this.onBeforeDroppingDraggedItems?.Invoke(draggedRows);
 
@@ -239,7 +302,7 @@ namespace Stratus
 
       var draggedElements = new List<TreeElement>();
       foreach (var x in draggedRows)
-        draggedElements.Add(((TreeViewItem<T>)x).item);
+        draggedElements.Add(((TreeViewItem<TreeElementType>)x).item);
 
       var selectedIDs = draggedElements.Select(x => x.id).ToArray();
       this.treeModel.MoveElements(parent, insertIndex, draggedElements);

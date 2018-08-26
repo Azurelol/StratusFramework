@@ -210,8 +210,8 @@ GameObject:
   - component: {fileID: 448861307}
   - component: {fileID: 448861306}
   - component: {fileID: 448861305}
-  - component: {fileID: 448861304}
   - component: {fileID: 448861310}
+  - component: {fileID: 448861304}
   m_Layer: 0
   m_Name: Agent
   m_TagString: Untagged
@@ -391,7 +391,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 448861303}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b4922a789fcd9747a3f9b869523944e, type: 3}
+  m_Script: {fileID: 11500000, guid: 3176f85ee4ec2644db0cffb44a3948ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
@@ -404,7 +404,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   control: 0
-  blackboard: {fileID: 0}
+  blackboard: {fileID: 11400000, guid: 82922c7ae942bd44ca64bf5d4f9bcfb0, type: 2}
   behavior: {fileID: 0}
   active: 1
   debug: 0

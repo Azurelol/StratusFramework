@@ -168,7 +168,7 @@ namespace Stratus
 
     protected override void OnWindowGUI()
     {
-      this.treeView.OnTreeViewGUI(this.guiPosition);
+      this.treeView.TreeViewGUI(this.guiPosition);
     }
 
     [MenuItem("Stratus/Core/Event Browser")]

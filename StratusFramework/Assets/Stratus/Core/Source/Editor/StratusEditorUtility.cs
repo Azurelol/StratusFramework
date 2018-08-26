@@ -493,6 +493,9 @@ namespace Stratus
       GUILayout.EndVertical();
     }
 
+    public static T Instantiate<T>() => Utilities.Reflection.Instantiate<T>();
+    public static object Instantiate(Type type) => Utilities.Reflection.Instantiate(type);
+
     ///// <summary>
     ///// Adds the given define symbols to PlayerSettings define symbols.
     ///// Just add your own define symbols to the Symbols property at the below.

@@ -108,12 +108,12 @@ namespace Stratus.Gameplay
         var menu = new GenericMenu();
         menu.AddPopup("Add Trigger", triggerTypes.displayedOptions, (int index) =>
         {
-          target.gameObject.AddComponent(triggerTypes.subTypes[index]);
+          target.gameObject.AddComponent(triggerTypes.AtIndex(index));
           UpdateConnections();
         });
         menu.AddPopup("Add Triggerable", triggerableTypes.displayedOptions, (int index) =>
         {
-          target.gameObject.AddComponent(triggerableTypes.subTypes[index]);
+          target.gameObject.AddComponent(triggerableTypes.AtIndex(index));
           UpdateConnections();
         });
         menu.ShowAsContext();

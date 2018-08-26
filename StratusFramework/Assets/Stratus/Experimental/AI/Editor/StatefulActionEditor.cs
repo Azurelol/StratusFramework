@@ -9,63 +9,39 @@ namespace Stratus
   namespace AI
   {
     [CustomEditor(typeof(StatefulAction))]
-    public class StatefulActionEditor: UnityEditor.Editor
+    public class StatefulActionEditor: ScriptableEditor<StatefulAction>
     {
-      StatefulAction StatefulAction;
-
-      // Properties
-      //SerializedProperty BlackboardAsset;
-      SerializedProperty Type;
-
       private UnityEditor.Editor ActionEditor;
+      SerializedProperty Type;
       SerializedProperty Preconditions;
       SerializedProperty Effects;
       SerializedProperty Cost;
 
-
-      private void OnEnable()
+      protected override void OnStratusEditorEnable()
       {
-        StatefulAction = target as StatefulAction;
+        this.AddArea(ModifyAction);
+      }      
 
-        //BlackboardAsset = serializedObject.FindProperty("BlackboardAsset");
-        Type = serializedObject.FindProperty("Type");        
 
-        Preconditions = serializedObject.FindProperty("Preconditions");
-        Effects = serializedObject.FindProperty("Effects");
-        Cost = serializedObject.FindProperty("Cost");
-      }
-
-      public override void OnInspectorGUI()
-      {
-        //EditorGUILayout.LabelField("Assets", EditorStyles.boldLabel);
-        //EditorGUILayout.PropertyField(BlackboardAsset);        
-        ModifyAction();
-        EditorGUILayout.LabelField("Planner", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(Cost);
-        EditorGUILayout.PropertyField(Preconditions);
-        EditorGUILayout.PropertyField(Effects);
-      }
-
-      void ModifyAction()
+      void ModifyAction(Rect rect)
       {
         EditorGUILayout.LabelField("Action", EditorStyles.boldLabel);
         // Set the action
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.PropertyField(Type);
+
         if (GUILayout.Button("Set", EditorStyles.miniButtonRight))
         {
-          var action = StatefulAction.AddInstanceToAsset(StatefulAction.Type.Type.DeclaringType) as Action;
-          StatefulAction.Action = action;
+          target.action = (Action)StratusEditorUtility.Instantiate(target.type.Type);
         }
         EditorGUILayout.EndHorizontal();
 
         // If an action has been set, show it
-        if (StatefulAction.Action && !ActionEditor)
-          ActionEditor = UnityEditor.Editor.CreateEditor(StatefulAction.Action);
-        ActionEditor.DrawDefaultInspector();
+        //if (target.action != null)
+        //  ActionEditor = UnityEditor.Editor.CreateEditor(StatefulAction.action);
+        //ActionEditor.DrawDefaultInspector();
 
       }
-      
 
 
     }

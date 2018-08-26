@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using Stratus.Dependencies.TypeReferences;
+using OdinSerializer;
 
 namespace Stratus
 {
@@ -17,37 +18,34 @@ namespace Stratus
       //----------------------------------------------------------------------/
       // Fields
       //----------------------------------------------------------------------/
-      //[SerializeField]
-      //private Blackboard BlackboardAsset;
-
       [SerializeField, ClassExtends(typeof(Action), Grouping = ClassGrouping.ByNamespace)]
-      public ClassTypeReference Type;      
-
-
+      public ClassTypeReference type;      
       [Tooltip("The list of symbols in the agent's world state that need to be present before the action can be used")]
-      public WorldState Preconditions = new WorldState();
+      public WorldState preconditions = new WorldState();
       [Tooltip("The list of symbols that are applied to the agent's worldstate after the action is completed")]
-      public WorldState Effects = new WorldState();
+      public WorldState effects = new WorldState();
       [Tooltip("The cost of this action. Used by the planner's A*")]
-      public float Cost;
+      public float cost;
+      /// <summary>
+      /// The encapsulated action
+      /// </summary>
+      [OdinSerialize]
+      public Action action;
 
       //----------------------------------------------------------------------/
       // Properties
       //----------------------------------------------------------------------/
 
-      public Action Action;
-
       /// <summary>
       /// A short description of this action
       /// </summary>
-      public string Description { get { return Action.Description; } }
-
+      public string description => action.description;
       /// <summary>
       /// Some actions require specific context precondition which needs to be checked
       /// before normal preconditions. Due to us wrapping around normal actions,
       /// we are currently not using it, so it will always return true.
       /// </summary>
-      public bool ContextPrecondition { get { return true; } }
+      public bool contextPrecondition => true;
 
       //----------------------------------------------------------------------/
       // Methods
@@ -58,7 +56,7 @@ namespace Stratus
       /// <param name="agent"></param>
       public void Initialize(Agent agent)
       {
-        Action.Initialize(agent);
+        action.Start(agent);
       }
 
       /// <summary>
@@ -67,13 +65,13 @@ namespace Stratus
       /// <param name="dt"></param>
       public void Execute(float dt)
       {
-        Action.Execute(dt);
+        action.Execute(dt);
       }
         
         /// <summary>
       /// Resets the underlying action
       /// </summary>
-      public void Reset() { Action.Reset(); }
+      public void Reset() { action.Reset(); }
       
 
     }

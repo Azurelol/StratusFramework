@@ -1,6 +1,7 @@
 using UnityEngine;
 using Stratus;
 using System.Text;
+using System;
 
 namespace Stratus
 {
@@ -49,12 +50,7 @@ namespace Stratus
       /// The current behavior being run by this system
       /// </summary>
       protected Behavior currentBehavior { set; get; }
-
-      //----------------------------------------------------------------------/
-      // Properties: Static
-      //----------------------------------------------------------------------/
-
-
+      
       //------------------------------------------------------------------------/
       // Interface
       //------------------------------------------------------------------------/
@@ -62,9 +58,10 @@ namespace Stratus
       protected abstract void OnUpdate(float dt);
       protected abstract void OnPrint(StringBuilder builder);
       // Behaviors
+      public abstract void OnBehaviorAdded(Behavior behavior);
       public abstract void OnBehaviorStarted(Behavior behavior);
       public abstract void OnBehaviorEnded(Behavior behavior);
-      public abstract void OnAssess();
+      public abstract void OnReset();
 
       //------------------------------------------------------------------------/
       // Methods
@@ -87,11 +84,11 @@ namespace Stratus
       }
 
       /// <summary>
-      /// Assess the situation, coming up with the next action for the agent to take
+      /// Resets the behaviour system so that it must evaluate from the beginning
       /// </summary>
-      public void Assess()
+      public void Reset()
       {
-        this.OnAssess();
+        this.OnReset();
       }
 
       /// <summary>
@@ -110,7 +107,27 @@ namespace Stratus
       /// </summary>
       public void Cancel()
       {
-        this.Assess();
+        this.Reset();
+      }
+
+      /// <summary>
+      /// Adds a behaviour to the system
+      /// </summary>
+      /// <param name="behaviourType"></param>
+      public void AddBehaviour(Type behaviourType)
+      {
+        if (!behaviourType.IsSubclassOf(typeof(Behavior)))
+          return;
+        this.AddBehaviour((Behavior)Utilities.Reflection.Instantiate(behaviourType));
+      }
+
+      /// <summary>
+      /// Adds a behaviour to the system
+      /// </summary>
+      /// <param name="type"></param>
+      public void AddBehaviour(Behavior behaviour)
+      {
+        this.OnBehaviorAdded(behaviour);
       }
 
       //------------------------------------------------------------------------/

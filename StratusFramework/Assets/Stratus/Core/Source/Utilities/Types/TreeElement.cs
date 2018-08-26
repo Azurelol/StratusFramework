@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using NUnit.Framework;
-using UnityEditor;
-using System.Linq;
-using UnityEditor.IMGUI.Controls;
 
 namespace Stratus
 {
@@ -47,8 +43,8 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/ 
-    public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(System.Action<TreeElementType, DataType> setData, params DataType[] elements) 
-      where TreeElementType : TreeElement, new ()
+    public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(System.Action<TreeElementType, DataType> setData, params DataType[] elements)
+      where TreeElementType : TreeElement, new()
       where DataType : class
     {
       List<TreeElementType> treeList = new List<TreeElementType>();
@@ -63,7 +59,7 @@ namespace Stratus
       treeList.Add(root);
 
       // Add the elements right below root
-      foreach(var element in elements)
+      foreach (var element in elements)
       {
         TreeElementType child = new TreeElementType();
         setData(child, element);
@@ -88,7 +84,7 @@ namespace Stratus
 
       // Add all the children starting from the root to the list in order
       Stack<T> stack = new Stack<T>();
-      stack.Push(root);      
+      stack.Push(root);
       while (stack.NotEmpty())
       {
         T current = stack.Pop();
@@ -105,41 +101,41 @@ namespace Stratus
       }
     }
 
-    /// <summary>
-    /// Fills out the list from the given root node
-    /// </summary>
-    /// <param name="root"></param>
-    /// <param name="result"></param>
-    public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
-    {
-      if (root == null)
-        throw new NullReferenceException("root");
-      if (result == null)
-        throw new NullReferenceException("result");
+    ///// <summary>
+    ///// Fills out the list from the given root node
+    ///// </summary>
+    ///// <param name="root"></param>
+    ///// <param name="result"></param>
+    //public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
+    //{
+    //  if (root == null)
+    //    throw new NullReferenceException("root");
+    //  if (result == null)
+    //    throw new NullReferenceException("result");
 
-      result.Clear();
+    //  result.Clear();
 
-      if (root.children == null)
-        return;
+    //  if (root.children == null)
+    //    return;
 
-      Stack<TreeViewItem> stack = new Stack<TreeViewItem>();
-      for (int i = root.children.Count - 1; i >= 0; i--)
-        stack.Push(root.children[i]);
+    //  Stack<TreeViewItem> stack = new Stack<TreeViewItem>();
+    //  for (int i = root.children.Count - 1; i >= 0; i--)
+    //    stack.Push(root.children[i]);
 
-      while (stack.Count > 0)
-      {
-        TreeViewItem current = stack.Pop();
-        result.Add(current);
+    //  while (stack.Count > 0)
+    //  {
+    //    TreeViewItem current = stack.Pop();
+    //    result.Add(current);
 
-        if (current.hasChildren && current.children[0] != null)
-        {
-          for (int i = current.children.Count - 1; i >= 0; i--)
-          {
-            stack.Push(current.children[i]);
-          }
-        }
-      }
-    }
+    //    if (current.hasChildren && current.children[0] != null)
+    //    {
+    //      for (int i = current.children.Count - 1; i >= 0; i--)
+    //      {
+    //        stack.Push(current.children[i]);
+    //      }
+    //    }
+    //  }
+    //} 
 
     /// <summary>
     /// Returns the root of the tree parsed from the list (always the first element)
@@ -218,7 +214,7 @@ namespace Stratus
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="list"></param>
-    public static void Assert<T>(IList<T> list) where T: TreeElement
+    public static void Assert<T>(IList<T> list) where T : TreeElement
     {
       // Verify count
       if (list.Count == 0)
@@ -267,7 +263,7 @@ namespace Stratus
         TreeElement current = stack.Pop();
         if (current.hasChildren)
         {
-          foreach(var child in current.children)
+          foreach (var child in current.children)
           {
             child.depth = current.depth + 1;
             stack.Push(child);
@@ -321,6 +317,15 @@ namespace Stratus
   {
     public T data;
 
+    //public TreeElement()
+    //{
+    //}
+    //
+    //public TreeElement(T data)
+    //{
+    //  this.data = data;
+    //}
+
     public void Set(T data)
     {
       this.data = data;
@@ -333,149 +338,7 @@ namespace Stratus
     }
 
     protected abstract string GetName();
-    
+
   }
-
-  class TreeElementUtilityTests
-  {
-    class TestElement : TreeElement
-    {
-      public TestElement(string name, int depth)
-      {
-        this.name = name;
-        this.depth = depth;
-      }
-    }
-
-    #region Tests
-    [Test]
-    public static void TestTreeToListWorks()
-    {
-      // Arrange
-      TestElement root = new TestElement("root", -1);
-      root.children = new List<TreeElement>();
-      root.children.Add(new TestElement("A", 0));
-      root.children.Add(new TestElement("B", 0));
-      root.children.Add(new TestElement("C", 0));
-
-      root.children[1].children = new List<TreeElement>();
-      root.children[1].children.Add(new TestElement("Bchild", 1));
-
-      root.children[1].children[0].children = new List<TreeElement>();
-      root.children[1].children[0].children.Add(new TestElement("Bchildchild", 2));
-
-      // Test
-      List<TestElement> result = new List<TestElement>();
-      TreeElement.TreeToList(root, result);
-
-      // Assert
-      string[] namesInCorrectOrder = { "root", "A", "B", "Bchild", "Bchildchild", "C" };
-      Assert.AreEqual(namesInCorrectOrder.Length, result.Count, "Result count is not match");
-      for (int i = 0; i < namesInCorrectOrder.Length; ++i)
-      {
-        Assert.AreEqual(namesInCorrectOrder[i], result[i].name);
-      }
-      TreeElement.Assert(result);
-    }
-
-
-    [Test]
-    public static void TestListToTreeWorks()
-    {
-      // Arrange
-      var list = new List<TestElement>();
-      list.Add(new TestElement("root", -1));
-      list.Add(new TestElement("A", 0));
-      list.Add(new TestElement("B", 0));
-      list.Add(new TestElement("Bchild", 1));
-      list.Add(new TestElement("Bchildchild", 2));
-      list.Add(new TestElement("C", 0));
-
-      // Test
-      TestElement root = TreeElement.ListToTree(list);
-
-      // Assert
-      Assert.AreEqual("root", root.name);
-      Assert.AreEqual(3, root.children.Count);
-      Assert.AreEqual("C", root.children[2].name);
-      Assert.AreEqual("Bchildchild", root.children[1].children[0].children[0].name);
-    }
-
-    [Test]
-    public static void TestListToTreeThrowsExceptionIfRootIsInvalidDepth()
-    {
-      // Arrange
-      var list = new List<TestElement>();
-      list.Add(new TestElement("root", 0));
-      list.Add(new TestElement("A", 1));
-      list.Add(new TestElement("B", 1));
-      list.Add(new TestElement("Bchild", 2));
-
-      // Test
-      bool catchedException = false;
-      try
-      {
-        TreeElement.ListToTree(list);
-      }
-      catch (Exception)
-      {
-        catchedException = true;
-      }
-
-      // Assert
-      Assert.IsTrue(catchedException, "We require the root.depth to be -1, here it is: " + list[0].depth);
-
-    }
-
-    [Test]
-    public static void FindCommonAncestorsWithinListWorks()
-    {
-      // Arrange
-      var list = new List<TestElement>();
-      list.Add(new TestElement("root", -1));
-      list.Add(new TestElement("A", 0));
-      var b0 = new TestElement("B", 0);
-      var b1 = new TestElement("Bchild", 1);
-      var b2 = new TestElement("Bchildchild", 2);
-      list.Add(b0);
-      list.Add(b1);
-      list.Add(b2);
-
-      var c0 = new TestElement("C", 0);
-      list.Add(c0);
-
-      var f0 = new TestElement("F", 0);
-      var f1 = new TestElement("Fchild", 1);
-      var f2 = new TestElement("Fchildchild", 2);
-      list.Add(f0);
-      list.Add(f1);
-      list.Add(f2);
-
-      // Init tree structure: set children and parent properties
-      TreeElement.ListToTree(list);
-
-
-      // Single element
-      TestElement[] input = { b1 };
-      TestElement[] expectedResult = { b1 };
-      var result = TreeElement.FindCommonAncestorsWithinList(input).ToArray();
-      Assert.IsTrue(ArrayUtility.ArrayEquals(expectedResult, result), "Single input should return single output");
-
-      // Single sub tree
-      input = new[] { b1, b2 };
-      expectedResult = new[] { b1 };
-      result = TreeElement.FindCommonAncestorsWithinList(input).ToArray();
-      Assert.IsTrue(ArrayUtility.ArrayEquals(expectedResult, result), "Common ancestor should only be b1 ");
-
-      // Multiple sub trees
-      input = new[] { b0, b2, f0, f2, c0 };
-      expectedResult = new[] { b0, f0, c0 };
-      result = TreeElement.FindCommonAncestorsWithinList(input).ToArray();
-      Assert.IsTrue(ArrayUtility.ArrayEquals(expectedResult, result), "Common ancestor should only be b0, f0, c0");
-    }
-
-    #endregion
-  }
-
 
 }

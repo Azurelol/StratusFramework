@@ -51,9 +51,8 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    public TreeAsset<TreeElementType> treeAsset { get; private set; }
+
     protected TreeViewColumn[] columns { get; private set; }
-    public SearchField search { get; private set; }
     public bool initialized { get; private set; }
     public StratusMultiColumnHeader stratusMultiColumnHeader { get; set; }
 
@@ -103,8 +102,8 @@ namespace Stratus
       this.extraSpaceBeforeIconAndLabel = this.toggleWidth;
 
       // Search
-      this.search = new SearchField();
-      this.search.downOrUpArrowKeyPressed += this.SetFocusAndEnsureSelectedItem;
+      //this.search = new SearchField();
+      //this.search.downOrUpArrowKeyPressed += this.SetFocusAndEnsureSelectedItem;
 
       // Callbacks
       this.multiColumnHeader.sortingChanged += this.OnSortingChanged;
@@ -227,66 +226,14 @@ namespace Stratus
       return false;
     }
 
-    /// <summary>
-    /// Sets the current tree asset at runtime
-    /// </summary>
-    /// <param name="asset"></param>
-    public void SetTreeAsset(TreeAsset<TreeElementType> asset)
-    {
-      this.treeAsset = asset;
-      this.SetTree(asset.elements);
-    }
 
-    /// <summary>
-    /// Sets the data for this tree, also initializing it
-    /// </summary>
-    /// <param name="tree"></param>
-    public void SetTree(IList<TreeElementType> tree)
-    {
-      this.treeModel.SetData(tree);
-      this.Reload();
-    }
 
     //------------------------------------------------------------------------/
     // Methods: GUI
     //------------------------------------------------------------------------/
     //private float xOffset = 20f, yOffset = 30;
 
-    /// <summary>
-    /// Draws the multicolumn tree view GUI
-    /// </summary>
-    /// <param name="rect"></param>
-    public void OnTreeViewGUI(Rect rect)
-    {
-      this.searchString = this.search.OnGUI(this.GetSearchBarRect(rect), this.searchString);
-      this.OnGUI(this.GetMultiColumnTreeViewRect(rect));
-    }
-    
-    /// <summary>
-    /// Calculates the rect to be used by the search bar
-    /// </summary>
-    /// <param name="position"></param>
-    /// <returns></returns>
-    protected virtual Rect GetSearchBarRect(Rect position)
-    {
-      return new Rect(position.x + 20f, 
-                      position.y + 10f, 
-                      position.width - 40f, 
-                      20f);
-    }
 
-    /// <summary>
-    /// Calculates the rect to be used by the multi-column tree view
-    /// </summary>
-    /// <param name="position"></param>
-    /// <returns></returns>
-    protected virtual Rect GetMultiColumnTreeViewRect(Rect position)
-    {
-      return new Rect(position.x + 20f, 
-                      position.y + 30f, 
-                      position.width - 40, 
-                      position.height - 60);
-    }
 
     /// <summary>
     /// Toggles the column
@@ -326,7 +273,8 @@ namespace Stratus
 
       // Sort the roots of the existing tree items
       this.SortByMultipleColumns();
-      TreeElement.TreeToList(root, rows);
+      //TreeElement.TreeToList(root, rows);
+      TreeToList(root, rows);
       this.Repaint();
     }
 
@@ -400,6 +348,44 @@ namespace Stratus
       DefaultGUI.Label(cellRect, value, selected, focused);
     }
 
+    //------------------------------------------------------------------------/
+    // Methods: Static
+    //------------------------------------------------------------------------/
+    /// <summary>
+    /// Fills out the list from the given root node
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="result"></param>
+    public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
+    {
+      if (root == null)
+        throw new NullReferenceException("root");
+      if (result == null)
+        throw new NullReferenceException("result");
+
+      result.Clear();
+
+      if (root.children == null)
+        return;
+
+      Stack<TreeViewItem> stack = new Stack<TreeViewItem>();
+      for (int i = root.children.Count - 1; i >= 0; i--)
+        stack.Push(root.children[i]);
+
+      while (stack.Count > 0)
+      {
+        TreeViewItem current = stack.Pop();
+        result.Add(current);
+
+        if (current.hasChildren && current.children[0] != null)
+        {
+          for (int i = current.children.Count - 1; i >= 0; i--)
+          {
+            stack.Push(current.children[i]);
+          }
+        }
+      }
+    }
   }
 
 }

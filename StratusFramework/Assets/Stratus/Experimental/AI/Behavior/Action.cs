@@ -1,12 +1,3 @@
-/******************************************************************************/
-/*!
-@file   PlanAction.cs
-@author Christian Sagel
-@par    email: c.sagel\@digipen.edu
-@par    DigiPen login: c.sagel
-*/
-/******************************************************************************/
-using UnityEngine;
 using Stratus.Utilities;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +18,7 @@ namespace Stratus
       //------------------------------------------------------------------------/
 
       //------------------------------------------------------------------------/
-      // Inheritance
+      // Interface
       //------------------------------------------------------------------------/   
       protected abstract void OnActionStart();
       protected abstract void OnActionReset();
@@ -35,7 +26,7 @@ namespace Stratus
       protected abstract void OnActionEnd();
 
       //------------------------------------------------------------------------/
-      // Interface
+      // Messages
       //------------------------------------------------------------------------/
       protected override void OnStart()
       {
@@ -66,26 +57,9 @@ namespace Stratus
       /// </summary>
       public void Reset()
       {
-        this.Active = false;
-        this.CurrentStatus = Status.Suspended;
+        this.currentStatus = Status.Suspended;
         this.OnActionReset();
       }
-
-      /// <summary>
-      /// Executes this action.
-      /// </summary>
-      protected virtual void Execute()
-      {
-        //Trace.Script(Description + " : Casting action...", this);
-      }
-            
-
-      
-
-
-
-
-
 
     }
 

@@ -668,9 +668,21 @@ namespace Stratus
 
         if (t.HasDefaultConstructor())
           return Activator.CreateInstance(t);
-        //return Expression.Lambda<Func<object>>(Expression.New(t)).Compile();
 
         return FormatterServices.GetUninitializedObject(t);
+      }
+
+      public static T Instantiate<T>()
+      {
+        Type t = typeof(T);
+        if (t == typeof(string))
+          return (T)(object)(Expression.Lambda<Func<string>>(Expression.Constant(string.Empty)).Compile());
+
+        if (t.HasDefaultConstructor())
+          return (T)Activator.CreateInstance(t);
+        //return Expression.Lambda<Func<object>>(Expression.New(t)).Compile();
+
+        return (T)FormatterServices.GetUninitializedObject(t);
       }
 
 

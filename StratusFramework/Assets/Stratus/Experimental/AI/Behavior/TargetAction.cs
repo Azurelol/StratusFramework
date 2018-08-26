@@ -9,13 +9,6 @@ namespace Stratus
   {
     public abstract class TargetAction<TargetType> : Action
     {
-      //public class VariableTarget
-      //{
-      //  public Transform Transform;
-      //  public GameObject GameObject;
-      //  public Vector3 Position;
-      //}
-
       //------------------------------------------------------------------------/
       // Fields
       //------------------------------------------------------------------------/
@@ -29,7 +22,7 @@ namespace Stratus
       /// </summary>
       [Tooltip("The range at which this action needs to be within the target")]
       [Range(0f, 10f)]
-      public float Range = 2f;
+      public float range = 2f;
 
       //------------------------------------------------------------------------/
       // Properties
@@ -37,15 +30,15 @@ namespace Stratus
       /// <summary>
       /// The current target of this action
       /// </summary>
-      protected abstract TargetType Target { get; }
+      protected abstract TargetType target { get; }
       /// <summary>
       /// Whether there's currently a valid target for this action
       /// </summary>
-      protected bool HasTarget { get { return Target != null; } }
+      protected bool hasTarget { get { return target != null; } }
       /// <summary>
       /// The current position of the target
       /// </summary>
-      protected abstract Vector3 TargetPosition { get; }
+      protected abstract Vector3 targetPosition { get; }
 
       //------------------------------------------------------------------------/
       // Interface
@@ -55,7 +48,7 @@ namespace Stratus
       protected abstract void OnTargetActionEnd();
 
       //------------------------------------------------------------------------/
-      // Message
+      // Messages
       //------------------------------------------------------------------------/ 
       protected override void OnActionStart()
       {
@@ -70,9 +63,9 @@ namespace Stratus
         {
           // If the target has been destroyed, cancel this action
           // If something happened to the target, replan
-          if (!HasTarget)
+          if (!hasTarget)
           {
-            this.Agent.gameObject.Dispatch<CanceledEvent>(new CanceledEvent());
+            this.agent.gameObject.Dispatch<CanceledEvent>(new CanceledEvent());
             return Status.Failure;
           }
 
@@ -99,7 +92,7 @@ namespace Stratus
       /// <returns></returns>
       bool IsWithinRange()
       {
-        return Library.CheckRange(this.Agent.transform, this.TargetPosition, this.Range);
+        return Library.CheckRange(this.agent.transform, this.targetPosition, this.range);
       }
 
       /// <summary>
@@ -107,11 +100,11 @@ namespace Stratus
       /// </summary>
       void Approach()
       {
-        if (!HasTarget)
+        if (!hasTarget)
           return;
 
         //if (this.Agent.tar)
-        this.Agent.MoveTo(this.TargetPosition);        
+        this.agent.MoveTo(this.targetPosition);        
       }
 
     } 

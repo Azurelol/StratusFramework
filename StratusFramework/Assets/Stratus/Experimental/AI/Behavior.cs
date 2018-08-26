@@ -7,12 +7,11 @@ namespace Stratus
   namespace AI
   {
     /// <summary>
-    /// An abstract interface that can be activated, run
-    /// and deactivated. For example, actions (leaf nodes),
+    /// An abstract interface that can be activated, run and deactivated. For example, actions (leaf nodes),
     /// decorators and composites are all behaviors
     /// </summary>
     [Serializable]
-    public abstract class Behavior : ScriptableObject
+    public abstract class Behavior
     {
       /// <summary>
       /// A behavior that needs to be updated every frame
@@ -22,6 +21,9 @@ namespace Stratus
         Status Update(float dt);
       }
 
+      /// <summary>
+      /// Enumerated status code
+      /// </summary>
       public enum Status
       {
         /// <summary>
@@ -42,46 +44,58 @@ namespace Stratus
         Running
       }
       
-      public class BehaviorEvent : Stratus.Event { public Behavior Behavior; }
+      public class BehaviorEvent : Stratus.Event { public Behavior behavior; }
       public class StartedEvent : BehaviorEvent { }
       public class UpdateEvent : BehaviorEvent { }
       public class SuspendEvent : BehaviorEvent { }
       public class EndedEvent : BehaviorEvent { }
       public class CanceledEvent : BehaviorEvent { }
 
+      //------------------------------------------------------------------------/
+      // Fields
+      //------------------------------------------------------------------------/ 
+      /// <summary>
+      /// The numeric identifier for this behavior
+      /// </summary>
+      [SerializeField] public int id;
+      /// <summary>
+      /// The name for this behavior
+      /// </summary>
+      [SerializeField] public string name;
+      /// <summary>
+      /// The depth of this behavior (used in tree structures)
+      /// </summary>
+      public int depth;
+
+
       //----------------------------------------------------------------------/
       // Properties
       //----------------------------------------------------------------------/
-      public bool Enabled { protected set; get; }
       public bool Active { protected set; get; }
-      /// <summary>
-      /// The name of this behavior
-      /// </summary>
-      public string Name { get { return GetType().DeclaringType.Name; } }
-      /// <summary>
-      /// A short description of what this behavior does
-      /// </summary>
-      public abstract string Description { get; }
       /// <summary>
       /// The agent this behavior is acting upon
       /// </summary>
-      public Agent Agent { private set; get; }
+      public Agent agent { private set; get; }
       /// <summary>
       /// The current state of this behavior
       /// </summary>
-      public Status CurrentStatus { protected set; get; }
+      public Status currentStatus { protected set; get; }
       /// <summary>
-      /// Whether this behavior is currently being debugged
+      /// Whether this behavior needs to be polled 
       /// </summary>
-      protected bool Tracing = true;
+      public bool isUpdated { private set; get; }
+      /// <summary>
+      /// A short description of what this behavior does
+      /// </summary>
+      public abstract string description { get; }
 
       //----------------------------------------------------------------------/
       // Interface
       //----------------------------------------------------------------------/
       /// <summary>
-      /// Called once after hte behavior has finished executing
+      /// Called once when the behavior is activated
       /// </summary>
-      protected abstract void OnEnd();
+      protected abstract void OnStart();
       /// <summary>
       /// If the behavior needs to be updated, it is called
       /// </summary>
@@ -89,13 +103,11 @@ namespace Stratus
       /// <returns></returns>
       protected abstract Status OnUpdate(float dt);
       /// <summary>
-      /// Called once when the behavior is activated
+      /// Called once after hte behavior has finished executing
       /// </summary>
-      protected abstract void OnStart();
-      /// <summary>
-      /// Whether this behavior needs to be polled 
-      /// </summary>
-      public bool IsUpdated { private set; get; }
+      protected abstract void OnEnd();
+
+      
 
       //----------------------------------------------------------------------/
       // Messages
@@ -105,17 +117,15 @@ namespace Stratus
       /// behavior's update method
       /// </summary>
       /// <param name="agent"></param>
-      public virtual void Initialize(Agent agent)
+      public virtual void Start(Agent agent)
       {
-        this.Agent = agent;
-
+        this.agent = agent;
         // Whether this behavior needs to be updated every frame
-        this.IsUpdated = (typeof(IUpdatable).IsAssignableFrom(GetType().DeclaringType));
+        this.isUpdated = (typeof(IUpdatable).IsAssignableFrom(GetType().DeclaringType));
         // Now initialize the subclass
         this.OnStart();
-        this.Agent.gameObject.Dispatch<StartedEvent>(new StartedEvent() { Behavior = this });
+        this.agent.gameObject.Dispatch<StartedEvent>(new StartedEvent() { behavior = this });
       }
-
 
       public virtual Status Execute(float dt)
       {
@@ -128,7 +138,7 @@ namespace Stratus
       public virtual void End()
       {
         this.OnEnd();
-        this.Agent.gameObject.Dispatch<EndedEvent>(new EndedEvent() { Behavior = this });
+        this.agent.gameObject.Dispatch<EndedEvent>(new EndedEvent() { behavior = this });
       }
 
 

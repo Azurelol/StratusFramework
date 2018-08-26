@@ -8,13 +8,23 @@ namespace Stratus
   /// <summary>
   /// An utility class for generating content for a dropdown list
   /// </summary>
-  public class DropdownList<T> where T : class
+  public class DropdownList
   {
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    public string[] displayedOptions { get; private set; }
+    public string[] displayedOptions { get; protected set; }
     public int selectedIndex { get; set; }
+  }
+
+  /// <summary>
+  /// An utility class for generating content for a dropdown list
+  /// </summary>
+  public class DropdownList<T> : DropdownList where T : class
+  {
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
     public T selected => isList ? list[selectedIndex] : array[selectedIndex];
 
     //------------------------------------------------------------------------/
@@ -23,15 +33,17 @@ namespace Stratus
     private List<T> list;
     private T[] array;
     private bool isList;
+    private Func<T, string> nameFunction;
 
     //------------------------------------------------------------------------/
-    // Methods
+    // CTOR
     //------------------------------------------------------------------------/
-    public DropdownList(List<T> list, Func<T, string> namer, T initial = null)
+    public DropdownList(List<T> list, Func<T, string> nameFunction, T initial = null)
     {
       this.list = list;
       isList = true;
-      displayedOptions = list.Names(namer);
+      this.nameFunction = nameFunction;
+      displayedOptions = list.Names(nameFunction);
 
       if (initial != null)
         SetIndex(initial);
@@ -41,6 +53,7 @@ namespace Stratus
     {
       this.list = list;
       isList = true;
+      this.nameFunction = namer;
       displayedOptions = list.Names(namer);
       selectedIndex = index;
     }
@@ -49,18 +62,32 @@ namespace Stratus
     {
       this.array = array;
       isList = false;
+      this.nameFunction = namer;
       displayedOptions = array.Names(namer);
 
       if (initial != null)
         SetIndex(initial);
     }
 
-    public DropdownList(T[] array, Func<T, string> namer, int index = 0)
+    //public DropdownList(T[] array, Func<T, string> namer, int index = 0)
+    //{
+    //  this.array = array;
+    //  isList = false;
+    //  this.nameFunction = namer;
+    //  displayedOptions = array.Names(namer);
+    //  selectedIndex = index;
+    //}
+
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
+    public void Sort()
     {
-      this.array = array;
-      isList = false;
-      displayedOptions = array.Names(namer);
-      selectedIndex = index;
+      Array.Sort(displayedOptions);
+      if (isList)
+        list.Sort();
+      else
+        Array.Sort(array, (T left, T right) => { return nameFunction(left).CompareTo(nameFunction(right)); });
     }
 
     /// <summary>
@@ -74,6 +101,13 @@ namespace Stratus
       else
         selectedIndex = array.FindIndex(x => x == element);
     }
+
+    /// <summary>
+    /// Retrieves the element at the given index
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public T AtIndex(int index) => isList ? list[index] : array[index];
   }
 
   /// <summary>

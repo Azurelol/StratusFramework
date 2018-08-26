@@ -70,7 +70,6 @@ namespace Stratus
     private TreeViewState treeViewState;
 
     private Countdown pollTimer;
-    private TreeView treeView;
     private const string displayName = "Watcher";
 
     //------------------------------------------------------------------------/
@@ -119,14 +118,14 @@ namespace Stratus
           if (this.hasTarget)
           {
             EditorGUILayout.LabelField($"({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
-            this.memberInspector.OnTreeViewGUI(this.currentPosition);
+            this.memberInspector.TreeViewGUI(this.currentPosition);
           }
           break;
 
         case Mode.WatchList:
           if (GameObjectBookmark.hasWatchList)
           {
-            this.memberInspector.OnTreeViewGUI(this.currentPosition);
+            this.memberInspector.TreeViewGUI(this.currentPosition);
           }
           break;
       }

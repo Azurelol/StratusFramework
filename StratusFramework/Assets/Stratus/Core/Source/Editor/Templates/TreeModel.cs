@@ -54,9 +54,11 @@ namespace Stratus
 
       this.data = data;
       if (this.numberOfDataElements > 0)
+      {
         this.root = TreeElement.ListToTree(this.data);
+        this.maxID = this.data.Max(d => d.id);
+      }
 
-      this.maxID = this.data.Max(d => d.id);
     }
 
     /// <summary>

@@ -6,24 +6,18 @@ namespace Stratus
   namespace AI
   {
     [CustomEditor(typeof(BehaviorTree))]
-    public class BehaviorTreeEditor : UnityEditor.Editor
+    public class BehaviorTreeEditor : ScriptableEditor<BehaviorTree>
     {
-      BehaviorTree BehaviorTree;
-
-      private void OnEnable()
+      protected override void OnStratusEditorEnable()
       {
-        BehaviorTree = target as BehaviorTree;
+        AddArea(Options);
       }
 
-      public override void OnInspectorGUI()
+      private void Options(Rect position)
       {
-        if (GUILayout.Button("Edit"))
-        {
-          BehaviorTreeEditorWindow.Open(this.BehaviorTree);
-        }
+        if (GUILayout.Button("Open"))
+          BehaviorTreeEditorWindow.Open(target);
       }
-
-
-    } 
+    }
   }
 }
