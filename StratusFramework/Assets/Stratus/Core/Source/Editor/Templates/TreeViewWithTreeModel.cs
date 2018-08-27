@@ -20,7 +20,7 @@ namespace Stratus
 
   }
 
-  public class TreeViewWithTreeModel<TreeElementType> : TreeView where TreeElementType: TreeElement
+  public abstract class TreeViewWithTreeModel<TreeElementType> : TreeView where TreeElementType: TreeElement
   {
     //------------------------------------------------------------------------/
     // Fields
@@ -37,6 +37,11 @@ namespace Stratus
     public event Action<IList<TreeViewItem>> onBeforeDroppingDraggedItems;
     public SearchField search { get; protected set; }
     public TreeAsset<TreeElementType> treeAsset { get; private set; }
+
+    //------------------------------------------------------------------------/
+    // CTOR
+    //------------------------------------------------------------------------/ 
+    protected abstract void OnItemContextMenu(GenericMenu menu, TreeElementType treeElement);
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -58,7 +63,7 @@ namespace Stratus
       this.treeModel = model;
       this.treeModel.onModelChanged += this.OnModelChanged;
       this.search = new SearchField();
-      this.search.downOrUpArrowKeyPressed += this.SetFocusAndEnsureSelectedItem;
+      this.search.downOrUpArrowKeyPressed += this.SetFocusAndEnsureSelectedItem;      
     }
 
     //------------------------------------------------------------------------/
@@ -96,6 +101,19 @@ namespace Stratus
       return this.rows;
     }
 
+    protected override void ContextClickedItem(int id)
+    {
+      base.ContextClickedItem(id);
+      TreeViewItem<TreeElementType> treeItem = (TreeViewItem<TreeElementType>)this.FindItem(id, this.rootItem);
+      TreeElementType treeElement = treeItem.item;
+
+      GenericMenu menu = new GenericMenu();
+      this.OnItemContextMenu(menu, treeElement);
+      menu.ShowAsContext();
+
+      //Trace.Script($"Context click on {treeElement.name}");
+    }
+
     //------------------------------------------------------------------------/
     // Events
     //------------------------------------------------------------------------/ 
@@ -115,7 +133,8 @@ namespace Stratus
     public void TreeViewGUI(Rect rect)
     {
       this.searchString = this.search.OnGUI(this.GetSearchBarRect(rect), this.searchString);
-      this.OnGUI(this.GetMainRect(rect));
+      Rect mainRect = this.GetMainRect(rect);
+      this.OnGUI(mainRect);
     }
 
     /// <summary>

@@ -49,7 +49,8 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    public static Rect defaultPosition => GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth, StratusEditorUtility.lineHeight);
+    public static float height = StratusEditorUtility.lineHeight;    
+    public static Rect defaultPosition => GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth, height);
     public static GUIStyle toolbarStyle => EditorStyles.toolbar;
     public static Color selectedColor => Color.cyan;
     public static Color defaultColor => Color.white;
@@ -239,9 +240,35 @@ namespace Stratus
       int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
 
       // Prefix
+      position.height = height;
       GUIContent labelContent = new GUIContent(label);
-      position = UnityEditor.EditorGUI.PrefixLabel(position, id, labelContent);
+      position = UnityEditor.EditorGUI.PrefixLabel(position, id, labelContent);      
 
+      // Enum Drawer
+      GUIContent enumValueContent = new GUIContent(displayedOptions[selectedIndex]);
+      if (DropdownButton(id, position, enumValueContent))
+      {
+        System.Action<int> onSelect = i =>
+        {
+          onSelected(i);
+          //string value = displayedOptions[i];
+        };
+        SearchablePopup.EditorGUI(position, selectedIndex, displayedOptions, onSelect);
+      }
+    }
+
+    /// <summary>
+    /// Displays an searchable popup for a list of strings
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="label"></param>
+    /// <param name="selected"></param>
+    /// <returns></returns>
+    public static void Popup(Rect position, int selectedIndex, string[] displayedOptions, System.Action<int> onSelected)
+    {
+      int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
+      position.height = height;
+      //position.width *= 0.5f;
       // Enum Drawer
       GUIContent enumValueContent = new GUIContent(displayedOptions[selectedIndex]);
       if (DropdownButton(id, position, enumValueContent))
@@ -265,6 +292,18 @@ namespace Stratus
     public static void Popup(string label, int selectedIndex, string[] displayedOptions, System.Action<int> onSelected)
     {
       Popup(defaultPosition, label, selectedIndex, displayedOptions, onSelected);
+    }
+
+    /// <summary>
+    /// Displays an searchable popup for a list of strings
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="label"></param>
+    /// <param name="selected"></param>
+    /// <returns></returns>
+    public static void Popup(int selectedIndex, string[] displayedOptions, System.Action<int> onSelected)
+    {
+      Popup(defaultPosition, selectedIndex, displayedOptions, onSelected);
     }
 
     private static void Repaint() => EditorWindow.focusedWindow.Repaint();    
@@ -295,6 +334,7 @@ namespace Stratus
           }
           break;
         case EventType.Repaint:
+          //UnityEditor.EditorGUI.Popup(position, )
           EditorStyles.popup.Draw(position, content, id, false);
           break;
       }

@@ -17,8 +17,6 @@ namespace Stratus
       [Serializable]
       public class BehaviorNode : TreeElement<Behavior>
       {
-        //public BehaviorNode(BehaviorNode behavior) : base(behavior) {}
-        protected override string GetName() => this.data.name;
       }
 
       //------------------------------------------------------------------------/
@@ -27,8 +25,8 @@ namespace Stratus
       /// <summary>
       /// The root node of this behavior tree
       /// </summary>
-      [SerializeField]
-      public List<BehaviorNode> nodes = new List<BehaviorNode>();
+      [OdinSerializer.OdinSerialize, HideInInspector]
+      public SerializedTree<BehaviorNode, Behavior> tree = new SerializedTree<BehaviorNode, Behavior>();
 
       //------------------------------------------------------------------------/
       // Properties
@@ -51,9 +49,9 @@ namespace Stratus
 
       }
 
-      public override void OnReset()
+      protected override void OnReset()
       {
-        this.current = this.nodes[0].data;
+        //this.current = this.nodes[0].data;
       }
 
       protected override void OnPrint(StringBuilder builder)
@@ -61,21 +59,33 @@ namespace Stratus
 
       }
 
-      public override void OnBehaviorStarted(Behavior behavior)
+      protected override void OnBehaviorStarted(Behavior behavior)
       {
         throw new NotImplementedException();
       }
 
-      public override void OnBehaviorEnded(Behavior behavior)
+      protected override void OnBehaviorEnded(Behavior behavior)
       {
         throw new NotImplementedException();
       }
 
-      public override void OnBehaviorAdded(Behavior behavior)
+      protected override void OnBehaviorAdded(Behavior behavior)
       {
-        BehaviorNode node = new BehaviorNode();
-        node.Set(behavior);
-        nodes.Add(node);
+        this.tree.AddElement(behavior, 0);
+        //// If there's no root node yet, set it
+        //if (nodes.Empty() || !nodes[0].isRoot)
+        //{
+        //  nodes.Insert(0, TreeElement.MakeRoot<BehaviorNode>());
+        //}
+        //
+        //BehaviorNode node = new BehaviorNode();
+        //node.Set(behavior);
+        //nodes.Add(node);
+      }
+
+      protected override void OnBehaviorsCleared()
+      {
+        this.tree.Clear();
       }
 
 

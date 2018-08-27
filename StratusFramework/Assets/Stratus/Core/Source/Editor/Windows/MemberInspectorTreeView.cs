@@ -10,18 +10,17 @@ namespace Stratus
   [Serializable]
   public class MemberInspectorTreeElement : TreeElement<ComponentInformation.MemberReference>
   {
-    protected override string GetName() => this.data.name;
 
     public static List<MemberInspectorTreeElement> GenerateFavoritesTree()
     {
       var members = GameObjectBookmark.watchList;
-      var elements = MemberInspectorTreeElement.GenerateFlatTree<MemberInspectorTreeElement, ComponentInformation.MemberReference>(Set, members);      
+      var elements = MemberInspectorTreeElement.GenerateFlatTree<MemberInspectorTreeElement, ComponentInformation.MemberReference>(members);      
       return elements;
     }
 
     public static List<MemberInspectorTreeElement> GenerateInspectorTree(GameObjectInformation target)
     {
-      var treeBuilder = new TreeBuilder<MemberInspectorTreeElement, ComponentInformation.MemberReference>(Set);
+      var treeBuilder = new TreeBuilder<MemberInspectorTreeElement, ComponentInformation.MemberReference>();
       treeBuilder.AddChildren(target.members, 0);
       return treeBuilder.ToTree();
     }

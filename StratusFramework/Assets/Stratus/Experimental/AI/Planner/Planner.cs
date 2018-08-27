@@ -53,8 +53,8 @@ namespace Stratus
       {
         this.agent.gameObject.Connect<WorldState.ModifySymbolEvent>(this.OnModifySymbolEvent);
       }
-      
-      public override void OnReset()
+
+      protected override void OnReset()
       {
         this.CurrentAction.Reset();
         this.FormulatePlan();
@@ -65,16 +65,16 @@ namespace Stratus
         currentBehavior.Execute(dt);        
       }
 
-      public override void OnBehaviorAdded(Behavior behavior)
+      protected override void OnBehaviorAdded(Behavior behavior)
       {
         throw new NotImplementedException();
       }
 
-      public override void OnBehaviorStarted(Behavior behavior)
+      protected override void OnBehaviorStarted(Behavior behavior)
       {        
       }
 
-      public override void OnBehaviorEnded(Behavior behavior)
+      protected override void OnBehaviorEnded(Behavior behavior)
       {
         // Modify the current world state due to the previous action
         // We already have a reference to the current action so
@@ -83,6 +83,12 @@ namespace Stratus
         this.State.Merge(CurrentAction.effects);
         ContinuePlan();
       }
+
+      protected override void OnBehaviorsCleared()
+      {
+        throw new NotImplementedException();
+      }
+
       protected override void OnPrint(StringBuilder builder)
       {
         foreach (var action in AvailableActions)

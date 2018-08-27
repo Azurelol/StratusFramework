@@ -58,10 +58,11 @@ namespace Stratus
       protected abstract void OnUpdate(float dt);
       protected abstract void OnPrint(StringBuilder builder);
       // Behaviors
-      public abstract void OnBehaviorAdded(Behavior behavior);
-      public abstract void OnBehaviorStarted(Behavior behavior);
-      public abstract void OnBehaviorEnded(Behavior behavior);
-      public abstract void OnReset();
+      protected abstract void OnBehaviorAdded(Behavior behavior);
+      protected abstract void OnBehaviorStarted(Behavior behavior);
+      protected abstract void OnBehaviorEnded(Behavior behavior);
+      protected abstract void OnBehaviorsCleared();
+      protected abstract void OnReset();
 
       //------------------------------------------------------------------------/
       // Methods
@@ -128,6 +129,14 @@ namespace Stratus
       public void AddBehaviour(Behavior behaviour)
       {
         this.OnBehaviorAdded(behaviour);
+      }
+
+      /// <summary>
+      /// Clears all behaviors from this system
+      /// </summary>
+      public void ClearBehaviors()
+      {
+        this.OnBehaviorsCleared();
       }
 
       //------------------------------------------------------------------------/

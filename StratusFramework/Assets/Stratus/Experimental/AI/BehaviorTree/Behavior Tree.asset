@@ -20,8 +20,106 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: root
+    - Name: tree
+      Entry: 7
+      Data: 0|Stratus.SerializedTree`2[[Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp],[Stratus.AI.Behavior,
+        Assembly-CSharp]], Assembly-CSharp
+    - Name: elements
+      Entry: 7
+      Data: 1|System.Collections.Generic.List`1[[Stratus.AI.BehaviorTree+BehaviorNode,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 2|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 0
+    - Name: name
+      Entry: 1
+      Data: Root
+    - Name: depth
+      Entry: 3
+      Data: -1
+    - Name: data
       Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 3|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 1
+    - Name: name
+      Entry: 1
+      Data: MoveToAction
+    - Name: depth
+      Entry: 3
+      Data: 0
+    - Name: data
+      Entry: 7
+      Data: 4|Stratus.AI.MoveToAction, Assembly-CSharp
+    - Name: _name
+      Entry: 1
+      Data: MoveToAction
+    - Name: Symbol
+      Entry: 6
+      Data: 
+    - Name: range
+      Entry: 4
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 5|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 2
+    - Name: name
+      Entry: 1
+      Data: MoveToAction
+    - Name: depth
+      Entry: 3
+      Data: 0
+    - Name: data
+      Entry: 7
+      Data: 6|Stratus.AI.MoveToAction, Assembly-CSharp
+    - Name: _name
+      Entry: 1
+      Data: MoveToAction
+    - Name: Symbol
+      Entry: 6
+      Data: 
+    - Name: range
+      Entry: 4
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: idCounter
+      Entry: 3
+      Data: 3
+    - Name: 
+      Entry: 8
       Data: 
   debug: 0
   description: 

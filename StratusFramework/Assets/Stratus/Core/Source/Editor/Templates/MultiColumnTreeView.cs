@@ -63,8 +63,7 @@ namespace Stratus
     protected abstract TreeViewColumn BuildColumn(ColumnType columnType);
     protected abstract void DrawColumn(Rect cellRect, TreeViewItem<TreeElementType> item, ColumnType column, ref RowGUIArgs args);
     protected abstract ColumnType GetColumn(int index);
-    protected abstract int GetColumnIndex(ColumnType columnType);
-    protected abstract void OnItemContextMenu(GenericMenu menu, TreeElementType treeElement);
+    protected abstract int GetColumnIndex(ColumnType columnType);    
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -76,7 +75,7 @@ namespace Stratus
       MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(columns);
       this.multiColumnHeader = this.stratusMultiColumnHeader = new StratusMultiColumnHeader(headerState);
       this.InitializeMultiColumnTreeView();
-      this.Reload();
+      //this.Reload();
     }
 
     public MultiColumnTreeView(TreeViewState state, TreeModel<TreeElementType> model)
@@ -86,7 +85,7 @@ namespace Stratus
       MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(columns);
       this.multiColumnHeader = new StratusMultiColumnHeader(headerState);
       this.InitializeMultiColumnTreeView();
-      this.Reload();
+      //this.Reload();
     }
 
 
@@ -107,6 +106,8 @@ namespace Stratus
 
       // Callbacks
       this.multiColumnHeader.sortingChanged += this.OnSortingChanged;
+
+      this.Reload();
     }
 
     //------------------------------------------------------------------------/
@@ -136,18 +137,7 @@ namespace Stratus
       }
     }
 
-    protected override void ContextClickedItem(int id)
-    {
-      base.ContextClickedItem(id);
-      TreeViewItem<TreeElementType> treeItem = (TreeViewItem<TreeElementType>)this.FindItem(id, this.rootItem);
-      TreeElementType treeElement = treeItem.item;
 
-      GenericMenu menu = new GenericMenu();
-      this.OnItemContextMenu(menu, treeElement);
-      menu.ShowAsContext();
-
-      //Trace.Script($"Context click on {treeElement.name}");
-    }
 
     protected override bool CanRename(TreeViewItem item)
     {

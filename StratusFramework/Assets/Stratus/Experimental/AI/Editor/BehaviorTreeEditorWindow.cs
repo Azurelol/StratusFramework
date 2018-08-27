@@ -27,6 +27,12 @@ namespace Stratus
         public BehaviourTreeView(TreeViewState state, IList<BehaviorTree.BehaviorNode> data) : base(state, data)
         {
         }
+
+        protected override void OnItemContextMenu(GenericMenu menu, BehaviorTree.BehaviorNode treeElement)
+        {
+          menu.AddItem("Boo", false, ()=> { });
+          //menu.AddItem("Remove", false, () => treeElement.data.);
+        }
       }
 
       //----------------------------------------------------------------------/
@@ -61,8 +67,15 @@ namespace Stratus
         if (this.treeViewState == null)
           this.treeViewState = new TreeViewState();
 
-        TreeBuilder<BehaviorTree.BehaviorNode, Behavior> treeBuilder = new TreeBuilder<BehaviorTree.BehaviorNode, Behavior>(null);
-        this.treeInspector = new BehaviourTreeView(treeViewState, treeBuilder.ToTree());
+        if (behaviorTree)
+        {
+          this.treeInspector = new BehaviourTreeView(treeViewState, behaviorTree.tree.elements);
+        }
+        else
+        {
+          TreeBuilder<BehaviorTree.BehaviorNode, Behavior> treeBuilder = new TreeBuilder<BehaviorTree.BehaviorNode, Behavior>();
+          this.treeInspector = new BehaviourTreeView(treeViewState, treeBuilder.ToTree());
+        }
         this.treeInspector.Reload();
         this.behaviorSelector = new TypeSelector(typeof(Behavior), false);
       }
@@ -71,10 +84,16 @@ namespace Stratus
       {
         Rect rect = currentPosition;
 
+        //GUILayout.BeginArea(rect, EditorStyles.inspectorDefaultMargins);
+        //GUILayout.EndArea();
+        rect.y += StratusEditorUtility.lineHeight;
+
         rect.width *= 0.5f;
         DrawHierarchy(rect);
 
         rect.x += rect.width;
+        rect.width -= StratusEditorGUI.standardPadding;
+        //StratusEditorGUI.GUIPopup(rect, "Behaviors", behaviorSelector.subTypes);
         DrawInspector(rect);        
       }
 
@@ -88,19 +107,31 @@ namespace Stratus
 
       private void DrawInspector(Rect rect)
       {
-        EditorGUILayout.LabelField("Inspector", StratusGUIStyles.header);
-        GUI.BeginGroup(rect);
+        //StratusEditorGUI.GUIPopup(rect, "Behaviors", behaviorSelector.subTypes);
+        GUILayout.BeginArea(rect, EditorStyles.inspectorDefaultMargins);        
         GUILayout.Label("Inspector", StratusGUIStyles.header);
+        StratusEditorGUI.GUILayoutPopup("Behaviors", behaviorSelector.subTypes);
         //GUILayout.BeginHorizontal();
-        //{
-        //  StratusEditorGUI.GUILayoutPopup("Behaviors", behaviorSelector.subTypes);
-        //  if (GUILayout.Button("Add", EditorStyles.miniButtonRight))
-        //  {
-        //    AddNode(behaviorSelector.selectedClass);
-        //  }
-        //}
+        {
+          //EditorGUILayout.Popup(behaviorSelector.selectedIndex, behaviorSelector.displayedOptions);          
+          if (GUILayout.Button("Add", EditorStyles.miniButtonRight))
+          {
+            AddNode(behaviorSelector.selectedClass);
+          }
+        }
         //GUILayout.EndHorizontal();
         //treeInspector.GetSelection
+
+        if (GUILayout.Button("Refresh"))
+          this.Refresh();
+        if (GUILayout.Button("Clear"))
+          this.RemoveAllNodes();
+
+
+        foreach(var element in this.behaviorTree.tree.elements)
+        {
+          GUILayout.Label(element.ToString());
+        }
         GUI.EndGroup();
       }
 
@@ -110,13 +141,28 @@ namespace Stratus
       private void AddNode(Type type)
       {
         behaviorTree.AddBehaviour(type);
+        EditorUtility.SetDirty(behaviorTree);
+        Refresh();
       }
 
       private void RemoveNode(BehaviorTree.BehaviorNode node)
       {
         //behaviorTree.AddBehaviour(type);
+        EditorUtility.SetDirty(behaviorTree);
+        Refresh();
       }
 
+      private void RemoveAllNodes()
+      {
+        behaviorTree.ClearBehaviors();
+        EditorUtility.SetDirty(behaviorTree);
+        Refresh();
+      }
+
+      public void Refresh()
+      {
+        this.treeInspector.SetTree(this.behaviorTree.tree.elements);
+      }
 
       //----------------------------------------------------------------------/
       // Methods: Static
@@ -142,10 +188,10 @@ namespace Stratus
       public void SetTree(BehaviorTree tree)
       {
         this.behaviorTree = tree;
-        if (tree.nodes == null)
-          tree.nodes = new List<BehaviorTree.BehaviorNode>();
-        this.treeInspector.SetTree(tree.nodes);        
+        this.Refresh();
       }
+
+      
 
 
     }

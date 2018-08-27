@@ -1,39 +1,42 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using OdinSerializer;
 
 namespace Stratus
 {
   /// <summary>
   /// Utility class for building a tree to be used with the TreeView
   /// </summary>
-  /// <typeparam name="TreeElementType"></typeparam>
+  /// <typeparam name="TreeElementType"></typeparam>  
   public class TreeBuilder<TreeElementType, DataType> 
-    where TreeElementType : TreeElement, new ()
+    where TreeElementType : TreeElement<DataType>, new ()
+    where DataType : INamed
   {
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
+    [OdinSerialize]
     private List<TreeElementType> tree = new List<TreeElementType>();
+    [SerializeField]
     private int idCounter = 0;
-    private System.Action<TreeElementType, DataType> setData;
 
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
     public bool hasRoot { get; private set; }
+    private System.Action<TreeElementType, DataType> setData { get; set; }
 
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
-    public TreeBuilder(System.Action<TreeElementType, DataType> setData, bool addRoot = true)
+    public TreeBuilder()
     {
-      this.setData = setData;
-      if (addRoot)
-        this.AddRoot();
+      this.AddRoot();
     }
 
-    public void AddRoot()
+    private void AddRoot()
     {
       TreeElementType root = new TreeElementType();
       root.name = "Root";
@@ -48,7 +51,8 @@ namespace Stratus
       TreeElementType child = new TreeElementType();
       child.id = idCounter++;
       child.depth = depth;
-      setData(child, childData);
+      child.Set(childData);
+      //child.data = childData;
       tree.Add(child);
     }
 
@@ -60,8 +64,88 @@ namespace Stratus
       }
     }
 
-    public List<TreeElementType> ToTree() { return this.tree; }
+    public List<TreeElementType> ToTree() => this.tree; 
+    public SerializedTree<TreeElementType, DataType> ToSerializedTree()
+    {
+      SerializedTree<TreeElementType, DataType> serializedTree = new SerializedTree<TreeElementType, DataType>(this.tree, this.idCounter);
+      return serializedTree;
+    }
 
+  }
+
+  /// <summary>
+  /// A serialized tree
+  /// </summary>
+  /// <typeparam name="TreeElementType"></typeparam>
+  [Serializable]
+  public class SerializedTree<TreeElementType, DataType>
+    where TreeElementType : TreeElement<DataType>, new()
+    where DataType : INamed
+  {
+    //------------------------------------------------------------------------/
+    // Fields
+    //------------------------------------------------------------------------/
+    [OdinSerialize]
+    public List<TreeElementType> elements = new List<TreeElementType>();
+    [SerializeField]
+    private int idCounter = 0;
+
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/    
+
+    //------------------------------------------------------------------------/
+    // CTOR
+    //------------------------------------------------------------------------/
+    public SerializedTree(List<TreeElementType> tree, int idCounter)
+    {
+      this.elements = tree;
+      this.idCounter = idCounter;      
+    }
+
+    public SerializedTree()
+    {
+      this.AddRoot();
+    }
+
+    //------------------------------------------------------------------------/
+    // Methods: Public
+    //------------------------------------------------------------------------/
+    public void AddElement(DataType data, int depth)
+    {
+      TreeElementType element = new TreeElementType();
+      element.id = idCounter++;
+      element.depth = depth;
+      element.Set(data);
+      elements.Add(element);
+    }
+
+    public void AddElements(DataType[] elementsData, int depth)
+    {
+      foreach (var data in elementsData)
+      {
+        this.AddElement(data, depth);
+      }
+    }
+
+    public void Clear()
+    {
+      this.elements.Clear();
+      this.idCounter = 0;
+      this.AddRoot();
+    }
+
+    //------------------------------------------------------------------------/
+    // Methods: Private
+    //------------------------------------------------------------------------/
+    private void AddRoot()
+    {
+      TreeElementType root = new TreeElementType();
+      root.name = "Root";
+      root.depth = -1;
+      root.id = idCounter++;
+      elements.Add(root);
+    }
   }
 
 }

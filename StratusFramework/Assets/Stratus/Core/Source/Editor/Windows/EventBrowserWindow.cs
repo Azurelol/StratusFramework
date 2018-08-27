@@ -20,13 +20,15 @@ namespace Stratus
     /// <summary>
     /// Basic information about an event
     /// </summary>
-    public struct EventInformation
+    public struct EventInformation : INamed
     {
       public string @namespace;
       public string @class;
       public string name;
       public string members;
       private const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+      string INamed.name => this.name;
 
       public EventInformation(System.Type type)
       {
@@ -42,8 +44,7 @@ namespace Stratus
     }
 
     public class EventTreeElement : TreeElement<EventInformation>
-    {
-      protected override string GetName() => data.name;
+    {      
     }
 
     public enum Columns
@@ -186,7 +187,7 @@ namespace Stratus
         eventsInformation[i] = new EventInformation(events[i]);
       }
 
-      var treeBuilder = new TreeBuilder<EventTreeElement, EventInformation>(EventTreeElement.Set);
+      var treeBuilder = new TreeBuilder<EventTreeElement, EventInformation>();
       treeBuilder.AddChildren(eventsInformation, 0);
       return treeBuilder.ToTree();
     }

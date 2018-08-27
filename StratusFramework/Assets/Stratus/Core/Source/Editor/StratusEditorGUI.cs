@@ -7,6 +7,8 @@ namespace Stratus
 {
   public static class StratusEditorGUI
   {
+    public static float standardPadding { get; } = 10f;
+
     public static void GUILayoutPopup(string label, int selectedindex, string[] displayedOptions, System.Action<int> onSelected)
     {
       SearchablePopup.Popup(label, selectedindex, displayedOptions, onSelected);
@@ -17,9 +19,19 @@ namespace Stratus
       SearchablePopup.Popup(label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
     }
 
+    public static void GUILayoutPopup(DropdownList dropdownList)
+    {
+      SearchablePopup.Popup(dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
+    }
+
     public static void GUIPopup(Rect position, string label, DropdownList dropdownList)
     {
       SearchablePopup.Popup(position, label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
+    }
+
+    public static void GUIPopup(Rect position, DropdownList dropdownList)
+    {
+      SearchablePopup.Popup(position, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
     }
 
     public static void GUIPopup(Rect position, string label, int selectedindex, string[] displayedOptions, System.Action<int> onSelected)

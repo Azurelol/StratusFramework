@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using OdinSerializer;
 
 namespace Stratus
 {
@@ -11,6 +12,10 @@ namespace Stratus
   [Serializable]
   public class TreeElement
   {
+    //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/ 
+
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/ 
@@ -25,6 +30,10 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/ 
     public bool hasChildren => children != null && children.Count > 0;
+    /// <summary>
+    /// THe root node must have a depth of -1
+    /// </summary>
+    public bool isRoot => depth == -1;
 
     //------------------------------------------------------------------------/
     // Methods
@@ -40,12 +49,17 @@ namespace Stratus
       this.id = id;
     }
 
+    public override string ToString()
+    {
+      return $"{name} id({id}) depth({depth})";
+    }
+
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/ 
-    public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(System.Action<TreeElementType, DataType> setData, params DataType[] elements)
-      where TreeElementType : TreeElement, new()
-      where DataType : class
+    public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(params DataType[] elements)
+      where TreeElementType : TreeElement<DataType>, new()
+      where DataType : INamed
     {
       List<TreeElementType> treeList = new List<TreeElementType>();
 
@@ -62,14 +76,14 @@ namespace Stratus
       foreach (var element in elements)
       {
         TreeElementType child = new TreeElementType();
-        setData(child, element);
+        child.Set(element);
         child.depth = 0;
         child.id = idCounter++;
         treeList.Add(child);
       }
 
       return treeList;
-    }
+    }    
 
     /// <summary>
     /// Fills out the list from the given root node
@@ -99,6 +113,21 @@ namespace Stratus
           }
         }
       }
+    }
+
+    public static TreeElementType MakeRoot<TreeElementType>() 
+      where TreeElementType : TreeElement, new()
+    {
+      TreeElementType root = new TreeElementType();
+      root.name = "Root";
+      root.depth = -1;
+      root.id = 0;
+      return root;
+    }
+
+    public static void AddElement<TreeElementType>(IList<TreeElementType> list, TreeElementType element)
+    {
+      //foreach(var)
     }
 
     ///// <summary>
@@ -312,32 +341,28 @@ namespace Stratus
   /// <summary>
   /// Generic class for a tree element with one primary data member
   /// </summary>
-  /// <typeparam name="T"></typeparam>
-  public abstract class TreeElement<T> : TreeElement
+  /// <typeparam name="DataType"></typeparam>
+  public abstract class TreeElement<DataType> : TreeElement
+    where DataType : INamed
   {
-    public T data;
+    [OdinSerialize]
+    public DataType data;
 
-    //public TreeElement()
-    //{
-    //}
-    //
-    //public TreeElement(T data)
-    //{
-    //  this.data = data;
-    //}
+    public TreeElement()
+    {
+    }
 
-    public void Set(T data)
+    public void Set(DataType data)
     {
       this.data = data;
+      this.name = data.name;
     }
 
-    public static void Set(TreeElement<T> treeElement, T data)
-    {
-      treeElement.Set(data);
-      treeElement.name = treeElement.GetName();
-    }
-
-    protected abstract string GetName();
+    //public static void Set(TreeElement<DataType> treeElement, DataType data)
+    //{
+    //  treeElement.Set(data);
+    //  treeElement.name = treeElement.GetName();
+    //}
 
   }
 

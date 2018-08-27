@@ -21,7 +21,7 @@ namespace Stratus
     /// Serialized reference to the member of a component
     /// </summary>
     [Serializable]
-    public class MemberReference
+    public class MemberReference : INamed
     {
       //------------------------------------------------------------------------/
       // Fields
@@ -62,6 +62,7 @@ namespace Stratus
       public string latestValueString { get; private set; }
       public object latestValue { get; private set; }
       public bool initialized { get; private set; } = false;
+      string INamed.name => this.name;
 
       //------------------------------------------------------------------------/
       // CTOR

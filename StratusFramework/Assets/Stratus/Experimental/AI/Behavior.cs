@@ -11,7 +11,7 @@ namespace Stratus
     /// decorators and composites are all behaviors
     /// </summary>
     [Serializable]
-    public abstract class Behavior
+    public abstract class Behavior : INamed
     {
       /// <summary>
       /// A behavior that needs to be updated every frame
@@ -53,20 +53,12 @@ namespace Stratus
 
       //------------------------------------------------------------------------/
       // Fields
-      //------------------------------------------------------------------------/ 
-      /// <summary>
-      /// The numeric identifier for this behavior
-      /// </summary>
-      [SerializeField] public int id;
+      //------------------------------------------------------------------------/
       /// <summary>
       /// The name for this behavior
       /// </summary>
-      [SerializeField] public string name;
-      /// <summary>
-      /// The depth of this behavior (used in tree structures)
-      /// </summary>
-      public int depth;
-
+      [SerializeField]
+      private string _name;
 
       //----------------------------------------------------------------------/
       // Properties
@@ -88,6 +80,10 @@ namespace Stratus
       /// A short description of what this behavior does
       /// </summary>
       public abstract string description { get; }
+      /// <summary>
+      /// The name for this behavior
+      /// </summary>
+      public string name => this._name;
 
       //----------------------------------------------------------------------/
       // Interface
@@ -107,7 +103,13 @@ namespace Stratus
       /// </summary>
       protected abstract void OnEnd();
 
-      
+      //------------------------------------------------------------------------/
+      // CTOR
+      //------------------------------------------------------------------------/
+      public Behavior()
+      {
+        this._name = GetType().Name;
+      }
 
       //----------------------------------------------------------------------/
       // Messages
