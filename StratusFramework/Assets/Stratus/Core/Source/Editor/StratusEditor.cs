@@ -555,6 +555,16 @@ namespace Stratus
     }
 
     /// <summary>
+    /// Returns the serialized property, saving any recorded changes
+    /// </summary>
+    /// <param name="property"></param>
+    /// <returns></returns>
+    public SerializedProperty GetSerializedProperty(string propertyName)
+    {
+      return propertyMap[propertyName];
+    }
+
+    /// <summary>
     /// Draws a serialized property, saving any recorded changes
     /// </summary>
     /// <param name="prop"></param>
@@ -759,7 +769,6 @@ namespace Stratus
           SerializedPropertyModel[] joinedProperties = propertiesByType[previousType].Concat(unityProperties);
           propertiesByType[previousType] = joinedProperties;
           // Concat property groups
-          var lastGroup = propertyGroups.Last();
           propertyGroups.RemoveLast();
           propertyGroups.Add(new Tuple<Type, SerializedPropertyModel[]>(previousType, joinedProperties));
         }

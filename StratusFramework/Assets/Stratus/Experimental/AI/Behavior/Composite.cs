@@ -11,23 +11,36 @@ namespace Stratus
     /// are called composite beaviors. We make more interesting,
     /// intelligent behaviors by combining simpler behaviors together.
     /// </summary>
-    public abstract class Composite : Behavior
+    public abstract class Composite : Behavior, IDecoratorSupport
     {
-      public List<Behavior> Children { private set; get; }
+      //------------------------------------------------------------------------/
+      // Fields
+      //------------------------------------------------------------------------/
+      [OdinSerializer.OdinSerialize]
+      public List<Decorator> decorators = new List<Decorator>();
 
+      //------------------------------------------------------------------------/
+      // Properties
+      //------------------------------------------------------------------------/
+      List<Decorator> IDecoratorSupport.decorators => this.decorators;
+      public List<Behavior> children { private set; get; }
+
+      //------------------------------------------------------------------------/
+      // Methods
+      //------------------------------------------------------------------------/
       public void Add(Behavior child)
       {
-        Children.Add(child);
+        children.Add(child);
       }
 
       public void Remove(Behavior child)
       {
-        Children.Remove(child);
+        children.Remove(child);
       }
 
       public void Clear()
       {
-        Children.Clear();
+        children.Clear();
       }
 
     } 

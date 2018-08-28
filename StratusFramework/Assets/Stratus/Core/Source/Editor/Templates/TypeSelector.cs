@@ -19,14 +19,10 @@ namespace Stratus
     //------------------------------------------------------------------------/
     public Type baseType { get; private set; }
     public DropdownList<Type> subTypes { get; private set; }
-
-    //public Type[] subTypes { get; private set; }
     public Type selectedClass => subTypes.selected;
     private string selectedClassName => selectedClass.Name;
     public int selectedIndex => subTypes.selectedIndex;
     public string[] displayedOptions => subTypes.displayedOptions;
-    //public string[] displayedOptions { get; private set; }
-    //public bool isValidIndex => currentIndex > 0;
     public System.Action onSelectionChanged { get; set; }
 
     //------------------------------------------------------------------------/
@@ -39,13 +35,17 @@ namespace Stratus
     public TypeSelector(Type baseType, bool includeAbstract, bool sortAlphabetically = false)
     {
       this.baseType = baseType;      
-      this.subTypes = new DropdownList<Type>(Reflection.GetSubclass(baseType), (Type type) => type.Name);
-      //this.displayedOptions = subTypes.Names(;
-      
+      this.subTypes = new DropdownList<Type>(Reflection.GetSubclass(baseType), Name);
       if (sortAlphabetically)
-      {
-        this.subTypes.Sort();
-      }
+        this.subTypes.Sort();      
+    }
+
+    public TypeSelector(Type[] types, bool includeAbstract, bool sortAlphabetically = false)
+    {
+      this.baseType = baseType;
+      this.subTypes = new DropdownList<Type>(types, Name);    
+      if (sortAlphabetically)
+        this.subTypes.Sort();      
     }
 
     public TypeSelector(Type baseType, Type interfaceType, bool sortAlphabetically = false)
@@ -58,6 +58,14 @@ namespace Stratus
         this.subTypes.Sort();
       }
     }
+
+    public static TypeSelector FilteredSelector(Type baseType, Type excludedType, bool includeAbstract, bool sortAlphabetically = true)
+    {
+      Type[] types = Reflection.GetSubclass(baseType).Where(x => !x.IsSubclassOf(excludedType)).ToArray();
+      return new TypeSelector(types, includeAbstract, sortAlphabetically);
+    }
+
+    private static string Name(Type type) => type.Name;
 
     //------------------------------------------------------------------------/
     // Methods
@@ -78,10 +86,10 @@ namespace Stratus
       onSelectionChanged?.Invoke();
     }
 
-    public virtual void DrawGUILayout(string label)
-    {
-      StratusEditorGUI.GUILayoutPopup(label, selectedIndex, displayedOptions, ResetSelection);
-    }
+    //public virtual void DrawGUILayout(string label)
+    //{
+    //  StratusEditorGUI.GUILayoutPopup(label, selectedIndex, displayedOptions, ResetSelection);
+    //}
     
 
     //public virtual bool DrawGUILayout(string label)

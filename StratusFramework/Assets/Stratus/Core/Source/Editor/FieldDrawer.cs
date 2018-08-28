@@ -24,6 +24,7 @@ namespace Stratus
       public SerializedPropertyType propertyType { get; private set; }
       public bool isArray { get; private set; }
       public Dictionary<Type, Attribute> attributesByName { get; private set; } = new Dictionary<Type, Attribute>();
+      //private StratusReorderableList reorderableList { get; set; }
 
       //------------------------------------------------------------------------/
       // Properties: Static
@@ -46,23 +47,23 @@ namespace Stratus
 
         this.attributesByName.AddRange(this.field.GetCustomAttributes(attributeType), (Attribute attribute) => attribute.GetType());
         this.propertyType = SerializedSystemObject.DeducePropertyType(field);
-
-        this.isDrawable = propertyType != SerializedPropertyType.Generic;
         this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
         this.isArray = typeof(IList).IsAssignableFrom(this.type); //this.type.IsArray || IsList(this.type);
+
+        this.isDrawable = true;
         this.height = StratusEditorUtility.lineHeight;
       }
 
-      public FieldDrawer(FieldInfo field, SerializedPropertyType propertyType)
-      {
-        this.field = field;
-        this.type = this.field.FieldType;
-        this.name = ObjectNames.NicifyVariableName(field.Name);
-        this.propertyType = propertyType;
-        this.isDrawable = propertyType != SerializedPropertyType.Generic;
-        this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
-        this.isArray = typeof(IList).IsAssignableFrom(this.type); //this.type.IsArray || IsList(this.type);
-      }
+      //public FieldDrawer(FieldInfo field, SerializedPropertyType propertyType)
+      //{
+      //  this.field = field;
+      //  this.type = this.field.FieldType;
+      //  this.name = ObjectNames.NicifyVariableName(field.Name);
+      //  this.propertyType = propertyType;
+      //  //this.isDrawable = propertyType != SerializedPropertyType.Generic;
+      //  this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
+      //  this.isArray = typeof(IList).IsAssignableFrom(this.type); //this.type.IsArray || IsList(this.type);
+      //}
 
       public override bool DrawEditorGUILayout(object target)
       {
@@ -108,8 +109,13 @@ namespace Stratus
           default:
             if (isArray)
             {
-              StratusEditorUtility.DrawPolymorphicList(this.field, target, this.name);
-              //EditorGUILayout.LabelField($"No drawer implementation for {label} of type {type.Name}");
+              //if (reorderableList == null)
+              //{
+              //  this.reorderableList = StratusReorderableList.PolymorphicList(this.GetValue( )
+              //
+              EditorGUILayout.Space();
+              StratusReorderableList.DrawCachedPolymorphicList(this.field, target);
+              //StratusEditorUtility.DrawPolymorphicList(this.field, target, this.name);
             }
             else
             {

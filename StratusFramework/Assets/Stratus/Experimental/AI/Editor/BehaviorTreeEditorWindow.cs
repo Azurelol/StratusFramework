@@ -34,20 +34,54 @@ namespace Stratus
 
         protected override void OnItemContextMenu(GenericMenu menu, BehaviorTree.BehaviorNode treeElement)
         {
-          menu.AddPopup("Add", BehaviorTreeEditorWindow.behaviorTypes.displayedOptions, (int index) =>
+          // Actions
+          menu.AddPopup("Add/Actions", BehaviorTreeEditorWindow.actionTypes.displayedOptions, (int index) =>
           {
-            window.AddNode(BehaviorTreeEditorWindow.behaviorTypes.AtIndex(index), treeElement);
+            window.AddNode(BehaviorTreeEditorWindow.actionTypes.AtIndex(index), treeElement);
           });
+
+          // Composite
+          menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
+          {
+            window.AddNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
+          });
+
+          //// Decorator
+          //IDecoratorSupport decoratable = treeElement.data as IDecoratorSupport;
+          //if (decoratable != null)
+          //{
+          //  menu.AddPopup("Add/Decorator", BehaviorTreeEditorWindow.decoratorTypes.displayedOptions, (int index) =>
+          //  {
+          //    decoratable.decorators.Add(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index));
+          //  });
+          //}
+
+          // Service
+          if (treeElement.data is Composite)
+          {
+            menu.AddPopup("Add/Service", BehaviorTreeEditorWindow.serviceTypes.displayedOptions, (int index) =>
+            {
+              window.AddNode(BehaviorTreeEditorWindow.serviceTypes.AtIndex(index), treeElement);
+            });
+          }
+
           menu.AddItem("Remove", false, ()=> window.RemoveNode(treeElement));
-          //menu.AddItem("Remove", false, () => treeElement.data.);
         }
 
         protected override void OnContextMenu(GenericMenu menu)
         {
-          menu.AddPopup("Add", BehaviorTreeEditorWindow.behaviorTypes.displayedOptions, (int index) =>
+          // Composite
+          menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
           {
-            window.AddNode(BehaviorTreeEditorWindow.behaviorTypes.AtIndex(index));
+            window.AddNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index));
           });
+
+          // Actions
+          menu.AddPopup("Add/Actions", BehaviorTreeEditorWindow.actionTypes.displayedOptions, (int index) =>
+          {
+            window.AddNode(BehaviorTreeEditorWindow.actionTypes.AtIndex(index));
+          });
+
           menu.AddItem("Clear", false, () => window.RemoveAllNodes());
         }
       }
@@ -73,7 +107,27 @@ namespace Stratus
       /// <summary>
       /// All supported behavior types
       /// </summary>
-      public static TypeSelector behaviorTypes { get; } = new TypeSelector(typeof(Behavior), false);
+      public static TypeSelector behaviorTypes { get; } = TypeSelector.FilteredSelector(typeof(Behavior), typeof(Decorator), false, true);
+
+      /// <summary>
+      /// All supported decorator types
+      /// </summary>
+      public static TypeSelector compositeTypes { get; } = new TypeSelector(typeof(Composite), false, true);
+
+      /// <summary>
+      /// All supported decorator types
+      /// </summary>
+      public static TypeSelector actionTypes { get; } = new TypeSelector(typeof(Action), false, true);
+
+      /// <summary>
+      /// All supported decorator types
+      /// </summary>
+      public static TypeSelector decoratorTypes { get; } = new TypeSelector(typeof(Decorator), false, true);
+
+      /// <summary>
+      /// All supported decorator types
+      /// </summary>
+      public static TypeSelector serviceTypes { get; } = new TypeSelector(typeof(Service), false, true);
 
       /// <summary>
       /// The behavior tree currently being edited
@@ -139,6 +193,7 @@ namespace Stratus
         DrawInspector(rect);
         // Blackboard: BOTTOM-RIGHT
         rect.y += rect.height;
+        rect.y += padding;
         DrawBlackboard(rect);
       }
 
@@ -157,25 +212,24 @@ namespace Stratus
 
       private void DrawInspector(Rect rect)
       {
-        //StratusEditorGUI.GUIPopup(rect, "Behaviors", behaviorSelector.subTypes);
         GUILayout.BeginArea(rect);        
         GUILayout.Label("Inspector", StratusGUIStyles.header);
 
         if (currentNodes != null)
         {          
           if (currentNodes.Count == 1)
-          {            
-            InspectNode(rect);
+          {
+            GUILayout.Label(currentNode.dataTypeName, EditorStyles.largeLabel);
+            this.inspectorScrollPosition = EditorGUILayout.BeginScrollView(this.inspectorScrollPosition, GUI.skin.box);
+            bool changed = currentNodeSerializedObject.DrawEditorGUILayout();
+            EditorGUILayout.EndScrollView();
           }
           else
           {
-            GUILayout.Label("Editing multiple nodes is not supported!", StratusGUIStyles.label);
+            GUILayout.Label("Editing multiple nodes is not supported!", EditorStyles.largeLabel);
           }
-        }
+        }    
 
-        //foreach (var element in this.behaviorTree.tree.elements)
-        //{
-        //  GUILayout.Label(element.ToString());        
         GUILayout.EndArea();
       }
 
@@ -201,7 +255,7 @@ namespace Stratus
             StratusEditorGUI.EnumToolbar(ref scope);
             StratusEditorGUI.EndAligned();
 
-            this.blackboardScrollPosition = EditorGUILayout.BeginScrollView(this.blackboardScrollPosition);
+            this.blackboardScrollPosition = EditorGUILayout.BeginScrollView(this.blackboardScrollPosition, GUI.skin.box);
             switch (scope)
             {
               case Blackboard.Scope.Local:
@@ -221,16 +275,6 @@ namespace Stratus
       //----------------------------------------------------------------------/
       // Methods: Private
       //----------------------------------------------------------------------/
-      private void InspectNode(Rect position)
-      {
-        GUILayout.Label(currentNode.dataTypeName, EditorStyles.largeLabel);
-        this.inspectorScrollPosition = EditorGUILayout.BeginScrollView(this.inspectorScrollPosition, GUI.skin.box);
-        bool changed = currentNodeSerializedObject.DrawEditorGUILayout();
-        if (changed)
-          currentNode.UpdateName();
-        EditorGUILayout.EndScrollView();
-      }
-
       private void AddNode(Type type, BehaviorTree.BehaviorNode parent = null)
       {
         if (parent != null)
@@ -238,24 +282,23 @@ namespace Stratus
         else
           behaviorTree.AddBehavior(type);
 
-        EditorUtility.SetDirty(behaviorTree);
-        Refresh();
+        Save();
       }
 
       private void RemoveNode(BehaviorTree.BehaviorNode node)
       {
-        //behaviorTree.AddBehaviour(type);
+        if (node == currentNode)
+          currentNodeSerializedObject = null;
+
         this.behaviorTree.RemoveBehavior(node);
-        EditorUtility.SetDirty(behaviorTree);
-        Refresh();
+        Save();
       }
 
       private void RemoveAllNodes()
       {
         behaviorTree.ClearBehaviors();
-        EditorUtility.SetDirty(behaviorTree);
         currentNodeSerializedObject = null;
-        Refresh();
+        Save();
       }
 
       private void Refresh()
@@ -270,6 +313,12 @@ namespace Stratus
         this.blackboardEditor = null;
         if (this.blackboard)
           this.OnBlackboardSet();        
+      }
+
+      private void Save()
+      {
+        EditorUtility.SetDirty(behaviorTree);
+        Refresh();
       }
 
       private void OnBlackboardSet()

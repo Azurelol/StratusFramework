@@ -101,7 +101,7 @@ namespace Stratus.AI
     /// <summary>
     /// The blackboard this agent is using
     /// </summary>
-    public Blackboard blackboard;
+    public Blackboard blackboard => behavior.blackboard;
     /// <summary>
     /// The collection of behaviors to run on this agent (a behavior system such as a BT, Planner, etc)
     /// </summary>

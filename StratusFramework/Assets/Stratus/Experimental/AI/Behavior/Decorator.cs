@@ -1,17 +1,21 @@
 using UnityEngine;
 using Stratus;
+using System.Collections.Generic;
+using System;
 
 namespace Stratus
 {
   namespace AI
   {
-    /// <summary>
-    /// A branch in a tree with only a single child.
-    /// </summary>
     public abstract class Decorator : Behavior
     {
-      Behavior Child;
-    }  
+      Behavior child;
+    }
+
+    public interface IDecoratorSupport
+    {
+      List<Decorator> decorators { get; }
+    }
 
   }
 }

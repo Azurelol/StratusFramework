@@ -367,7 +367,7 @@ namespace Stratus
   /// Generic class for a tree element with one primary data member
   /// </summary>
   /// <typeparam name="DataType"></typeparam>
-  public abstract class TreeElement<DataType> : TreeElement
+  public abstract class TreeElement<DataType> : TreeElement, ISerializationCallbackReceiver
     where DataType : class, INamed
   {
     //----------------------------------------------------------------------/
@@ -378,9 +378,25 @@ namespace Stratus
     [OdinSerialize]
     public string dataTypeName;
 
+
     //----------------------------------------------------------------------/
     // Properties
     //----------------------------------------------------------------------/    
+    public bool hasData => data != null;
+
+    //----------------------------------------------------------------------/
+    // Messages
+    //----------------------------------------------------------------------/    
+    public void OnBeforeSerialize()
+    {
+      if (hasData)
+        this.UpdateName();
+    }
+
+    public void OnAfterDeserialize()
+    {
+      
+    }
 
     //----------------------------------------------------------------------/
     // Methods
@@ -402,6 +418,8 @@ namespace Stratus
     {
       return data.name;
     }
+
+
   }
 
 }

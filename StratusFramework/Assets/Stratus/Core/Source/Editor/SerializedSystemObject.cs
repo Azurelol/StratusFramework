@@ -173,6 +173,11 @@ namespace Stratus
              type.GetGenericTypeDefinition().IsAssignableFrom(typeof(List<>));
     }
 
+    public static bool IsArray(Type type)
+    {
+      return typeof(IList).IsAssignableFrom(type);
+    }
+
     public static bool IsDictionary(object o)
     {
       if (o == null) return false;

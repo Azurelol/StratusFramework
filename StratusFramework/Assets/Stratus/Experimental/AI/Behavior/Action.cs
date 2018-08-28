@@ -11,11 +11,19 @@ namespace Stratus
     /// Also known as a leaf node, an action represents any concrete action
     /// an agent can make (such as moving to a location, attacking a target, etc)
     /// </summary>
-    public abstract class Action : Behavior
+    public abstract class Action : Behavior, IDecoratorSupport
     {
+      //------------------------------------------------------------------------/
+      // Fields
+      //------------------------------------------------------------------------/
+      [OdinSerializer.OdinSerialize]
+      public List<Decorator> decorators = new List<Decorator>();
+
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/
+      List<Decorator> IDecoratorSupport.decorators => this.decorators;
+
 
       //------------------------------------------------------------------------/
       // Interface

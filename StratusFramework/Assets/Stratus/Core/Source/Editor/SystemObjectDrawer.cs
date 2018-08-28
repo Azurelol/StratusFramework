@@ -129,7 +129,6 @@ namespace Stratus
           position.y += lineHeight;
         }
 
-
         // Draw all drawers
         foreach (var drawer in drawers)
         {
@@ -164,7 +163,9 @@ namespace Stratus
           Type fieldType = field.FieldType;
           SerializedPropertyType serializedPropertyType = DeducePropertyType(field);
 
-          bool isUnitySupportedType = serializedPropertyType != SerializedPropertyType.Generic; //  OdinSerializer.FormatterUtilities.IsPrimitiveType(fieldType);
+          // Unity is supported by Unity if it's not a generic array
+          bool isArray = IsArray(fieldType);
+          bool isUnitySupportedType = (serializedPropertyType != SerializedPropertyType.Generic || isArray); //  OdinSerializer.FormatterUtilities.IsPrimitiveType(fieldType);
           if (isUnitySupportedType)
           {
             FieldDrawer drawer = new FieldDrawer(field); 

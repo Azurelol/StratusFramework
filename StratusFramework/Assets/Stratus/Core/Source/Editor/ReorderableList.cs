@@ -14,10 +14,21 @@ namespace Stratus
   public class StratusReorderableList : ReorderableList
   {
     //------------------------------------------------------------------------/
+    // Declarations
+    //------------------------------------------------------------------------/
+    //------------------------------------------------------------------------/
     // Properties
+    //------------------------------------------------------------------------/
+    public OdinSerializedProperty odinSerializedProperty { get; private set; }
+    //public string label { get; set; }
+    //public bool isExpanded { get; set; }
+
+    //------------------------------------------------------------------------/
+    // Properties: Static
     //------------------------------------------------------------------------/
     public static GUIStyle elementLabelStyle => EditorStyles.boldLabel;
     public bool drawElementTypeLabel { get; set; } = true;
+    private static Dictionary<IList, StratusReorderableList> cachedLists { get; set; } = new Dictionary<IList, StratusReorderableList>();
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -50,11 +61,29 @@ namespace Stratus
       return reorderableList;
     }
 
+
+    public static StratusReorderableList PolymorphicList(FieldInfo field, object target)
+    {
+      OdinSerializedProperty odinSerializedProperty = new OdinSerializedProperty(field, target);
+      return PolymorphicList(odinSerializedProperty);
+    }
+
     public static StratusReorderableList List(SerializedProperty serializedProperty, Type baseElementType)
     {
       var reorderableList = new StratusReorderableList(serializedProperty.serializedObject, serializedProperty, true, true, true, true);
       reorderableList.SetDefault(serializedProperty);
       return reorderableList;
+    }
+
+    public static void DrawCachedPolymorphicList(FieldInfo field, object target)
+    {
+      IList list = field.GetValue(target) as IList;
+      if (!cachedLists.ContainsKey(list))
+      {
+        StratusReorderableList reorderableList = PolymorphicList(field, target);
+        cachedLists.Add(list, reorderableList);
+      }
+      cachedLists[list].DoLayoutList();
     }
 
     //------------------------------------------------------------------------/
@@ -75,6 +104,18 @@ namespace Stratus
       this.SetElementAddCallback(serializedProperty);
     }
 
+    //public void SetPolymorphic(FieldInfo field, IList list)
+    //{
+    //  this.label = field.Name;
+    //  this.SetHeaderCallback();
+    //  this.SetPolymorphicElementDrawCallback(serializedProperty);
+    //  this.SetPolymorphicElementHeightCallback(serializedProperty);
+    //  this.SetElementAddCallback(serializedProperty);
+    //}
+
+    //------------------------------------------------------------------------/
+    // Callbacks
+    //------------------------------------------------------------------------/
     public void SetHeaderCallback(SerializedProperty serializedProperty)
     {
       this.drawHeaderCallback = (Rect rect) =>
@@ -92,6 +133,15 @@ namespace Stratus
         serializedProperty.isExpanded = EditorGUI.Foldout(newRect, serializedProperty.isExpanded, $"{serializedProperty.displayName} ({serializedProperty.listElementType.Name}) ");
       };
     }
+
+    //public void SetHeaderCallback()
+    //{
+    //  this.drawHeaderCallback = (Rect rect) =>
+    //  {
+    //    var newRect = new Rect(rect.x + 10, rect.y, rect.width - 10, rect.height);
+    //    serializedProperty.isExpanded = EditorGUI.Foldout(newRect, this.isExpanded, $"{serializedProperty.displayName} ({serializedProperty.listElementType.Name}) ");
+    //  };
+    //}
 
     public void SetElementDrawCallback(SerializedProperty serializedProperty)
     {

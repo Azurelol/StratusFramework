@@ -13,12 +13,13 @@ namespace Stratus
     {
       private UnityEditor.Editor ActionEditor;
       SerializedProperty Type;
-      SerializedProperty Preconditions;
-      SerializedProperty Effects;
-      SerializedProperty Cost;
+      //SerializedProperty Preconditions;
+      //SerializedProperty Effects;
+      //SerializedProperty Cost;
 
       protected override void OnStratusEditorEnable()
       {
+        Type = this.GetSerializedProperty(nameof(StatefulAction.type));
         this.AddArea(ModifyAction);
       }      
 
