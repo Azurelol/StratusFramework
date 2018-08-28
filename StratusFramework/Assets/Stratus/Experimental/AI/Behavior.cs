@@ -56,22 +56,20 @@ namespace Stratus
       //------------------------------------------------------------------------/
       /// <summary>
       /// The name for this behavior
-      /// </summary>
-      [SerializeField]
-      private string _name;
+      /// </summary>      
+      public string label;
 
       //----------------------------------------------------------------------/
       // Properties
       //----------------------------------------------------------------------/
-      public bool Active { protected set; get; }
+      /// <summary>
+      /// The current state of this behavior
+      /// </summary>
+      public Status status { protected set; get; }
       /// <summary>
       /// The agent this behavior is acting upon
       /// </summary>
       public Agent agent { private set; get; }
-      /// <summary>
-      /// The current state of this behavior
-      /// </summary>
-      public Status currentStatus { protected set; get; }
       /// <summary>
       /// Whether this behavior needs to be polled 
       /// </summary>
@@ -83,7 +81,7 @@ namespace Stratus
       /// <summary>
       /// The name for this behavior
       /// </summary>
-      public string name => this._name;
+      public string name => this.label;
 
       //----------------------------------------------------------------------/
       // Interface
@@ -108,7 +106,7 @@ namespace Stratus
       //------------------------------------------------------------------------/
       public Behavior()
       {
-        this._name = GetType().Name;
+        //this.label = GetType().Name;
       }
 
       //----------------------------------------------------------------------/
@@ -134,13 +132,17 @@ namespace Stratus
         return this.OnUpdate(dt);
       }      
 
-      /// <summary>
-      /// Ends the behavior
-      /// </summary>
       public virtual void End()
       {
         this.OnEnd();
         this.agent.gameObject.Dispatch<EndedEvent>(new EndedEvent() { behavior = this });
+      }
+
+      public static Behavior Instantiate(Type behaviorType)
+      {
+        if (!behaviorType.IsSubclassOf(typeof(Behavior)))
+          return null;
+        return (Behavior)Utilities.Reflection.Instantiate(behaviorType);
       }
 
 

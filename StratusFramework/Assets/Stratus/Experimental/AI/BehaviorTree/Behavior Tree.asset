@@ -46,6 +46,9 @@ MonoBehaviour:
     - Name: data
       Entry: 6
       Data: 
+    - Name: dataTypeName
+      Entry: 6
+      Data: 
     - Name: 
       Entry: 8
       Data: 
@@ -57,25 +60,29 @@ MonoBehaviour:
       Data: 1
     - Name: name
       Entry: 1
-      Data: MoveToAction
+      Data: Sequence (Cats)
     - Name: depth
       Entry: 3
       Data: 0
     - Name: data
       Entry: 7
-      Data: 4|Stratus.AI.MoveToAction, Assembly-CSharp
-    - Name: _name
+      Data: 4|Stratus.AI.Sequence, Assembly-CSharp
+    - Name: label
       Entry: 1
-      Data: MoveToAction
-    - Name: Symbol
-      Entry: 6
-      Data: 
-    - Name: range
-      Entry: 4
-      Data: 2
+      Data: Cats
+    - Name: ChildrenEnumerator
+      Entry: 7
+      Data: System.Collections.Generic.List`1+Enumerator[[Stratus.AI.Behavior, Assembly-CSharp]],
+        mscorlib
     - Name: 
       Entry: 8
       Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: Sequence
     - Name: 
       Entry: 8
       Data: 
@@ -90,15 +97,24 @@ MonoBehaviour:
       Data: MoveToAction
     - Name: depth
       Entry: 3
-      Data: 0
+      Data: 1
     - Name: data
       Entry: 7
       Data: 6|Stratus.AI.MoveToAction, Assembly-CSharp
-    - Name: _name
-      Entry: 1
-      Data: MoveToAction
-    - Name: Symbol
+    - Name: label
       Entry: 6
+      Data: 
+    - Name: Symbol
+      Entry: 7
+      Data: 7|Stratus.Types.Symbol+Reference, Assembly-CSharp
+    - Name: key
+      Entry: 6
+      Data: 
+    - Name: type
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
       Data: 
     - Name: range
       Entry: 4
@@ -106,6 +122,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: MoveToAction
     - Name: 
       Entry: 8
       Data: 
@@ -123,4 +142,4 @@ MonoBehaviour:
       Data: 
   debug: 0
   description: 
-  blackboard: {fileID: 0}
+  blackboard: {fileID: 11400000, guid: 06f4e3f9e9f7d404b83669bbedb9b7a5, type: 2}

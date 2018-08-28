@@ -55,6 +55,8 @@ namespace Stratus
       }
     }
 
+    public static float padding => StratusEditorGUI.standardPadding;
+
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
@@ -128,6 +130,16 @@ namespace Stratus
       }
       return bools.ToArray();
     }
+
+    protected void EditProperties(params SerializedProperty[] serializedProperties)
+    {
+      foreach(var property in serializedProperties)
+      {
+        EditProperty(property, property.displayName);
+      }
+    }
+
+    protected bool EditProperty(SerializedProperty serializedProperty, string label) => StratusEditorGUI.EditorGUILayoutProperty(serializedProperty, label);
 
     //protected void DrawMenu(GenericMenu menu, float width, float height)
     //{

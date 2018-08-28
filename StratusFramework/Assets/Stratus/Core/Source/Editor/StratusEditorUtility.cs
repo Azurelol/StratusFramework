@@ -39,7 +39,6 @@ namespace Stratus
     public static float labelWidth => EditorGUIUtility.labelWidth;
     public static DefaultPropertyFieldDelegate defaultPropertyField { get; private set; }
 
-    
     private static Dictionary<int, float> abstractListHeights { get; set; } = new Dictionary<int, float>();
 
 
@@ -489,8 +488,33 @@ namespace Stratus
           drawFunction();
           break;
       }
+      GUILayout.EndHorizontal();
+    }
 
-      GUILayout.EndVertical();
+    public static Rect Pad(Rect rect)
+    {
+      float padding = StratusEditorGUI.standardPadding;
+      rect.y += padding;
+      rect.height -= padding;
+      rect.x += padding;
+      rect.width -= padding;
+      return rect;
+    }
+
+    public static Rect PadVertical(Rect rect)
+    {
+      float padding = StratusEditorGUI.standardPadding;
+      rect.y += padding;
+      rect.height -= padding;
+      return rect;
+    }
+
+    public static Rect PadHorizontal(Rect rect)
+    {
+      float padding = StratusEditorGUI.standardPadding;
+      rect.x += padding;
+      rect.width -= padding;
+      return rect;
     }
 
     public static T Instantiate<T>() => Utilities.Reflection.Instantiate<T>();

@@ -20,7 +20,7 @@ namespace Stratus
     /// <summary>
     /// Basic information about an event
     /// </summary>
-    public struct EventInformation : INamed
+    public class EventInformation : INamed
     {
       public string @namespace;
       public string @class;
@@ -54,7 +54,7 @@ namespace Stratus
       Name,
       Members,
     }
-
+     
     public class EventTreeView : MultiColumnTreeView<EventTreeElement, Columns>
     {
       public EventTreeView(TreeViewState state, IList<EventTreeElement> data) : base(state, data)
@@ -137,6 +137,11 @@ namespace Stratus
       protected override int GetColumnIndex(Columns columnType)
       {
         return (int)columnType;
+      }
+
+      protected override void OnContextMenu(GenericMenu menu)
+      {
+        
       }
 
       protected override void OnItemContextMenu(GenericMenu menu, EventTreeElement treeElement)

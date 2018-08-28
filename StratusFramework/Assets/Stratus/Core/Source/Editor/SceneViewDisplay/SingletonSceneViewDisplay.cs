@@ -21,7 +21,7 @@ namespace Stratus
     protected override void OnInitializeState()
     {
       if (instance)
-        properties = new SerializedPropertyMap(instance);
+        properties = new SerializedPropertyMap(instance, typeof(MonoBehaviour));
       OnInitializeSingletonState();
     }
 

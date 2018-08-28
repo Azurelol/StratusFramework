@@ -9,7 +9,7 @@ namespace Stratus
   namespace AI
   {
     [CreateAssetMenu(fileName = "Behavior Tree", menuName = "Stratus/AI/Behavior Tree")]
-    public partial class BehaviorTree : BehaviorSystem 
+    public partial class BehaviorTree : BehaviorSystem
     {
       //------------------------------------------------------------------------/
       // Declarations
@@ -17,6 +17,12 @@ namespace Stratus
       [Serializable]
       public class BehaviorNode : TreeElement<Behavior>
       {
+        public override string GetName()
+        {
+          if (!string.IsNullOrEmpty(data.label))
+            return $"{dataTypeName} ({data.name})";
+          return $"{dataTypeName}";
+        }
       }
 
       //------------------------------------------------------------------------/
@@ -71,7 +77,7 @@ namespace Stratus
 
       protected override void OnBehaviorAdded(Behavior behavior)
       {
-        this.tree.AddElement(behavior, 0);
+        this.tree.AddElement(behavior);
         //// If there's no root node yet, set it
         //if (nodes.Empty() || !nodes[0].isRoot)
         //{
@@ -81,6 +87,18 @@ namespace Stratus
         //BehaviorNode node = new BehaviorNode();
         //node.Set(behavior);
         //nodes.Add(node);
+      }
+
+      public void RemoveBehavior(BehaviorNode behaviorNode)
+      {
+        this.tree.RemoveElement(behaviorNode);
+      }
+
+      public void AddBehavior(Type behaviorType, BehaviorNode parent)
+      {
+        Behavior behavior = Behavior.Instantiate(behaviorType);
+        if (behavior != null)
+          this.tree.AddElement(behavior, parent);
       }
 
       protected override void OnBehaviorsCleared()

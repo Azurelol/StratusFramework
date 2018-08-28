@@ -47,7 +47,7 @@ namespace Stratus.Types
     /// Constructs a reference to this symbol
     /// </summary>
     /// <returns></returns>
-    public Reference reference => new Reference() { key = key, type = type };
+    public Reference reference => new Reference(key, type);
 
     /// <summary>
     /// A reference of a symbol
@@ -57,9 +57,34 @@ namespace Stratus.Types
     {
       public string key;
       public Variant.VariantType type;
+
+      public Reference()
+      {
+      }
+
+      public Reference(Variant.VariantType type)
+      {
+        this.type = type;
+      }
+
+      public Reference(string key, Variant.VariantType type)
+      {
+        this.key = key;
+        this.type = type;
+      }
     }
 
-   
+    /// <summary>
+    /// A reference of a symbol
+    /// </summary>
+    [Serializable]
+    public class Vector3Reference
+    {
+      public string key;
+      public Variant.VariantType type { get; } = Variant.VariantType.Vector3;
+    }
+
+
   }
 
 

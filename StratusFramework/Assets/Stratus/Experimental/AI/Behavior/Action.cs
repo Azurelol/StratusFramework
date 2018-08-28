@@ -57,7 +57,7 @@ namespace Stratus
       /// </summary>
       public void Reset()
       {
-        this.currentStatus = Status.Suspended;
+        this.status = Status.Suspended;
         this.OnActionReset();
       }
 

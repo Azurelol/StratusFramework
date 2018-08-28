@@ -5,6 +5,7 @@ using System;
 using System.Reflection;
 using UnityEditor;
 using OdinSerializer;
+using System.Linq;
 
 namespace Stratus
 {
@@ -34,7 +35,9 @@ namespace Stratus
       public ObjectDrawer(Type type, ObjectDrawer parent = null)
       {
         this.type = type;
-        this.fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+        var members = OdinSerializer.FormatterUtilities.GetSerializableMembers(type, OdinSerializer.SerializationPolicies.Unity); 
+        this.fields = members.OfType<FieldInfo>().ToArray();
+        //this.fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public); ;
         this.fieldsByName.AddRange(this.fields, (FieldInfo field) => field.Name);
         this.height = lineHeight;
         this.drawers = GenerateDrawers(fields);

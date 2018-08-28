@@ -29,11 +29,18 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/ 
+    /// <summary>
+    /// Whether this tree element has children
+    /// </summary>
     public bool hasChildren => children != null && children.Count > 0;
     /// <summary>
-    /// THe root node must have a depth of -1
+    /// The root node must have a depth of -1
     /// </summary>
     public bool isRoot => depth == -1;
+    /// <summary>
+    /// Howw many children this element has
+    /// </summary>
+    public int childrenCount => children != null ? children.Count : 0;
 
     //------------------------------------------------------------------------/
     // Methods
@@ -57,34 +64,6 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/ 
-    public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(params DataType[] elements)
-      where TreeElementType : TreeElement<DataType>, new()
-      where DataType : INamed
-    {
-      List<TreeElementType> treeList = new List<TreeElementType>();
-
-      int idCounter = 0;
-
-      // Add root
-      TreeElementType root = new TreeElementType();
-      root.name = "Root";
-      root.depth = -1;
-      root.id = idCounter++;
-      treeList.Add(root);
-
-      // Add the elements right below root
-      foreach (var element in elements)
-      {
-        TreeElementType child = new TreeElementType();
-        child.Set(element);
-        child.depth = 0;
-        child.id = idCounter++;
-        treeList.Add(child);
-      }
-
-      return treeList;
-    }    
-
     /// <summary>
     /// Fills out the list from the given root node
     /// </summary>
@@ -336,6 +315,52 @@ namespace Stratus
       return result;
     }
 
+    /// <summary>
+    /// Returns a list of elements with common ancestors
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="elements"></param>
+    /// <returns></returns>
+    public static IList<T> FindChildrenWithinList<T>(IList<T> elements) where T : TreeElement
+    {
+      // IF there's only one elment...
+      if (elements.Count == 1)
+        return new List<T>(elements);
+
+      List<T> result = new List<T>(elements);
+      result.RemoveAll(g => !IsChildOf(g, elements));
+      return result;
+    }
+
+
+    public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(params DataType[] elements)
+      where TreeElementType : TreeElement<DataType>, new()
+      where DataType : class, INamed
+    {
+      List<TreeElementType> treeList = new List<TreeElementType>();
+
+      int idCounter = 0;
+
+      // Add root
+      TreeElementType root = new TreeElementType();
+      root.name = "Root";
+      root.depth = -1;
+      root.id = idCounter++;
+      treeList.Add(root);
+
+      // Add the elements right below root
+      foreach (var element in elements)
+      {
+        TreeElementType child = new TreeElementType();
+        child.Set(element);
+        child.depth = 0;
+        child.id = idCounter++;
+        treeList.Add(child);
+      }
+
+      return treeList;
+    }
+
   }
 
   /// <summary>
@@ -343,27 +368,40 @@ namespace Stratus
   /// </summary>
   /// <typeparam name="DataType"></typeparam>
   public abstract class TreeElement<DataType> : TreeElement
-    where DataType : INamed
+    where DataType : class, INamed
   {
+    //----------------------------------------------------------------------/
+    // Fields
+    //----------------------------------------------------------------------/
     [OdinSerialize]
     public DataType data;
+    [OdinSerialize]
+    public string dataTypeName;
 
-    public TreeElement()
-    {
-    }
+    //----------------------------------------------------------------------/
+    // Properties
+    //----------------------------------------------------------------------/    
+
+    //----------------------------------------------------------------------/
+    // Methods
+    //----------------------------------------------------------------------/
 
     public void Set(DataType data)
     {
       this.data = data;
-      this.name = data.name;
+      this.dataTypeName = data.GetType().Name;
+      this.UpdateName();
     }
 
-    //public static void Set(TreeElement<DataType> treeElement, DataType data)
-    //{
-    //  treeElement.Set(data);
-    //  treeElement.name = treeElement.GetName();
-    //}
+    public void UpdateName()
+    {
+      this.name = this.GetName();
+    }
 
+    public virtual string GetName()
+    {
+      return data.name;
+    }
   }
 
 }

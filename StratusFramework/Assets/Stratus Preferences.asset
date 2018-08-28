@@ -37,9 +37,10 @@ MonoBehaviour:
       Color: {r: 1, g: 1, b: 1, a: 0}
   objectBookmarks:
     projectBookmarks:
-    - {fileID: 11500000, guid: ade417d6036ed1a49a620426a64d0ade, type: 3}
     - {fileID: 11400000}
     - {fileID: 11400000, guid: 7c252266617aae3479272c671d225861, type: 2}
     - {fileID: 1796509462004904, guid: d9fbbf25f343a8c4aa0bfb5f893ef373, type: 2}
     - {fileID: 11400000, guid: 7dab221bce8cb9344ad16b900fe587ba, type: 2}
     - {fileID: 11500000, guid: 3176f85ee4ec2644db0cffb44a3948ad, type: 3}
+    - {fileID: 11400000, guid: 0e85f07bb08a54a44825c8a22d8825f5, type: 2}
+    - {fileID: 11500000, guid: 43b954b576043a74491743b20d353ae5, type: 3}

@@ -39,6 +39,20 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
+    protected override void OnMainGUI(Rect rect)
+    {
+      GUI.DrawTexture(rect, EditorStyles.toolbar.normal.background);
+      base.OnMainGUI(rect);
+    }
+
+    protected override void DoubleClickedItem(int id)
+    {      
+      this.SetExpanded(id, !this.IsExpanded(id));
+    }
+
+    //override Row
+
+
 
 
   }

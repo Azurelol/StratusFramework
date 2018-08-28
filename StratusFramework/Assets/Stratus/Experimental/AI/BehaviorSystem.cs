@@ -114,19 +114,17 @@ namespace Stratus
       /// <summary>
       /// Adds a behaviour to the system
       /// </summary>
-      /// <param name="behaviourType"></param>
-      public void AddBehaviour(Type behaviourType)
+      /// <param name="behaviorType"></param>
+      public void AddBehavior(Type behaviorType)
       {
-        if (!behaviourType.IsSubclassOf(typeof(Behavior)))
-          return;
-        this.AddBehaviour((Behavior)Utilities.Reflection.Instantiate(behaviourType));
+        this.AddBehavior(Behavior.Instantiate(behaviorType));
       }
 
       /// <summary>
       /// Adds a behaviour to the system
       /// </summary>
       /// <param name="type"></param>
-      public void AddBehaviour(Behavior behaviour)
+      public void AddBehavior(Behavior behaviour)
       {
         this.OnBehaviorAdded(behaviour);
       }

@@ -16,7 +16,7 @@ namespace Stratus
       /// The symbol used in the blackboard for this target
       /// </summary>
       [Tooltip("The symbol used in the blackboard for this target")]
-      public Symbol.Reference Symbol;
+      public Symbol.Reference symbol = new Symbol.Reference(Variant.VariantType.Vector3);
       /// <summary>
       /// The range at which this action needs to be within the target
       /// </summary>

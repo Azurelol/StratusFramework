@@ -10,7 +10,7 @@ namespace Stratus
     {
       public override string description { get; } = "Moves the agent to the target location";
 
-      protected override Vector3 target => agent.blackboard.locals.GetValue<Vector3>(Symbol.key);
+      protected override Vector3 target => agent.blackboard.locals.GetValue<Vector3>(symbol.key);
 
       protected override Vector3 targetPosition => target;
 

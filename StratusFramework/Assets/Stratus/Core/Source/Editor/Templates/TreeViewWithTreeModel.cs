@@ -33,6 +33,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/ 
+    public event System.Action<IList<TreeElementType>> onSelectionChanged;
     public event System.Action onTreeChanged;
     public event Action<IList<TreeViewItem>> onBeforeDroppingDraggedItems;
     public SearchField search { get; protected set; }
@@ -42,6 +43,7 @@ namespace Stratus
     // CTOR
     //------------------------------------------------------------------------/ 
     protected abstract void OnItemContextMenu(GenericMenu menu, TreeElementType treeElement);
+    protected abstract void OnContextMenu(GenericMenu menu);
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -110,8 +112,29 @@ namespace Stratus
       GenericMenu menu = new GenericMenu();
       this.OnItemContextMenu(menu, treeElement);
       menu.ShowAsContext();
+      UnityEngine.Event.current.Use();
+    }
 
-      //Trace.Script($"Context click on {treeElement.name}");
+    protected override void ContextClicked()
+    {
+      base.ContextClicked();
+      GenericMenu menu = new GenericMenu();
+      this.OnContextMenu(menu);
+      if (menu.GetItemCount() > 0)
+        menu.ShowAsContext();
+      UnityEngine.Event.current.Use();
+    }
+
+    protected override void SelectionChanged(IList<int> selectedIds)
+    {
+      base.SelectionChanged(selectedIds);
+      List<TreeElementType> elements = new List<TreeElementType>();
+      foreach (var id in selectedIds)
+      {
+        TreeViewItem<TreeElementType> treeItem = (TreeViewItem<TreeElementType>)this.FindItem(id, this.rootItem);
+        elements.Add(treeItem.item);
+      }
+      onSelectionChanged.Invoke(elements);
     }
 
     //------------------------------------------------------------------------/
@@ -132,9 +155,16 @@ namespace Stratus
     /// <param name="rect"></param>
     public void TreeViewGUI(Rect rect)
     {
-      this.searchString = this.search.OnGUI(this.GetSearchBarRect(rect), this.searchString);
+      Rect searchRect = this.GetSearchBarRect(rect);
+      this.searchString = this.search.OnGUI(searchRect, this.searchString);
+
       Rect mainRect = this.GetMainRect(rect);
-      this.OnGUI(mainRect);
+      this.OnMainGUI(mainRect);
+    }
+
+    protected virtual void OnMainGUI(Rect rect)
+    {
+      this.OnGUI(rect);
     }
 
     /// <summary>
@@ -233,7 +263,6 @@ namespace Stratus
     {
       return this.treeModel.GetDescendantsThatHaveChildren(id);
     }
-
 
     private void AddChildrenRecursive(TreeElementType parent, int depth, IList<TreeViewItem> newRows)
     {
@@ -339,6 +368,45 @@ namespace Stratus
         currentParent = currentParent.parent;
       }
       return true;
+    }
+
+    //------------------------------------------------------------------------/
+    // Methods: Static
+    //------------------------------------------------------------------------/
+    /// <summary>
+    /// Fills out the list from the given root node
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="result"></param>
+    public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
+    {
+      if (root == null)
+        throw new NullReferenceException("root");
+      if (result == null)
+        throw new NullReferenceException("result");
+
+      result.Clear();
+
+      if (root.children == null)
+        return;
+
+      Stack<TreeViewItem> stack = new Stack<TreeViewItem>();
+      for (int i = root.children.Count - 1; i >= 0; i--)
+        stack.Push(root.children[i]);
+
+      while (stack.Count > 0)
+      {
+        TreeViewItem current = stack.Pop();
+        result.Add(current);
+
+        if (current.hasChildren && current.children[0] != null)
+        {
+          for (int i = current.children.Count - 1; i >= 0; i--)
+          {
+            stack.Push(current.children[i]);
+          }
+        }
+      }
     }
 
   }

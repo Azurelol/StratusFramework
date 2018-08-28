@@ -137,23 +137,23 @@ namespace Stratus
       EnumPopup(SearchablePopup.defaultPosition, property);
     }
 
-    private static string[] GetEnumDisplayNames(Enum value)
+    public static string[] GetEnumDisplayNames(Enum value)
     {
       Type type = value.GetType();
       return enumDisplayNames.GetValueAddIfMissing(type, Enum.GetNames);
     }
 
-    private static string[] GetEnumDisplayNames(Type enumType)
+    public static string[] GetEnumDisplayNames(Type enumType)
     {
       return enumDisplayNames.GetValueAddIfMissing(enumType, Enum.GetNames);
     }
 
-    private static Array GetEnumValues(Type enumType)
+    public static Array GetEnumValues(Type enumType)
     {
       return enumValues.GetValueAddIfMissing(enumType, Enum.GetValues);
     }
 
-    private static Enum GetEnumValue(Type enumType, int index)
+    public static Enum GetEnumValue(Type enumType, int index)
     {
       return (Enum)GetEnumValues(enumType).GetValue(index);
     }

@@ -48,6 +48,10 @@ namespace Stratus
     /// Whether the property map is currently valid
     /// </summary>
     public bool valid => serializedObject.targetObject != null;
+    /// <summary>
+    /// The base type of which this property map will stop at
+    /// </summary>
+    public Type baseType { get; private set; }
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -59,10 +63,11 @@ namespace Stratus
       AddProperties();
     }
 
-    public SerializedPropertyMap(UnityEngine.Object target)
+    public SerializedPropertyMap(UnityEngine.Object target, Type baseType)
     {
       this.target = target;
       this.serializedObject = new SerializedObject(target);
+      this.baseType = baseType;
       AddProperties();
     }
 
@@ -178,7 +183,7 @@ namespace Stratus
         }
       }
     }
-      
+
 
     /// <summary>
     /// Adds all the properties 
@@ -188,22 +193,18 @@ namespace Stratus
       // For every type, starting from the most derived up to the base, get its serialized properties      
       Type declaredType = target.GetType();
       Type currentType = declaredType;
-      while (currentType != typeof(MonoBehaviour))
+
+      while (currentType != baseType)
       {
         // Add the properties onto the map
         var properties = GetSerializedProperties(serializedObject, currentType);
-        foreach (var prop in properties)
+        foreach (var property in properties)
         {
-          // Check the attributes for this proeprty
-          //prop.
-          //Trace.Script($"- {prop.name}");
+          // Record this property
+          if (property == null)
+            continue;
 
-          propertyMap.Add(prop.name, prop);
-          //if (prop.isArray && prop.propertyType != SerializedPropertyType.String)
-          //{
-          //  ReorderableList list = GetListWithFoldout(serializedObject, prop, true, true, true, true);
-          //  reorderableLists.Add(prop, list);
-          //}
+          propertyMap.Add(property.name, property);
         }
 
         // Add all the properties for this type into the property map by type        

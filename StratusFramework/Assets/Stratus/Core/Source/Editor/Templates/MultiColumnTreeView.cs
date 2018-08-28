@@ -338,44 +338,7 @@ namespace Stratus
       DefaultGUI.Label(cellRect, value, selected, focused);
     }
 
-    //------------------------------------------------------------------------/
-    // Methods: Static
-    //------------------------------------------------------------------------/
-    /// <summary>
-    /// Fills out the list from the given root node
-    /// </summary>
-    /// <param name="root"></param>
-    /// <param name="result"></param>
-    public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
-    {
-      if (root == null)
-        throw new NullReferenceException("root");
-      if (result == null)
-        throw new NullReferenceException("result");
 
-      result.Clear();
-
-      if (root.children == null)
-        return;
-
-      Stack<TreeViewItem> stack = new Stack<TreeViewItem>();
-      for (int i = root.children.Count - 1; i >= 0; i--)
-        stack.Push(root.children[i]);
-
-      while (stack.Count > 0)
-      {
-        TreeViewItem current = stack.Pop();
-        result.Add(current);
-
-        if (current.hasChildren && current.children[0] != null)
-        {
-          for (int i = current.children.Count - 1; i >= 0; i--)
-          {
-            stack.Push(current.children[i]);
-          }
-        }
-      }
-    }
   }
 
 }

@@ -51,6 +51,12 @@ namespace Stratus
       this.target = target;
     }
 
+    public SerializedSystemObject(object target)
+    {
+      this.drawer = new ObjectDrawer(target.GetType());
+      this.target = target;
+    }
+
     public bool DrawEditorGUILayout()
     {
       return this.drawer.DrawEditorGUILayout(this.target);

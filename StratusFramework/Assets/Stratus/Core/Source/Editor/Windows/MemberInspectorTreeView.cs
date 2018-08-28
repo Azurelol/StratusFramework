@@ -26,7 +26,7 @@ namespace Stratus
     }
   } 
 
-
+   
   public class MemberInspectorTreeView : MultiColumnTreeView<MemberInspectorTreeElement, MemberInspectorWindow.Column>  
   {
     public MemberInspectorTreeView(TreeViewState state, TreeModel<MemberInspectorTreeElement> model) : base(state, model)
@@ -159,6 +159,11 @@ namespace Stratus
     protected override MemberInspectorWindow.Column GetColumn(int index) => (MemberInspectorWindow.Column)index;
 
     protected override int GetColumnIndex(MemberInspectorWindow.Column columnType) => (int)columnType;
+
+    protected override void OnContextMenu(GenericMenu menu)
+    {
+      
+    }
 
     protected override void OnItemContextMenu(GenericMenu menu, MemberInspectorTreeElement treeElement)
     {      

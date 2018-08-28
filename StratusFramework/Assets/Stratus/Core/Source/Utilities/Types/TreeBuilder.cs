@@ -12,7 +12,7 @@ namespace Stratus
   /// <typeparam name="TreeElementType"></typeparam>  
   public class TreeBuilder<TreeElementType, DataType> 
     where TreeElementType : TreeElement<DataType>, new ()
-    where DataType : INamed
+    where DataType : class, INamed
   {
     //------------------------------------------------------------------------/
     // Fields
@@ -78,9 +78,9 @@ namespace Stratus
   /// </summary>
   /// <typeparam name="TreeElementType"></typeparam>
   [Serializable]
-  public class SerializedTree<TreeElementType, DataType>
+  public class SerializedTree<TreeElementType, DataType> : ISerializationCallbackReceiver
     where TreeElementType : TreeElement<DataType>, new()
-    where DataType : INamed
+    where DataType : class, INamed
   {
     //------------------------------------------------------------------------/
     // Fields
@@ -89,10 +89,27 @@ namespace Stratus
     public List<TreeElementType> elements = new List<TreeElementType>();
     [SerializeField]
     private int idCounter = 0;
+    [NonSerialized]
+    private TreeElementType _root;
 
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/    
+    /// <summary>
+    /// Returns the root of the tree (internally parsing and setting up children based on depth information)
+    /// </summary>
+    public TreeElementType root
+    {
+      get
+      {
+        if (!parsed)
+          Parse();
+        return _root;
+      }
+    }
+    private bool parsed => _root != null;
+    public static int rootDepth { get; } = -1;
+    public static int defaultDepth { get; } = 0;
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -109,15 +126,49 @@ namespace Stratus
     }
 
     //------------------------------------------------------------------------/
+    // Messages
+    //------------------------------------------------------------------------/
+    public void OnBeforeSerialize()
+    {      
+    }
+
+    public void OnAfterDeserialize()
+    {
+      this.Parse(); 
+    }
+
+    //------------------------------------------------------------------------/
     // Methods: Public
     //------------------------------------------------------------------------/
-    public void AddElement(DataType data, int depth)
+    public void AddElement(DataType data)
     {
+      this.AddElement(data, defaultDepth);
+    }
+
+    public void AddElement(DataType data, TreeElementType parent)
+    {      
+      // Insert element below the last child
       TreeElementType element = new TreeElementType();
       element.id = idCounter++;
-      element.depth = depth;
+      element.depth = parent.depth + 1;
       element.Set(data);
-      elements.Add(element);
+      this.elements.Insert(FindLastChildIndex(parent) + 1, element);
+    }
+
+    public void RemoveElement(TreeElementType element)
+    {
+      // Remove all children first
+      if (element.hasChildren)
+      {
+        foreach(var child in element.children)
+        {
+          this.elements.Remove((TreeElementType)child);
+        }
+      }
+
+      this.elements.Remove(element);
+
+      //int index = this.elements.FindIndex(0, x => x == element);
     }
 
     public void AddElements(DataType[] elementsData, int depth)
@@ -138,6 +189,15 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Private
     //------------------------------------------------------------------------/
+    private void AddElement(DataType data, int depth)
+    {
+      TreeElementType element = new TreeElementType();
+      element.id = idCounter++;
+      element.depth = depth;
+      element.Set(data);
+      this.elements.Add(element);
+    }
+
     private void AddRoot()
     {
       TreeElementType root = new TreeElementType();
@@ -146,6 +206,26 @@ namespace Stratus
       root.id = idCounter++;
       elements.Add(root);
     }
+
+    private void Parse()
+    {
+      _root = TreeElement.ListToTree(this.elements);
+    }
+
+    private int FindIndex(TreeElementType element)
+    {
+      int index = this.elements.IndexOf(element);
+      return index;
+    }
+
+    private int FindLastChildIndex(TreeElementType element)
+    {
+      int index = FindIndex(element);
+      int lastIndex = index + element.childrenCount;
+      return lastIndex;
+    }
+
+
   }
 
 }
