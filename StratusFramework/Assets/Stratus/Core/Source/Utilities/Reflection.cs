@@ -1,12 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Reflection.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@note   Credit to Or Aviram: 
-        https://forum.unity3d.com/threads/draw-a-field-only-if-a-condition-is-met.448855/
-*/
-/******************************************************************************/
 using System;
 using System.Reflection;
 using System.Linq;
@@ -581,23 +572,73 @@ namespace Stratus
                 where (f.FieldType.IsSubclassOf(typeof(UnityEngine.Object))
                 && f.GetValue(behaviour).Equals(null))
                 select f).ToArray();
-
-
-
-        //foreach (var field in fields)
-        //{
-        //  if (field.FieldType.IsSubclassOf(typeof(UnityEngine.Object)))
-        //  {
-        //    Trace.Script($"The field {field.Name}", behaviour);
-        //    var value = field.GetValue(behaviour);
-        //    if (value == null || value.Equals(null))
-        //      Trace.Script("Null!");
-        //  }          
-        //
-        //}
       }
 
+      public static Type GetPrivateType(string name, Type source)
+      {
+        var assembly = source.Assembly;
+        return assembly.GetType(name);
+      }
 
+      public static Type[] GetTypesFromAssembly(Assembly assembly)
+      {
+        if (assembly == null)
+        {
+          return new Type[0];
+        }
+        try
+        {
+          return assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException)
+        {
+          return new Type[0];
+        }
+      }
+
+      public static Type GetPrivateType(string fqName)
+      {
+        return Type.GetType(fqName);
+      }
+
+      public static T GetField<T>(string name, Type type, bool isStatic = true, object instance = null)
+      {
+        var bindflags = isStatic ? (BindingFlags.NonPublic | BindingFlags.Static) : (BindingFlags.NonPublic | BindingFlags.Instance);
+        var field = type.GetField(name, bindflags);
+
+        return (T)field.GetValue(instance);
+      }
+
+      public static void SetField<T>(string name, Type type, T value, bool isStatic = true, object instantce = null)
+      {
+        var bindflags = isStatic ? (BindingFlags.NonPublic | BindingFlags.Static) : (BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var field = type.GetField(name, bindflags);
+
+        if (instantce != null)
+        {
+          field = instantce.GetType().GetField(name, bindflags);
+        }
+
+        field.SetValue(instantce, value);
+      }
+
+      public static T GetProperty<T>(string name, Type type, object instance)
+      {
+        var bindflags = BindingFlags.NonPublic | BindingFlags.Instance;
+        var propInfo = type.GetProperty(name, bindflags);
+
+        MethodInfo getAccessor = propInfo.GetGetMethod(true);
+
+        return (T)getAccessor.Invoke(instance, null);
+      }
+
+      public static MethodInfo GetReflectedMethod(string name, Type type, bool isStatic = true, object instantce = null)
+      {
+        var bindflags = isStatic ? (BindingFlags.NonPublic | BindingFlags.Static) : (BindingFlags.NonPublic | BindingFlags.Instance);
+        var method = type.GetMethod(name, bindflags);
+
+        return method;
+      }
 
       /// <summary>
       /// Retrieves the name of this property / field as well as its owning object.

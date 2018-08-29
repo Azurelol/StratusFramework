@@ -11,7 +11,7 @@ namespace Stratus
 {
   namespace AI
   {
-    public class BehaviorTreeEditorWindow : StratusEditorWindow<BehaviorTreeEditorWindow> 
+    public class BehaviorTreeEditorWindow : StratusEditorWindow<BehaviorTreeEditorWindow>
     {
       //----------------------------------------------------------------------/
       // Declarations
@@ -21,7 +21,7 @@ namespace Stratus
         Hierarchy,
         Inspector
       }
-        
+
       public class BehaviourTreeView : HierarchicalTreeView<BehaviorTree.BehaviorNode>
       {
         private BehaviorTreeEditorWindow window => BehaviorTreeEditorWindow.instance;
@@ -46,16 +46,6 @@ namespace Stratus
             window.AddNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
           });
 
-          //// Decorator
-          //IDecoratorSupport decoratable = treeElement.data as IDecoratorSupport;
-          //if (decoratable != null)
-          //{
-          //  menu.AddPopup("Add/Decorator", BehaviorTreeEditorWindow.decoratorTypes.displayedOptions, (int index) =>
-          //  {
-          //    decoratable.decorators.Add(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index));
-          //  });
-          //}
-
           // Service
           if (treeElement.data is Composite)
           {
@@ -65,7 +55,7 @@ namespace Stratus
             });
           }
 
-          menu.AddItem("Remove", false, ()=> window.RemoveNode(treeElement));
+          menu.AddItem("Remove", false, () => window.RemoveNode(treeElement));
         }
 
         protected override void OnContextMenu(GenericMenu menu)
@@ -98,8 +88,8 @@ namespace Stratus
       const string folder = "Stratus/Experimental/AI/";
       private Vector2 inspectorScrollPosition, blackboardScrollPosition;
       private SerializedPropertyMap behaviorTreeProperties;
+      //private SerializedProperty treeProperty, treeElementsProperty, currentNodeProperty;
       private StratusEditor blackboardEditor;
-      
 
       //----------------------------------------------------------------------/
       // Properties
@@ -133,7 +123,7 @@ namespace Stratus
       /// The behavior tree currently being edited
       /// </summary>
       public BehaviorTree behaviorTree { get; private set; }
-      
+
       /// <summary>
       /// The blackboard being used by the tree
       /// </summary>
@@ -172,7 +162,8 @@ namespace Stratus
           TreeBuilder<BehaviorTree.BehaviorNode, Behavior> treeBuilder = new TreeBuilder<BehaviorTree.BehaviorNode, Behavior>();
           this.treeInspector = new BehaviourTreeView(treeViewState, treeBuilder.ToTree());
         }
-        this.treeInspector.onSelectionChanged += this.OnSelectionChanged;
+        //this.treeInspector.onSelectionChanged += this.OnSelectionChanged;
+        this.treeInspector.onSelectionIdsChanged += this.OnSelectionChanged;
         this.treeInspector.Reload();
         //this.behaviorSelector = new TypeSelector(typeof(Behavior), false);
       }
@@ -212,11 +203,11 @@ namespace Stratus
 
       private void DrawInspector(Rect rect)
       {
-        GUILayout.BeginArea(rect);        
+        GUILayout.BeginArea(rect);
         GUILayout.Label("Inspector", StratusGUIStyles.header);
 
         if (currentNodes != null)
-        {          
+        {
           if (currentNodes.Count == 1)
           {
             GUILayout.Label(currentNode.dataTypeName, EditorStyles.largeLabel);
@@ -228,7 +219,7 @@ namespace Stratus
           {
             GUILayout.Label("Editing multiple nodes is not supported!", EditorStyles.largeLabel);
           }
-        }    
+        }
 
         GUILayout.EndArea();
       }
@@ -302,17 +293,20 @@ namespace Stratus
       }
 
       private void Refresh()
-      {        
+      {
         this.treeInspector.SetTree(this.behaviorTree.tree.elements);
       }
 
       private void OnTreeSet()
       {
         this.behaviorTreeProperties = new SerializedPropertyMap(this.behaviorTree, typeof(StratusScriptable));
+        //this.treeProperty = this.behaviorTreeProperties.GetProperty(nameof(BehaviorTree.tree));
+        //this.treeElementsProperty = this.treeElementsProperty.FindPropertyRelative("elements");
+
         // Blackboard
         this.blackboardEditor = null;
         if (this.blackboard)
-          this.OnBlackboardSet();        
+          this.OnBlackboardSet();
       }
 
       private void Save()
@@ -327,17 +321,35 @@ namespace Stratus
         //this.blackboardEditor.OnInspectorGUI();
       }
 
-      private void OnSelectionChanged(IList<BehaviorTree.BehaviorNode> elements)
-      {
-        currentNodeSerializedObject = null;
+      //private void OnSelectionChanged(IList<BehaviorTree.BehaviorNode> elements)
+      //{
+      //  this.currentNodeSerializedObject = null;
+      //  this.currentNodeProperty = null;
+      //  //this.currentNodeProperty = this.treeElementsProperty.get
+      //
+      //  
+      //  currentNodes = elements;
+      //  if (currentNodes.Count > 0)
+      //  {
+      //    this.currentNode = currentNodes[0];
+      //    this.currentNodeSerializedObject = new SerializedSystemObject(currentNode.data);
+      //    //this.currentNodeProperty = this.treeElementsProperty.GetArrayElementAtIndex(0);
+      //  }
+      //}
 
-        currentNodes = elements;
-        if (currentNodes.Count > 0)
+      private void OnSelectionChanged(IList<int> ids)
+      {
+        this.currentNodeSerializedObject = null;
+        //this.currentNodeProperty = null;
+
+        this.currentNodes = this.treeInspector.GetElements(ids);
+        if (this.currentNodes.Count > 0)
         {
-          currentNode = currentNodes[0];
-          currentNodeSerializedObject = new SerializedSystemObject(currentNode.data);
+          this.currentNode = currentNodes[0];
+          this.currentNodeSerializedObject = new SerializedSystemObject(currentNode.data);
+          //SerializedObject boo = new SerializedObject(currentNode.data);
+          //this.currentNodeProperty = this.treeElementsProperty.GetArrayElementAtIndex(ids[0]);
         }
-        
       }
 
       //----------------------------------------------------------------------/
@@ -348,13 +360,13 @@ namespace Stratus
       {
         var myTreeAsset = EditorUtility.InstanceIDToObject(instanceID) as BehaviorTree;
         if (myTreeAsset != null)
-        {          
+        {
           Open(myTreeAsset);
           return true;
         }
-        return false; 
+        return false;
       }
-      
+
       public static void Open(BehaviorTree tree)
       {
         OnOpen("Behavior Tree");
@@ -363,12 +375,12 @@ namespace Stratus
 
       public void SetTree(BehaviorTree tree)
       {
-        this.behaviorTree = tree;        
+        this.behaviorTree = tree;
         this.OnTreeSet();
         this.Refresh();
       }
 
-      
+
 
 
     }

@@ -31,6 +31,7 @@ namespace Stratus
       //------------------------------------------------------------------------/
       public static Type attributeType { get; } = typeof(System.Attribute);
       public static Type rangeAttributeType { get; } = typeof(RangeAttribute);
+      public static Type hideInInspectorAttribute { get; } = typeof(HideInInspector);
       //private static Dictionary<Type, System.Func<Attribute, SerializedProperty, bool>> attributeFunctions { get; } = new Dictionary<Type, Func<Attribute, SerializedProperty, bool>>()
       //{
       //  { typeof(RangeAttribute), OnRangeAttribute},
@@ -50,7 +51,7 @@ namespace Stratus
         this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
         this.isArray = typeof(IList).IsAssignableFrom(this.type); //this.type.IsArray || IsList(this.type);
 
-        this.isDrawable = true;
+        this.isDrawable = !this.attributesByName.ContainsKey(hideInInspectorAttribute);
         this.height = StratusEditorUtility.lineHeight;
       }
 

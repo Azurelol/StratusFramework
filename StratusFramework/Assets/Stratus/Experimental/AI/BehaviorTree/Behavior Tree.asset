@@ -30,7 +30,7 @@ MonoBehaviour:
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
-      Data: 3
+      Data: 4
     - Name: 
       Entry: 7
       Data: 2|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
@@ -60,7 +60,7 @@ MonoBehaviour:
       Data: 1
     - Name: name
       Entry: 1
-      Data: Sequence
+      Data: Sequence (One)
     - Name: depth
       Entry: 3
       Data: 0
@@ -68,8 +68,8 @@ MonoBehaviour:
       Entry: 7
       Data: 4|Stratus.AI.Sequence, Assembly-CSharp
     - Name: label
-      Entry: 6
-      Data: 
+      Entry: 1
+      Data: One
     - Name: decorators
       Entry: 7
       Data: 5|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
@@ -133,7 +133,7 @@ MonoBehaviour:
       Entry: 7
       Data: 10|Stratus.AI.Cooldown, Assembly-CSharp
     - Name: label
-      Entry: 6
+      Entry: 1
       Data: 
     - Name: duration
       Entry: 4
@@ -143,13 +143,13 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 11|Stratus.AI.Cooldown, Assembly-CSharp
+      Data: 11|Stratus.AI.Loop, Assembly-CSharp
     - Name: label
       Entry: 6
       Data: 
-    - Name: duration
-      Entry: 4
-      Data: 15
+    - Name: counter
+      Entry: 3
+      Data: 3
     - Name: 
       Entry: 8
       Data: 
@@ -184,6 +184,46 @@ MonoBehaviour:
       Entry: 8
       Data: 
     - Name: 
+      Entry: 7
+      Data: 13|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 3
+    - Name: name
+      Entry: 1
+      Data: Sequence (Two)
+    - Name: depth
+      Entry: 3
+      Data: 0
+    - Name: data
+      Entry: 7
+      Data: 14|Stratus.AI.Sequence, Assembly-CSharp
+    - Name: label
+      Entry: 1
+      Data: Two
+    - Name: decorators
+      Entry: 7
+      Data: 15|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: Sequence
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
       Entry: 13
       Data: 
     - Name: 
@@ -191,7 +231,7 @@ MonoBehaviour:
       Data: 
     - Name: idCounter
       Entry: 3
-      Data: 3
+      Data: 4
     - Name: 
       Entry: 8
       Data: 

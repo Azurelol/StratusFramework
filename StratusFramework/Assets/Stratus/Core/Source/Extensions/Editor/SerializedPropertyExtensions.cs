@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   SerializedPropertyExtensions.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@date   5/25/2016
-*/
-/******************************************************************************/
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -191,20 +183,20 @@ namespace Stratus
 
       return allTypes;
     }
-  
 
-  /// This is a way to get a field name string in such a manner that the compiler will
-  /// generate errors for invalid fields.  Much better than directly using strings.
-  /// Usage: instead of
-  /// <example>
-  /// "m_MyField";
-  /// </example>
-  /// do this:
-  /// <example>
-  /// MyClass myclass = null;
-  /// SerializedPropertyHelper.PropertyName( () => myClass.m_MyField);
-  /// </example>
-  public static string PropertyName(Expression<Func<object>> exp)
+
+    /// This is a way to get a field name string in such a manner that the compiler will
+    /// generate errors for invalid fields.  Much better than directly using strings.
+    /// Usage: instead of
+    /// <example>
+    /// "m_MyField";
+    /// </example>
+    /// do this:
+    /// <example>
+    /// MyClass myclass = null;
+    /// SerializedPropertyHelper.PropertyName( () => myClass.m_MyField);
+    /// </example>
+    public static string PropertyName(Expression<Func<object>> exp)
     {
       var body = exp.Body as MemberExpression;
       if (body == null)
@@ -213,6 +205,54 @@ namespace Stratus
         body = ubody.Operand as MemberExpression;
       }
       return body.Member.Name;
+    }
+
+    /// <summary>
+    /// Generates a hash unique to this specific property on its specific object. 
+    /// Useful for mapping metadata to the editor representation of one of its specific properties.
+    /// </summary>
+    /// <param name="property"></param>
+    /// <returns></returns>
+    public static int GetPropertyObjectHash(this SerializedProperty property)
+    {
+      int h1 = property.serializedObject.targetObject.GetHashCode();
+      int h2 = property.propertyPath.GetHashCode();
+      
+
+      return ((h1 << 5) + h1) ^ h2;
+    }
+
+    /// <summary>
+    /// Get the visible children of a given SerializedProperty
+    /// </summary>
+    /// <param name="property"></param>
+    /// <returns></returns>
+    public static IEnumerable<SerializedProperty> GetVisibleChildren(this SerializedProperty property)
+    {
+      if (property.hasChildren == false)
+        yield break;
+
+      bool checkNext = false;
+      property = property.Copy();
+      SerializedProperty next = property.Copy();
+
+      // We only consider checking next if we're not the root property (which can't have a next)
+      if (property.depth != -1)
+        checkNext = next.NextVisible(false);
+
+      if (property.NextVisible(true))
+      {
+        do
+        {
+          if (checkNext && SerializedProperty.EqualContents(property, next))
+          {
+            yield break;
+          }
+          yield return property;
+        }
+        while (property.NextVisible(false));
+      }
+
     }
 
     /// Usage: instead of
@@ -278,7 +318,15 @@ namespace Stratus
       return attributes;
     }
 
+    public static int GetHashCodeForPropertyPathWithoutArrayIndex(this SerializedProperty prop)
+    {
+      return Reflection.GetProperty<int>("hashCodeForPropertyPathWithoutArrayIndex", typeof(SerializedProperty), prop);
+    }
 
+    public static int GetInspectorMode(this SerializedObject prop)
+    {
+      return Reflection.GetProperty<int>("inspectorMode", typeof(SerializedObject), prop);
+    }
 
   }
 

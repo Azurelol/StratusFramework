@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using UnityEditor.AnimatedValues;
 using Rotorz.ReorderableList;
 using OdinSerializer;
+using Stratus.Utilities;
 
 namespace Stratus
 {
@@ -38,8 +39,18 @@ namespace Stratus
     public static float verticalSpacing => EditorGUIUtility.standardVerticalSpacing;
     public static float labelWidth => EditorGUIUtility.labelWidth;
     public static DefaultPropertyFieldDelegate defaultPropertyField { get; private set; }
-
     private static Dictionary<int, float> abstractListHeights { get; set; } = new Dictionary<int, float>();
+    public static Rect lastEditorGUILayoutRect
+    {
+      get
+      {
+        return Reflection.GetField<Rect>("s_LastRect", typeof(UnityEditor.EditorGUILayout));
+      }
+      set
+      {
+        Reflection.SetField<Rect>("s_LastRect", typeof(UnityEditor.EditorGUILayout), value);
+      }
+    }
 
 
     //------------------------------------------------------------------------/
@@ -58,6 +69,9 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/
+    public static T Instantiate<T>() => Utilities.Reflection.Instantiate<T>();
+    public static object Instantiate(Type type) => Utilities.Reflection.Instantiate(type);
+
     public static void OnMouseClick(System.Action onLeftClick, System.Action onRightClick, System.Action onDoubleClick, bool used = false)
     {
       if (!used && !currentEvent.isMouse)
@@ -517,8 +531,42 @@ namespace Stratus
       return rect;
     }
 
-    public static T Instantiate<T>() => Utilities.Reflection.Instantiate<T>();
-    public static object Instantiate(Type type) => Utilities.Reflection.Instantiate(type);
+    public static bool LabelHasContent(GUIContent label)
+    {
+      if (label == null)
+      {
+        return true;
+      }
+      return label.text != string.Empty || label.image != null;
+    }
+
+    public static float GetSinglePropertyHeight(SerializedProperty property, GUIContent label)
+    {
+      return (float)Reflection.GetReflectedMethod("GetSinglePropertyHeight", typeof(UnityEditor.EditorGUI)).Invoke(null, new object[] { property, label });
+    }
+
+    internal static bool HasVisibleChildFields(SerializedProperty property)
+    {
+      return (bool)Reflection.GetReflectedMethod("HasVisibleChildFields", typeof(UnityEditor.EditorGUI)).Invoke(null, new object[] { property });
+    }
+
+    internal static bool DefaultPropertyField(Rect position, SerializedProperty property, GUIContent label)
+    {
+      return (bool)Reflection.GetReflectedMethod("DefaultPropertyField", typeof(UnityEditor.EditorGUI)).Invoke(null, new object[] { position, property, label });
+    }
+
+    internal static Rect GetToggleRect(bool hasLabel, params GUILayoutOption[] options)
+    {
+      return (Rect)Reflection.GetReflectedMethod("GetToggleRect", typeof(UnityEditor.EditorGUILayout)).Invoke(null, new object[] { hasLabel, options });
+    }
+
+    internal static GUIContent TempContent(string t)
+    {
+      var bindflags = BindingFlags.NonPublic | BindingFlags.Static;
+      var method = typeof(UnityEditor.EditorGUIUtility).GetMethod("TempContent", bindflags, null, new[] { typeof(string) }, null);
+
+      return (GUIContent)method.Invoke(null, new[] { t });
+    }
 
     ///// <summary>
     ///// Adds the given define symbols to PlayerSettings define symbols.

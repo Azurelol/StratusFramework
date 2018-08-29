@@ -23,6 +23,15 @@ namespace Stratus
   public abstract class TreeViewWithTreeModel<TreeElementType> : TreeView where TreeElementType: TreeElement
   {
     //------------------------------------------------------------------------/
+    // Declaration
+    //------------------------------------------------------------------------/ 
+    public struct SelectionData
+    {
+      public TreeElementType element;
+      public int index;
+    }
+
+    //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/ 
     protected TreeModel<TreeElementType> treeModel;
@@ -34,6 +43,7 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/ 
     public event System.Action<IList<TreeElementType>> onSelectionChanged;
+    public event System.Action<IList<int>> onSelectionIdsChanged;
     public event System.Action onTreeChanged;
     public event Action<IList<TreeViewItem>> onBeforeDroppingDraggedItems;
     public SearchField search { get; protected set; }
@@ -128,13 +138,26 @@ namespace Stratus
     protected override void SelectionChanged(IList<int> selectedIds)
     {
       base.SelectionChanged(selectedIds);
+
+      List<TreeElementType> elements = GetElements(selectedIds);
+      onSelectionChanged?.Invoke(elements);
+      onSelectionIdsChanged?.Invoke(selectedIds);
+    }
+
+    public TreeElementType GetElement(int id)
+    {
+      TreeViewItem<TreeElementType> treeItem = (TreeViewItem<TreeElementType>)this.FindItem(id, this.rootItem);
+      return treeItem.item;
+    }
+
+    public List<TreeElementType> GetElements(IList<int> ids)
+    {
       List<TreeElementType> elements = new List<TreeElementType>();
-      foreach (var id in selectedIds)
-      {
-        TreeViewItem<TreeElementType> treeItem = (TreeViewItem<TreeElementType>)this.FindItem(id, this.rootItem);
-        elements.Add(treeItem.item);
+      foreach (var id in ids)
+      {        
+        elements.Add(GetElement(id));
       }
-      onSelectionChanged.Invoke(elements);
+      return elements;
     }
 
     //------------------------------------------------------------------------/

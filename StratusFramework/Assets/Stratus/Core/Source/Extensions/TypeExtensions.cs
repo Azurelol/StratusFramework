@@ -24,6 +24,25 @@ namespace Stratus
       return AttributeUtility.MapAttributes(type);
     }
 
+    public static bool IsArrayOrList(this Type listType)
+    {
+      return listType.IsArray || (listType.IsGenericType && listType.GetGenericTypeDefinition() == typeof(List<>));
+    }
+
+    public static Type GetArrayOrListElementType(this Type listType)
+    {
+      if (listType.IsArray)
+      {
+        return listType.GetElementType();
+      }
+      if (listType.IsGenericType && listType.GetGenericTypeDefinition() == typeof(List<>))
+      {
+        return listType.GetGenericArguments()[0];
+      }
+
+      return null;
+    }
+
   }
 
 }
