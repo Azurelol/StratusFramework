@@ -46,14 +46,34 @@ namespace Stratus
           EditorGUI.PropertyField(position, valueProperty);
 
         }
-
-
         EditorGUI.EndProperty();
+      }      
+    }
+
+    public class SymbolDrawerTwo : SerializedSystemObject.CustomObjectDrawer<Symbol>
+    {
+      protected override float GetHeight(Symbol value)
+      {
+        return lineHeight;
       }
 
+      protected override void OnDrawEditorGUI(Rect position, Symbol value)
+      {
+        throw new System.NotImplementedException();
+      }
 
-      
+      protected override void OnDrawEditorGUILayout(Symbol value)
+      {
+        throw new System.NotImplementedException();
+        EditorGUILayout.BeginHorizontal();
+        
+        EditorGUILayout.EndHorizontal();
+        
+      }
     }
+
+
+
   }
 
 }

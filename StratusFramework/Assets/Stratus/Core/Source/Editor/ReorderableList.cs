@@ -175,7 +175,7 @@ namespace Stratus
          // Get the drawer for the element type
          var element = serializedProperty.GetArrayElementAtIndex(index);
          Type elementType = element.GetType();
-         SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(elementType);
+         SerializedSystemObject.DefaultObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(elementType);
          
          // Draw the element
          Rect position = new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight);
@@ -210,10 +210,10 @@ namespace Stratus
         }
         else
         {
-          SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(serializedProperty.GetArrayElementAtIndex(indexer));
+          SerializedSystemObject.DefaultObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(serializedProperty.GetArrayElementAtIndex(indexer));
           float height = drawer.height;
           // We add an additional line of height since we are drawing a label for polymorphic list
-          if (drawElementTypeLabel) height += SerializedSystemObject.ObjectDrawer.lineHeight;
+          if (drawElementTypeLabel) height += SerializedSystemObject.DefaultObjectDrawer.lineHeight;
           return height;
         }
       };

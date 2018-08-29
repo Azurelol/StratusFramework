@@ -71,7 +71,7 @@ namespace Stratus
     public bool isArray { get; private set; }
     public IList list { get; private set; }    
     public Type listElementType { get; private set; }
-    public SerializedSystemObject.ObjectDrawer drawer { get; private set; }
+    public SerializedSystemObject.DefaultObjectDrawer drawer { get; private set; }
 
     public OdinSerializedProperty(FieldInfo field, object target)
     {

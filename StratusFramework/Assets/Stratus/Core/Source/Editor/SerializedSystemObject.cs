@@ -5,6 +5,8 @@ using System;
 using System.Reflection;
 using UnityEditor;
 using OdinSerializer;
+using Stratus.Utilities;
+using System.Linq;
 
 namespace Stratus
 {
@@ -28,7 +30,27 @@ namespace Stratus
       public float height { get; protected set; }
       public static float lineHeight => StratusEditorUtility.lineHeight;
       public static float labelWidth => StratusEditorUtility.labelWidth;
-    }   
+    }
+
+    /// <summary>
+    /// Base class for all drawers
+    /// </summary>
+    public abstract class ObjectDrawer : Drawer
+    {
+      public FieldInfo[] fields { get; private set; }
+      public Dictionary<string, FieldInfo> fieldsByName { get; private set; } = new Dictionary<string, FieldInfo>();
+      public bool hasFields => fields.NotEmpty();
+      public bool hasDefaultConstructor { get; private set; }
+
+      public ObjectDrawer(Type type)
+      {
+        this.type = type;
+        MemberInfo[] members = OdinSerializer.FormatterUtilities.GetSerializableMembers(type, OdinSerializer.SerializationPolicies.Unity);
+        this.fields = members.OfType<FieldInfo>().ToArray();
+        this.fieldsByName.AddRange(this.fields, (FieldInfo field) => field.Name);
+        this.hasDefaultConstructor = (type.GetConstructor(Type.EmptyTypes) != null) || type.IsValueType;
+      }
+    }
 
     //------------------------------------------------------------------------/
     // Properties
@@ -39,24 +61,46 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Properties: Static
     //------------------------------------------------------------------------/
-    private static Dictionary<Type, SerializedSystemObject.ObjectDrawer> objectDrawers { get; set; } = new Dictionary<Type, SerializedSystemObject.ObjectDrawer>();
-    private static Dictionary<FieldInfo, SerializedSystemObject.FieldDrawer> fieldDrawers { get; set; } = new Dictionary<FieldInfo, SerializedSystemObject.FieldDrawer>();
+    private static Dictionary<Type, ObjectDrawer> objectDrawers { get; set; } = new Dictionary<Type, ObjectDrawer>();
+    private static Dictionary<FieldInfo, FieldDrawer> fieldDrawers { get; set; } = new Dictionary<FieldInfo, FieldDrawer>();
+    private static Type[] customObjectDrawers { get; set; } = Reflection.GetSubclass<CustomObjectDrawer>(false);
 
     //------------------------------------------------------------------------/
-    // Methods
+    // CTOR
     //------------------------------------------------------------------------/
     public SerializedSystemObject(Type type, object target)
     {
-      this.drawer = new ObjectDrawer(type);
+      this.drawer = GetDrawer(type);
       this.target = target;
     }
 
     public SerializedSystemObject(object target)
     {
-      this.drawer = new ObjectDrawer(target.GetType());
+      this.drawer = GetDrawer(target.GetType());
       this.target = target;
     }
 
+    static SerializedSystemObject()
+    {
+      foreach (var type in customObjectDrawers)
+        objectDrawers.Add(type, (DefaultObjectDrawer)Reflection.Instantiate(type));
+    }
+
+    /// <summary>
+    /// Gets the object drawer for the given type
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static ObjectDrawer GetDrawer(Type type)
+    {
+      if (!objectDrawers.ContainsKey(type))
+        objectDrawers.Add(type, new DefaultObjectDrawer(type));
+      return objectDrawers[type];
+    }
+
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
     public bool DrawEditorGUILayout()
     {
       return this.drawer.DrawEditorGUILayout(this.target);
@@ -135,24 +179,24 @@ namespace Stratus
       return propertyType;
     }
 
-    public static SerializedSystemObject.ObjectDrawer GetObjectDrawer(object element)
+    public static ObjectDrawer GetObjectDrawer(object element)
     {
       Type elementType = element.GetType();
       if (!objectDrawers.ContainsKey(elementType))
-        objectDrawers.Add(elementType, new SerializedSystemObject.ObjectDrawer(elementType));
-      SerializedSystemObject.ObjectDrawer drawer = objectDrawers[elementType];
+        objectDrawers.Add(elementType, new SerializedSystemObject.DefaultObjectDrawer(elementType));
+      ObjectDrawer drawer = objectDrawers[elementType];
       return drawer;
     }
 
-    public static SerializedSystemObject.ObjectDrawer GetObjectDrawer(Type elementType)
+    public static ObjectDrawer GetObjectDrawer(Type elementType)
     {
       if (!objectDrawers.ContainsKey(elementType))
-        objectDrawers.Add(elementType, new SerializedSystemObject.ObjectDrawer(elementType));
-      SerializedSystemObject.ObjectDrawer drawer = objectDrawers[elementType];
+        objectDrawers.Add(elementType, new SerializedSystemObject.DefaultObjectDrawer(elementType));
+      ObjectDrawer drawer = objectDrawers[elementType];
       return drawer;
     }
 
-    public static SerializedSystemObject.FieldDrawer GetFieldDrawer(FieldInfo field)
+    public static FieldDrawer GetFieldDrawer(FieldInfo field)
     {
       if (!fieldDrawers.ContainsKey(field))
         fieldDrawers.Add(field, new SerializedSystemObject.FieldDrawer(field));

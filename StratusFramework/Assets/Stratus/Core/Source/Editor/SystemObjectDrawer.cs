@@ -14,38 +14,29 @@ namespace Stratus
     /// <summary>
     /// Draws all the fields in a System.Object
     /// </summary>
-    public class ObjectDrawer : Drawer
+    public class DefaultObjectDrawer : ObjectDrawer
     {
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/
-      public ObjectDrawer parent { get; private set; }
+      public DefaultObjectDrawer parent { get; private set; }
       public Drawer[] drawers { get; private set; }
-      public FieldInfo[] fields { get; private set; }
-      public Dictionary<string, FieldInfo> fieldsByName { get; private set; } = new Dictionary<string, FieldInfo>();
-      public bool hasFields => fields.NotEmpty();
-      public bool hasDefaultConstructor { get; private set; }
+      //public bool[] isField { get; private set; }
       public int fieldCount => drawers.Length;
       public bool isArray { get; private set; }
-      public bool isField { get; private set; }      
+      public bool isField { get; private set; }
 
       //------------------------------------------------------------------------/
       // CTOR
       //------------------------------------------------------------------------/
-      public ObjectDrawer(Type type, ObjectDrawer parent = null)
+      public DefaultObjectDrawer(Type type) : base(type)
       {
-        this.type = type;
-        var members = OdinSerializer.FormatterUtilities.GetSerializableMembers(type, OdinSerializer.SerializationPolicies.Unity); 
-        this.fields = members.OfType<FieldInfo>().ToArray();
-        //this.fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public); ;
-        this.fieldsByName.AddRange(this.fields, (FieldInfo field) => field.Name);
         this.height = lineHeight;
         this.drawers = GenerateDrawers(fields);
         this.isDrawable = this.drawers.NotEmpty();
-        this.hasDefaultConstructor = (type.GetConstructor(Type.EmptyTypes) != null) || type.IsValueType;
       }
 
-      public void SetParent(ObjectDrawer parent, string fieldName)
+      public void SetParent(DefaultObjectDrawer parent, string fieldName)
       {
         this.parent = parent;
         this.isField = true;
@@ -54,16 +45,6 @@ namespace Stratus
         this.displayName = ObjectNames.NicifyVariableName(this.name);
       }
 
-
-      //public static object GetDefaultValueForProperty(PropertyInfo property)
-      //{
-      //  var defaultAttr = property.GetCustomAttribute(typeof(DefaultValueAttribute));
-      //  if (defaultAttr != null)
-      //    return (defaultAttr as DefaultValueAttribute).Value;
-      //
-      //  var propertyType = property.PropertyType;
-      //  return propertyType.IsValueType ? Activator.CreateInstance(propertyType) : null;
-      //}
 
       //------------------------------------------------------------------------/
       // Methods: Draw
@@ -154,7 +135,7 @@ namespace Stratus
         return changed;
       }
 
-      private Drawer[] GenerateDrawers(FieldInfo[] fields)
+      protected Drawer[] GenerateDrawers(FieldInfo[] fields)
       {
         List<Drawer> drawers = new List<Drawer>();
         for (int i = 0; i < fields.Length; ++i)
@@ -168,7 +149,7 @@ namespace Stratus
           bool isUnitySupportedType = (serializedPropertyType != SerializedPropertyType.Generic || isArray); //  OdinSerializer.FormatterUtilities.IsPrimitiveType(fieldType);
           if (isUnitySupportedType)
           {
-            FieldDrawer drawer = new FieldDrawer(field); 
+            FieldDrawer drawer = new FieldDrawer(field);
             if (drawer.isDrawable)
             {
               drawers.Add(drawer);
@@ -178,7 +159,7 @@ namespace Stratus
           }
           else
           {
-            ObjectDrawer drawer = new ObjectDrawer(fieldType);
+            ObjectDrawer drawer = GetDrawer(fieldType); // new ObjectDrawer(fieldType);
             drawer.SetParent(this, field.Name);
             if (drawer.isDrawable)
             {
@@ -191,6 +172,60 @@ namespace Stratus
         return drawers.ToArray();
       }
     }
+
+    /// <summary>
+    /// A custom object drawer for a given type
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public abstract class CustomObjectDrawer : ObjectDrawer
+    {
+      public CustomObjectDrawer(Type type) : base(type)
+      {
+      }
+    }
+
+    /// <summary>
+    /// A custom object drawer for a given type
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public abstract class CustomObjectDrawer<T> : CustomObjectDrawer
+    {
+      //------------------------------------------------------------------------/
+      // Virtual
+      //------------------------------------------------------------------------/
+      protected abstract void OnDrawEditorGUI(Rect position, T value);
+      protected abstract void OnDrawEditorGUILayout(T value);
+      protected abstract float GetHeight(T value);
+
+      //------------------------------------------------------------------------/
+      // CTOR
+      //------------------------------------------------------------------------/
+      public CustomObjectDrawer() : base(typeof(T))
+      {
+      }
+
+      //------------------------------------------------------------------------/
+      // Messages
+      //------------------------------------------------------------------------/
+      public override bool DrawEditorGUI(Rect position, object target)
+      {
+        throw new System.NotImplementedException();
+        EditorGUI.BeginChangeCheck();
+        //this.OnDrawEditorGUI(position, target);
+        bool changed = EditorGUI.EndChangeCheck();
+        return changed;
+      }
+
+      public override bool DrawEditorGUILayout(object target)
+      {
+        throw new System.NotImplementedException();
+        EditorGUI.BeginChangeCheck();
+        //this.OnDrawEditorGUILayout(target);
+        bool changed = EditorGUI.EndChangeCheck();
+        return changed;
+      }
+
+    }
   }
 
- }
+}

@@ -24,7 +24,6 @@ namespace Stratus
       public SerializedPropertyType propertyType { get; private set; }
       public bool isArray { get; private set; }
       public Dictionary<Type, Attribute> attributesByName { get; private set; } = new Dictionary<Type, Attribute>();
-      //private StratusReorderableList reorderableList { get; set; }
 
       //------------------------------------------------------------------------/
       // Properties: Static
@@ -32,10 +31,6 @@ namespace Stratus
       public static Type attributeType { get; } = typeof(System.Attribute);
       public static Type rangeAttributeType { get; } = typeof(RangeAttribute);
       public static Type hideInInspectorAttribute { get; } = typeof(HideInInspector);
-      //private static Dictionary<Type, System.Func<Attribute, SerializedProperty, bool>> attributeFunctions { get; } = new Dictionary<Type, Func<Attribute, SerializedProperty, bool>>()
-      //{
-      //  { typeof(RangeAttribute), OnRangeAttribute},
-      //};
 
       //------------------------------------------------------------------------/
       // CTOR
@@ -49,22 +44,12 @@ namespace Stratus
         this.attributesByName.AddRange(this.field.GetCustomAttributes(attributeType), (Attribute attribute) => attribute.GetType());
         this.propertyType = SerializedSystemObject.DeducePropertyType(field);
         this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
-        this.isArray = typeof(IList).IsAssignableFrom(this.type); //this.type.IsArray || IsList(this.type);
-
-        this.isDrawable = !this.attributesByName.ContainsKey(hideInInspectorAttribute);
+        this.isArray = typeof(IList).IsAssignableFrom(this.type); 
+        // Drawable unless its meant to be hidden
+        this.isDrawable = !this.attributesByName.ContainsKey(hideInInspectorAttribute);        
+        // All currently fields are eventually of a single line
         this.height = StratusEditorUtility.lineHeight;
       }
-
-      //public FieldDrawer(FieldInfo field, SerializedPropertyType propertyType)
-      //{
-      //  this.field = field;
-      //  this.type = this.field.FieldType;
-      //  this.name = ObjectNames.NicifyVariableName(field.Name);
-      //  this.propertyType = propertyType;
-      //  //this.isDrawable = propertyType != SerializedPropertyType.Generic;
-      //  this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
-      //  this.isArray = typeof(IList).IsAssignableFrom(this.type); //this.type.IsArray || IsList(this.type);
-      //}
 
       public override bool DrawEditorGUILayout(object target)
       {
@@ -110,13 +95,8 @@ namespace Stratus
           default:
             if (isArray)
             {
-              //if (reorderableList == null)
-              //{
-              //  this.reorderableList = StratusReorderableList.PolymorphicList(this.GetValue( )
-              //
               EditorGUILayout.Space();
               StratusReorderableList.DrawCachedPolymorphicList(this.field, target);
-              //StratusEditorUtility.DrawPolymorphicList(this.field, target, this.name);
             }
             else
             {
@@ -133,6 +113,60 @@ namespace Stratus
 
         return false;
       }
+
+      //public static void FieldEditorGUILayout(FieldInfo field, SerializedPropertyType propertyType, string name, object target)
+      //{
+      //  switch (propertyType)
+      //  {
+      //    case SerializedPropertyType.ObjectReference:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.ObjectField(name, this.GetValue<UnityEngine.Object>(target), type, true));
+      //      break;
+      //    case SerializedPropertyType.Integer:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.IntField(name, this.GetValue<int>(target)));
+      //      break;
+      //    case SerializedPropertyType.Boolean:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.Toggle(name, this.GetValue<bool>(target)));
+      //      break;
+      //    case SerializedPropertyType.Float:
+      //      OnFloatEditorGUILayout(target);
+      //      break;
+      //    case SerializedPropertyType.String:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.TextField(name, this.GetValue<string>(target)));
+      //      break;
+      //    case SerializedPropertyType.Color:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.ColorField(name, this.GetValue<Color>(target)));
+      //      break;
+      //    case SerializedPropertyType.LayerMask:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.LayerField(name, this.GetValue<LayerMask>(target)));
+      //      break;
+      //    case SerializedPropertyType.Enum:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.EnumPopup(name, this.GetValue<Enum>(target)));
+      //      break;
+      //    case SerializedPropertyType.Vector2:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.Vector2Field(name, this.GetValue<Vector2>(target)));
+      //      break;
+      //    case SerializedPropertyType.Vector3:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.Vector3Field(name, this.GetValue<Vector3>(target)));
+      //      break;
+      //    case SerializedPropertyType.Vector4:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.Vector4Field(name, this.GetValue<Vector4>(target)));
+      //      break;
+      //    case SerializedPropertyType.Rect:
+      //      this.field.SetValue(target, UnityEditor.EditorGUILayout.RectField(name, this.GetValue<Rect>(target)));
+      //      break;
+      //    default:
+      //      if (isArray)
+      //      {
+      //        EditorGUILayout.Space();
+      //        StratusReorderableList.DrawCachedPolymorphicList(this.field, target);
+      //      }
+      //      else
+      //      {
+      //        UnityEditor.EditorGUILayout.LabelField($"No drawer implementation for {name} of type {type.Name}");
+      //      }
+      //      break;
+      //  }
+      //}
 
       public override bool DrawEditorGUI(Rect position, object target)
       {
@@ -162,8 +196,6 @@ namespace Stratus
             value = EditorGUI.LayerField(position, name, GetValue<LayerMask>(target));
             break;
           case SerializedPropertyType.Enum:
-            //value = EditorGUI.EnumPopup(position, name, GetValue<Enum>(target));
-            //value = SearchableEnum.EnumPopup(position, name, GetValue<Enum>(target));
             SearchableEnum.EnumPopup(position, name, GetValue<Enum>(target), (Enum selected) => SetValue(target, selected));
             break;
           case SerializedPropertyType.Vector2:
