@@ -20,9 +20,9 @@ namespace Stratus
       // Properties
       //------------------------------------------------------------------------/
       public DefaultObjectDrawer parent { get; private set; }
-      public Drawer[] drawers { get; private set; }
+      public DrawCommand [] drawCalls { get; private set; }
       //public bool[] isField { get; private set; }
-      public int fieldCount => drawers.Length;
+
       public bool isArray { get; private set; }
       public bool isField { get; private set; }
 
@@ -32,19 +32,9 @@ namespace Stratus
       public DefaultObjectDrawer(Type type) : base(type)
       {
         this.height = lineHeight;
-        this.drawers = GenerateDrawers(fields);
-        this.isDrawable = this.drawers.NotEmpty();
+        this.drawCalls = GenerateDrawCommands(fields);
+        this.isDrawable = this.drawCalls.NotEmpty();
       }
-
-      public void SetParent(DefaultObjectDrawer parent, string fieldName)
-      {
-        this.parent = parent;
-        this.isField = true;
-        this.height -= lineHeight;
-        this.name = fieldName;
-        this.displayName = ObjectNames.NicifyVariableName(this.name);
-      }
-
 
       //------------------------------------------------------------------------/
       // Methods: Draw
@@ -55,36 +45,54 @@ namespace Stratus
         string content = this.isDrawable ? this.displayName : $"No serialized fields available";
         UnityEditor.EditorGUILayout.LabelField(content);
 
-        if (this.isField)
+        foreach (var call in drawCalls)
         {
-          UnityEditor.EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        }
-
-        foreach (var drawer in drawers)
-        {
-          // If this is a member inside a member
-          if (this.isField)
+          if (call.hasChildren)
           {
-            object value = GetValueOrSetDefault(target);
-            changed |= drawer.DrawEditorGUILayout(value);
-          }
+            changed |= call.drawer.DrawEditorGUILayout(target);
+          }          
           else
           {
-            changed |= drawer.DrawEditorGUILayout(target);
+            //UnityEditor.EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            object value = GetValueOrSetDefault(call.field, target);
+            changed |= call.drawer.DrawEditorGUILayout(value);
+            //UnityEditor.EditorGUILayout.EndVertical();
           }
-        }
 
-        if (this.isField)
-        {
-          UnityEditor.EditorGUILayout.EndVertical();
         }
-
         return changed;
       }
 
-      private object GetValueOrSetDefault(object target)
+      public override bool DrawEditorGUI(Rect position, object target)
       {
-        FieldInfo field = this.parent.fieldsByName[this.name];
+        bool changed = false;
+        string content = this.isDrawable ? this.displayName : $"No serialized fields for {type.Name}";
+        EditorGUI.LabelField(position, content);
+
+        // Draw all drawers
+        foreach (var call in drawCalls)
+        {
+          if (call.hasChildren)
+          {
+            changed |= call.drawer.DrawEditorGUI(position, target);
+          }
+          else
+          {
+            //UnityEditor.EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUI.indentLevel++;
+            //position.y += lineHeight;
+            object value = GetValueOrSetDefault(call.field, target);
+            changed |= call.drawer.DrawEditorGUI(position, value);
+            EditorGUI.indentLevel--;
+            //UnityEditor.EditorGUILayout.EndVertical();
+          }
+          position.y += lineHeight;
+        }
+        return changed;
+      }
+
+      private object GetValueOrSetDefault(FieldInfo field, object target)
+      {
         // Try to get the value from the taret
         object value;
         value = field.GetValue(target);
@@ -97,47 +105,11 @@ namespace Stratus
         return value;
       }
 
-      public override bool DrawEditorGUI(Rect position, object target)
+
+
+      protected DrawCommand[] GenerateDrawCommands(FieldInfo[] fields)
       {
-        bool changed = false;
-        string content = this.isDrawable ? this.displayName : $"No serialized fields for {type.Name}";
-        EditorGUI.LabelField(position, content);
-
-        if (this.isField)
-        {
-          EditorGUI.indentLevel++;
-          //GUI.BeginGroup(position, EditorStyles.helpBox);
-          position.y += lineHeight;
-        }
-
-        // Draw all drawers
-        foreach (var drawer in drawers)
-        {
-          // If this is a member inside a member
-          if (this.isField)
-          {
-            object value = GetValueOrSetDefault(target);
-            changed |= drawer.DrawEditorGUI(position, value);
-          }
-          else
-          {
-            changed |= drawer.DrawEditorGUI(position, target);
-          }
-          position.y += lineHeight;
-        }
-
-        if (this.isField)
-        {
-          EditorGUI.indentLevel--;
-          //GUI.EndGroup();
-        }
-
-        return changed;
-      }
-
-      protected Drawer[] GenerateDrawers(FieldInfo[] fields)
-      {
-        List<Drawer> drawers = new List<Drawer>();
+        List<DrawCommand> drawers = new List<DrawCommand>();
         for (int i = 0; i < fields.Length; ++i)
         {
           FieldInfo field = fields[i];
@@ -147,28 +119,24 @@ namespace Stratus
           // Unity is supported by Unity if it's not a generic array
           bool isArray = IsArray(fieldType);
           bool isUnitySupportedType = (serializedPropertyType != SerializedPropertyType.Generic || isArray); //  OdinSerializer.FormatterUtilities.IsPrimitiveType(fieldType);
+          Drawer drawer = null;
+
+          
           if (isUnitySupportedType)
           {
-            FieldDrawer drawer = new FieldDrawer(field);
-            if (drawer.isDrawable)
-            {
-              drawers.Add(drawer);
-              this.height += drawer.height;
-            }
-
+            drawer = new FieldDrawer(field);
           }
           else
           {
-            ObjectDrawer drawer = GetDrawer(fieldType); // new ObjectDrawer(fieldType);
-            drawer.SetParent(this, field.Name);
-            if (drawer.isDrawable)
-            {
-              drawers.Add(drawer);
-              this.height += drawer.height;
-            }
+            drawer = GetDrawer(fieldType); 
           }
 
+          DrawCommand drawCommand = new DrawCommand(drawer, field, isUnitySupportedType);
+          if (drawer.isDrawable)
+            this.height += drawer.height;
+          drawers.Add(drawCommand);
         }
+
         return drawers.ToArray();
       }
     }
@@ -209,18 +177,16 @@ namespace Stratus
       //------------------------------------------------------------------------/
       public override bool DrawEditorGUI(Rect position, object target)
       {
-        throw new System.NotImplementedException();
         EditorGUI.BeginChangeCheck();
-        //this.OnDrawEditorGUI(position, target);
+        this.OnDrawEditorGUI(position, (T)target);
         bool changed = EditorGUI.EndChangeCheck();
         return changed;
       }
 
       public override bool DrawEditorGUILayout(object target)
       {
-        throw new System.NotImplementedException();
         EditorGUI.BeginChangeCheck();
-        //this.OnDrawEditorGUILayout(target);
+        this.OnDrawEditorGUILayout((T)target);
         bool changed = EditorGUI.EndChangeCheck();
         return changed;
       }

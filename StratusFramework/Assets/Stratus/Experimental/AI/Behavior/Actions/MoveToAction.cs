@@ -1,6 +1,7 @@
 using UnityEngine;
 using Stratus;
 using System;
+using Stratus.Types;
 
 namespace Stratus
 {

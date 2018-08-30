@@ -318,7 +318,14 @@ namespace Stratus
             yield return (T)currentValue;
         }
       }
-      
+
+      public static FieldInfo[] GetSerializedFields(Type type)
+      {
+        MemberInfo[] members = OdinSerializer.FormatterUtilities.GetSerializableMembers(type, OdinSerializer.SerializationPolicies.Unity);
+        return members.OfType<FieldInfo>().ToArray();
+      }
+
+
       /// <summary>
       /// Gets all the fields in obj.
       /// </summary>

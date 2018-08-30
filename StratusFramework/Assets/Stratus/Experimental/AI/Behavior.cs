@@ -127,8 +127,9 @@ namespace Stratus
         this.agent.gameObject.Dispatch<StartedEvent>(new StartedEvent() { behavior = this });
       }
 
-      public virtual Status Execute(float dt)
+      public virtual Status Update(float dt)
       {
+        Trace.Script($"Updating {GetType().Name}");
         return this.OnUpdate(dt);
       }      
 

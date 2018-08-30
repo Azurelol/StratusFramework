@@ -15,63 +15,24 @@ namespace Stratus
   /// </summary>
   public partial class SerializedSystemObject
   {
-    /// <summary>
-    /// Base class for all drawers
-    /// </summary>
-    public abstract class Drawer
-    {
-      public string name { get; protected set; }
-      public string displayName { get; protected set; }
-      public Type type { get; protected set; }
-      public abstract bool DrawEditorGUILayout(object target);
-      public abstract bool DrawEditorGUI(Rect position, object target);
-      public bool isDrawable { get; protected set; }
-      public bool isPrimitive { get; protected set; }
-      public float height { get; protected set; }
-      public static float lineHeight => StratusEditorUtility.lineHeight;
-      public static float labelWidth => StratusEditorUtility.labelWidth;
-    }
-
-    /// <summary>
-    /// Base class for all drawers
-    /// </summary>
-    public abstract class ObjectDrawer : Drawer
-    {
-      public FieldInfo[] fields { get; private set; }
-      public Dictionary<string, FieldInfo> fieldsByName { get; private set; } = new Dictionary<string, FieldInfo>();
-      public bool hasFields => fields.NotEmpty();
-      public bool hasDefaultConstructor { get; private set; }
-
-      public ObjectDrawer(Type type)
-      {
-        this.type = type;
-        MemberInfo[] members = OdinSerializer.FormatterUtilities.GetSerializableMembers(type, OdinSerializer.SerializationPolicies.Unity);
-        this.fields = members.OfType<FieldInfo>().ToArray();
-        this.fieldsByName.AddRange(this.fields, (FieldInfo field) => field.Name);
-        this.hasDefaultConstructor = (type.GetConstructor(Type.EmptyTypes) != null) || type.IsValueType;
-      }
-    }
-
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
+    public Type type { get; private set; }
+    public OdinSerializedProperty[] properties { get; private set; }
+    public Dictionary<string, OdinSerializedProperty> propertiesByName { get; private set; }
     public ObjectDrawer drawer { get; private set; }
-    public object target { get; private set; }
-
-    //------------------------------------------------------------------------/
-    // Properties: Static
-    //------------------------------------------------------------------------/
-    private static Dictionary<Type, ObjectDrawer> objectDrawers { get; set; } = new Dictionary<Type, ObjectDrawer>();
-    private static Dictionary<FieldInfo, FieldDrawer> fieldDrawers { get; set; } = new Dictionary<FieldInfo, FieldDrawer>();
-    private static Type[] customObjectDrawers { get; set; } = Reflection.GetSubclass<CustomObjectDrawer>(false);
+    public object target { get; private set; }    
 
     //------------------------------------------------------------------------/
     // CTOR
     //------------------------------------------------------------------------/
     public SerializedSystemObject(Type type, object target)
     {
-      this.drawer = GetDrawer(type);
+      this.type = type;
       this.target = target;
+      this.drawer = GetDrawer(type);
+      this.GenerateProperties();
     }
 
     public SerializedSystemObject(object target)
@@ -82,8 +43,12 @@ namespace Stratus
 
     static SerializedSystemObject()
     {
-      foreach (var type in customObjectDrawers)
-        objectDrawers.Add(type, (DefaultObjectDrawer)Reflection.Instantiate(type));
+      foreach (var drawerType in customObjectDrawers)
+      {
+        ObjectDrawer drawer = (ObjectDrawer)Reflection.Instantiate(drawerType);
+        Type objectType = drawer.type;
+        objectDrawers.Add(objectType, drawer);
+      }
     }
 
     /// <summary>
@@ -144,40 +109,51 @@ namespace Stratus
       JsonUtility.FromJsonOverwrite(data, target);
     }
 
+    private void GenerateProperties()
+    {
+      FieldInfo[] fields = GetSerializedFields(this.type);
+      List<OdinSerializedProperty> properties = new List<OdinSerializedProperty>();
+      foreach(var field in fields)
+      {
+        OdinSerializedProperty property = new OdinSerializedProperty(field, this.target);
+        propertiesByName.Add(property.name, property);
+        properties.Add(property);
+      }
+      this.properties = properties.ToArray();
+    }
+
     //------------------------------------------------------------------------/
     // Static Methods
     //------------------------------------------------------------------------/
+    private static Dictionary<Type, SerializedPropertyType> propertyTypesMap { get; set; } = new Dictionary<Type, SerializedPropertyType>()
+    {
+      { typeof(bool), SerializedPropertyType.Boolean },
+      { typeof(int), SerializedPropertyType.Integer},
+      { typeof(float), SerializedPropertyType.Float },
+      { typeof(string), SerializedPropertyType.String },
+      { typeof(Vector2), SerializedPropertyType.Vector2 },
+      { typeof(Vector3), SerializedPropertyType.Vector3},
+      { typeof(Vector4), SerializedPropertyType.Vector4},
+      { typeof(Color), SerializedPropertyType.Color },
+      { typeof(Rect), SerializedPropertyType.Rect},
+      { typeof(LayerMask), SerializedPropertyType.LayerMask},
+    };
+
     public static SerializedPropertyType DeducePropertyType(FieldInfo field)
     {
       Type type = field.FieldType;
       SerializedPropertyType propertyType = SerializedPropertyType.Generic;
 
-      if (type.IsSubclassOf(typeof(UnityEngine.Object)))
-        propertyType = SerializedPropertyType.ObjectReference;
-      else if (type.Equals(typeof(bool)))
-        propertyType = SerializedPropertyType.Boolean;
-      else if (type.Equals(typeof(int)))
-        propertyType = SerializedPropertyType.Integer;
-      else if (type.Equals(typeof(float)))
-        propertyType = SerializedPropertyType.Float;
-      else if (type.Equals(typeof(string)))
-        propertyType = SerializedPropertyType.String;
-      else if (type.Equals(typeof(Vector2)))
-        propertyType = SerializedPropertyType.Vector2;
-      else if (type.Equals(typeof(Vector3)))
-        propertyType = SerializedPropertyType.Vector3;
-      else if (type.Equals(typeof(Vector4)))
-        propertyType = SerializedPropertyType.Vector4;
-      else if (type.Equals(typeof(Color)))
-        propertyType = SerializedPropertyType.Color;
-      else if (type.IsEnum)
+      if (type.IsEnum)
         propertyType = SerializedPropertyType.Enum;
-      else if (type.Equals(typeof(Rect)))
-        propertyType = SerializedPropertyType.Rect;
-      else if (type.Equals(typeof(LayerMask)))
-        propertyType = SerializedPropertyType.LayerMask;
+      else if (propertyTypesMap.ContainsKey(type))
+        propertyType = propertyTypesMap[type];
+      else if (type.IsSubclassOf(typeof(UnityEngine.Object)))
+        propertyType = SerializedPropertyType.ObjectReference;
       return propertyType;
     }
+
+    public static FieldInfo[] GetSerializedFields(Type type) => Reflection.GetSerializedFields(type);
 
     public static ObjectDrawer GetObjectDrawer(object element)
     {

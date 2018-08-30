@@ -50,25 +50,40 @@ namespace Stratus
       }      
     }
 
-    public class SymbolDrawerTwo : SerializedSystemObject.CustomObjectDrawer<Symbol>
+    //public class SymbolDrawerTwo : SerializedSystemObject.CustomObjectDrawer<Symbol>
+    //{
+    //  protected override float GetHeight(Symbol value)
+    //  {
+    //    return lineHeight;
+    //  }
+    //
+    //  protected override void OnDrawEditorGUI(Rect position, Symbol value)
+    //  {
+    //    throw new System.NotImplementedException();
+    //  }
+    //
+    //  protected override void OnDrawEditorGUILayout(Symbol value)
+    //  {
+    //    throw new System.NotImplementedException();        
+    //  }
+    //}
+
+    public class SymbolReferenceDrawer2 : SerializedSystemObject.CustomObjectDrawer<Symbol.Reference>
     {
-      protected override float GetHeight(Symbol value)
+      protected override float GetHeight(Symbol.Reference value)
       {
         return lineHeight;
       }
 
-      protected override void OnDrawEditorGUI(Rect position, Symbol value)
+      protected override void OnDrawEditorGUI(Rect position, Symbol.Reference value)
       {
-        throw new System.NotImplementedException();
-      }
+        //EditorGUI.LabelField(position, value.key);
+        StratusEditorGUI.DrawGUI(position, "Key", ref value.key);
+      }      
 
-      protected override void OnDrawEditorGUILayout(Symbol value)
+      protected override void OnDrawEditorGUILayout(Symbol.Reference value)
       {
-        throw new System.NotImplementedException();
-        EditorGUILayout.BeginHorizontal();
-        
-        EditorGUILayout.EndHorizontal();
-        
+        StratusEditorGUI.DrawGUILayout("Key", ref value.key);
       }
     }
 

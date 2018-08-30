@@ -49,7 +49,12 @@ namespace Stratus
       /// <summary>
       /// The current behavior being run by this system
       /// </summary>
-      protected Behavior currentBehavior { set; get; }
+      protected abstract Behavior currentBehavior { get; }
+
+      /// <summary>
+      /// Whether this system has behaviors present
+      /// </summary>
+      protected abstract bool hasBehaviors { get; }
       
       //------------------------------------------------------------------------/
       // Interface

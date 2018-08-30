@@ -30,7 +30,7 @@ MonoBehaviour:
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
-      Data: 4
+      Data: 3
     - Name: 
       Entry: 7
       Data: 2|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
@@ -60,7 +60,7 @@ MonoBehaviour:
       Data: 1
     - Name: name
       Entry: 1
-      Data: Sequence (One)
+      Data: Sequence
     - Name: depth
       Entry: 3
       Data: 0
@@ -68,27 +68,15 @@ MonoBehaviour:
       Entry: 7
       Data: 4|Stratus.AI.Sequence, Assembly-CSharp
     - Name: label
-      Entry: 1
-      Data: One
+      Entry: 6
+      Data: 
     - Name: decorators
       Entry: 7
       Data: 5|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
         mscorlib
     - Name: 
       Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: 6|Stratus.AI.Cooldown, Assembly-CSharp
-    - Name: label
-      Entry: 6
-      Data: 
-    - Name: duration
-      Entry: 4
-      Data: 5
-    - Name: 
-      Entry: 8
-      Data: 
+      Data: 0
     - Name: 
       Entry: 13
       Data: 
@@ -106,104 +94,25 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 7|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 6|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 2
+      Data: 3
     - Name: name
       Entry: 1
-      Data: MoveToAction
+      Data: EventAction
     - Name: depth
       Entry: 3
       Data: 1
     - Name: data
       Entry: 7
-      Data: 8|Stratus.AI.MoveToAction, Assembly-CSharp
+      Data: 7|Stratus.AI.EventAction, Assembly-CSharp
     - Name: label
       Entry: 6
       Data: 
     - Name: decorators
       Entry: 7
-      Data: 9|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 7
-      Data: 10|Stratus.AI.Cooldown, Assembly-CSharp
-    - Name: label
-      Entry: 1
-      Data: 
-    - Name: duration
-      Entry: 4
-      Data: 5
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 11|Stratus.AI.Loop, Assembly-CSharp
-    - Name: label
-      Entry: 6
-      Data: 
-    - Name: counter
-      Entry: 3
-      Data: 3
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: symbol
-      Entry: 7
-      Data: 12|Stratus.Types.Symbol+Reference, Assembly-CSharp
-    - Name: key
-      Entry: 6
-      Data: 
-    - Name: type
-      Entry: 3
-      Data: 4
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: range
-      Entry: 4
-      Data: 2
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: dataTypeName
-      Entry: 1
-      Data: MoveToAction
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 13|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
-    - Name: id
-      Entry: 3
-      Data: 3
-    - Name: name
-      Entry: 1
-      Data: Sequence (Two)
-    - Name: depth
-      Entry: 3
-      Data: 0
-    - Name: data
-      Entry: 7
-      Data: 14|Stratus.AI.Sequence, Assembly-CSharp
-    - Name: label
-      Entry: 1
-      Data: Two
-    - Name: decorators
-      Entry: 7
-      Data: 15|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
+      Data: 8|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
         mscorlib
     - Name: 
       Entry: 12
@@ -219,7 +128,7 @@ MonoBehaviour:
       Data: 
     - Name: dataTypeName
       Entry: 1
-      Data: Sequence
+      Data: EventAction
     - Name: 
       Entry: 8
       Data: 

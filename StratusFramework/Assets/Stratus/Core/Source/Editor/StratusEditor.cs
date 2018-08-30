@@ -723,8 +723,9 @@ namespace Stratus
           if (property.type != SerializedPropertyModel.SerializationType.Unity)
             continue;
 
-          SerializedProperty serializedProperty = property.unitySerialized;          
+          SerializedProperty serializedProperty = property.unitySerialized;
           
+          //serializedProperty.tar
           // Map the property
           propertyMap.Add(serializedProperty.name, serializedProperty);
           

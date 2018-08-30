@@ -15,7 +15,7 @@ namespace Stratus
     public class Sequence : Composite
     {
       public Behavior currentChild { private set; get; }
-      public List<Behavior>.Enumerator childrenEnumerator { get; private set; }
+      public IEnumerator<Behavior> childrenEnumerator { get; private set; }
 
       public override string description
       {
@@ -37,7 +37,7 @@ namespace Stratus
         // Keep going until a child behavior says its running
         while (true)
         {
-          var status = currentChild.Execute(dt);
+          var status = currentChild.Update(dt);
           if (status != Status.Success)
             return status;
           // If we have reached the end of the collection

@@ -110,6 +110,7 @@ namespace Stratus
     private bool parsed => _root != null;
     public static int rootDepth { get; } = -1;
     public static int defaultDepth { get; } = 0;
+    public bool hasElements => elements.Count > 1;
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -177,6 +178,15 @@ namespace Stratus
       {
         this.AddElement(data, depth);
       }
+    }
+
+    public void Iterate(System.Action<TreeElementType> action)
+    {
+      if (!parsed)
+        Parse();
+
+      foreach (var element in this.elements)
+        action(element);
     }
 
     public void Clear()

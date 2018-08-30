@@ -94,7 +94,7 @@ namespace Stratus
       }
     }
 
-    public static TreeElementType MakeRoot<TreeElementType>() 
+    public static TreeElementType MakeRoot<TreeElementType>()
       where TreeElementType : TreeElement, new()
     {
       TreeElementType root = new TreeElementType();
@@ -378,11 +378,13 @@ namespace Stratus
     [OdinSerialize]
     public string dataTypeName;
 
-
     //----------------------------------------------------------------------/
     // Properties
     //----------------------------------------------------------------------/    
     public bool hasData => data != null;
+    public Type dataType => typeof(DataType);
+    public DataType[] childrenData { get; private set; }
+    //public IList<TreeElement<DataType>> childrenDerived { get; private set; }
 
     //----------------------------------------------------------------------/
     // Messages
@@ -395,7 +397,8 @@ namespace Stratus
 
     public void OnAfterDeserialize()
     {
-      
+      //this.childrenDerived = (IList<TreeElement<DataType>>)this.children;
+      this.childrenData = this.GetChildrenData();
     }
 
     //----------------------------------------------------------------------/
@@ -414,10 +417,26 @@ namespace Stratus
       this.name = this.GetName();
     }
 
-    public virtual string GetName()
+    protected virtual string GetName()
     {
       return data.name;
     }
+
+    public DataType[] GetChildrenData()
+    {
+      if (!this.hasChildren)
+        return null;
+
+      List<DataType> children = new List<DataType>();
+      foreach (var child in this.children)
+        children.Add(((TreeElement<DataType>)child).data);
+      return children.ToArray();
+    }
+
+    public TreeElement<DataType> GetChild(int index) => (TreeElement<DataType>)children[index];
+
+
+
 
 
   }

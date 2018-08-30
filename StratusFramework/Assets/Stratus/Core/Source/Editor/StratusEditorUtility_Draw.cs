@@ -42,7 +42,7 @@ namespace Stratus
       {
         // Get the drawer
         Type type = value.GetType();
-        SerializedSystemObject.DefaultObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(type);
+        SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(type);
 
         // We draw one line at a time
         position.height = lineHeight;
@@ -123,7 +123,7 @@ namespace Stratus
 
         // Get the drawer for the type
         Type elementType = element.GetType();
-        SerializedSystemObject.DefaultObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(elementType);
+        SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(elementType);
 
         EditorGUILayout.BeginVertical(ReorderableListStyles.Container);
         {

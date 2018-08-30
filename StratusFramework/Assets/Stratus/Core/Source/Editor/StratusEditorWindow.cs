@@ -78,11 +78,11 @@ namespace Stratus
 
     private void OnGUI()
     {
-      StratusGUIStyles.OverrideDefaultFont();
+      //StratusGUIStyles.OverrideDefaultFont();
       EditorGUILayout.Space();
       this.menuBarDrawer?.Draw(this.currentPosition);
       this.OnWindowGUI();
-      StratusGUIStyles.RevertDefaultFont();
+      //StratusGUIStyles.RevertDefaultFont();
     }
 
     private void Update()

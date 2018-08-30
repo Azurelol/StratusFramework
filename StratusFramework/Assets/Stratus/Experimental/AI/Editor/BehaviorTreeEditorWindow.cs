@@ -144,6 +144,8 @@ namespace Stratus
       /// </summary>
       public BehaviorTree.BehaviorNode currentNode { get; private set; }
 
+      public bool hasSelection => currentNodes != null;
+
       //----------------------------------------------------------------------/
       // Messages
       //----------------------------------------------------------------------/
@@ -206,7 +208,7 @@ namespace Stratus
         GUILayout.BeginArea(rect);
         GUILayout.Label("Inspector", StratusGUIStyles.header);
 
-        if (currentNodes != null)
+        if (hasSelection)
         {
           if (currentNodes.Count == 1)
           {
@@ -278,8 +280,9 @@ namespace Stratus
 
       private void RemoveNode(BehaviorTree.BehaviorNode node)
       {
-        if (node == currentNode)
-          currentNodeSerializedObject = null;
+        //if (node == currentNode)
+        currentNodeSerializedObject = null;
+        currentNodes = null;
 
         this.behaviorTree.RemoveBehavior(node);
         Save();
@@ -320,22 +323,6 @@ namespace Stratus
         this.blackboardEditor = StratusEditor.CreateEditor(this.behaviorTree.blackboard) as StratusEditor;
         //this.blackboardEditor.OnInspectorGUI();
       }
-
-      //private void OnSelectionChanged(IList<BehaviorTree.BehaviorNode> elements)
-      //{
-      //  this.currentNodeSerializedObject = null;
-      //  this.currentNodeProperty = null;
-      //  //this.currentNodeProperty = this.treeElementsProperty.get
-      //
-      //  
-      //  currentNodes = elements;
-      //  if (currentNodes.Count > 0)
-      //  {
-      //    this.currentNode = currentNodes[0];
-      //    this.currentNodeSerializedObject = new SerializedSystemObject(currentNode.data);
-      //    //this.currentNodeProperty = this.treeElementsProperty.GetArrayElementAtIndex(0);
-      //  }
-      //}
 
       private void OnSelectionChanged(IList<int> ids)
       {

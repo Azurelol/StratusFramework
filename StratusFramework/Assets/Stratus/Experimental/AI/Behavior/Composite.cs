@@ -23,25 +23,13 @@ namespace Stratus
       // Properties
       //------------------------------------------------------------------------/
       List<Decorator> IDecoratorSupport.decorators => this.decorators;
-      public List<Behavior> children { private set; get; }
+      public IList<Behavior> children { private set; get; }
+      public bool hasChildren => children.NotNullOrEmpty();
 
       //------------------------------------------------------------------------/
       // Methods
       //------------------------------------------------------------------------/
-      public void Add(Behavior child)
-      {
-        children.Add(child);
-      }
-
-      public void Remove(Behavior child)
-      {
-        children.Remove(child);
-      }
-
-      public void Clear()
-      {
-        children.Clear();
-      }
+      public void SetChildren(IList<Behavior> children) => this.children = children;
 
     } 
   }

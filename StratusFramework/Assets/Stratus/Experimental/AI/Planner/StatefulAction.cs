@@ -65,7 +65,7 @@ namespace Stratus
       /// <param name="dt"></param>
       public void Execute(float dt)
       {
-        action.Execute(dt);
+        action.Update(dt);
       }
         
         /// <summary>

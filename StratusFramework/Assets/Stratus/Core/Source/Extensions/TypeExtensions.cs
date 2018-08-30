@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Stratus.Utilities;
+using System;
+using System.Reflection;
 
 namespace Stratus
 {
@@ -42,6 +44,9 @@ namespace Stratus
 
       return null;
     }
+
+    public static T GetValue<T>(this FieldInfo fieldInfo, object target) => (T)fieldInfo.GetValue(target);
+    public static void SetValue<T>(this FieldInfo fieldInfo, object target, object value) => fieldInfo.SetValue(target, value);
 
   }
 

@@ -102,6 +102,11 @@ namespace Stratus
       return collection.Count > 0;
     }
 
+    public static bool NotNullOrEmpty<T>(this ICollection<T> collection)
+    {
+      return collection != null && collection.Count > 0;
+    }
+
     public static bool NotEmpty<T>(this Stack<T> stack)
     {
       return stack.Count > 0;

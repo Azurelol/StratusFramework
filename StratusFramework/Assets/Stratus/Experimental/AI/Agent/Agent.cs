@@ -185,7 +185,7 @@ namespace Stratus.AI
 
     protected internal override void OnManagedStart()
     {
-      //if (this.debug) this.AddLineRenderer();
+      this.behavior.Initialize();
       this.OnAgentStart();
       currentState = State.Idle;
     }

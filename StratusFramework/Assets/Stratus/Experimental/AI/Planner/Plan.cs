@@ -163,7 +163,7 @@ namespace Stratus
         if (cheapestNode == null)
         {
           // If the current state is already fulfilling this condition, we are done!
-          if (planner.State.Satisfies(parent.State)) return true;
+          if (planner.state.Satisfies(parent.State)) return true;
           // Otherwise, no valid solution could be found
           if (planner.debug) Trace.Script("No actions could fulfill these preconditions");
           return false;

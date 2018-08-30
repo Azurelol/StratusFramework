@@ -17,12 +17,12 @@ namespace Stratus
       [Serializable]
       public class BehaviorNode : TreeElement<Behavior>
       {
-        public override string GetName()
+        protected override string GetName()
         {
           if (!string.IsNullOrEmpty(data.label))
             return $"{dataTypeName} ({data.name})";
           return $"{dataTypeName}";
-        }
+        }        
       }
 
       //------------------------------------------------------------------------/
@@ -37,27 +37,29 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/
-      /// <summary>
-      /// The current node
-      /// </summary>
-      public Behavior current { get; private set; }
+      public BehaviorNode currentNode { get; private set; }
+      protected override Behavior currentBehavior => currentNode.data;
+      protected override bool hasBehaviors => tree.hasElements;
 
       //----------------------------------------------------------------------/
       // Interface
       //----------------------------------------------------------------------/
       protected override void OnInitialize()
       {
+        this.tree.Iterate(this.SetComposites);
         this.Reset();
       }
 
       protected override void OnUpdate(float dt)
       {
-
+        //this.current.children
+        this.currentNode.data.Update(dt);
       }
 
       protected override void OnReset()
       {
-        //this.current = this.nodes[0].data;
+        if (tree.hasElements)
+          this.currentNode = (BehaviorNode)tree.root.GetChild(0);
       }
 
       protected override void OnPrint(StringBuilder builder)
@@ -67,26 +69,16 @@ namespace Stratus
 
       protected override void OnBehaviorStarted(Behavior behavior)
       {
-        throw new NotImplementedException();
+        
       }
 
       protected override void OnBehaviorEnded(Behavior behavior)
-      {
-        throw new NotImplementedException();
+      {        
       }
 
       protected override void OnBehaviorAdded(Behavior behavior)
       {
         this.tree.AddElement(behavior);
-        //// If there's no root node yet, set it
-        //if (nodes.Empty() || !nodes[0].isRoot)
-        //{
-        //  nodes.Insert(0, TreeElement.MakeRoot<BehaviorNode>());
-        //}
-        //
-        //BehaviorNode node = new BehaviorNode();
-        //node.Set(behavior);
-        //nodes.Add(node);
       }
 
       public void RemoveBehavior(BehaviorNode behaviorNode)
@@ -104,6 +96,13 @@ namespace Stratus
       protected override void OnBehaviorsCleared()
       {
         this.tree.Clear();
+        this.tree.root.data = Behavior.Instantiate(typeof(Sequence));
+      }
+
+      private void SetComposites(BehaviorNode behaviorNode)
+      {
+        Composite composite = behaviorNode.data as Composite;
+        composite?.SetChildren(behaviorNode.GetChildrenData());
       }
 
 

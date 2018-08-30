@@ -63,28 +63,40 @@ namespace Stratus
   /// </summary>
   public class OdinSerializedProperty
   {
+    public object target { get; private set; }
     public FieldInfo field { get; private set; }
     public System.Type type { get; private set; }
-    public object target { get; private set; }
     public bool isExpanded { get; set; } = true;
+    public string name => field.Name;
     public string displayName { get; private set; }
     public bool isArray { get; private set; }
     public IList list { get; private set; }    
     public Type listElementType { get; private set; }
-    public SerializedSystemObject.DefaultObjectDrawer drawer { get; private set; }
+    public SerializedSystemObject.ObjectDrawer drawer { get; private set; }
+    public string[] enumDisplayNames { get; private set; }
+    public SerializedPropertyType propertyType { get; private set; }
 
     public OdinSerializedProperty(FieldInfo field, object target)
     {
       this.field = field;
       this.type = this.field.FieldType;
+      this.propertyType = SerializedSystemObject.DeducePropertyType(this.field);
       this.displayName = ObjectNames.NicifyVariableName(this.field.Name);
       this.target = target;
+
+      // Enum
+      if (this.propertyType == SerializedPropertyType.Enum)
+        this.enumDisplayNames = SearchableEnum.GetEnumDisplayNames(this.type);
+      
+      // Array
       this.isArray = typeof(IList).IsAssignableFrom(this.type);
       if (this.isArray)
       {
         this.list = this.field.GetValue(target) as IList;
         this.listElementType = Utilities.Reflection.GetIndexedType(list);
       }
+
+      // Set the drawer
       this.drawer = SerializedSystemObject.GetObjectDrawer(this.isArray ? this.listElementType : this.type);
     }
 

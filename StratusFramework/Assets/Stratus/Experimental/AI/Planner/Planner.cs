@@ -21,17 +21,17 @@ namespace Stratus
       /// <summary>
       /// The goal set for this planner.
       /// </summary>
-      public Goal Goal;
+      public Goal goal;
 
       /// <summary>
       /// The current state of this agent.
       /// </summary>
-      public WorldState State = new WorldState();
+      public WorldState state = new WorldState();
 
       /// <summary>
       /// List of all available actions to this planner.
       /// </summary>
-      public StatefulAction[] AvailableActions;
+      public StatefulAction[] availableActions;
 
       //------------------------------------------------------------------------/
       // Properties
@@ -39,12 +39,16 @@ namespace Stratus
       /// <summary>
       /// The currently formulated plan
       /// </summary>
-      public Plan CurrentPlan { private set; get; }
+      public Plan currentPlan { private set; get; }
 
       /// <summary>
       /// The currently running action
       /// </summary>
-      public StatefulAction CurrentAction { private set; get; }
+      public StatefulAction currentAction { private set; get; }
+
+      protected override Behavior currentBehavior => currentAction.action;
+
+      protected override bool hasBehaviors => availableActions.Length > 0;
 
       //------------------------------------------------------------------------/
       // Interface
@@ -56,13 +60,13 @@ namespace Stratus
 
       protected override void OnReset()
       {
-        this.CurrentAction.Reset();
+        this.currentAction.Reset();
         this.FormulatePlan();
       }
 
       protected override void OnUpdate(float dt)
       {
-        currentBehavior.Execute(dt);        
+        currentBehavior.Update(dt);        
       }
 
       protected override void OnBehaviorAdded(Behavior behavior)
@@ -80,7 +84,7 @@ namespace Stratus
         // We already have a reference to the current action so
         // don't really use the behavior here (it wouldn't know its
         // part of a stateful action anyway)
-        this.State.Merge(CurrentAction.effects);
+        this.state.Merge(currentAction.effects);
         ContinuePlan();
       }
 
@@ -91,7 +95,7 @@ namespace Stratus
 
       protected override void OnPrint(StringBuilder builder)
       {
-        foreach (var action in AvailableActions)
+        foreach (var action in availableActions)
         {
           builder.AppendFormat(" - {0}", action.description);
         }
@@ -106,7 +110,7 @@ namespace Stratus
       /// <param name="e"></param>
       void OnModifySymbolEvent(WorldState.ModifySymbolEvent e)
       {
-        this.State.Apply(e.Symbol);
+        this.state.Apply(e.Symbol);
       }
 
       //------------------------------------------------------------------------/
@@ -118,17 +122,17 @@ namespace Stratus
       public void ContinuePlan()
       {
         // If there's nothing actions left in the plan, reassess?
-        if (CurrentPlan.IsFinished)
+        if (currentPlan.IsFinished)
         {
-          this.Goal.Complete(this);
+          this.goal.Complete(this);
           this.agent.gameObject.Dispatch<Plan.ExecutedEvent>(new Plan.ExecutedEvent());
           //if (Tracing) Trace.Script("The plan for " + this.CurrentGoal.Name + " has been fulfilled!", this);
           //this.gameObject.Dispatch<Agent.>
           return;
         }
 
-        this.CurrentAction = CurrentPlan.Next();
-        this.CurrentAction.Initialize(this.agent);
+        this.currentAction = currentPlan.Next();
+        this.currentAction.Initialize(this.agent);
       }
 
       /// <summary>
@@ -137,13 +141,13 @@ namespace Stratus
       public void FormulatePlan()
       {
         this.sensor.Scan();
-        this.CurrentPlan = Plan.Formulate(this, this.AvailableActions, this.State, this.Goal);
+        this.currentPlan = Plan.Formulate(this, this.availableActions, this.state, this.goal);
 
-        if (this.CurrentPlan != null)
+        if (this.currentPlan != null)
         {
           //if (Tracing)
             Trace.Script("Executing new plan!", this.agent);
-          this.agent.gameObject.Dispatch<Plan.FormulatedEvent>(new Plan.FormulatedEvent(this.CurrentPlan));
+          this.agent.gameObject.Dispatch<Plan.FormulatedEvent>(new Plan.FormulatedEvent(this.currentPlan));
           this.ContinuePlan();
         }
         else
