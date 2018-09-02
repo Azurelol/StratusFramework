@@ -11,19 +11,18 @@ namespace Stratus
     /// Also known as a leaf node, an action represents any concrete action
     /// an agent can make (such as moving to a location, attacking a target, etc)
     /// </summary>
-    public abstract class Task : Behavior, IDecoratorSupport
+    public abstract class Task : Behavior, IServiceSupport
     {
       //------------------------------------------------------------------------/
       // Fields
       //------------------------------------------------------------------------/
       [OdinSerializer.OdinSerialize]
-      public List<Decorator> decorators = new List<Decorator>();
+      public List<Service> services = new List<Service>();
 
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/
-      List<Decorator> IDecoratorSupport.decorators => this.decorators;
-
+      List<Service> IServiceSupport.services => this.services;
 
       //------------------------------------------------------------------------/
       // Interface
@@ -35,6 +34,13 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Messages
       //------------------------------------------------------------------------/
+      public override Status Update(Agent agent)
+      {
+        foreach (var service in this.services)
+          service.Execute(agent);
+        return base.Update(agent);
+      }
+
       protected override void OnStart(Agent agent)
       {
         this.OnTaskStart(agent);

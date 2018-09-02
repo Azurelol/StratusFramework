@@ -94,10 +94,23 @@ namespace Stratus
         return behavior;
       }
 
+      public Behavior AddParentBehavior(Type behaviorType, BehaviorNode child)
+      {
+        Behavior behavior = Behavior.Instantiate(behaviorType);
+        AddParentBehavior(behavior, child);
+        return behavior;
+      }
+
       public void AddBehavior(Behavior behavior, BehaviorNode parent)
       {
         if (behavior != null)
-          this.tree.AddElement(behavior, parent);
+          this.tree.AddChildElement(behavior, parent);
+      }
+
+      public void AddParentBehavior(Behavior behavior, BehaviorNode child)
+      {
+        if (behavior != null)
+          this.tree.AddParentElement(behavior, child);
       }
 
       protected override void OnBehaviorsCleared()
@@ -109,7 +122,7 @@ namespace Stratus
       private void SetComposites(BehaviorNode behaviorNode)
       {
         Composite composite = behaviorNode.data as Composite;
-        composite?.SetChildren(behaviorNode.GetChildrenData());
+        composite?.Set(behaviorNode.GetChildrenData());
       }
 
 

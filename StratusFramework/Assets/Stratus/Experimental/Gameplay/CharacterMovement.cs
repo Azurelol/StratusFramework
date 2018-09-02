@@ -228,7 +228,7 @@ namespace Stratus.Gameplay
     }
 
     protected internal override void OnManagedLateUpdate()
-    {
+    {      
       CheckMovement();
 
       if (!jumping || !grounded)
@@ -587,12 +587,15 @@ namespace Stratus.Gameplay
     /// </summary>
     private void CheckMovement()
     {
+      //if (locomotion == LocomotionMode.NavMeshAgent)
+      //  moving = navMeshAgent.velocity != Vector3.zero;
+
       if (inertiaTimer.isFinished)
       {
         // Override movement
         if (movingTo)
         {
-          moving = movingTo = navMeshAgent.hasPath;
+          moving = movingTo = navMeshAgent.velocity != Vector3.zero;
         }
         // Moving along a direction
         else if (moving)

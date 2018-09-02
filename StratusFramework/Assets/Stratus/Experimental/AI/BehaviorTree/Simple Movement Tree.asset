@@ -1,0 +1,180 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d99599d1a97838488d5f255f9b0e3ef, type: 3}
+  m_Name: Simple Movement Tree
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: tree
+      Entry: 7
+      Data: 0|Stratus.SerializedTree`2[[Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp],[Stratus.AI.Behavior,
+        Assembly-CSharp]], Assembly-CSharp
+    - Name: elements
+      Entry: 7
+      Data: 1|System.Collections.Generic.List`1[[Stratus.AI.BehaviorTree+BehaviorNode,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 2|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 0
+    - Name: name
+      Entry: 1
+      Data: Root
+    - Name: depth
+      Entry: 3
+      Data: -1
+    - Name: data
+      Entry: 6
+      Data: 
+    - Name: dataTypeName
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 3|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 1
+    - Name: name
+      Entry: 1
+      Data: Sequence
+    - Name: depth
+      Entry: 3
+      Data: 0
+    - Name: data
+      Entry: 7
+      Data: 4|Stratus.AI.Sequence, Assembly-CSharp
+    - Name: label
+      Entry: 6
+      Data: 
+    - Name: services
+      Entry: 7
+      Data: 5|System.Collections.Generic.List`1[[Stratus.AI.Service, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 6|Stratus.AI.SetRandomPosition, Assembly-CSharp
+    - Name: interval
+      Entry: 4
+      Data: 2
+    - Name: deviation
+      Entry: 4
+      Data: 0
+    - Name: key
+      Entry: 1
+      Data: Waypoint
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: Sequence
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 7|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 2
+    - Name: name
+      Entry: 1
+      Data: MoveToTask
+    - Name: depth
+      Entry: 3
+      Data: 1
+    - Name: data
+      Entry: 7
+      Data: 8|Stratus.AI.MoveToTask, Assembly-CSharp
+    - Name: label
+      Entry: 6
+      Data: 
+    - Name: services
+      Entry: 7
+      Data: 9|System.Collections.Generic.List`1[[Stratus.AI.Service, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: targetSymbol
+      Entry: 7
+      Data: 10|Stratus.Blackboard+Reference`1[[UnityEngine.Vector3, UnityEngine.CoreModule]],
+        Assembly-CSharp
+    - Name: key
+      Entry: 1
+      Data: Waypoint
+    - Name: scope
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: range
+      Entry: 4
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: MoveToTask
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: idCounter
+      Entry: 3
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+  debug: 0
+  description: 
+  blackboard: {fileID: 11400000, guid: 06f4e3f9e9f7d404b83669bbedb9b7a5, type: 2}

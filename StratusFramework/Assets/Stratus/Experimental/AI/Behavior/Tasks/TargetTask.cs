@@ -7,7 +7,7 @@ namespace Stratus
 {
   namespace AI
   {
-    public abstract class TargetAction<TargetType> : Task
+    public abstract class TargetedTask<TargetType> : Task
     {
       //------------------------------------------------------------------------/
       // Fields
@@ -62,13 +62,6 @@ namespace Stratus
         if (!IsWithinRange(agent, targetPosition))
         {
           this.Approach(agent, targetPosition);
-          // If the target has been destroyed, cancel this action
-          // If something happened to the target, replan
-          //if (!hasTarget)
-          //{
-          //  agent.gameObject.Dispatch<CanceledEvent>(new CanceledEvent());
-          //  return Status.Failure;
-          //}
 
           // If there's a valid target, approach it
           //this.Approach();

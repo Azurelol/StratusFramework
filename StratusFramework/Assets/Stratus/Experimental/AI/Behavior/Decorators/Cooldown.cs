@@ -11,6 +11,7 @@ namespace Stratus.AI
   {
     public float duration = 5.0f;
     private Stratus.Cooldown cooldown;
+
     public override string description { get; } = "Bases its condition on wheher its duration has expired";
 
     protected override void OnStart(Agent agent)

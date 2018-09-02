@@ -124,17 +124,17 @@ namespace Stratus
       {
         if (!this.started)
         {
-          Trace.Script($"Starting {fullName}");
+          //Trace.Script($"Starting {fullName}");
           this.OnStart(agent);
           this.started = true;
         }
 
-        Trace.Script($"Updating {fullName}"); 
+        //Trace.Script($"Updating {fullName}"); 
 
         Status status = this.OnUpdate(agent);
         if (status != Status.Running)
         {
-          Trace.Script($"Ending {fullName}");
+          //Trace.Script($"Ending {fullName}");
           this.OnEnd(agent);
           this.Reset();
         }
@@ -142,7 +142,7 @@ namespace Stratus
         return status;
       }      
 
-      public void Reset()
+      public virtual void Reset()
       {
         this.started = false;
       }

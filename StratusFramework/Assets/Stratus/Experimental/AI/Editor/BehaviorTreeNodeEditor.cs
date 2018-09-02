@@ -41,7 +41,7 @@ namespace Stratus
         AddDecorator(node, null);
       }
 
-      void AddDecorator(BehaviorTreeNode node, Decorator decorator)
+      void AddDecorator(BehaviorTreeNode node, Service decorator)
       {
         node.AddContent(new Node.ContentElement("Decorator", "One\nTwo\nThree", null, Woof));
       }

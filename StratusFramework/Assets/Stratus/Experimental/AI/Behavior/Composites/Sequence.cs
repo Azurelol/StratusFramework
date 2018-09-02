@@ -45,13 +45,13 @@ namespace Stratus
           // If we have reached the end of the collection
           if (!this.childrenEnumerator.MoveNext())
           {
-            Trace.Script("Reached end of sequence");
+            //Trace.Script("Reached end of sequence");
             return Status.Success;
           }
 
           // Otherwise keep going
           currentChild = this.childrenEnumerator.Current;
-          Trace.Script($"Moved onto next child {currentChild.fullName}");
+          //Trace.Script($"Moved onto next child {currentChild.fullName}");
         }        
       }
 

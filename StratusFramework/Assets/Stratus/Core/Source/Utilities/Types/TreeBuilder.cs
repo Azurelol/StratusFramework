@@ -146,7 +146,7 @@ namespace Stratus
       this.AddElement(data, defaultDepth);
     }
 
-    public void AddElement(DataType data, TreeElementType parent)
+    public void AddChildElement(DataType data, TreeElementType parent)
     {      
       // Insert element below the last child
       TreeElementType element = new TreeElementType();
@@ -154,6 +154,20 @@ namespace Stratus
       element.depth = parent.depth + 1;
       element.Set(data);
       this.elements.Insert(FindLastChildIndex(parent) + 1, element);
+    }
+
+    public void AddParentElement(DataType data, TreeElementType child)
+    {
+      // Insert element below the last child
+      TreeElementType element = new TreeElementType();
+      element.id = idCounter++;
+      element.Set(data);
+      element.depth = child.depth;
+      this.elements.Insert(FindIndex(child) - 1, element);
+      foreach(var childChild in this.FindChildren(child))
+      {
+        childChild.depth++;
+      }
     }
 
     public void RemoveElement(TreeElementType element)
@@ -233,6 +247,16 @@ namespace Stratus
       int index = FindIndex(element);
       int lastIndex = index + element.childrenCount;
       return lastIndex;
+    }
+
+    private TreeElementType[] FindChildren(TreeElementType element)
+    {
+      int index = FindIndex(element);
+      //int lastIndex = index + element.childrenCount;
+      //List<TreeElementType>
+      //for(int i = index; i < lastIndex; ++i)
+      //  this.elements.[i]
+      return this.elements.GetRange(index, element.childrenCount).ToArray();
     }
 
 

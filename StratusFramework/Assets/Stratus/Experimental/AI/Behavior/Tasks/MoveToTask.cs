@@ -7,7 +7,7 @@ namespace Stratus
 {
   namespace AI
   {
-    public class MoveToAction : TargetAction<Vector3> 
+    public class MoveToTask : TargetedTask<Vector3> 
     {
       public override string description { get; } = "Moves the agent to the target location";
 
@@ -15,8 +15,7 @@ namespace Stratus
 
 
       protected override Status OnTargetActionUpdate(Agent agent, Vector3 target)
-      {
-        // For now succeed right away        
+      {      
         return Status.Success;
       }
 
@@ -27,7 +26,6 @@ namespace Stratus
 
       protected override void OnTargetActionEnd(Agent agent, Vector3 target)
       {
-        Trace.Script($"Reached the target {target} ", agent);
       }
     }
   }

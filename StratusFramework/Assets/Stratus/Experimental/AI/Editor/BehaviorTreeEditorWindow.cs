@@ -35,7 +35,7 @@ namespace Stratus
         protected override bool IsParentValid(BehaviorTree.BehaviorNode parent)
         {
           Trace.Script($"Parent type = {parent.dataType}");
-          return parent.data != null && parent.dataType.IsSubclassOf(compositeType);
+          return parent.data != null && (parent.dataType.IsSubclassOf(compositeType) || parent.dataType.IsSubclassOf(decoratorType)); 
         }
 
         protected override void OnItemContextMenu(GenericMenu menu, BehaviorTree.BehaviorNode treeElement)
@@ -45,6 +45,11 @@ namespace Stratus
           {
             BehaviorTree.BehaviorNode parent = treeElement.GetParent<BehaviorTree.BehaviorNode>();
             menu.AddItem("Duplicate", false, () => window.AddNode((Behavior)treeElement.data.Clone(), parent));
+
+            menu.AddPopup("Add/Decorator", BehaviorTreeEditorWindow.decoratorTypes.displayedOptions, (int index) =>
+            {
+              window.AddParentNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
+            });
           }
 
           // Composites
@@ -52,18 +57,17 @@ namespace Stratus
           {
             menu.AddPopup("Add/Tasks", BehaviorTreeEditorWindow.taskTypes.displayedOptions, (int index) =>
             {
-              window.AddNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index), treeElement);
+              window.AddChildNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index), treeElement);
             });
             
             menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
             {
-              window.AddNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
-            });            
-
+              window.AddChildNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
+            });  
             
-            menu.AddPopup("Add/Service", BehaviorTreeEditorWindow.serviceTypes.displayedOptions, (int index) =>
+            menu.AddPopup("Add/Decorator", BehaviorTreeEditorWindow.decoratorTypes.displayedOptions, (int index) =>
             {
-              window.AddNode(BehaviorTreeEditorWindow.serviceTypes.AtIndex(index), treeElement);
+              window.AddParentNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
             });
           }
           menu.AddItem("Remove", false, () => window.RemoveNode(treeElement));
@@ -74,13 +78,13 @@ namespace Stratus
           // Composite
           menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
           {
-            window.AddNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index));
+            window.AddChildNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index));
           });
 
           // Actions
           menu.AddPopup("Add/Tasks", BehaviorTreeEditorWindow.taskTypes.displayedOptions, (int index) =>
           {
-            window.AddNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index));
+            window.AddChildNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index));
           });
 
           menu.AddItem("Clear", false, () => window.RemoveAllNodes());
@@ -107,11 +111,12 @@ namespace Stratus
       // Properties
       //----------------------------------------------------------------------/
       private static Type compositeType { get; } = typeof(Composite);
+      private static Type decoratorType { get; } = typeof(Decorator);
 
       /// <summary>
       /// All supported behavior types
       /// </summary>
-      public static TypeSelector behaviorTypes { get; } = TypeSelector.FilteredSelector(typeof(Behavior), typeof(Decorator), false, true);
+      public static TypeSelector behaviorTypes { get; } = TypeSelector.FilteredSelector(typeof(Behavior), typeof(Service), false, true);
 
       /// <summary>
       /// All supported decorator types
@@ -126,12 +131,12 @@ namespace Stratus
       /// <summary>
       /// All supported decorator types
       /// </summary>
-      public static TypeSelector decoratorTypes { get; } = new TypeSelector(typeof(Decorator), false, true);
+      public static TypeSelector serviceTypes { get; } = new TypeSelector(typeof(Service), false, true);
 
       /// <summary>
       /// All supported decorator types
       /// </summary>
-      public static TypeSelector serviceTypes { get; } = new TypeSelector(typeof(Service), false, true);
+      public static TypeSelector decoratorTypes { get; } = new TypeSelector(typeof(Decorator), false, true);
 
       /// <summary>
       /// The behavior tree currently being edited
@@ -282,13 +287,19 @@ namespace Stratus
       //----------------------------------------------------------------------/
       // Methods: Private
       //----------------------------------------------------------------------/
-      private void AddNode(Type type, BehaviorTree.BehaviorNode parent = null)
+      private void AddChildNode(Type type, BehaviorTree.BehaviorNode parent = null)
       {
         if (parent != null)
           behaviorTree.AddBehavior(type, parent);
         else
           behaviorTree.AddBehavior(type);
 
+        Save();
+      }
+
+      private void AddParentNode(Type type, BehaviorTree.BehaviorNode child)
+      {
+        behaviorTree.AddParentBehavior(type, child);
         Save();
       }
 
@@ -321,6 +332,7 @@ namespace Stratus
       private void Refresh()
       {
         this.treeInspector.SetTree(this.behaviorTree.tree.elements);
+        this.Repaint();
       }
 
       private void OnTreeSet()

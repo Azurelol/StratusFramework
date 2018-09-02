@@ -174,7 +174,9 @@ namespace Stratus.Types
 
       // Look for the key in the list
       if (!symbolsMap.ContainsKey(key))
+      {
         throw new KeyNotFoundException("The key '" + key + "' was not found on this symbol table!");
+      }
       return symbolsMap[key];
 
       #else

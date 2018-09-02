@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d99599d1a97838488d5f255f9b0e3ef, type: 3}
-  m_Name: Behavior Tree
+  m_Name: Simple Tree
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -70,18 +70,8 @@ MonoBehaviour:
     - Name: label
       Entry: 1
       Data: Outer
-    - Name: decorators
-      Entry: 7
-      Data: 5|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
+    - Name: services
+      Entry: 6
       Data: 
     - Name: 
       Entry: 8
@@ -94,7 +84,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 6|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 5|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
       Data: 8
@@ -106,22 +96,12 @@ MonoBehaviour:
       Data: 1
     - Name: data
       Entry: 7
-      Data: 7|Stratus.AI.LogTask, Assembly-CSharp
+      Data: 6|Stratus.AI.LogTask, Assembly-CSharp
     - Name: label
       Entry: 1
       Data: 1
-    - Name: decorators
-      Entry: 7
-      Data: 8|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
+    - Name: services
+      Entry: 6
       Data: 
     - Name: message
       Entry: 1
@@ -137,7 +117,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 9|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 7|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
       Data: 10
@@ -149,22 +129,12 @@ MonoBehaviour:
       Data: 1
     - Name: data
       Entry: 7
-      Data: 10|Stratus.AI.LogTask, Assembly-CSharp
+      Data: 8|Stratus.AI.LogTask, Assembly-CSharp
     - Name: label
       Entry: 1
       Data: 2
-    - Name: decorators
-      Entry: 7
-      Data: 11|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
+    - Name: services
+      Entry: 6
       Data: 
     - Name: message
       Entry: 1
@@ -180,7 +150,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 12|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 9|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
       Data: 11
@@ -192,22 +162,12 @@ MonoBehaviour:
       Data: 1
     - Name: data
       Entry: 7
-      Data: 13|Stratus.AI.LogTask, Assembly-CSharp
+      Data: 10|Stratus.AI.LogTask, Assembly-CSharp
     - Name: label
       Entry: 1
       Data: 3
-    - Name: decorators
-      Entry: 7
-      Data: 14|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
+    - Name: services
+      Entry: 6
       Data: 
     - Name: message
       Entry: 1
@@ -223,7 +183,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 15|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 11|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
       Data: 12
@@ -235,22 +195,12 @@ MonoBehaviour:
       Data: 1
     - Name: data
       Entry: 7
-      Data: 16|Stratus.AI.Sequence, Assembly-CSharp
+      Data: 12|Stratus.AI.Sequence, Assembly-CSharp
     - Name: label
       Entry: 1
       Data: Inner
-    - Name: decorators
-      Entry: 7
-      Data: 17|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
+    - Name: services
+      Entry: 6
       Data: 
     - Name: 
       Entry: 8
@@ -263,7 +213,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 18|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 13|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
       Data: 13
@@ -275,22 +225,12 @@ MonoBehaviour:
       Data: 2
     - Name: data
       Entry: 7
-      Data: 19|Stratus.AI.LogTask, Assembly-CSharp
+      Data: 14|Stratus.AI.LogTask, Assembly-CSharp
     - Name: label
       Entry: 6
       Data: 
-    - Name: decorators
-      Entry: 7
-      Data: 20|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
+    - Name: services
+      Entry: 6
       Data: 
     - Name: message
       Entry: 1
@@ -306,7 +246,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 21|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 15|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
       Data: 14
@@ -318,22 +258,12 @@ MonoBehaviour:
       Data: 2
     - Name: data
       Entry: 7
-      Data: 22|Stratus.AI.LogTask, Assembly-CSharp
+      Data: 16|Stratus.AI.LogTask, Assembly-CSharp
     - Name: label
       Entry: 6
       Data: 
-    - Name: decorators
-      Entry: 7
-      Data: 23|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
+    - Name: services
+      Entry: 6
       Data: 
     - Name: message
       Entry: 1
@@ -349,7 +279,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 24|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 17|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
       Data: 15
@@ -361,22 +291,12 @@ MonoBehaviour:
       Data: 2
     - Name: data
       Entry: 7
-      Data: 25|Stratus.AI.LogTask, Assembly-CSharp
+      Data: 18|Stratus.AI.LogTask, Assembly-CSharp
     - Name: label
       Entry: 6
       Data: 
-    - Name: decorators
-      Entry: 7
-      Data: 26|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
+    - Name: services
+      Entry: 6
       Data: 
     - Name: message
       Entry: 1

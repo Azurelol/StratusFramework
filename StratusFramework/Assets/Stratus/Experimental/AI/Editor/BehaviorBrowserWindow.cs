@@ -29,7 +29,7 @@ namespace Stratus
         EditorWindow.GetWindow(typeof(BehaviorBrowserWindow), false, Title);
         Composites = Reflection.GenerateClassList<Composite>();
         Actions = Reflection.GenerateClassList<Task>();
-        Decorators = Reflection.GenerateClassList<Decorator>();
+        Decorators = Reflection.GenerateClassList<Service>();
       }
 
       private void OnGUI()

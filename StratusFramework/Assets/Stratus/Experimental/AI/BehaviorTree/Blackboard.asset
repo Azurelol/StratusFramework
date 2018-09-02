@@ -54,13 +54,5 @@ MonoBehaviour:
         integerValue: 0
         floatValue: 0
         booleanValue: 0
-        vector3Value: {x: 0, y: 0, z: 0}
-        stringValue: 
-    - key: Cats
-      value:
-        type: 2
-        integerValue: 0
-        floatValue: 0
-        booleanValue: 0
-        vector3Value: {x: 0, y: 0, z: 0}
+        vector3Value: {x: 5, y: 0, z: 0}
         stringValue: 

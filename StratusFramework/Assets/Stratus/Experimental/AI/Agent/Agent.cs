@@ -299,10 +299,14 @@ namespace Stratus.AI
     /// Moves this agent to the target point
     /// </summary>
     /// <param name="point"></param>
-    public void MoveTo(Vector3 point)
+    public bool MoveTo(Vector3 point)
     {
       if (!enabled)
-        return;
+        return false;
+
+      if (navigation.destination == point)
+        return false;
+
       // Reset the current path
       navigation.ResetPath();
 
@@ -322,6 +326,8 @@ namespace Stratus.AI
         if (this.debug)
           Trace.Script("Can not move to that position!", this);
       }
+
+      return true;
     }
 
     /// <summary>

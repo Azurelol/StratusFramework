@@ -11,10 +11,7 @@ namespace Stratus
     {
       public override float remaining => this.total - this.current;
 
-      /// <summary>
-      /// Constructor for the countdown.
-      /// </summary>
-      /// <param name="total">The total amount of time to countdown.</param>
+
       public Stopwatch(float total)
       {
         this.total = total;
