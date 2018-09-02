@@ -6,17 +6,39 @@ namespace Stratus.AI
 {
   public class SetRandomPosition : Service
   {
+    public enum Type
+    {
+      Point,
+      Target
+    }
+
     public string key;
+    public Type type;
+    public float radius = 5;
 
     protected override void OnExecute(Agent agent)
     {
-      Vector2 offset = Random.insideUnitCircle * 5;
-      Vector3 position = agent.transform.position;
+      Vector3 position = Vector3.zero;
+      switch (this.type)
+      {
+        case Type.Point:
+          position = agent.transform.position;
+          Vector2 offset = Random.insideUnitCircle * radius;
+          position.x += offset.x;
+          position.z += offset.y;
+          break;
+
+        case Type.Target:
+          Transform[] targets = agent.transform.GetTransformsWithinRadius(radius);
+          position = targets.Random().position;
+          break;
+      }
+
       Trace.Script($"{key} set to {position}");
-      position.x += offset.x;
-      position.z += offset.y;
       agent.blackboard.SetLocal(agent.gameObject, key, position);
     }
+
+    
   }
 
 }

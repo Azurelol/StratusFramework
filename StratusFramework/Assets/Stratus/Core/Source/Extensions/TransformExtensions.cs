@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Stratus
 {
@@ -26,6 +28,19 @@ namespace Stratus
     public static Vector3 CalculatePositionAtDirection(this Transform transform, Vector3 normalizedDirVec, float distance)
     {
       return transform.position + (normalizedDirVec * distance);
+    }
+
+    /// <summary>
+    /// Gets a list of all transforms within range
+    /// </summary>
+    /// <param name="transform"></param>
+    /// <param name="radius"></param>
+    /// <returns></returns>
+    public static Transform[] GetTransformsWithinRadius(this Transform transform, float radius)
+    {
+      Collider[] hits = Physics.OverlapSphere(transform.position, radius);
+      var transforms = hits.Select(x => x.transform).ToArray();
+      return transforms;
     }
 
     /// <summary>
