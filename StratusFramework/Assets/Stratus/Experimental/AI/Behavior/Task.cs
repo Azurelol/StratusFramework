@@ -11,7 +11,7 @@ namespace Stratus
     /// Also known as a leaf node, an action represents any concrete action
     /// an agent can make (such as moving to a location, attacking a target, etc)
     /// </summary>
-    public abstract class Action : Behavior, IDecoratorSupport
+    public abstract class Task : Behavior, IDecoratorSupport
     {
       //------------------------------------------------------------------------/
       // Fields
@@ -28,46 +28,33 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Interface
       //------------------------------------------------------------------------/   
-      protected abstract void OnActionStart();
-      protected abstract void OnActionReset();
-      protected abstract Status OnActionUpdate(float dt);
-      protected abstract void OnActionEnd();
+      protected abstract void OnTaskStart(Agent agent);
+      protected abstract Status OnTaskUpdate(Agent agent);
+      protected abstract void OnTaskEnd(Agent agent);
 
       //------------------------------------------------------------------------/
       // Messages
       //------------------------------------------------------------------------/
-      protected override void OnStart()
+      protected override void OnStart(Agent agent)
       {
-        this.OnActionStart();
+        this.OnTaskStart(agent);
       }
 
-      protected override Status OnUpdate(float dt)
+      protected override Status OnUpdate(Agent agent)
       {
-        var status = OnActionUpdate(dt);
+        var status = OnTaskUpdate(agent);
                 
         // If the action has finished, end it
-        if (status == Status.Success)
-          this.End();
+        if (status != Status.Running)
+          this.End(agent);
 
         return status;
       }
 
-      protected override void OnEnd()
+      protected override void OnEnd(Agent agent)
       {
-        this.OnActionEnd();
+        this.OnTaskEnd(agent);
       }      
-
-      //------------------------------------------------------------------------/
-      // Methods
-      //------------------------------------------------------------------------/
-      /// <summary>
-      /// Resets all values to this action, making it execute again from the beginning.
-      /// </summary>
-      public void Reset()
-      {
-        this.status = Status.Suspended;
-        this.OnActionReset();
-      }
 
     }
 

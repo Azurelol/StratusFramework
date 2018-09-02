@@ -9,55 +9,50 @@ namespace Stratus
     /// <summary>
     /// An action that takes a specified amount of time to complete
     /// </summary>
-    public abstract class TimedAction : Action 
+    public abstract class TimedAction : Task
     {
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/
       [Tooltip("How long it takes to execute this action")]
-      public float Speed = 1f;
-      public float Progress { get { return ProgressTimer.normalizedProgress; } }
-      protected Countdown ProgressTimer;
+      public float speed = 1f;
+      public float progress { get { return progressTimer.normalizedProgress; } }
+      protected Countdown progressTimer;
 
       //------------------------------------------------------------------------/
       // Interface
       //------------------------------------------------------------------------/
-      protected abstract void OnTimedActionStart();
-      protected abstract Status OnTimedActionUpdate(float dt);
-      protected abstract void OnTimedActionEnd();
+      protected abstract void OnTimedActionStart(Agent agent);
+      protected abstract Status OnTimedActionUpdate(Agent agent);
+      protected abstract void OnTimedActionEnd(Agent agent);
 
       //------------------------------------------------------------------------/
       // Interface
       //------------------------------------------------------------------------/
-      protected override void OnActionStart()
+      protected override void OnTaskStart(Agent agent)
       {
-        this.ProgressTimer = new Countdown(this.Speed);
+        this.progressTimer = new Countdown(this.speed);
       }
 
-      protected override void OnActionReset()
-      {
-        this.ProgressTimer.Set(this.Speed);
-      }
-
-      protected override Status OnActionUpdate(float dt)
+      protected override Status OnTaskUpdate(Agent agent)
       {
         // Update the progress timer. 
-        bool isFinished = ProgressTimer.Update(Time.deltaTime);
+        bool isFinished = progressTimer.Update(Time.deltaTime);
         // Update the action
         if (!isFinished)
         {
-          var status = this.OnTimedActionUpdate(dt);
+          var status = this.OnTimedActionUpdate(agent);
           if (status != Status.Success)
             return Status.Running;
         }
-        
+
         // If the timer has finished, end the action
         return Status.Success;
       }
 
-      protected override void OnActionEnd()
+      protected override void OnTaskEnd(Agent agent)
       {
-        this.OnTimedActionEnd();
+        this.OnTimedActionEnd(agent);
       }
 
       //------------------------------------------------------------------------/

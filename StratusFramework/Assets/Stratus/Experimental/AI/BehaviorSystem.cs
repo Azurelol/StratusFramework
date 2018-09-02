@@ -2,6 +2,7 @@ using UnityEngine;
 using Stratus;
 using System.Text;
 using System;
+using System.Collections.Generic;
 
 namespace Stratus
 {
@@ -55,12 +56,17 @@ namespace Stratus
       /// Whether this system has behaviors present
       /// </summary>
       protected abstract bool hasBehaviors { get; }
+
+      /// <summary>
+      /// All currently running behavior systems for given agents
+      /// </summary>
+      protected static Dictionary<Agent, BehaviorSystem> agentBehaviors { get; set; } = new Dictionary<Agent, BehaviorSystem>();
       
       //------------------------------------------------------------------------/
       // Interface
       //------------------------------------------------------------------------/
       protected abstract void OnInitialize();
-      protected abstract void OnUpdate(float dt);
+      protected abstract void OnUpdate(Agent agent);
       protected abstract void OnPrint(StringBuilder builder);
       // Behaviors
       protected abstract void OnBehaviorAdded(Behavior behavior);
@@ -73,49 +79,39 @@ namespace Stratus
       // Methods
       //------------------------------------------------------------------------/
       /// <summary>
-      /// Configures the system. In order to initialize behaviors call Assesss.
+      /// Initializes the system for the given agent
       /// </summary>
-      public void Initialize()
+      public void Initialize(Agent agent)
       {
-        this.OnInitialize();
+        if (!agentBehaviors.ContainsKey(agent))
+          agentBehaviors.Add(agent, Instantiate(agent));
+
+        agentBehaviors[agent].OnInitialize();
+        //this.OnInitialize();
       }
 
       /// <summary>
       /// Updates this behavior system.
       /// </summary>
       /// <param name="dt"></param>
-      public void UpdateSystem(float dt)
+      public void UpdateSystem(Agent agent)
       {
-        this.OnUpdate(dt);
+        agentBehaviors[agent].OnUpdate(agent);
+        //this.OnUpdate(dt);
       }
 
       /// <summary>
       /// Resets the behaviour system so that it must evaluate from the beginning
       /// </summary>
-      public void Reset()
+      public void ResetSystem()
       {
-        this.OnReset();
+        agentBehaviors[agent].OnReset();
+        //this.OnReset();
       }
 
-      /// <summary>
-      /// Prints a representation of the contents of this behavior system
-      /// </summary>
-      /// <returns></returns>
-      public string Print()
-      {
-        var builder = new StringBuilder();
-        OnPrint(builder);
-        return builder.ToString();
-      }
-      
-      /// <summary>
-      /// Cancels the agent's current action, forcing it to reassess the situation
-      /// </summary>
-      public void Cancel()
-      {
-        this.Reset();
-      }
-
+      //------------------------------------------------------------------------/
+      // Behavior
+      //------------------------------------------------------------------------/
       /// <summary>
       /// Adds a behaviour to the system
       /// </summary>
@@ -143,6 +139,20 @@ namespace Stratus
       }
 
       //------------------------------------------------------------------------/
+      // Methods: Utility
+      //------------------------------------------------------------------------/
+      /// <summary>
+      /// Prints a representation of the contents of this behavior system
+      /// </summary>
+      /// <returns></returns>
+      public string Print()
+      {
+        var builder = new StringBuilder();
+        OnPrint(builder);
+        return builder.ToString();
+      }
+
+      //------------------------------------------------------------------------/
       // Methods: Static
       //------------------------------------------------------------------------/
       /// <summary>
@@ -151,13 +161,31 @@ namespace Stratus
       /// </summary>
       /// <param name="agent"></param>
       /// <returns></returns>
-      public T Instantiate<T>(Agent agent) where T : BehaviorSystem
+      public BehaviorSystem Instantiate(Agent agent)
       {
-        var behaviorSystem = Instantiate(this) as T;
+        var behaviorSystem = Instantiate(this);
         behaviorSystem.agent = agent;
         behaviorSystem.sensor = agent.sensor;
         return behaviorSystem;
       }
+
+      public BehaviorSystem Instantiate(Agent agent, Blackboard blackboard)
+      {
+        var behaviorSystem = Instantiate(this);
+        behaviorSystem.blackboard = blackboard;
+        behaviorSystem.agent = agent;
+        behaviorSystem.sensor = agent.sensor;
+        return behaviorSystem;
+      }
+
+      //public BehaviorSystem Instantiate(Blackboard blackboard)
+      //{
+      //  var behaviorSystem = Instantiate(this);
+      //  behaviorSystem.blackboard = blackboard;
+      //  behaviorSystem.sensor = agent.sensor;
+      //  return behaviorSystem;
+      //}
+
 
     }
   }

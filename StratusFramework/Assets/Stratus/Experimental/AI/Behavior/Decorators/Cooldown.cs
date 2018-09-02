@@ -7,23 +7,28 @@ namespace Stratus.AI
   /// <summary>
   /// Bases its condition on wheher its duration has expired
   /// </summary>
-  public class Cooldown : Decorator
+  public class Cooldown : Decorator 
   {
     public float duration = 5.0f;
-
+    private Stratus.Cooldown cooldown;
     public override string description { get; } = "Bases its condition on wheher its duration has expired";
 
-    protected override void OnEnd()
-    {      
-    }
-
-    protected override void OnStart()
-    {      
-    }
-
-    protected override Status OnUpdate(float dt)
+    protected override void OnStart(Agent agent)
     {
-      return Status.Running;      
+      this.cooldown = new Stratus.Cooldown(this.duration);
+    }
+
+    protected override void OnEnd(Agent agent)
+    {
+      this.cooldown.Activate();
+    }
+
+    protected override Status OnUpdate(Agent agent)
+    {
+      cooldown.Update(Time.deltaTime);
+      if (cooldown.isActive)
+        return Status.Running;
+      return Status.Success;
     }
   }
 

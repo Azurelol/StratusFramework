@@ -31,7 +31,7 @@ namespace Stratus
     public class Selector
     {
       public Blackboard blackboard;
-      public Scope scope;
+      public Scope scope;      
       public string key;
 
       /// <summary>
@@ -78,6 +78,48 @@ namespace Stratus
         return value;
       }
     }
+
+    /// <summary>
+    /// A reference of a symbol within the blackboard
+    /// </summary>
+    [Serializable]
+    public class Reference<T>// where T : struct
+    {
+      public string key;
+      public Scope scope;
+
+      public Variant.VariantType type { get; } = VariantUtilities.Convert(typeof(T));
+
+      public T GetValue(Blackboard blackboard, GameObject gameObject)
+      {
+        if (scope == Scope.Local)
+          return blackboard.GetLocal<T>(gameObject, key);
+        return blackboard.GetGlobal<T>(key);
+      }
+
+      public void SetValue(Blackboard blackboard, GameObject gameObject, T value)
+      {
+        if (scope == Scope.Local)
+          blackboard.SetLocal<T>(gameObject, key, value);
+        else 
+          blackboard.SetGlobal<T>(key, value);
+      }
+    }
+
+    /// <summary>
+    /// A reference for a Vector3 within a blackboard
+    /// </summary>
+    public class Vector3Reference : Reference<Vector3>
+    {
+    }
+
+    /// <summary>
+    /// A reference for an integer within a blackboard
+    /// </summary>
+    public class IntegerReference : Reference<int>
+    {      
+    }
+
 
     public delegate void OnGlobalSymbolChanged(Symbol symbol);
     public delegate void OnLocalSymbolChanged(GameObject gameObject, Symbol symbol);
@@ -204,7 +246,7 @@ namespace Stratus
     {
       Symbol symbol = GetLocals(owner).Find(key);
       symbol.SetValue(value);
-      onLocalSymbolChanged(owner, symbol);
+      onLocalSymbolChanged?.Invoke(owner, symbol);
       //GetLocals(owner).SetValue<T>(key, value);
     }
 
@@ -218,7 +260,7 @@ namespace Stratus
     {
       Symbol symbol = GetLocals(owner).Find(key);
       symbol.SetValue(value);
-      onLocalSymbolChanged(owner, symbol);
+      onLocalSymbolChanged?.Invoke(owner, symbol);
       //GetLocals(owner).SetValue(key, value);
     }
 
@@ -232,7 +274,7 @@ namespace Stratus
     {
       Symbol symbol = GetGlobals().Find(key);
       symbol.SetValue(value);
-      onGlobalSymbolChanged(symbol);
+      onGlobalSymbolChanged?.Invoke(symbol);
 
       //GetGlobals().SetValue<T>(key, value);
     }
@@ -247,7 +289,7 @@ namespace Stratus
     {
       Symbol symbol = GetGlobals().Find(key);
       symbol.SetValue(value);
-      onGlobalSymbolChanged(symbol);
+      onGlobalSymbolChanged?.Invoke(symbol);
       //GetGlobals().SetValue(key, value);
     }
 

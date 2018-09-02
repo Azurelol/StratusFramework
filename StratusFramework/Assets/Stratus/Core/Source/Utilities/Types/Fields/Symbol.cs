@@ -54,7 +54,7 @@ namespace Stratus.Types
     /// </summary>
     [Serializable]
     public class Reference
-    {
+    {      
       public string key;
       public Variant.VariantType type;
 
@@ -73,6 +73,8 @@ namespace Stratus.Types
         this.type = type;
       }
     }
+
+
 
     /// <summary>
     /// A reference of a symbol

@@ -33,7 +33,7 @@ namespace Stratus
 
         if (GUILayout.Button("Set", EditorStyles.miniButtonRight))
         {
-          target.action = (Action)StratusEditorUtility.Instantiate(target.type.Type);
+          target.task = (Task)StratusEditorUtility.Instantiate(target.type.Type);
         }
         EditorGUILayout.EndHorizontal();
 

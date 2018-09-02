@@ -67,10 +67,6 @@ namespace Stratus
       /// </summary>
       public Status status { protected set; get; }
       /// <summary>
-      /// The agent this behavior is acting upon
-      /// </summary>
-      public Agent agent { private set; get; }
-      /// <summary>
       /// Whether this behavior needs to be polled 
       /// </summary>
       public bool isUpdated { private set; get; }
@@ -82,6 +78,14 @@ namespace Stratus
       /// The name for this behavior
       /// </summary>
       public string name => this.label;
+      /// <summary>
+      /// The name of the type of this behavior
+      /// </summary>
+      public string typeName => GetType().Name;
+      /// <summary>
+      /// Whether this behavior has started
+      /// </summary>
+      public bool started { get; private set; }
 
       //----------------------------------------------------------------------/
       // Interface
@@ -89,56 +93,56 @@ namespace Stratus
       /// <summary>
       /// Called once when the behavior is activated
       /// </summary>
-      protected abstract void OnStart();
+      protected abstract void OnStart(Agent agent);
       /// <summary>
       /// If the behavior needs to be updated, it is called
       /// </summary>
       /// <param name="dt"></param>
       /// <returns></returns>
-      protected abstract Status OnUpdate(float dt);
+      protected abstract Status OnUpdate(Agent agent);
       /// <summary>
       /// Called once after hte behavior has finished executing
       /// </summary>
-      protected abstract void OnEnd();
-
-      //------------------------------------------------------------------------/
-      // CTOR
-      //------------------------------------------------------------------------/
-      public Behavior()
-      {
-        //this.label = GetType().Name;
-      }
+      protected abstract void OnEnd(Agent agent);
 
       //----------------------------------------------------------------------/
-      // Messages
+      // Methods
       //----------------------------------------------------------------------/
-      /// <summary>
-      /// This method is called once, immediately before the first call to this
-      /// behavior's update method
-      /// </summary>
-      /// <param name="agent"></param>
-      public virtual void Start(Agent agent)
+      public virtual Status Update(Agent agent)
       {
-        this.agent = agent;
-        // Whether this behavior needs to be updated every frame
-        this.isUpdated = (typeof(IUpdatable).IsAssignableFrom(GetType().DeclaringType));
-        // Now initialize the subclass
-        this.OnStart();
-        this.agent.gameObject.Dispatch<StartedEvent>(new StartedEvent() { behavior = this });
-      }
+        if (!this.started)
+        {
+          Trace.Script($"Starting {typeName}");
+          this.OnStart(agent);
+          this.started = true;
+        }
 
-      public virtual Status Update(float dt)
-      {
-        Trace.Script($"Updating {GetType().Name}");
-        return this.OnUpdate(dt);
+        Trace.Script($"Updating {typeName}"); 
+
+        Status status = this.OnUpdate(agent);
+        if (status != Status.Running)
+        {
+          this.OnEnd(agent);
+        }
+
+        return status;
       }      
 
-      public virtual void End()
+      public virtual void End(Agent agent)
       {
-        this.OnEnd();
-        this.agent.gameObject.Dispatch<EndedEvent>(new EndedEvent() { behavior = this });
+        Trace.Script($"Ending {typeName}");
+        this.OnEnd(agent);
+        this.Reset();
       }
 
+      public void Reset()
+      {
+        this.started = false;
+      }
+
+      //----------------------------------------------------------------------/
+      // Static Methods
+      //----------------------------------------------------------------------/
       public static Behavior Instantiate(Type behaviorType)
       {
         if (!behaviorType.IsSubclassOf(typeof(Behavior)))

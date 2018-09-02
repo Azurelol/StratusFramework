@@ -32,23 +32,30 @@ namespace Stratus
         {
         }
 
+        protected override bool IsParentValid(BehaviorTree.BehaviorNode parent)
+        {
+          Trace.Script($"Parent type = {parent.dataType}");
+          return parent.data != null && parent.dataType.IsSubclassOf(compositeType);
+        }
+
         protected override void OnItemContextMenu(GenericMenu menu, BehaviorTree.BehaviorNode treeElement)
         {
-          // Actions
-          menu.AddPopup("Add/Actions", BehaviorTreeEditorWindow.actionTypes.displayedOptions, (int index) =>
-          {
-            window.AddNode(BehaviorTreeEditorWindow.actionTypes.AtIndex(index), treeElement);
-          });
-
-          // Composite
-          menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
-          {
-            window.AddNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
-          });
-
-          // Service
+          // Composites
           if (treeElement.data is Composite)
           {
+            // Actions
+            menu.AddPopup("Add/Tasks", BehaviorTreeEditorWindow.taskTypes.displayedOptions, (int index) =>
+            {
+              window.AddNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index), treeElement);
+            });
+
+            // Composite
+            menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
+            {
+              window.AddNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
+            });            
+
+            // Service
             menu.AddPopup("Add/Service", BehaviorTreeEditorWindow.serviceTypes.displayedOptions, (int index) =>
             {
               window.AddNode(BehaviorTreeEditorWindow.serviceTypes.AtIndex(index), treeElement);
@@ -67,9 +74,9 @@ namespace Stratus
           });
 
           // Actions
-          menu.AddPopup("Add/Actions", BehaviorTreeEditorWindow.actionTypes.displayedOptions, (int index) =>
+          menu.AddPopup("Add/Tasks", BehaviorTreeEditorWindow.taskTypes.displayedOptions, (int index) =>
           {
-            window.AddNode(BehaviorTreeEditorWindow.actionTypes.AtIndex(index));
+            window.AddNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index));
           });
 
           menu.AddItem("Clear", false, () => window.RemoveAllNodes());
@@ -91,9 +98,12 @@ namespace Stratus
       //private SerializedProperty treeProperty, treeElementsProperty, currentNodeProperty;
       private StratusEditor blackboardEditor;
 
+
       //----------------------------------------------------------------------/
       // Properties
       //----------------------------------------------------------------------/
+      private static Type compositeType { get; } = typeof(Composite);
+
       /// <summary>
       /// All supported behavior types
       /// </summary>
@@ -107,7 +117,7 @@ namespace Stratus
       /// <summary>
       /// All supported decorator types
       /// </summary>
-      public static TypeSelector actionTypes { get; } = new TypeSelector(typeof(Action), false, true);
+      public static TypeSelector taskTypes { get; } = new TypeSelector(typeof(Task), false, true);
 
       /// <summary>
       /// All supported decorator types

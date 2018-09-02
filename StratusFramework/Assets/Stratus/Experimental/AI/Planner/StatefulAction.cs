@@ -18,7 +18,7 @@ namespace Stratus
       //----------------------------------------------------------------------/
       // Fields
       //----------------------------------------------------------------------/
-      [SerializeField, ClassExtends(typeof(Action), Grouping = ClassGrouping.ByNamespace)]
+      [SerializeField, ClassExtends(typeof(Task), Grouping = ClassGrouping.ByNamespace)]
       public ClassTypeReference type;      
       [Tooltip("The list of symbols in the agent's world state that need to be present before the action can be used")]
       public WorldState preconditions = new WorldState();
@@ -30,7 +30,7 @@ namespace Stratus
       /// The encapsulated action
       /// </summary>
       [OdinSerialize]
-      public Action action;
+      public Task task;
 
       //----------------------------------------------------------------------/
       // Properties
@@ -39,7 +39,7 @@ namespace Stratus
       /// <summary>
       /// A short description of this action
       /// </summary>
-      public string description => action.description;
+      public string description => task.description;
       /// <summary>
       /// Some actions require specific context precondition which needs to be checked
       /// before normal preconditions. Due to us wrapping around normal actions,
@@ -51,27 +51,18 @@ namespace Stratus
       // Methods
       //----------------------------------------------------------------------/
       /// <summary>
-      /// Initializes the underlying action
-      /// </summary>
-      /// <param name="agent"></param>
-      public void Initialize(Agent agent)
-      {
-        action.Start(agent);
-      }
-
-      /// <summary>
       /// Updates the underlying action
       /// </summary>
       /// <param name="dt"></param>
-      public void Execute(float dt)
+      public void OnUpdate(Agent agent)
       {
-        action.Update(dt);
+        task.Update(agent);
       }
         
         /// <summary>
       /// Resets the underlying action
       /// </summary>
-      public void Reset() { action.Reset(); }
+      public void Reset() { task.Reset(); }
       
 
     }

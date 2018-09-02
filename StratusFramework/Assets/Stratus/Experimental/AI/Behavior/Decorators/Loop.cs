@@ -13,20 +13,22 @@ namespace Stratus.AI
 
     public override string description => "Bases its condition on wheher its loop counter has exceeded";
 
-    protected override void OnEnd()
+    protected override void OnStart(Agent agent)
     {
-      
+
     }
 
-    protected override void OnStart()
-    {
-      
-    }
-
-    protected override Status OnUpdate(float dt)
+    protected override Status OnUpdate(Agent agent)
     {
       throw new System.NotImplementedException();
     }
+
+    protected override void  OnEnd(Agent agent)
+    {
+      throw new System.NotImplementedException();
+    }
+
+    
   }
 
 }

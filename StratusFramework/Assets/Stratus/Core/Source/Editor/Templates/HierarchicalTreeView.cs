@@ -50,7 +50,17 @@ namespace Stratus
       this.SetExpanded(id, !this.IsExpanded(id));
     }
 
-    //override Row
+    //protected override DragAndDropVisualMode HandleDragAndDrop(DragAndDropArgs args)
+    //{      
+    //  TreeElementType treeElement = this.GetElement(args.parentItem.id);
+    //  //Trace.Script($"{treeElement.name}");
+    //  return base.HandleDragAndDrop(args);
+    //}
+
+    //protected override void SetupDragAndDrop(SetupDragAndDropArgs args)
+    //{
+    //  args.
+    //}
 
 
 

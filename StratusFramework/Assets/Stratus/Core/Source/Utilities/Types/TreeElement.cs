@@ -382,7 +382,7 @@ namespace Stratus
     // Properties
     //----------------------------------------------------------------------/    
     public bool hasData => data != null;
-    public Type dataType => typeof(DataType);
+    public Type dataType => data.GetType();
     public DataType[] childrenData { get; private set; }
     //public IList<TreeElement<DataType>> childrenDerived { get; private set; }
 

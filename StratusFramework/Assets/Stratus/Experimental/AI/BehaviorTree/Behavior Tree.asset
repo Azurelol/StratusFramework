@@ -97,7 +97,7 @@ MonoBehaviour:
       Data: 6|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 3
+      Data: 7
     - Name: name
       Entry: 1
       Data: EventAction
@@ -140,7 +140,7 @@ MonoBehaviour:
       Data: 
     - Name: idCounter
       Entry: 3
-      Data: 4
+      Data: 8
     - Name: 
       Entry: 8
       Data: 

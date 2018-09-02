@@ -33,7 +33,7 @@ namespace Stratus.Types
     /// <summary>
     /// The lookup table for quick access to symbols
     /// </summary>
-    private Dictionary<string, Symbol> symbolsMap { get; set; }
+    private Dictionary<string, Symbol> symbolsMap { get; set; } = new Dictionary<string, Symbol>();
 
     /// <summary>
     /// Whether the lookupp table has been initialized. It will be initialized
@@ -220,9 +220,11 @@ namespace Stratus.Types
     /// </summary>
     private void ConstructLookupTable()
     {
-      symbolsMap = new Dictionary<string, Symbol>();
       foreach (var symbol in symbols)
-        symbolsMap.Add(symbol.key, symbol);
+      {
+        if (!symbolsMap.ContainsKey(symbol.key))
+          symbolsMap.Add(symbol.key, symbol);
+      }
       hasLookupTable = true;
     }
 

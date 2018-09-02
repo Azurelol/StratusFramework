@@ -26,18 +26,19 @@ namespace Stratus
         }
       }
 
-      protected override void OnStart()
+      protected override void OnStart(Agent agent)
       {
         this.childrenEnumerator = children.GetEnumerator();
+        this.childrenEnumerator.MoveNext();
         this.currentChild = childrenEnumerator.Current;
       }
 
-      protected override Status OnUpdate(float dt)
+      protected override Status OnUpdate(Agent agent)
       {
         // Keep going until a child behavior says its running
         while (true)
         {
-          var status = currentChild.Update(dt);
+          var status = currentChild.Update(agent);
           if (status != Status.Success)
             return status;
           // If we have reached the end of the collection
@@ -48,7 +49,7 @@ namespace Stratus
         }
         
       }
-      protected override void OnEnd()
+      protected override void OnEnd(Agent agent)
       {        
       }
 

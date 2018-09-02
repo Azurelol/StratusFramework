@@ -46,7 +46,7 @@ namespace Stratus
       /// </summary>
       public StatefulAction currentAction { private set; get; }
 
-      protected override Behavior currentBehavior => currentAction.action;
+      protected override Behavior currentBehavior => currentAction.task;
 
       protected override bool hasBehaviors => availableActions.Length > 0;
 
@@ -64,9 +64,9 @@ namespace Stratus
         this.FormulatePlan();
       }
 
-      protected override void OnUpdate(float dt)
+      protected override void OnUpdate(Agent agent)
       {
-        currentBehavior.Update(dt);        
+        currentBehavior.Update(agent);        
       }
 
       protected override void OnBehaviorAdded(Behavior behavior)
@@ -132,7 +132,7 @@ namespace Stratus
         }
 
         this.currentAction = currentPlan.Next();
-        this.currentAction.Initialize(this.agent);
+        this.currentAction.OnUpdate(this.agent);
       }
 
       /// <summary>

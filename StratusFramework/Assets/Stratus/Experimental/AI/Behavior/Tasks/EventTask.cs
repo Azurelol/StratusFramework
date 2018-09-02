@@ -4,26 +4,20 @@ using UnityEngine;
 
 namespace Stratus.AI
 {
-  public class EventAction : Action
+  public class EventAction : Task 
   {
     public override string description => "Invokes an event";
 
-    protected override void OnActionEnd()
+
+    protected override void OnTaskEnd(Agent agent)
     {
-      
     }
 
-    protected override void OnActionReset()
+    protected override void OnTaskStart(Agent agent)
     {
-      
     }
 
-    protected override void OnActionStart()
-    {
-      
-    }
-
-    protected override Status OnActionUpdate(float dt)
+    protected override Status OnTaskUpdate(Agent agent)
     {
       Trace.Script("Woof!");
       return Status.Success;

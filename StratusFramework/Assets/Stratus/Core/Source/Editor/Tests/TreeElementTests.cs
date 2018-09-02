@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using NUnit.Framework;
-using UnityEditor;
+﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Stratus
@@ -19,7 +16,6 @@ namespace Stratus
       }
     }
 
-    #region Tests
     [Test]
     public static void TestTreeToListWorks()
     {
@@ -144,7 +140,5 @@ namespace Stratus
       result = TreeElement.FindCommonAncestorsWithinList(input).ToArray();
       Assert.IsTrue(UnityEditor.ArrayUtility.ArrayEquals(expectedResult, result), "Common ancestor should only be b0, f0, c0");
     }
-
-    #endregion
   } 
 }

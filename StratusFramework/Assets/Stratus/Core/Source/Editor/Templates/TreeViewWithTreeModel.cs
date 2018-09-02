@@ -346,7 +346,8 @@ namespace Stratus
             if (args.performDrop && validDrag)
             {
               TreeElementType parentData = ((TreeViewItem<TreeElementType>)args.parentItem).item;
-              OnDropDraggedElementsAtIndex(draggedRows, parentData, args.insertAtIndex == -1 ? 0 : args.insertAtIndex);
+              if (IsParentValid(parentData))
+                OnDropDraggedElementsAtIndex(draggedRows, parentData, args.insertAtIndex == -1 ? 0 : args.insertAtIndex);
             }
             return validDrag ? DragAndDropVisualMode.Move : DragAndDropVisualMode.None;
           }
@@ -392,6 +393,8 @@ namespace Stratus
       }
       return true;
     }
+
+    protected virtual bool IsParentValid(TreeElementType parent) => true;
 
     //------------------------------------------------------------------------/
     // Methods: Static

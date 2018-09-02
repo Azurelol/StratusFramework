@@ -22,7 +22,9 @@ namespace Stratus
           if (!string.IsNullOrEmpty(data.label))
             return $"{dataTypeName} ({data.name})";
           return $"{dataTypeName}";
-        }        
+        }
+
+        public void Update(Agent agent) => data.Update(agent);
       }
 
       //------------------------------------------------------------------------/
@@ -40,6 +42,7 @@ namespace Stratus
       public BehaviorNode currentNode { get; private set; }
       protected override Behavior currentBehavior => currentNode.data;
       protected override bool hasBehaviors => tree.hasElements;
+      protected Stack<BehaviorNode> stack { get; private set; } = new Stack<BehaviorNode>();
 
       //----------------------------------------------------------------------/
       // Interface
@@ -47,19 +50,22 @@ namespace Stratus
       protected override void OnInitialize()
       {
         this.tree.Iterate(this.SetComposites);
-        this.Reset();
+        this.OnReset();
       }
 
-      protected override void OnUpdate(float dt)
+      protected override void OnUpdate(Agent agent)
       {
         //this.current.children
-        this.currentNode.data.Update(dt);
+        this.currentNode.data.Update(agent);
       }
 
       protected override void OnReset()
       {
         if (tree.hasElements)
+        {
           this.currentNode = (BehaviorNode)tree.root.GetChild(0);
+          this.stack.Push(this.currentNode);
+        }
       }
 
       protected override void OnPrint(StringBuilder builder)
@@ -69,11 +75,11 @@ namespace Stratus
 
       protected override void OnBehaviorStarted(Behavior behavior)
       {
-        
+
       }
 
       protected override void OnBehaviorEnded(Behavior behavior)
-      {        
+      {
       }
 
       protected override void OnBehaviorAdded(Behavior behavior)

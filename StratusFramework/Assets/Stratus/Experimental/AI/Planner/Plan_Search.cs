@@ -77,7 +77,7 @@ namespace Stratus
         /// </summary>
         public struct Results
         {
-          List<Action> Path;
+          List<Task> Path;
         }
 
         /// <summary>
