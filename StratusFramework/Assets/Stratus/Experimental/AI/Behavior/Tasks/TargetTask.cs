@@ -23,6 +23,11 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/ 
+      /// <summary>
+      /// Whether the target is currently being approached
+      /// </summary>
+      public bool isApproaching { get; private set; }
+
       ///// <summary>
       ///// The current target of this action
       ///// </summary>
@@ -59,9 +64,17 @@ namespace Stratus
         TargetType target = GetTarget(agent);
         Vector3 targetPosition = this.GetTargetPosition(target);
 
+
         if (!IsWithinRange(agent, targetPosition))
         {
-          this.Approach(agent, targetPosition);
+          if (!isApproaching)
+          {
+            bool canApproach = this.Approach(agent, targetPosition);
+            if (canApproach)
+              this.isApproaching = true;
+            else
+              return Status.Failure;
+          }
 
           // If there's a valid target, approach it
           //this.Approach();
@@ -69,11 +82,12 @@ namespace Stratus
         }
 
         // If it's in range, perform the underlying action
+        this.isApproaching = false;
         return OnTargetActionUpdate(agent, target);
       }
 
       protected override void OnTaskEnd(Agent agent)
-      {
+      {        
         TargetType target = GetTarget(agent);
         this.OnTargetActionEnd(agent, target);
       }
@@ -91,11 +105,11 @@ namespace Stratus
       }
 
       /// <summary>
-      /// Approaches the current target of this action
+      /// Attemps to approach the current target of this action
       /// </summary>
-      protected void Approach(Agent agent, Vector3 targetPosition)
+      protected bool Approach(Agent agent, Vector3 targetPosition)
       {
-        agent.MoveTo(targetPosition);        
+        return agent.MoveTo(targetPosition);        
       }
 
       TargetType GetTarget(Agent agent) => this.targetSymbol.GetValue(agent.blackboard, agent.gameObject);

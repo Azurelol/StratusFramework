@@ -306,6 +306,7 @@ namespace Stratus.AI
 
       if (navigation.destination == point)
         return false;
+            
 
       // Reset the current path
       navigation.ResetPath();
@@ -325,6 +326,7 @@ namespace Stratus.AI
 
         if (this.debug)
           Trace.Script("Can not move to that position!", this);
+        return false;
       }
 
       return true;

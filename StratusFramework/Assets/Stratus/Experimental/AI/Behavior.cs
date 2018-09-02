@@ -126,42 +126,49 @@ namespace Stratus
       /// Called once after hte behavior has finished executing
       /// </summary>
       protected abstract void OnEnd(Arguments agent);
+      /// <summary>
+      /// Resets the state of the behavior
+      /// </summary>
+      protected virtual void OnReset()
+      {
+      }
 
       //----------------------------------------------------------------------/
       // Methods
       //----------------------------------------------------------------------/
       public virtual void Update(Arguments args)
       {
+        // Start
         if (!this.started)
         {
           Trace.Script($"Starting {fullName}");
+          this.status = Status.Running;
           this.OnStart(args);
           this.started = true;
+          this.finished = false;
           args.system.OnBehaviorStarted(this);
         }
 
+        // Update
         Trace.Script($"Updating {fullName}"); 
-
         this.status = this.OnUpdate(args);
+
+        // End
         if (this.status != Status.Running)
         {
           Trace.Script($"Ending {fullName}");
           this.OnEnd(args);
           this.finished = true;
           args.system.OnBehaviorEnded(this, status);
-          //args.onFinished?.Invoke(status);
-          //args.onFinished = null;
           this.Reset();
         }
-
-        //return status;
       }      
 
-      public virtual void Reset()
+      public void Reset()
       {
         this.status = Status.Suspended;
         this.started = false;
-        this.finished = true;
+        //this.finished = true;
       }
 
       //----------------------------------------------------------------------/

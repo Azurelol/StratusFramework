@@ -54,7 +54,7 @@ namespace Stratus
       protected override void OnEnd(Arguments args)
       {
         this.OnTaskEnd(args.agent);
-      }      
+      }
 
     }
 

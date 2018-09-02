@@ -39,7 +39,6 @@ namespace Stratus
       // Properties
       //------------------------------------------------------------------------/
       public BehaviorNode rootNode => (BehaviorNode)tree.root.GetChild(0);
-      //public BehaviorNode currentNode { get; private set; }
       protected override Behavior currentBehavior => stack.Peek();
       protected override bool hasBehaviors => tree.hasElements;
       protected Stack<Behavior> stack { get; private set; } = new Stack<Behavior>();
@@ -55,17 +54,16 @@ namespace Stratus
 
       protected override void OnUpdate()
       {
-        this.rootNode.data.Update(this.behaviorArguments);
-        //this.currentBehavior.Update(this.behaviorArguments);
+        //this.rootNode.data.Update(this.behaviorArguments);
+        this.currentBehavior.Update(this.behaviorArguments);
       }
 
       protected override void OnReset()
       {
         if (tree.hasElements)
         {
-          //this.currentNode = rootNode;
           this.stack.Clear();
-          this.rootNode.data.Reset();
+          //this.rootNode.data.Reset();
           this.stack.Push(this.rootNode.data);
         }
       }
@@ -83,7 +81,6 @@ namespace Stratus
         {
           this.OnReset();
         }
-        //Trace.Script($"current behavior = {currentBehavior}");
       }
 
       protected override void OnBehaviorAdded(Behavior behavior)

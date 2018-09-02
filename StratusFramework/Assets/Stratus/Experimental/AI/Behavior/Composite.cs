@@ -24,6 +24,7 @@ namespace Stratus
       //------------------------------------------------------------------------/
       List<Service> IServiceSupport.services => this.services;
       public IList<Behavior> children { private set; get; }
+      public Behavior currentChild { protected set; get; }
       public bool hasChildren => children.NotNullOrEmpty();
 
       //------------------------------------------------------------------------/

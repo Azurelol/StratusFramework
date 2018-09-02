@@ -269,8 +269,8 @@ MonoBehaviour:
     member:
       _parameterTypes: []
       _target: {fileID: 448861303}
-      _component: CharacterControllerMovement
-      _name: moving
+      _component: NavMeshAgent
+      _name: hasPath
   - parameterName: Speed
     parameterType: 1
     member:
@@ -354,7 +354,7 @@ MonoBehaviour:
   extensionBehaviours:
   - {fileID: 448861305}
   - {fileID: 448861306}
-  selectedExtensionTypeIndex: 2
+  selectedExtensionTypeIndex: 0
   debug: 0
 --- !u!136 &448861308
 CapsuleCollider:
