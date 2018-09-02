@@ -233,7 +233,7 @@ namespace Stratus
           {
             GUILayout.Label(currentNode.dataTypeName, EditorStyles.largeLabel);
             this.inspectorScrollPosition = EditorGUILayout.BeginScrollView(this.inspectorScrollPosition, GUI.skin.box);
-            bool changed = currentNodeSerializedObject.DrawEditorGUILayout();
+            currentNodeSerializedObject.DrawEditorGUILayout();
             EditorGUILayout.EndScrollView();
           }
           else

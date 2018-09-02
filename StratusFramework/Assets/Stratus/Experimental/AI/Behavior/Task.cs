@@ -34,26 +34,26 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Messages
       //------------------------------------------------------------------------/
-      public override Status Update(Agent agent)
+      public override void Update(Arguments args)
       {
         foreach (var service in this.services)
-          service.Execute(agent);
-        return base.Update(agent);
+          service.Execute(args.agent);
+        base.Update(args);
       }
 
-      protected override void OnStart(Agent agent)
+      protected override void OnStart(Arguments args)
       {
-        this.OnTaskStart(agent);
+        this.OnTaskStart(args.agent);
       }
 
-      protected override Status OnUpdate(Agent agent)
+      protected override Status OnUpdate(Arguments args)
       {
-        return this.OnTaskUpdate(agent);
+        return this.OnTaskUpdate(args.agent);
       }
 
-      protected override void OnEnd(Agent agent)
+      protected override void OnEnd(Arguments args)
       {
-        this.OnTaskEnd(agent);
+        this.OnTaskEnd(args.agent);
       }      
 
     }

@@ -66,7 +66,7 @@ namespace Stratus
 
       protected override void OnUpdate()
       {
-        currentBehavior.Update(agent);        
+        currentBehavior.Update(behaviorArguments);        
       }
 
       //------------------------------------------------------------------------/
@@ -77,11 +77,11 @@ namespace Stratus
         throw new NotImplementedException();
       }
 
-      protected override void OnBehaviorStarted(Behavior behavior)
+      public override void OnBehaviorStarted(Behavior behavior)
       {        
       }
 
-      protected override void OnBehaviorEnded(Behavior behavior)
+      public override void OnBehaviorEnded(Behavior behavior, Behavior.Status status)
       {
         // Modify the current world state due to the previous action
         // We already have a reference to the current action so
@@ -138,7 +138,7 @@ namespace Stratus
         }
 
         this.currentAction = currentPlan.Next();
-        this.currentAction.OnUpdate(this.agent);
+        this.currentAction.OnUpdate(this.behaviorArguments);
       }
 
       /// <summary>

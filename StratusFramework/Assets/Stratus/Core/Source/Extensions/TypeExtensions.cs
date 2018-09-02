@@ -1,9 +1,6 @@
-﻿using System.Collections;
+﻿using Stratus.Utilities;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
-using Stratus.Utilities;
-using System;
 using System.Reflection;
 
 namespace Stratus

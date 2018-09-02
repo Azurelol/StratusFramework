@@ -54,9 +54,9 @@ namespace Stratus
       /// Updates the underlying action
       /// </summary>
       /// <param name="dt"></param>
-      public void OnUpdate(Agent agent)
+      public void OnUpdate(Task.Arguments args)
       {
-        task.Update(agent);
+        task.Update(args);
       }
         
         /// <summary>

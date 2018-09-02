@@ -108,34 +108,34 @@ namespace Genitus
       get
       {
         throw new System.NotImplementedException();
-        if (!enabled)
-        {
-          //Trace.Script("Ability disabled!");
-          return false;
-        }
-
-        // If the caster does not have enough resources to cast it
-        //  owner.stamina.current < cost
-        //if (owner.IsAvailable(this))
+        //if (!enabled)
         //{
-        //  //Trace.Script("Not enough stamina to cast! ");
+        //  //Trace.Script("Ability disabled!");
         //  return false;
         //}
 
-        // If it's on cooldown
-        if (cooldownTimer.isActive)
-        {
-          //Trace.Script("Ability on cooldown!");
-          return false;
-        }
+        //// If the caster does not have enough resources to cast it
+        ////  owner.stamina.current < cost
+        ////if (owner.IsAvailable(this))
+        ////{
+        ////  //Trace.Script("Not enough stamina to cast! ");
+        ////  return false;
+        ////}
 
-        if (!OnValidate())
-        {
-          return false;
-        }
+        //// If it's on cooldown
+        //if (cooldownTimer.isActive)
+        //{
+        //  //Trace.Script("Ability on cooldown!");
+        //  return false;
+        //}
+
+        //if (!OnValidate())
+        //{
+        //  return false;
+        //}
 
 
-        return true;
+        //return true;
       }
     }
 

@@ -34,11 +34,11 @@ namespace Stratus
         this.children = children;
       }
 
-      public override Status Update(Agent agent)
+      public override void Update(Arguments args)
       {
         foreach (var service in this.services)
-          service.Execute(agent);
-        return base.Update(agent);
+          service.Execute(args.agent);
+        base.Update(args);
       }
 
     } 

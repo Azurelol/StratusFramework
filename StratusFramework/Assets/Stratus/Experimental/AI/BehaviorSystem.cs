@@ -61,6 +61,11 @@ namespace Stratus
       /// All currently running behavior systems for given agents
       /// </summary>
       protected static Dictionary<Agent, BehaviorSystem> agentBehaviors { get; set; } = new Dictionary<Agent, BehaviorSystem>();
+
+      /// <summary>
+      /// Arguments used for updating behaviors
+      /// </summary>
+      protected Behavior.Arguments behaviorArguments { private set;  get; }
       
       //------------------------------------------------------------------------/
       // Interface
@@ -68,10 +73,9 @@ namespace Stratus
       protected abstract void OnInitialize();
       protected abstract void OnUpdate();
       protected abstract void OnReset();
-      // Behaviors
       protected abstract void OnBehaviorAdded(Behavior behavior);
-      protected abstract void OnBehaviorStarted(Behavior behavior);
-      protected abstract void OnBehaviorEnded(Behavior behavior);
+      public abstract void OnBehaviorStarted(Behavior behavior);
+      public abstract void OnBehaviorEnded(Behavior behavior, Behavior.Status status);
       protected abstract void OnBehaviorsCleared();
 
 
@@ -83,6 +87,7 @@ namespace Stratus
       /// </summary>
       public void InitializeSystem()
       {
+        this.behaviorArguments = new Behavior.Arguments() { agent = this.agent, system = this };
         this.OnInitialize();
       }
 
@@ -186,6 +191,9 @@ namespace Stratus
       {
         this.OnBehaviorsCleared();
       }
+
+      //public void StartBehavior(Behavior behavior) => OnBehaviorStarted(behavior);
+      //public void EndBehavior(Behavior behavior) => OnBehaviorStarted(behavior);
 
       //------------------------------------------------------------------------/
       // Methods: Static

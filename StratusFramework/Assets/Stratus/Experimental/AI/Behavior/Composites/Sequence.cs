@@ -26,39 +26,58 @@ namespace Stratus
         }
       }
 
-      protected override void OnStart(Agent agent)
+      protected override void OnStart(Arguments args)
       {
         this.childrenEnumerator = children.GetEnumerator();
         this.childrenEnumerator.MoveNext();
         this.currentChild = childrenEnumerator.Current;
       }
 
-      protected override Status OnUpdate(Agent agent)
+      protected override Status OnUpdate(Arguments args)
       {
         // Keep going until a child behavior says its running
         while (true)
         {
-          var status = currentChild.Update(agent);
-          if (status != Status.Success)
+          //args.onFinished = OnChildFinished; 
+          // Reset the child after going past it
+          //if (currentChild.finished)
+          //{
+          //  currentChild.Reset();
+          //}
+          //else
+
+          //if (currentChild.status != Status.Suspended)
+          //{
+          //
+          //}
+          //{
+          currentChild.Update(args);
+          if (currentChild.status != Status.Success)
             return status;
+          //}
 
           // If we have reached the end of the collection
           if (!this.childrenEnumerator.MoveNext())
           {
-            //Trace.Script("Reached end of sequence");
+            Trace.Script("Reached end of sequence");
             return Status.Success;
           }
 
           // Otherwise keep going
           currentChild = this.childrenEnumerator.Current;
           //Trace.Script($"Moved onto next child {currentChild.fullName}");
-        }        
+        }
       }
 
-      protected override void OnEnd(Agent agent)
+      protected override void OnEnd(Arguments args)
       {
-        this.OnStart(agent);
+        this.OnStart(args);
       }
+
+      //private void OnChildFinished(Status status)
+      //{
+      //
+      //}
 
     }
   }

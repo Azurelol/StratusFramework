@@ -24,7 +24,6 @@ namespace Stratus
           return $"{dataTypeName}";
         }
 
-        public void Update(Agent agent) => data.Update(agent);
       }
 
       //------------------------------------------------------------------------/
@@ -40,10 +39,10 @@ namespace Stratus
       // Properties
       //------------------------------------------------------------------------/
       public BehaviorNode rootNode => (BehaviorNode)tree.root.GetChild(0);
-      public BehaviorNode currentNode { get; private set; }
-      protected override Behavior currentBehavior => currentNode.data;
+      //public BehaviorNode currentNode { get; private set; }
+      protected override Behavior currentBehavior => stack.Peek();
       protected override bool hasBehaviors => tree.hasElements;
-      protected Stack<BehaviorNode> stack { get; private set; } = new Stack<BehaviorNode>();
+      protected Stack<Behavior> stack { get; private set; } = new Stack<Behavior>();
 
       //----------------------------------------------------------------------/
       // Interface
@@ -56,25 +55,35 @@ namespace Stratus
 
       protected override void OnUpdate()
       {
-        this.rootNode.data.Update(this.agent);
+        this.rootNode.data.Update(this.behaviorArguments);
+        //this.currentBehavior.Update(this.behaviorArguments);
       }
 
       protected override void OnReset()
       {
         if (tree.hasElements)
         {
-          this.currentNode = rootNode;
-          this.stack.Push(this.currentNode);
+          //this.currentNode = rootNode;
+          this.stack.Clear();
+          this.rootNode.data.Reset();
+          this.stack.Push(this.rootNode.data);
         }
       }
 
-      protected override void OnBehaviorStarted(Behavior behavior)
+      public override void OnBehaviorStarted(Behavior behavior)
       {
-
+        stack.Push(behavior);
+        Trace.Script($"current behavior = {currentBehavior}");
       }
 
-      protected override void OnBehaviorEnded(Behavior behavior)
+      public override void OnBehaviorEnded(Behavior behavior, Behavior.Status status)
       {
+        stack.Pop();
+        if (stack.Count == 0)
+        {
+          this.OnReset();
+        }
+        //Trace.Script($"current behavior = {currentBehavior}");
       }
 
       protected override void OnBehaviorAdded(Behavior behavior)

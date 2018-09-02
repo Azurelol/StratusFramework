@@ -42,6 +42,15 @@ namespace Stratus
         /// The behaviour is still running
         /// </summary>
         Running
+      }            
+
+      public class Arguments
+      {
+        public Agent agent;
+        public BehaviorSystem system;
+        public System.Action<Status> onFinished;
+
+        public Status lastStatus;
       }
       
       public class BehaviorEvent : Stratus.Event { public Behavior behavior; }
@@ -63,7 +72,7 @@ namespace Stratus
       // Properties
       //----------------------------------------------------------------------/
       /// <summary>
-      /// The current state of this behavior
+      /// The latest status of this behavior
       /// </summary>
       public Status status { protected set; get; }
       /// <summary>
@@ -98,6 +107,7 @@ namespace Stratus
       /// Whether this behavior has started
       /// </summary>
       public bool started { get; private set; }
+      public bool finished { get; private set; }
 
       //----------------------------------------------------------------------/
       // Interface
@@ -105,46 +115,53 @@ namespace Stratus
       /// <summary>
       /// Called once when the behavior is activated
       /// </summary>
-      protected abstract void OnStart(Agent agent);
+      protected abstract void OnStart(Arguments agent);
       /// <summary>
       /// If the behavior needs to be updated, it is called
       /// </summary>
       /// <param name="dt"></param>
       /// <returns></returns>
-      protected abstract Status OnUpdate(Agent agent);
+      protected abstract Status OnUpdate(Arguments agent);
       /// <summary>
       /// Called once after hte behavior has finished executing
       /// </summary>
-      protected abstract void OnEnd(Agent agent);
+      protected abstract void OnEnd(Arguments agent);
 
       //----------------------------------------------------------------------/
       // Methods
       //----------------------------------------------------------------------/
-      public virtual Status Update(Agent agent)
+      public virtual void Update(Arguments args)
       {
         if (!this.started)
         {
-          //Trace.Script($"Starting {fullName}");
-          this.OnStart(agent);
+          Trace.Script($"Starting {fullName}");
+          this.OnStart(args);
           this.started = true;
+          args.system.OnBehaviorStarted(this);
         }
 
-        //Trace.Script($"Updating {fullName}"); 
+        Trace.Script($"Updating {fullName}"); 
 
-        Status status = this.OnUpdate(agent);
-        if (status != Status.Running)
+        this.status = this.OnUpdate(args);
+        if (this.status != Status.Running)
         {
-          //Trace.Script($"Ending {fullName}");
-          this.OnEnd(agent);
+          Trace.Script($"Ending {fullName}");
+          this.OnEnd(args);
+          this.finished = true;
+          args.system.OnBehaviorEnded(this, status);
+          //args.onFinished?.Invoke(status);
+          //args.onFinished = null;
           this.Reset();
         }
 
-        return status;
+        //return status;
       }      
 
       public virtual void Reset()
       {
+        this.status = Status.Suspended;
         this.started = false;
+        this.finished = true;
       }
 
       //----------------------------------------------------------------------/
