@@ -434,6 +434,7 @@ namespace Stratus
     }
 
     public TreeElement<DataType> GetChild(int index) => (TreeElement<DataType>)children[index];
+    public T GetParent<T>() where T : TreeElement => (T)parent;
 
 
 

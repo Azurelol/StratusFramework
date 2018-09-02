@@ -22,7 +22,7 @@ namespace Stratus.AI
       Blackboard blackboard = MakeTestBlackboard();
       string key = "Lives";
       int value = 7;
-      blackboard.globals.Add(new Types.Symbol(key, value));      
+      blackboard.globals.Add(new Symbol(key, value));      
       Assert.AreEqual(blackboard.GetGlobal(key), value);
     }
 
@@ -34,7 +34,7 @@ namespace Stratus.AI
       string key = "Lives";
       int value = 7;
 
-      blackboard.globals.Add(new Types.Symbol(key, value));
+      blackboard.globals.Add(new Symbol(key, value));
       Assert.AreEqual(blackboard.GetGlobal(key), value);
 
       int nextValue = 14;
@@ -49,7 +49,13 @@ namespace Stratus.AI
     public static void Sequence()
     {
       BehaviorTree tree = ScriptableObject.CreateInstance<BehaviorTree>();
+      
       tree.blackboard = MakeTestBlackboard();
+      tree.blackboard.AddGlobal(new Symbol("Integer", 5));
+
+      Sequence seq = tree.AddBehavior<Sequence>();
+
+      tree.UpdateSystem();
       
     }
   }

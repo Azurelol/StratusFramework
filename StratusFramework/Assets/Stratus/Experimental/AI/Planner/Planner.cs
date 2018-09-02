@@ -51,7 +51,7 @@ namespace Stratus
       protected override bool hasBehaviors => availableActions.Length > 0;
 
       //------------------------------------------------------------------------/
-      // Interface
+      // Messages
       //------------------------------------------------------------------------/
       protected override void OnInitialize()
       {
@@ -64,11 +64,14 @@ namespace Stratus
         this.FormulatePlan();
       }
 
-      protected override void OnUpdate(Agent agent)
+      protected override void OnUpdate()
       {
         currentBehavior.Update(agent);        
       }
 
+      //------------------------------------------------------------------------/
+      // Messages: Behaviors
+      //------------------------------------------------------------------------/
       protected override void OnBehaviorAdded(Behavior behavior)
       {
         throw new NotImplementedException();
@@ -93,13 +96,16 @@ namespace Stratus
         throw new NotImplementedException();
       }
 
-      protected override void OnPrint(StringBuilder builder)
+      public override string ToString()
       {
+        StringBuilder builder = new StringBuilder();
         foreach (var action in availableActions)
         {
           builder.AppendFormat(" - {0}", action.description);
         }
+        return builder.ToString();
       }
+
 
       //------------------------------------------------------------------------/
       // Events
@@ -140,7 +146,7 @@ namespace Stratus
       /// </summary>
       public void FormulatePlan()
       {
-        this.sensor.Scan();
+        this.agent.sensor.Scan();
         this.currentPlan = Plan.Formulate(this, this.availableActions, this.state, this.goal);
 
         if (this.currentPlan != null)

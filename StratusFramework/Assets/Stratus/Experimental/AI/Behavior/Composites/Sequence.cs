@@ -41,16 +41,23 @@ namespace Stratus
           var status = currentChild.Update(agent);
           if (status != Status.Success)
             return status;
+
           // If we have reached the end of the collection
           if (!this.childrenEnumerator.MoveNext())
+          {
+            Trace.Script("Reached end of sequence");
             return Status.Success;
+          }
+
           // Otherwise keep going
           currentChild = this.childrenEnumerator.Current;
-        }
-        
+          Trace.Script($"Moved onto next child {currentChild.fullName}");
+        }        
       }
+
       protected override void OnEnd(Agent agent)
-      {        
+      {
+        this.OnStart(agent);
       }
 
     }

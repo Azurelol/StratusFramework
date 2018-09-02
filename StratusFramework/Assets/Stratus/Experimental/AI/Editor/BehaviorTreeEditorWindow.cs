@@ -40,28 +40,32 @@ namespace Stratus
 
         protected override void OnItemContextMenu(GenericMenu menu, BehaviorTree.BehaviorNode treeElement)
         {
+          // Tasks
+          if (treeElement.data is Task)
+          {
+            BehaviorTree.BehaviorNode parent = treeElement.GetParent<BehaviorTree.BehaviorNode>();
+            menu.AddItem("Duplicate", false, () => window.AddNode((Behavior)treeElement.data.Clone(), parent));
+          }
+
           // Composites
           if (treeElement.data is Composite)
           {
-            // Actions
             menu.AddPopup("Add/Tasks", BehaviorTreeEditorWindow.taskTypes.displayedOptions, (int index) =>
             {
               window.AddNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index), treeElement);
             });
-
-            // Composite
+            
             menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
             {
               window.AddNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
             });            
 
-            // Service
+            
             menu.AddPopup("Add/Service", BehaviorTreeEditorWindow.serviceTypes.displayedOptions, (int index) =>
             {
               window.AddNode(BehaviorTreeEditorWindow.serviceTypes.AtIndex(index), treeElement);
             });
           }
-
           menu.AddItem("Remove", false, () => window.RemoveNode(treeElement));
         }
 
@@ -288,6 +292,15 @@ namespace Stratus
         Save();
       }
 
+      private void AddNode(Behavior behavior, BehaviorTree.BehaviorNode parent = null)
+      {
+        if (parent != null)
+          behaviorTree.AddBehavior(behavior, parent);
+        else
+          behaviorTree.AddBehavior(behavior);
+
+        Save();
+      }
       private void RemoveNode(BehaviorTree.BehaviorNode node)
       {
         //if (node == currentNode)

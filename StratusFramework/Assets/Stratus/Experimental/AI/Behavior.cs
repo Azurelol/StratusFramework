@@ -83,6 +83,18 @@ namespace Stratus
       /// </summary>
       public string typeName => GetType().Name;
       /// <summary>
+      /// A more descriptive name for this behavior
+      /// </summary>
+      public string fullName
+      {
+        get
+        {
+          if (!string.IsNullOrEmpty(label))
+            return $"{typeName} ({label})";
+          return $"{typeName}";
+        }
+      }
+      /// <summary>
       /// Whether this behavior has started
       /// </summary>
       public bool started { get; private set; }
@@ -112,28 +124,23 @@ namespace Stratus
       {
         if (!this.started)
         {
-          Trace.Script($"Starting {typeName}");
+          Trace.Script($"Starting {fullName}");
           this.OnStart(agent);
           this.started = true;
         }
 
-        Trace.Script($"Updating {typeName}"); 
+        Trace.Script($"Updating {fullName}"); 
 
         Status status = this.OnUpdate(agent);
         if (status != Status.Running)
         {
+          Trace.Script($"Ending {fullName}");
           this.OnEnd(agent);
+          this.Reset();
         }
 
         return status;
       }      
-
-      public virtual void End(Agent agent)
-      {
-        Trace.Script($"Ending {typeName}");
-        this.OnEnd(agent);
-        this.Reset();
-      }
 
       public void Reset()
       {
@@ -148,6 +155,11 @@ namespace Stratus
         if (!behaviorType.IsSubclassOf(typeof(Behavior)))
           return null;
         return (Behavior)Utilities.Reflection.Instantiate(behaviorType);
+      }
+
+      public static T Instantiate<T>() where T : Behavior
+      {
+        return (T)Instantiate(typeof(T));
       }
 
 

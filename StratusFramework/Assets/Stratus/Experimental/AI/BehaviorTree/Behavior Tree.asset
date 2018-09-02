@@ -30,7 +30,7 @@ MonoBehaviour:
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
-      Data: 3
+      Data: 9
     - Name: 
       Entry: 7
       Data: 2|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
@@ -60,7 +60,7 @@ MonoBehaviour:
       Data: 1
     - Name: name
       Entry: 1
-      Data: Sequence
+      Data: Sequence (Outer)
     - Name: depth
       Entry: 3
       Data: 0
@@ -68,8 +68,8 @@ MonoBehaviour:
       Entry: 7
       Data: 4|Stratus.AI.Sequence, Assembly-CSharp
     - Name: label
-      Entry: 6
-      Data: 
+      Entry: 1
+      Data: Outer
     - Name: decorators
       Entry: 7
       Data: 5|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
@@ -97,22 +97,151 @@ MonoBehaviour:
       Data: 6|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 7
+      Data: 8
     - Name: name
       Entry: 1
-      Data: EventAction
+      Data: LogTask (1)
     - Name: depth
       Entry: 3
       Data: 1
     - Name: data
       Entry: 7
-      Data: 7|Stratus.AI.EventAction, Assembly-CSharp
+      Data: 7|Stratus.AI.LogTask, Assembly-CSharp
     - Name: label
-      Entry: 6
-      Data: 
+      Entry: 1
+      Data: 1
     - Name: decorators
       Entry: 7
       Data: 8|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: message
+      Entry: 1
+      Data: Beep
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: LogTask
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 9|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 10
+    - Name: name
+      Entry: 1
+      Data: LogTask (2)
+    - Name: depth
+      Entry: 3
+      Data: 1
+    - Name: data
+      Entry: 7
+      Data: 10|Stratus.AI.LogTask, Assembly-CSharp
+    - Name: label
+      Entry: 1
+      Data: 2
+    - Name: decorators
+      Entry: 7
+      Data: 11|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: message
+      Entry: 1
+      Data: Boop
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: LogTask
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 12|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 11
+    - Name: name
+      Entry: 1
+      Data: LogTask (3)
+    - Name: depth
+      Entry: 3
+      Data: 1
+    - Name: data
+      Entry: 7
+      Data: 13|Stratus.AI.LogTask, Assembly-CSharp
+    - Name: label
+      Entry: 1
+      Data: 3
+    - Name: decorators
+      Entry: 7
+      Data: 14|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: message
+      Entry: 1
+      Data: Beep Boop
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: LogTask
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 15|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 12
+    - Name: name
+      Entry: 1
+      Data: Sequence (Inner)
+    - Name: depth
+      Entry: 3
+      Data: 1
+    - Name: data
+      Entry: 7
+      Data: 16|Stratus.AI.Sequence, Assembly-CSharp
+    - Name: label
+      Entry: 1
+      Data: Inner
+    - Name: decorators
+      Entry: 7
+      Data: 17|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
         mscorlib
     - Name: 
       Entry: 12
@@ -128,7 +257,136 @@ MonoBehaviour:
       Data: 
     - Name: dataTypeName
       Entry: 1
-      Data: EventAction
+      Data: Sequence
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 18|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 13
+    - Name: name
+      Entry: 1
+      Data: LogTask
+    - Name: depth
+      Entry: 3
+      Data: 2
+    - Name: data
+      Entry: 7
+      Data: 19|Stratus.AI.LogTask, Assembly-CSharp
+    - Name: label
+      Entry: 6
+      Data: 
+    - Name: decorators
+      Entry: 7
+      Data: 20|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: message
+      Entry: 1
+      Data: A
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: LogTask
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 21|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 14
+    - Name: name
+      Entry: 1
+      Data: LogTask
+    - Name: depth
+      Entry: 3
+      Data: 2
+    - Name: data
+      Entry: 7
+      Data: 22|Stratus.AI.LogTask, Assembly-CSharp
+    - Name: label
+      Entry: 6
+      Data: 
+    - Name: decorators
+      Entry: 7
+      Data: 23|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: message
+      Entry: 1
+      Data: B
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: LogTask
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 24|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 15
+    - Name: name
+      Entry: 1
+      Data: LogTask
+    - Name: depth
+      Entry: 3
+      Data: 2
+    - Name: data
+      Entry: 7
+      Data: 25|Stratus.AI.LogTask, Assembly-CSharp
+    - Name: label
+      Entry: 6
+      Data: 
+    - Name: decorators
+      Entry: 7
+      Data: 26|System.Collections.Generic.List`1[[Stratus.AI.Decorator, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: message
+      Entry: 1
+      Data: C
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: LogTask
     - Name: 
       Entry: 8
       Data: 
@@ -140,7 +398,7 @@ MonoBehaviour:
       Data: 
     - Name: idCounter
       Entry: 3
-      Data: 8
+      Data: 16
     - Name: 
       Entry: 8
       Data: 

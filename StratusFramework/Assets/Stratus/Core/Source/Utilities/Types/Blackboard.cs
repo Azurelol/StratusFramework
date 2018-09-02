@@ -174,6 +174,44 @@ namespace Stratus
     // Methods
     //----------------------------------------------------------------------/
     /// <summary>
+    /// Adds a local symbol to the blackboard
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="symbol"></param>
+    public void Add(Symbol symbol, Scope scope)
+    {
+      switch (scope)
+      {
+        case Scope.Local:
+          this.AddLocal(symbol);
+          break;
+        case Scope.Global:
+          this.AddGlobal(symbol);
+          break;
+      }      
+    }
+
+    /// <summary>
+    /// Adds a local symbol to the blackboard
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="symbol"></param>
+    public void AddGlobal(Symbol symbol)
+    {
+      this.globals.Add(symbol);
+    }
+
+    /// <summary>
+    /// Adds a global symbol to the blackboard
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="symbol"></param>
+    public void AddLocal(Symbol symbol)
+    {
+      this.locals.Add(symbol);
+    }
+
+    /// <summary>
     /// Returns all the global symbols for this blackboard at runtime
     /// </summary>
     /// <returns></returns>

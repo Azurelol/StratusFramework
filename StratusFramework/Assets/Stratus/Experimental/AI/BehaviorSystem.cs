@@ -42,10 +42,10 @@ namespace Stratus
       /// </summary>
       public Agent agent { private set; get; }
 
-      /// <summary>
-      /// The sensor the agent is using
-      /// </summary>
-      protected Sensor sensor { private set; get; }
+      ///// <summary>
+      ///// The sensor the agent is using
+      ///// </summary>
+      //protected Sensor sensor { private set; get; }
 
       /// <summary>
       /// The current behavior being run by this system
@@ -66,14 +66,14 @@ namespace Stratus
       // Interface
       //------------------------------------------------------------------------/
       protected abstract void OnInitialize();
-      protected abstract void OnUpdate(Agent agent);
-      protected abstract void OnPrint(StringBuilder builder);
+      protected abstract void OnUpdate();
+      protected abstract void OnReset();
       // Behaviors
       protected abstract void OnBehaviorAdded(Behavior behavior);
       protected abstract void OnBehaviorStarted(Behavior behavior);
       protected abstract void OnBehaviorEnded(Behavior behavior);
       protected abstract void OnBehaviorsCleared();
-      protected abstract void OnReset();
+
 
       //------------------------------------------------------------------------/
       // Methods
@@ -81,23 +81,18 @@ namespace Stratus
       /// <summary>
       /// Initializes the system for the given agent
       /// </summary>
-      public void Initialize(Agent agent)
+      public void InitializeSystem()
       {
-        if (!agentBehaviors.ContainsKey(agent))
-          agentBehaviors.Add(agent, Instantiate(agent));
-
-        agentBehaviors[agent].OnInitialize();
-        //this.OnInitialize();
+        this.OnInitialize();
       }
 
       /// <summary>
       /// Updates this behavior system.
       /// </summary>
       /// <param name="dt"></param>
-      public void UpdateSystem(Agent agent)
+      public void UpdateSystem()
       {
-        agentBehaviors[agent].OnUpdate(agent);
-        //this.OnUpdate(dt);
+        this.OnUpdate();
       }
 
       /// <summary>
@@ -105,8 +100,40 @@ namespace Stratus
       /// </summary>
       public void ResetSystem()
       {
-        agentBehaviors[agent].OnReset();
-        //this.OnReset();
+        this.OnReset();
+      }
+
+      /// <summary>
+      /// Initializes an instance of this system, unique for the given agent
+      /// </summary>
+      /// <param name="agent"></param>
+      /// <param name="system"></param>
+      public static BehaviorSystem InitializeSystemInstance(Agent agent, BehaviorSystem system)
+      {
+        if (!agentBehaviors.ContainsKey(agent))
+          agentBehaviors.Add(agent, system.Instantiate(agent));
+
+        BehaviorSystem instance = agentBehaviors[agent];
+        instance.InitializeSystem();
+        return instance;
+      }
+
+      /// <summary>
+      /// Updates an instance of the system that is unique for the given agent
+      /// </summary>
+      /// <param name="agent"></param>
+      /// <param name="system"></param>
+      public static void UpdateSystemInstance(Agent agent)
+      {
+        agentBehaviors[agent].UpdateSystem();
+      }
+
+      /// <summary>
+      /// Resets the behaviour system so that it must evaluate from the beginning
+      /// </summary>
+      public void ResetSystemInstance(Agent agent)
+      {
+        agentBehaviors[agent].ResetSystem();
       }
 
       //------------------------------------------------------------------------/
@@ -116,18 +143,40 @@ namespace Stratus
       /// Adds a behaviour to the system
       /// </summary>
       /// <param name="behaviorType"></param>
-      public void AddBehavior(Type behaviorType)
+      public Behavior AddBehavior(Type behaviorType)
       {
-        this.AddBehavior(Behavior.Instantiate(behaviorType));
+        Behavior behavior = Behavior.Instantiate(behaviorType);
+        this.AddBehavior(behavior);
+        return behavior;
+      }
+
+      /// <summary>
+      /// Adds a behaviour to the system
+      /// </summary>
+      /// <param name="behaviorType"></param>
+      public T AddBehavior<T>() where T : Behavior
+      {
+        T behavior = Behavior.Instantiate<T>();
+        this.AddBehavior(behavior);
+        return behavior;
       }
 
       /// <summary>
       /// Adds a behaviour to the system
       /// </summary>
       /// <param name="type"></param>
-      public void AddBehavior(Behavior behaviour)
+      public void AddBehavior(Behavior behavior)
       {
-        this.OnBehaviorAdded(behaviour);
+        this.OnBehaviorAdded(behavior);
+      }
+
+      /// <summary>
+      /// Adds a behaviour to the system
+      /// </summary>
+      /// <param name="type"></param>
+      public void AddBehavior<T>(T behavior) where T : Behavior
+      {
+        this.OnBehaviorAdded(behavior);
       }
 
       /// <summary>
@@ -139,25 +188,10 @@ namespace Stratus
       }
 
       //------------------------------------------------------------------------/
-      // Methods: Utility
-      //------------------------------------------------------------------------/
-      /// <summary>
-      /// Prints a representation of the contents of this behavior system
-      /// </summary>
-      /// <returns></returns>
-      public string Print()
-      {
-        var builder = new StringBuilder();
-        OnPrint(builder);
-        return builder.ToString();
-      }
-
-      //------------------------------------------------------------------------/
       // Methods: Static
       //------------------------------------------------------------------------/
       /// <summary>
-      /// Returns an instance of this behavior system to be used by a
-      /// single agent.
+      /// Returns an instance of this behavior system to be used by a single agent.
       /// </summary>
       /// <param name="agent"></param>
       /// <returns></returns>
@@ -165,27 +199,20 @@ namespace Stratus
       {
         var behaviorSystem = Instantiate(this);
         behaviorSystem.agent = agent;
-        behaviorSystem.sensor = agent.sensor;
         return behaviorSystem;
       }
 
-      public BehaviorSystem Instantiate(Agent agent, Blackboard blackboard)
+      /// <summary>
+      /// Returns an instance of this behavior system to be used by a single agent.
+      /// </summary>
+      /// <param name="agent"></param>
+      /// <returns></returns>
+      public BehaviorSystem Instantiate(Blackboard blackboard)
       {
         var behaviorSystem = Instantiate(this);
         behaviorSystem.blackboard = blackboard;
-        behaviorSystem.agent = agent;
-        behaviorSystem.sensor = agent.sensor;
         return behaviorSystem;
       }
-
-      //public BehaviorSystem Instantiate(Blackboard blackboard)
-      //{
-      //  var behaviorSystem = Instantiate(this);
-      //  behaviorSystem.blackboard = blackboard;
-      //  behaviorSystem.sensor = agent.sensor;
-      //  return behaviorSystem;
-      //}
-
 
     }
   }

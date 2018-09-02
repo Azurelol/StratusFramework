@@ -185,7 +185,7 @@ namespace Stratus.AI
 
     protected internal override void OnManagedStart()
     {
-      this.behavior.Initialize(this);
+      this.behavior = BehaviorSystem.InitializeSystemInstance(this, this.behavior);      
       this.OnAgentStart();
       currentState = State.Idle;
     }
@@ -201,7 +201,7 @@ namespace Stratus.AI
         return;
 
       if (isAutomatic)
-        this.behavior.UpdateSystem(this);
+        this.behavior.UpdateSystem();
 
       this.OnAgentUpdate();
     }        

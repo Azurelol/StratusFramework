@@ -42,13 +42,7 @@ namespace Stratus
 
       protected override Status OnUpdate(Agent agent)
       {
-        var status = OnTaskUpdate(agent);
-                
-        // If the action has finished, end it
-        if (status != Status.Running)
-          this.End(agent);
-
-        return status;
+        return this.OnTaskUpdate(agent);
       }
 
       protected override void OnEnd(Agent agent)

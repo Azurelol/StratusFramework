@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 
-namespace Stratus.Types
+namespace Stratus
 {
   /// <summary>
   /// A symbol represents a key-value pair where the key is an identifying string
