@@ -141,24 +141,24 @@ namespace Stratus
         // Start
         if (!this.started)
         {
-          Trace.Script($"Starting {fullName}");
+          //Trace.Script($"Starting {fullName}");
           this.status = Status.Running;
-          this.OnStart(args);
           this.started = true;
           this.finished = false;
+          this.OnStart(args);
           args.system.OnBehaviorStarted(this);
         }
 
         // Update
-        Trace.Script($"Updating {fullName}"); 
+        //Trace.Script($"Updating {fullName}"); 
         this.status = this.OnUpdate(args);
 
         // End
         if (this.status != Status.Running)
         {
-          Trace.Script($"Ending {fullName}");
-          this.OnEnd(args);
+          //Trace.Script($"Ending {fullName}");
           this.finished = true;
+          this.OnEnd(args);
           args.system.OnBehaviorEnded(this, status);
           this.Reset();
         }
@@ -166,7 +166,7 @@ namespace Stratus
 
       public void Reset()
       {
-        this.status = Status.Suspended;
+        //this.status = Status.Suspended;
         this.started = false;
         //this.finished = true;
       }

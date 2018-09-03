@@ -15,6 +15,7 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/
 
+
     //------------------------------------------------------------------------/
     // CTOR
     //------------------------------------------------------------------------/
@@ -27,6 +28,11 @@ namespace Stratus
     {
       this.InitializeHierarchicalTreeView();
     }
+
+    //------------------------------------------------------------------------/
+    // Virtual
+    //------------------------------------------------------------------------/
+    protected virtual void OnBeforeRow(Rect rect, TreeViewItem<TreeElementType> treeViewItem) { }
 
     //------------------------------------------------------------------------/
     // Methods
@@ -46,8 +52,14 @@ namespace Stratus
     }
 
     protected override void DoubleClickedItem(int id)
-    {      
+    {
       this.SetExpanded(id, !this.IsExpanded(id));
+    }
+
+    protected override void RowGUI(RowGUIArgs args)
+    {
+      this.OnBeforeRow(args.rowRect, (TreeViewItem<TreeElementType>)args.item);
+      base.RowGUI(args);
     }
 
     //protected override DragAndDropVisualMode HandleDragAndDrop(DragAndDropArgs args)

@@ -34,7 +34,7 @@ namespace Stratus.AI
           break;
       }
 
-      Trace.Script($"{key} set to {position}");
+      //Trace.Script($"{key} set to {position}");
       agent.blackboard.SetLocal(agent.gameObject, key, position);
     }
 

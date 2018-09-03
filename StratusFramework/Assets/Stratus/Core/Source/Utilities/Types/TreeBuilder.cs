@@ -91,6 +91,8 @@ namespace Stratus
     private int idCounter = 0;
     [NonSerialized]
     private TreeElementType _root;
+    [SerializeField]
+    private int _maxDepth;
 
     //------------------------------------------------------------------------/
     // Properties
@@ -108,9 +110,10 @@ namespace Stratus
       }
     }
     private bool parsed => _root != null;
+    public bool hasElements => elements.Count > 1;
+    public int maxDepth => _maxDepth;
     public static int rootDepth { get; } = -1;
     public static int defaultDepth { get; } = 0;
-    public bool hasElements => elements.Count > 1;
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -147,22 +150,16 @@ namespace Stratus
     }
 
     public void AddChildElement(DataType data, TreeElementType parent)
-    {      
+    {
       // Insert element below the last child
-      TreeElementType element = new TreeElementType();
-      element.id = idCounter++;
-      element.depth = parent.depth + 1;
-      element.Set(data);
+      TreeElementType element = CreateElement(data, parent.depth + 1);
       this.elements.Insert(FindLastChildIndex(parent) + 1, element);
     }
 
     public void AddParentElement(DataType data, TreeElementType child)
     {
       // Insert element below the last child
-      TreeElementType element = new TreeElementType();
-      element.id = idCounter++;
-      element.Set(data);
-      element.depth = child.depth;
+      TreeElementType element = CreateElement(data, child.depth - 1);
       this.elements.Insert(FindIndex(child) - 1, element);
       foreach(var childChild in this.FindChildren(child))
       {
@@ -215,11 +212,21 @@ namespace Stratus
     //------------------------------------------------------------------------/
     private void AddElement(DataType data, int depth)
     {
+      TreeElementType element = CreateElement(data, depth);
+      this.elements.Add(element);      
+    }
+
+    private TreeElementType CreateElement(DataType data, int depth)
+    {
       TreeElementType element = new TreeElementType();
       element.id = idCounter++;
       element.depth = depth;
       element.Set(data);
-      this.elements.Add(element);
+
+      if (depth > this._maxDepth)
+        this._maxDepth = element.depth;
+
+      return element;
     }
 
     private void AddRoot()

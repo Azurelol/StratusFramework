@@ -23,10 +23,6 @@ namespace Stratus
       public Console Console;
     }
 
-    //public struct DrawRequest
-    //{
-    //}
-
     public delegate void OnGUILayout(Rect rect);
 
     //------------------------------------------------------------------------/
@@ -180,7 +176,15 @@ namespace Stratus
     {
       Color currentColor = GUI.color;
       GUI.color = tint;
-      GUI.Box(rect, "", style);
+      GUI.Box(rect, string.Empty, style);
+      GUI.color = currentColor;
+    }
+
+    public static void GUIBox(Rect rect, Color tint)
+    {
+      Color currentColor = GUI.color;
+      GUI.color = tint;
+      GUI.Box(rect, string.Empty);
       GUI.color = currentColor;
     }
 

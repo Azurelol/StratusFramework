@@ -2,6 +2,7 @@ using Stratus.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 namespace Stratus
 {
@@ -23,6 +24,7 @@ namespace Stratus
       // Properties
       //------------------------------------------------------------------------/
       List<Service> IServiceSupport.services => this.services;
+      public static Color color => StratusGUIStyles.Colors.jade;
 
       //------------------------------------------------------------------------/
       // Interface

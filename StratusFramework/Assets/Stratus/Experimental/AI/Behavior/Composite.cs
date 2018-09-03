@@ -26,6 +26,7 @@ namespace Stratus
       public IList<Behavior> children { private set; get; }
       public Behavior currentChild { protected set; get; }
       public bool hasChildren => children.NotNullOrEmpty();
+      public static Color color => StratusGUIStyles.Colors.valencia;
 
       //------------------------------------------------------------------------/
       // Methods

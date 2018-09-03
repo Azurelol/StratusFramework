@@ -42,11 +42,6 @@ namespace Stratus
       /// </summary>
       public Agent agent { private set; get; }
 
-      ///// <summary>
-      ///// The sensor the agent is using
-      ///// </summary>
-      //protected Sensor sensor { private set; get; }
-
       /// <summary>
       /// The current behavior being run by this system
       /// </summary>
@@ -67,6 +62,11 @@ namespace Stratus
       /// </summary>
       protected Behavior.Arguments behaviorArguments { private set;  get; }
       
+      /// <summary>
+      /// A description of the state of the system
+      /// </summary>
+      public string stateDescription { get; }
+      
       //------------------------------------------------------------------------/
       // Interface
       //------------------------------------------------------------------------/
@@ -77,7 +77,6 @@ namespace Stratus
       public abstract void OnBehaviorStarted(Behavior behavior);
       public abstract void OnBehaviorEnded(Behavior behavior, Behavior.Status status);
       protected abstract void OnBehaviorsCleared();
-
 
       //------------------------------------------------------------------------/
       // Methods

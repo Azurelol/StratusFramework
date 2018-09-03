@@ -39,15 +39,16 @@ namespace Stratus
       // Properties
       //------------------------------------------------------------------------/
       public BehaviorNode rootNode => (BehaviorNode)tree.root.GetChild(0);
-      protected override Behavior currentBehavior => stack.Peek();
+      protected override Behavior currentBehavior => stack.Last();
       protected override bool hasBehaviors => tree.hasElements;
-      protected Stack<Behavior> stack { get; private set; } = new Stack<Behavior>();
+      protected List<Behavior> stack { get; private set; } = new List<Behavior>();      
 
       //----------------------------------------------------------------------/
       // Interface
       //----------------------------------------------------------------------/
       protected override void OnInitialize()
       {
+        this.stack = new List<Behavior>();
         this.tree.Iterate(this.SetComposites);
         this.OnReset();
       }
@@ -64,23 +65,27 @@ namespace Stratus
         {
           this.stack.Clear();
           //this.rootNode.data.Reset();
-          this.stack.Push(this.rootNode.data);
-        }
+          //this.stack.Push(this.rootNode.data);
+          this.stack.Add(this.rootNode.data);
+        }        
       }
 
       public override void OnBehaviorStarted(Behavior behavior)
       {
-        stack.Push(behavior);
-        Trace.Script($"current behavior = {currentBehavior}");
+        //stack.Push(behavior);
+        stack.Add(behavior);
       }
 
       public override void OnBehaviorEnded(Behavior behavior, Behavior.Status status)
       {
-        stack.Pop();
-        if (stack.Count == 0)
-        {
+        stack.RemoveLast();
+        if (stack.Empty())
           this.OnReset();
-        }
+        //stack.Pop();
+        //if (stack.Count == 0)
+        //{
+        //  this.OnReset();
+        //}
       }
 
       protected override void OnBehaviorAdded(Behavior behavior)

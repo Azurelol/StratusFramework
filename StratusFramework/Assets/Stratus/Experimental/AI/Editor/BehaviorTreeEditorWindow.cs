@@ -16,10 +16,10 @@ namespace Stratus
       //----------------------------------------------------------------------/
       // Declarations
       //----------------------------------------------------------------------/
-      public enum Column
+      public enum Mode
       {
-        Hierarchy,
-        Inspector
+        Editor = 0,
+        Debugger = 1,
       }
 
       public class BehaviourTreeView : HierarchicalTreeView<BehaviorTree.BehaviorNode>
@@ -89,6 +89,18 @@ namespace Stratus
 
           menu.AddItem("Clear", false, () => window.RemoveAllNodes());
         }
+
+        protected override void OnBeforeRow(Rect rect, TreeViewItem<BehaviorTree.BehaviorNode> treeViewItem)
+        {
+          if (treeViewItem.item.data is Composite)
+          {
+            StratusGUI.GUIBox(rect, Composite.color);
+          }
+          else if (treeViewItem.item.data is Task)
+          {
+            StratusGUI.GUIBox(rect, Task.color);
+          }
+        }
       }
 
       //----------------------------------------------------------------------/
@@ -98,14 +110,21 @@ namespace Stratus
       private BehaviourTreeView treeInspector;
       [SerializeField]
       private TreeViewState treeViewState;
+      [SerializeField]
+      private Mode mode = Mode.Editor;
+      [SerializeField]
+      private Agent agent;
 
       private SerializedSystemObject currentNodeSerializedObject;
       const string folder = "Stratus/Experimental/AI/";
       private Vector2 inspectorScrollPosition, blackboardScrollPosition;
       private SerializedPropertyMap behaviorTreeProperties;
-      //private SerializedProperty treeProperty, treeElementsProperty, currentNodeProperty;
       private StratusEditor blackboardEditor;
-
+      private string[] toolbarOptions = new string[]
+      {
+        nameof(Mode.Editor),
+        nameof(Mode.Debugger),
+      };
 
       //----------------------------------------------------------------------/
       // Properties
@@ -191,9 +210,38 @@ namespace Stratus
 
       protected override void OnWindowGUI()
       {
-        Rect rect = currentPosition;
+        StratusEditorUtility.DrawAligned(this.DrawModeControl, TextAlignment.Center);
+        GUILayout.Space(padding);
+        Rect rect = this.currentPosition;
         rect = StratusEditorUtility.Pad(rect);
+        switch (this.mode)
+        {
+          case Mode.Editor:
+            this.DrawEditor(rect);
+            break;
+          case Mode.Debugger:
+            this.DrawDebugger(rect);
+            break;
+        }
 
+      }
+
+      //----------------------------------------------------------------------/
+      // Procedures
+      //----------------------------------------------------------------------/
+      private void DrawModeControl()
+      {
+        //EditorGUI.BeginChangeCheck();
+        {
+          this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions, GUILayout.ExpandWidth(false));
+        }
+        //if (EditorGUI.EndChangeCheck())
+        //{          
+        //}
+      }
+
+      private void DrawEditor(Rect rect)
+      {
         // Hierarchy: LEFT
         rect.width *= 0.5f;
         DrawHierarchy(rect);
@@ -209,9 +257,12 @@ namespace Stratus
         DrawBlackboard(rect);
       }
 
-      //----------------------------------------------------------------------/
-      // Procedures
-      //----------------------------------------------------------------------/
+      private void DrawDebugger(Rect rect)
+      {
+        EditorGUILayout.LabelField("Target", StratusGUIStyles.header);
+        this.agent = (Agent)EditorGUILayout.ObjectField(this.agent, typeof(Agent), true);
+      }
+
       private void DrawHierarchy(Rect rect)
       {
         //if (behaviorTree != null)

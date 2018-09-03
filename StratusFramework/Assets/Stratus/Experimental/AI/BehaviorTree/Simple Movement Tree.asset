@@ -30,7 +30,7 @@ MonoBehaviour:
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
-      Data: 3
+      Data: 4
     - Name: 
       Entry: 7
       Data: 2|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
@@ -82,13 +82,19 @@ MonoBehaviour:
       Data: 6|Stratus.AI.SetRandomPosition, Assembly-CSharp
     - Name: interval
       Entry: 4
-      Data: 2
+      Data: 0
     - Name: deviation
       Entry: 4
       Data: 0
     - Name: key
       Entry: 1
       Data: Waypoint
+    - Name: type
+      Entry: 3
+      Data: 1
+    - Name: radius
+      Entry: 4
+      Data: 15
     - Name: 
       Entry: 8
       Data: 
@@ -164,6 +170,49 @@ MonoBehaviour:
       Entry: 8
       Data: 
     - Name: 
+      Entry: 7
+      Data: 11|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 3
+    - Name: name
+      Entry: 1
+      Data: LogTask
+    - Name: depth
+      Entry: 3
+      Data: 1
+    - Name: data
+      Entry: 7
+      Data: 12|Stratus.AI.LogTask, Assembly-CSharp
+    - Name: label
+      Entry: 6
+      Data: 
+    - Name: services
+      Entry: 7
+      Data: 13|System.Collections.Generic.List`1[[Stratus.AI.Service, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: message
+      Entry: 1
+      Data: Woof
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: LogTask
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
       Entry: 13
       Data: 
     - Name: 
@@ -171,7 +220,10 @@ MonoBehaviour:
       Data: 
     - Name: idCounter
       Entry: 3
-      Data: 3
+      Data: 4
+    - Name: _maxDepth
+      Entry: 3
+      Data: 1
     - Name: 
       Entry: 8
       Data: 

@@ -20,7 +20,8 @@ namespace Stratus
 
   }
 
-  public abstract class TreeViewWithTreeModel<TreeElementType> : TreeView where TreeElementType: TreeElement
+  public abstract class TreeViewWithTreeModel<TreeElementType> : TreeView 
+    where TreeElementType: TreeElement
   {
     //------------------------------------------------------------------------/
     // Declaration
@@ -50,7 +51,7 @@ namespace Stratus
     public TreeAsset<TreeElementType> treeAsset { get; private set; }
 
     //------------------------------------------------------------------------/
-    // CTOR
+    // Virtual
     //------------------------------------------------------------------------/ 
     protected abstract void OnItemContextMenu(GenericMenu menu, TreeElementType treeElement);
     protected abstract void OnContextMenu(GenericMenu menu);

@@ -393,8 +393,7 @@ namespace Stratus
         this.SetTreeView();
       }
 
-      //StratusEditorUtility.DrawContextMenu(this.DrawSettingsContext, StratusEditorUtility.ContextMenuType.Options);
-      
+      //StratusEditorUtility.DrawContextMenu(this.DrawSettingsContext, StratusEditorUtility.ContextMenuType.Options);      
     }
 
     private GenericMenu DrawSettingsContext()
