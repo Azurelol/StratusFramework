@@ -14,7 +14,8 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/
     protected const string rootMenu = "Stratus/";
-    protected SerializedObject serializedObject;
+    protected SerializedObject serializedObject { get; set; }
+    protected SerializedPropertyMap serializedPropertyMap { get; set; }
   }
 
   public abstract class StratusEditorWindow<T> : StratusEditorWindow where T : EditorWindow
@@ -31,6 +32,9 @@ namespace Stratus
     /// </summary>
     protected static T instance { get; private set; }
 
+    /// <summary>
+    /// A drawer for an optional menu bar
+    /// </summary>
     protected StratusMenuBarDrawer menuBarDrawer { get; set; }
 
     /// <summary>
@@ -64,6 +68,7 @@ namespace Stratus
     protected abstract void OnWindowGUI();
     protected virtual StratusMenuBarDrawer OnSetMenuBar() => null;
 
+
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
@@ -71,6 +76,7 @@ namespace Stratus
     {
       instance = this as T;
       this.serializedObject = new SerializedObject(this);
+      this.serializedPropertyMap = new SerializedPropertyMap(this.serializedObject);
       this.menuBarDrawer = this.OnSetMenuBar();
       this.OnWindowEnable();
       EditorApplication.playModeStateChanged += this.OnPlayModeStateChange;
@@ -114,6 +120,12 @@ namespace Stratus
     private void DrawMultiColumns()
     {
 
+    }
+
+    protected void EditProperty(string propertyName)
+    {
+      SerializedProperty property = this.serializedPropertyMap.GetProperty(propertyName);      
+      EditorGUILayout.PropertyField(property);
     }
 
     //------------------------------------------------------------------------/

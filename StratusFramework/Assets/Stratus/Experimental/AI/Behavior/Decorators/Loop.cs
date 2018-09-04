@@ -4,31 +4,39 @@ using UnityEngine;
 
 namespace Stratus.AI
 {
-  ///// <summary>
-  ///// Bases its condition on wheher its loop counter has exceeded
-  ///// </summary>
-  //public class Loop : Decorator
-  //{
-  //  public int counter = 3;
+  /// <summary>
+  /// Bases its condition on wheher its loop counter has exceeded
+  /// </summary>
+  public class Loop : PostExecutionDecorator 
+  { 
+    public int counter = 3;
+    public Counter currentCounter { get; set; }
 
-  //  public override string description => "Bases its condition on wheher its loop counter has exceeded";
+    public override string description => "Bases its condition on wheher its loop counter has exceeded";
 
-  //  protected override void OnStart(Arguments args)
-  //  {
+    protected override void OnDecoratorStart(Arguments args)
+    {
+      this.currentCounter = new Counter(this.counter);
+    }
 
-  //  }
+    protected override bool OnDecoratorChildEnded(Arguments args, Status status)
+    {      
+      if (status == Status.Failure)
+        return false;
 
-  //  protected override Status OnUpdate(Arguments args)
-  //  {
-  //    throw new System.NotImplementedException();
-  //  }
+      this.currentCounter.Increment();
+      return !this.currentCounter.isAtLimit;
+    }
 
-  //  protected override void OnEnd(Arguments args)
-  //  {
-  //    throw new System.NotImplementedException();
-  //  }
+    //protected override bool OnDecoratorCanChildExecute(Arguments args)
+    //{
+    //  return !this.currentCounter.isAtLimit;
+    //}
 
-    
-  //}
+    //protected override bool OnDecoratorCanChildExecute(Arguments args)
+    //{
+    //  
+    //}
+  }
 
 }

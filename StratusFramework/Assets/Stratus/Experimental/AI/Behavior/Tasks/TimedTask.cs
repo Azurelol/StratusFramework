@@ -9,15 +9,29 @@ namespace Stratus
     /// <summary>
     /// An action that takes a specified amount of time to complete
     /// </summary>
-    public abstract class TimedAction : Task
+    public abstract class TimedTask : Task
     {
+      //------------------------------------------------------------------------/
+      // Declarations
+      //------------------------------------------------------------------------/
+      public enum Mode
+      {
+        Static,
+        Symbol
+      }
+
+      //------------------------------------------------------------------------/
+      // Fields
+      //------------------------------------------------------------------------/
+      [Tooltip("How long it takes to execute this action")]
+      public float duration = 1f;
+
+      protected Countdown timer;
+
       //------------------------------------------------------------------------/
       // Properties
       //------------------------------------------------------------------------/
-      [Tooltip("How long it takes to execute this action")]
-      public float speed = 1f;
-      public float progress { get { return progressTimer.normalizedProgress; } }
-      protected Countdown progressTimer;
+      public float progress { get { return timer.normalizedProgress; } }
 
       //------------------------------------------------------------------------/
       // Interface
@@ -31,19 +45,20 @@ namespace Stratus
       //------------------------------------------------------------------------/
       protected override void OnTaskStart(Agent agent)
       {
-        this.progressTimer = new Countdown(this.speed);
+        this.timer = new Countdown(this.duration);
       }
 
       protected override Status OnTaskUpdate(Agent agent)
       {
         // Update the progress timer. 
-        bool isFinished = progressTimer.Update(Time.deltaTime);
+        bool isFinished = timer.Update(Time.deltaTime);
         // Update the action
         if (!isFinished)
         {
           var status = this.OnTimedActionUpdate(agent);
-          if (status != Status.Success)
-            return Status.Running;
+          return status;
+          //if (status != Status.Success)
+          //  return Status.Running;
         }
 
         // If the timer has finished, end the action
@@ -55,9 +70,6 @@ namespace Stratus
         this.OnTimedActionEnd(agent);
       }
 
-      //------------------------------------------------------------------------/
-      // Methods
-      //------------------------------------------------------------------------/
     }
   }
 

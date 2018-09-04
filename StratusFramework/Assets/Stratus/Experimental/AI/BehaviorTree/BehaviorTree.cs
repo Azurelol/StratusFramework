@@ -49,7 +49,7 @@ namespace Stratus
       protected override void OnInitialize()
       {
         this.stack = new List<Behavior>();
-        this.tree.Iterate(this.SetComposites);
+        this.tree.Iterate(this.SetChildren);
         this.OnReset();
       }
 
@@ -64,28 +64,22 @@ namespace Stratus
         if (tree.hasElements)
         {
           this.stack.Clear();
-          //this.rootNode.data.Reset();
-          //this.stack.Push(this.rootNode.data);
           this.stack.Add(this.rootNode.data);
         }        
       }
 
       public override void OnBehaviorStarted(Behavior behavior)
       {
-        //stack.Push(behavior);
+        Trace.Script($"Adding {behavior}");
         stack.Add(behavior);
       }
 
       public override void OnBehaviorEnded(Behavior behavior, Behavior.Status status)
       {
         stack.RemoveLast();
+        Trace.Script($"Removing {behavior}");
         if (stack.Empty())
           this.OnReset();
-        //stack.Pop();
-        //if (stack.Count == 0)
-        //{
-        //  this.OnReset();
-        //}
       }
 
       protected override void OnBehaviorAdded(Behavior behavior)
@@ -130,10 +124,19 @@ namespace Stratus
         this.tree.root.data = Behavior.Instantiate(typeof(Sequence));
       }
 
-      private void SetComposites(BehaviorNode behaviorNode)
+      private void SetChildren(BehaviorNode behaviorNode)
       {
-        Composite composite = behaviorNode.data as Composite;
-        composite?.Set(behaviorNode.GetChildrenData());
+        if (behaviorNode.data is Composite)
+        {
+          Composite composite = behaviorNode.data as Composite;
+          composite?.Set(behaviorNode.GetChildrenData());
+        }
+        else if (behaviorNode.data is Decorator)
+        {
+          Decorator decorator = behaviorNode.data as Decorator;
+          if (behaviorNode.childrenCount > 0)
+            decorator?.Set(behaviorNode.GetChildrenData().First());
+        }
       }
 
 

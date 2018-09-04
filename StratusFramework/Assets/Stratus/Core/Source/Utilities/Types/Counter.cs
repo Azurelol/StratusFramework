@@ -1,12 +1,4 @@
-﻿/******************************************************************************/
-/*!
-@file   Counter.cs
-@author Christian Sagel
-@par    email: c.sagel\@digipen.edu
-@par    DigiPen login: c.sagel
-*/
-/******************************************************************************/
-using System;
+﻿using System;
 
 namespace Stratus
 {
@@ -16,6 +8,9 @@ namespace Stratus
   [Serializable]
   public struct Counter
   {
+    //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
     /// <summary>
     /// The upper bound of this counter
     /// </summary>
@@ -29,7 +24,7 @@ namespace Stratus
     /// <summary>
     /// Whether the counter has been filled
     /// </summary>
-    public bool isFull
+    public bool isAtLimit
     {
       get
       {
@@ -55,24 +50,30 @@ namespace Stratus
     /// </summary>
     public string completion { get { return current + "/" + total; } }
 
+    //------------------------------------------------------------------------/
+    // CTOR
+    //------------------------------------------------------------------------/
     public Counter(int total)
     {
       this.total = total;
       current = 0;
     }
 
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
     /// <summary>
     /// Increments this counter
     /// </summary>
     /// <returns>Returns true if the counter is full, false otherwise</returns>
     public bool Increment()
     {
-      if (isFull)
+      if (isAtLimit)
         return true;
 
       current++;
 
-      if (isFull)
+      if (isAtLimit)
         return true;
 
       return false;

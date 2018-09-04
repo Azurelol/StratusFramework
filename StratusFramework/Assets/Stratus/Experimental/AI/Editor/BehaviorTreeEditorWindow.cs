@@ -67,7 +67,7 @@ namespace Stratus
             
             menu.AddPopup("Add/Decorator", BehaviorTreeEditorWindow.decoratorTypes.displayedOptions, (int index) =>
             {
-              window.AddParentNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
+              window.AddChildNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
             });
           }
           menu.AddItem("Remove", false, () => window.RemoveNode(treeElement));
@@ -100,6 +100,10 @@ namespace Stratus
           {
             StratusGUI.GUIBox(rect, Task.color);
           }
+          else if (treeViewItem.item.data is Decorator)
+          {
+            StratusGUI.GUIBox(rect, Decorator.color);
+          }
         }
       }
 
@@ -113,7 +117,7 @@ namespace Stratus
       [SerializeField]
       private Mode mode = Mode.Editor;
       [SerializeField]
-      private Agent agent;
+      private Agent debugTarget;
 
       private SerializedSystemObject currentNodeSerializedObject;
       const string folder = "Stratus/Experimental/AI/";
@@ -260,7 +264,13 @@ namespace Stratus
       private void DrawDebugger(Rect rect)
       {
         EditorGUILayout.LabelField("Target", StratusGUIStyles.header);
-        this.agent = (Agent)EditorGUILayout.ObjectField(this.agent, typeof(Agent), true);
+        //EditProperty(nameof(debugTarget));
+        EditorGUI.BeginChangeCheck();
+        this.debugTarget = (Agent)EditorGUILayout.ObjectField(this.debugTarget, typeof(Agent), true);
+        if (EditorGUI.EndChangeCheck())
+        {
+          EditorUtility.SetDirty(this);
+        }
       }
 
       private void DrawHierarchy(Rect rect)
@@ -377,6 +387,7 @@ namespace Stratus
       {
         behaviorTree.ClearBehaviors();
         currentNodeSerializedObject = null;
+        currentNodes = null;
         Save();
       }
 

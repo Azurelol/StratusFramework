@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Stratus;
 using System;
 using System.Collections.Generic;
@@ -8,23 +8,18 @@ namespace Stratus
   namespace AI
   {
     /// <summary>
-    /// Executes each of the child behaviors in sequence
-    /// until all of the children have executed successfully
-    /// or until one of the child behaviors fail
+    /// Nodes execute their children from left to right, and will stop executing
+    /// for its children when one of their children succeeds. If all the selector's
+    /// children succeed, the selector succeeds. if all fail, the selector fails.
     /// </summary>
-    public class Sequence : Composite
+    public class Selector : Composite
     {
       public IEnumerator<Behavior> childrenEnumerator { get; private set; }
       public override Behavior currentChild => childrenEnumerator.Current;
 
-      public override string description
-      {
-        get
-        {
-          return "Executes each of the child behaviors in sequence until all of the children " +
-                 "have executed successfully or until one of the child behaviors fail";
-        }
-      }
+      public override string description { get; } = "Nodes execute their children from left to right, and will stop executing " +
+            "its children when one of their children succeeds. If a Selector's child succeeds, " +
+            "the Selector succeeds. If all the Selector's children fail, the Selector fails.";
 
       protected override void OnCompositeStart(Arguments args)
       {
@@ -38,25 +33,27 @@ namespace Stratus
         {
           Trace.Script($"Moved onto next child {currentChild.fullName}");
           this.currentChild.Start(args, this.OnCompositeChildEnded);
+
         }
         else
         {
-          //Trace.Script("Reached end of sequence");
+          Trace.Script("Reached end of sequence");
         }
         return valid;
       }
 
+
       protected override void OnCompositeChildEnded(Arguments args, Status status)
       {
-        if (status == Status.Failure)
+        if (status == Status.Success)
         {
-          this.End(args, Status.Failure);
+          this.End(args, Status.Success);
           return;
         }
 
         if (!this.OnCompositeSetNextChild(args))
         {
-          this.End(args, Status.Success);
+          this.End(args, Status.Failure);
         }
       }
 

@@ -30,7 +30,7 @@ MonoBehaviour:
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
-      Data: 4
+      Data: 5
     - Name: 
       Entry: 7
       Data: 2|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
@@ -57,7 +57,7 @@ MonoBehaviour:
       Data: 3|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 1
+      Data: 5
     - Name: name
       Entry: 1
       Data: Sequence
@@ -76,28 +76,7 @@ MonoBehaviour:
         mscorlib
     - Name: 
       Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: 6|Stratus.AI.SetRandomPosition, Assembly-CSharp
-    - Name: interval
-      Entry: 4
       Data: 0
-    - Name: deviation
-      Entry: 4
-      Data: 0
-    - Name: key
-      Entry: 1
-      Data: Waypoint
-    - Name: type
-      Entry: 3
-      Data: 1
-    - Name: radius
-      Entry: 4
-      Data: 15
-    - Name: 
-      Entry: 8
-      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -115,25 +94,25 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 7|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 6|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 2
+      Data: 3
     - Name: name
       Entry: 1
-      Data: MoveToTask
+      Data: LogTask
     - Name: depth
       Entry: 3
       Data: 1
     - Name: data
       Entry: 7
-      Data: 8|Stratus.AI.MoveToTask, Assembly-CSharp
+      Data: 7|Stratus.AI.LogTask, Assembly-CSharp
     - Name: label
       Entry: 6
       Data: 
     - Name: services
       Entry: 7
-      Data: 9|System.Collections.Generic.List`1[[Stratus.AI.Service, Assembly-CSharp]],
+      Data: 8|System.Collections.Generic.List`1[[Stratus.AI.Service, Assembly-CSharp]],
         mscorlib
     - Name: 
       Entry: 12
@@ -144,28 +123,45 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: targetSymbol
-      Entry: 7
-      Data: 10|Stratus.Blackboard+Reference`1[[UnityEngine.Vector3, UnityEngine.CoreModule]],
-        Assembly-CSharp
-    - Name: key
+    - Name: message
       Entry: 1
-      Data: Waypoint
-    - Name: scope
-      Entry: 3
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: range
-      Entry: 4
-      Data: 2
+      Data: Beep
     - Name: 
       Entry: 8
       Data: 
     - Name: dataTypeName
       Entry: 1
-      Data: MoveToTask
+      Data: LogTask
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 9|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 6
+    - Name: name
+      Entry: 1
+      Data: Loop
+    - Name: depth
+      Entry: 3
+      Data: 1
+    - Name: data
+      Entry: 7
+      Data: 10|Stratus.AI.Loop, Assembly-CSharp
+    - Name: label
+      Entry: 6
+      Data: 
+    - Name: counter
+      Entry: 3
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: Loop
     - Name: 
       Entry: 8
       Data: 
@@ -174,13 +170,13 @@ MonoBehaviour:
       Data: 11|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 3
+      Data: 7
     - Name: name
       Entry: 1
       Data: LogTask
     - Name: depth
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: data
       Entry: 7
       Data: 12|Stratus.AI.LogTask, Assembly-CSharp
@@ -202,7 +198,7 @@ MonoBehaviour:
       Data: 
     - Name: message
       Entry: 1
-      Data: Woof
+      Data: Boop
     - Name: 
       Entry: 8
       Data: 
@@ -220,10 +216,10 @@ MonoBehaviour:
       Data: 
     - Name: idCounter
       Entry: 3
-      Data: 4
+      Data: 8
     - Name: _maxDepth
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: 
       Entry: 8
       Data: 

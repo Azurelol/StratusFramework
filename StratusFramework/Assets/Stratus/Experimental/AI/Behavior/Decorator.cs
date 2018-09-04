@@ -7,28 +7,105 @@ namespace Stratus.AI
 {
   /// <summary>
   /// Decorator, also known as conditionals in other Behavior Tree systems, 
-  /// are attached to either a Composite or a Task node and define whether or not a branch in the tree, 
-  /// or even a single node, can be executed.
+  /// are attached to either a Composite or a Task node and define whether or not a branch in the 
+  /// tree, or even a single node, can be executed.
   /// </summary>
   public abstract class Decorator : Behavior
   {
     //------------------------------------------------------------------------/
+    // Properties
+    //------------------------------------------------------------------------/
+    public Behavior child { private set; get; }
+    public static Color color => StratusGUIStyles.Colors.saffron;
+
+    //------------------------------------------------------------------------/
     // Virtual
     //------------------------------------------------------------------------/
+    protected abstract void OnDecoratorStart(Arguments args);
 
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
-    //protected override void OnStart(Agent agent)
+    protected override void OnStart(Arguments args)
+    {
+      this.OnDecoratorStart(args);      
+    }
+
+    protected override void OnEnd(Arguments args)
+    {
+    }
+
+    //------------------------------------------------------------------------/
+    // Method
+    //------------------------------------------------------------------------/
+    public void Set(Behavior child)
+    {
+      this.child = child;
+    }
+
+    //protected void OnDecoratorChildEnded(Arguments args, Status status)
     //{
-    //}
-    //
-    //protected override void OnEnd(Agent agent)
-    //{
-    //}
-    //
-    //protected override Status OnUpdate(Agent agent)
-    //{
+    //  if (this.OnDecoratorCanChildExecute(args))
+    //    this.StartChild(args);
+    //  else
+    //    this.End(args, this.child.status);
     //}
   }
+
+  /// <summary>
+  /// A decorator that checks before the child is run
+  /// </summary>
+  public abstract class PreExecutionDecorator : Decorator
+  {
+    protected abstract bool OnDecoratorCanChildExecute(Arguments args);
+    protected override void OnStart(Arguments args)
+    {
+      this.OnDecoratorStart(args);
+      //if (this.OnDecoratorCanChildExecute(args))
+      //  this.StartChild(args);
+      //else
+      //  this.End(args, Status.Failure);
+    }
+  }
+
+  /// <summary>
+  /// A decorator that checks after the child has run
+  /// </summary>
+  public abstract class PostExecutionDecorator : Decorator
+  {
+    protected abstract bool OnDecoratorChildEnded(Arguments args, Status status);
+
+    protected override void OnStart(Arguments args)
+    {
+      base.OnStart(args);
+      this.StartChild(args);
+    }
+
+    protected override Status OnUpdate(Arguments args)
+    {
+      return Status.Running;
+    }
+
+    private void OnChildEnded(Arguments args, Status status)
+    {
+      bool restart = OnDecoratorChildEnded(args, status);
+      Trace.Script($"Restart {child.fullName}? {restart}");
+      if (restart)
+        this.StartChild(args);
+      else
+        this.End(args, this.child.status);
+    }
+
+    private void StartChild(Arguments args)
+    {
+      if (this.child == null)
+        throw new ArgumentNullException($"There's no child for this decorator!");
+
+      Trace.Script($"Starting {child.fullName}");
+      this.child.Start(args, this.OnChildEnded);
+    }
+
+
+  }
+
 }

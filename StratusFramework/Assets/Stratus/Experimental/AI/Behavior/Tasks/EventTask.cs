@@ -11,7 +11,6 @@ namespace Stratus.AI
 
     protected override void OnTaskEnd(Agent agent)
     {
-      Trace.Script("Woof!");
     }
 
     protected override void OnTaskStart(Agent agent)

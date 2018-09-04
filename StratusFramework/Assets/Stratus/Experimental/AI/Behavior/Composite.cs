@@ -24,9 +24,45 @@ namespace Stratus
       //------------------------------------------------------------------------/
       List<Service> IServiceSupport.services => this.services;
       public IList<Behavior> children { private set; get; }
-      public Behavior currentChild { protected set; get; }
+      public abstract Behavior currentChild { get; }
       public bool hasChildren => children.NotNullOrEmpty();
       public static Color color => StratusGUIStyles.Colors.valencia;
+
+      //------------------------------------------------------------------------/
+      // Virtual
+      //------------------------------------------------------------------------/
+      protected abstract void OnCompositeStart(Arguments args);
+      protected abstract bool OnCompositeSetNextChild(Arguments args);
+      protected abstract void OnCompositeChildEnded(Arguments args, Status status);
+
+      //------------------------------------------------------------------------/
+      // Messages
+      //------------------------------------------------------------------------/
+      public override void Update(Arguments args)
+      {
+        foreach (var service in this.services)
+          service.Execute(args.agent);
+        base.Update(args);
+      }
+
+      protected override void OnStart(Arguments args)
+      {
+        this.OnCompositeStart(args);
+        this.OnCompositeSetNextChild(args);
+      }
+
+      protected override Status OnUpdate(Arguments args)
+      {
+        return Status.Running;
+      }
+
+      protected override void OnEnd(Arguments args)
+      {
+        foreach (var child in children)
+        {
+          child.Reset();
+        }
+      }
 
       //------------------------------------------------------------------------/
       // Methods
@@ -34,13 +70,6 @@ namespace Stratus
       public void Set(IList<Behavior> children)
       {
         this.children = children;
-      }
-
-      public override void Update(Arguments args)
-      {
-        foreach (var service in this.services)
-          service.Execute(args.agent);
-        base.Update(args);
       }
 
     } 

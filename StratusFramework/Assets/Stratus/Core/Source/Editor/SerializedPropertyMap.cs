@@ -63,6 +63,13 @@ namespace Stratus
       AddProperties();
     }
 
+    public SerializedPropertyMap(SerializedObject serializedObject)
+    {
+      this.serializedObject = serializedObject;
+      this.target = serializedObject.targetObject;
+      AddProperties();
+    }
+
     public SerializedPropertyMap(UnityEngine.Object target, Type baseType)
     {
       this.target = target;

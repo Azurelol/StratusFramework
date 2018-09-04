@@ -42,17 +42,15 @@ namespace Stratus
         /// The behaviour is still running
         /// </summary>
         Running
-      }            
+      }
 
       public class Arguments
       {
         public Agent agent;
         public BehaviorSystem system;
-        public System.Action<Status> onFinished;
-
         public Status lastStatus;
       }
-      
+
       public class BehaviorEvent : Stratus.Event { public Behavior behavior; }
       public class StartedEvent : BehaviorEvent { }
       public class UpdateEvent : BehaviorEvent { }
@@ -107,7 +105,10 @@ namespace Stratus
       /// Whether this behavior has started
       /// </summary>
       public bool started { get; private set; }
-      public bool finished { get; private set; }
+      /// <summary>
+      /// Invoked whenever this behavior ends
+      /// </summary>
+      public System.Action<Arguments, Status> onEnded { get; private set; }
 
       //----------------------------------------------------------------------/
       // Interface
@@ -140,14 +141,7 @@ namespace Stratus
       {
         // Start
         if (!this.started)
-        {
-          //Trace.Script($"Starting {fullName}");
-          this.status = Status.Running;
-          this.started = true;
-          this.finished = false;
-          this.OnStart(args);
-          args.system.OnBehaviorStarted(this);
-        }
+          this.Start(args);        
 
         // Update
         //Trace.Script($"Updating {fullName}"); 
@@ -155,20 +149,44 @@ namespace Stratus
 
         // End
         if (this.status != Status.Running)
-        {
-          //Trace.Script($"Ending {fullName}");
-          this.finished = true;
-          this.OnEnd(args);
-          args.system.OnBehaviorEnded(this, status);
-          this.Reset();
-        }
-      }      
+          this.End(args);
+      }
+
+      public void Start(Arguments args)
+      {
+        Trace.Script($"Starting {fullName}");
+        this.started = true;
+        this.status = Status.Running;
+        args.system.OnBehaviorStarted(this);
+        this.OnStart(args);
+      }
+
+      public void Start(Arguments args, System.Action<Arguments, Status> onEnded)
+      {
+        this.onEnded = onEnded;
+        this.Start(args);
+      }
+
+      public void End(Arguments args)
+      {
+        Trace.Script($"Ending {fullName}");
+        this.OnEnd(args);
+        args.system.OnBehaviorEnded(this, status);
+        this.onEnded?.Invoke(args, this.status);
+        this.Reset();
+      }
+
+      public void End(Arguments args, Status status)
+      {
+        this.status = status;
+        this.End(args);
+      }
 
       public void Reset()
       {
-        //this.status = Status.Suspended;
+        Trace.Script($"Resetting {fullName}");
         this.started = false;
-        //this.finished = true;
+        this.onEnded = null;
       }
 
       //----------------------------------------------------------------------/
@@ -191,5 +209,5 @@ namespace Stratus
 
 
     }
-  } 
+  }
 }

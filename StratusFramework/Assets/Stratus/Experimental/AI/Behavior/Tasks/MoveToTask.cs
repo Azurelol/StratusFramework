@@ -26,7 +26,6 @@ namespace Stratus
 
       protected override void OnTargetActionEnd(Agent agent, Vector3 target)
       {
-        Trace.Script($"Finished");
       }
     }
   }
