@@ -200,16 +200,16 @@ MonoBehaviour:
       Data: 13|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 3
+      Data: 25
     - Name: name
       Entry: 1
-      Data: LogTask
+      Data: EventTask
     - Name: depth
       Entry: 3
       Data: 2
     - Name: data
       Entry: 7
-      Data: 14|Stratus.AI.LogTask, Assembly-CSharp
+      Data: 14|Stratus.AI.EventTask, Assembly-CSharp
     - Name: label
       Entry: 6
       Data: 
@@ -226,15 +226,12 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: message
-      Entry: 1
-      Data: Beep
     - Name: 
       Entry: 8
       Data: 
     - Name: dataTypeName
       Entry: 1
-      Data: LogTask
+      Data: EventTask
     - Name: 
       Entry: 8
       Data: 
@@ -246,7 +243,7 @@ MonoBehaviour:
       Data: 
     - Name: idCounter
       Entry: 3
-      Data: 5
+      Data: 29
     - Name: _maxDepth
       Entry: 3
       Data: 2

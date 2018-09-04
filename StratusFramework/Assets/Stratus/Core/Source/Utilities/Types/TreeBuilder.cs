@@ -158,15 +158,21 @@ namespace Stratus
       this.elements.Insert(insertionIndex, element);
     }
 
-    public void AddParentElement(DataType data, TreeElementType child)
+    public void AddParentElement(DataType data, TreeElementType element)
     {
       // Insert element below the last child
-      TreeElementType element = CreateElement(data, child.depth - 1);
-      this.elements.Insert(FindIndex(child) - 1, element);
-      foreach(var childChild in this.FindChildren(child))
+      TreeElementType parentElement = CreateElement(data, element.depth);
+      element.depth++;
+      parentElement.parent = element.parent;
+
+      int insertionIndex = FindIndex(element);
+
+      foreach(var child in this.FindChildren(element))
       {
-        childChild.depth++;
+        child.depth++;
       }
+
+      this.elements.Insert(insertionIndex, parentElement);
     }
 
     /// <summary>
@@ -304,7 +310,6 @@ namespace Stratus
     {
       int index = FindIndex(element);
       int lastIndex = index + element.totalChildrenCount;
-      Trace.Script($"index ={index}, lastIndex = {lastIndex}");
       return lastIndex;
     }
 

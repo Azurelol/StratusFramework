@@ -34,8 +34,15 @@ namespace Stratus
 
         protected override bool IsParentValid(BehaviorTree.BehaviorNode parent)
         {
-          Trace.Script($"Parent type = {parent.dataType}");
-          return parent.data != null && (parent.dataType.IsSubclassOf(compositeType) || parent.dataType.IsSubclassOf(decoratorType)); 
+          //Trace.Script($"Parent type = {parent.dataType}");
+          if (parent.data == null)
+            return false;
+          if (parent.data is Composite)
+            return true;
+          else if (parent.data is Decorator && !parent.hasChildren)
+            return true;
+
+          return false;
         }
 
         protected override void OnItemContextMenu(GenericMenu menu, BehaviorTree.BehaviorNode treeElement)
@@ -45,7 +52,7 @@ namespace Stratus
           {
             BehaviorTree.BehaviorNode parent = treeElement.GetParent<BehaviorTree.BehaviorNode>();
             menu.AddItem("Duplicate", false, () => window.AddNode((Behavior)treeElement.data.Clone(), parent));
-
+                        
             menu.AddPopup("Add/Decorator", BehaviorTreeEditorWindow.decoratorTypes.displayedOptions, (int index) =>
             {
               window.AddParentNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
@@ -72,15 +79,18 @@ namespace Stratus
           // Decorators
           else if (treeElement.data is Decorator)
           {
-            menu.AddPopup("Add/Tasks", BehaviorTreeEditorWindow.taskTypes.displayedOptions, (int index) =>
+            if (!treeElement.hasChildren)
             {
-              window.AddChildNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index), treeElement);
-            });
+              menu.AddPopup("Add/Tasks", BehaviorTreeEditorWindow.taskTypes.displayedOptions, (int index) =>
+              {
+                window.AddChildNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index), treeElement);
+              });
 
-            menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
-            {
-              window.AddChildNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
-            });
+              menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
+              {
+                window.AddChildNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
+              });
+            }
           }
 
 
