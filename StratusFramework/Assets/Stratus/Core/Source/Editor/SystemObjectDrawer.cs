@@ -30,7 +30,15 @@ namespace Stratus
       // CTOR
       //------------------------------------------------------------------------/
       public DefaultObjectDrawer(Type type) : base(type)
+      {        
+        this.height = lineHeight;
+        this.drawCalls = GenerateDrawCommands(fields);
+        this.isDrawable = this.drawCalls.NotEmpty();
+      }
+
+      public DefaultObjectDrawer(FieldInfo field, Type type) : base(type)
       {
+        this.displayName = ObjectNames.NicifyVariableName(field.Name);
         this.height = lineHeight;
         this.drawCalls = GenerateDrawCommands(fields);
         this.isDrawable = this.drawCalls.NotEmpty();
@@ -39,27 +47,39 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Methods: Draw
       //------------------------------------------------------------------------/
-      public override bool DrawEditorGUILayout(object target)
+      public override bool DrawEditorGUILayout(object target, bool isChild = false)
       {
         bool changed = false;
         string content = this.isDrawable ? this.displayName : $"No serialized fields available";
         UnityEditor.EditorGUILayout.LabelField(content);
 
+        if (isChild)
+          EditorGUI.indentLevel++;
+
         foreach (var call in drawCalls)
         {
-          if (call.hasChildren)
+          if (call.isField)
           {
+            //call.field.Name
+            //EditorGUI.indentLevel++;
             changed |= call.drawer.DrawEditorGUILayout(target);
+            //EditorGUI.indentLevel--;
           }          
           else
           {
             //UnityEditor.EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            //EditorGUI.indentLevel++;
             object value = GetValueOrSetDefault(call.field, target);
-            changed |= call.drawer.DrawEditorGUILayout(value);
+            changed |= call.drawer.DrawEditorGUILayout(value, true);
+            //EditorGUI.indentLevel--;
             //UnityEditor.EditorGUILayout.EndVertical();
           }
+          //EditorGUI.indentLevel = 0;
 
         }
+
+        if (isChild)
+          EditorGUI.indentLevel--;
         return changed;
       }
 
@@ -72,7 +92,7 @@ namespace Stratus
         // Draw all drawers
         foreach (var call in drawCalls)
         {
-          if (call.hasChildren)
+          if (call.isField)
           {
             changed |= call.drawer.DrawEditorGUI(position, target);
           }
@@ -99,7 +119,7 @@ namespace Stratus
         // If the field hasn't been instantiated
         if (value == null)
         {
-          value = Activator.CreateInstance(this.type);
+          value = Activator.CreateInstance(field.FieldType);
           field.SetValue(target, value);
         }
         return value;
@@ -128,9 +148,11 @@ namespace Stratus
           }
           else
           {
-            drawer = GetDrawer(fieldType); 
+            drawer = new DefaultObjectDrawer(field, fieldType); //  GetDrawer(field);
+            //drawer.displayName = field.Name;
           }
 
+          //drawer.displayName = field.Name;
           DrawCommand drawCommand = new DrawCommand(drawer, field, isUnitySupportedType);
           if (drawer.isDrawable)
             this.height += drawer.height;
@@ -183,7 +205,7 @@ namespace Stratus
         return changed;
       }
 
-      public override bool DrawEditorGUILayout(object target)
+      public override bool DrawEditorGUILayout(object target, bool isChild = false)
       {
         EditorGUI.BeginChangeCheck();
         this.OnDrawEditorGUILayout((T)target);

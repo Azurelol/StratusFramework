@@ -58,13 +58,25 @@ namespace Stratus.AI
   public abstract class PreExecutionDecorator : Decorator
   {
     protected abstract bool OnDecoratorCanChildExecute(Arguments args);
+
     protected override void OnStart(Arguments args)
     {
       this.OnDecoratorStart(args);
-      //if (this.OnDecoratorCanChildExecute(args))
-      //  this.StartChild(args);
-      //else
-      //  this.End(args, Status.Failure);
+      if (this.OnDecoratorCanChildExecute(args))
+        this.child.Start(args, OnChildEnded);
+      else
+        this.End(args, Status.Failure);
+    }
+
+    protected override Status OnUpdate(Arguments agent)
+    {
+      return Status.Running;
+    }
+
+    private bool OnChildEnded(Arguments args, Status status)
+    {
+      this.End(args, status);
+      return true;
     }
   }
 
@@ -86,22 +98,26 @@ namespace Stratus.AI
       return Status.Running;
     }
 
-    private void OnChildEnded(Arguments args, Status status)
+    private bool OnChildEnded(Arguments args, Status status)
     {
       bool restart = OnDecoratorChildEnded(args, status);
-      Trace.Script($"Restart {child.fullName}? {restart}");
+      //Trace.Script($"Restart {child.fullName}? {restart}");
       if (restart)
+      {
         this.StartChild(args);
-      else
-        this.End(args, this.child.status);
+        return false;
+      }
+
+      this.End(args, this.child.status);
+      return true;
     }
 
     private void StartChild(Arguments args)
     {
       if (this.child == null)
-        throw new ArgumentNullException($"There's no child for this decorator!");
+        throw new ArgumentNullException($"There's no child for the decorator {fullName}");
 
-      Trace.Script($"Starting {child.fullName}");
+      //Trace.Script($"Starting {child.fullName}");
       this.child.Start(args, this.OnChildEnded);
     }
 

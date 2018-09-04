@@ -5,8 +5,7 @@ namespace Stratus
   /// <summary>
   /// A counter of items, which is incremented one at a time.
   /// </summary>
-  [Serializable]
-  public struct Counter
+  public class Counter
   {
     //------------------------------------------------------------------------/
     // Properties
@@ -56,7 +55,13 @@ namespace Stratus
     public Counter(int total)
     {
       this.total = total;
-      current = 0;
+      this.current = 0;
+    }
+
+    public Counter()
+    {
+      this.total = 1;
+      this.current = 0;
     }
 
     //------------------------------------------------------------------------/

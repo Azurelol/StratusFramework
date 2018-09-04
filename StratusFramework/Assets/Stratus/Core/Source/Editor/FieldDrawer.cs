@@ -51,7 +51,7 @@ namespace Stratus
         this.height = StratusEditorUtility.lineHeight;
       }
 
-      public override bool DrawEditorGUILayout(object target)
+      public override bool DrawEditorGUILayout(object target, bool isChild = false)
       {
         EditorGUI.BeginChangeCheck();
         switch (propertyType)

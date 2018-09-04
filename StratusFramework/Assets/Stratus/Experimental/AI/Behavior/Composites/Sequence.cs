@@ -36,7 +36,7 @@ namespace Stratus
         bool valid = this.childrenEnumerator.MoveNext();
         if (valid)
         {
-          Trace.Script($"Moved onto next child {currentChild.fullName}");
+          //Trace.Script($"Moved onto next child {currentChild.fullName}");
           this.currentChild.Start(args, this.OnCompositeChildEnded);
         }
         else
@@ -46,18 +46,18 @@ namespace Stratus
         return valid;
       }
 
-      protected override void OnCompositeChildEnded(Arguments args, Status status)
+      protected override bool OnCompositeChildEnded(Arguments args, Status status)
       {
         if (status == Status.Failure)
         {
           this.End(args, Status.Failure);
-          return;
+          return true;
         }
-
-        if (!this.OnCompositeSetNextChild(args))
+        else if (!this.OnCompositeSetNextChild(args))
         {
           this.End(args, Status.Success);
         }
+        return true;
       }
 
     }

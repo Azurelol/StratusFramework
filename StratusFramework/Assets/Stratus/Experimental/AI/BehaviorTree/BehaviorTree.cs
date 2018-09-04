@@ -70,14 +70,14 @@ namespace Stratus
 
       public override void OnBehaviorStarted(Behavior behavior)
       {
-        Trace.Script($"Adding {behavior}");
+        //Trace.Script($"Adding {behavior}");
         stack.Add(behavior);
       }
 
       public override void OnBehaviorEnded(Behavior behavior, Behavior.Status status)
       {
         stack.RemoveLast();
-        Trace.Script($"Removing {behavior}");
+        //Trace.Script($"Removing {behavior}");
         if (stack.Empty())
           this.OnReset();
       }

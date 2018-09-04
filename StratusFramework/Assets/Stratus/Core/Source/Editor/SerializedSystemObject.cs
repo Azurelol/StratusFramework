@@ -63,6 +63,21 @@ namespace Stratus
       return objectDrawers[type];
     }
 
+    /// <summary>
+    /// Gets the object drawer for the given type
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static ObjectDrawer GetDrawer(FieldInfo field)
+    {
+      Type type = field.FieldType;
+      if (!objectDrawers.ContainsKey(type))
+        objectDrawers.Add(type, new DefaultObjectDrawer(field, type));
+      ObjectDrawer drawer = objectDrawers[type];
+      //drawer.SetDisplayName(field.Name);
+      return drawer;
+    }
+
     //------------------------------------------------------------------------/
     // Methods
     //------------------------------------------------------------------------/

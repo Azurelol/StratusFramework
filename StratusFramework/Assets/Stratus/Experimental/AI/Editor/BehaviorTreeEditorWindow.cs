@@ -51,9 +51,8 @@ namespace Stratus
               window.AddParentNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
             });
           }
-
           // Composites
-          if (treeElement.data is Composite)
+          else if (treeElement.data is Composite)
           {
             menu.AddPopup("Add/Tasks", BehaviorTreeEditorWindow.taskTypes.displayedOptions, (int index) =>
             {
@@ -70,6 +69,22 @@ namespace Stratus
               window.AddChildNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
             });
           }
+          // Decorators
+          else if (treeElement.data is Decorator)
+          {
+            menu.AddPopup("Add/Tasks", BehaviorTreeEditorWindow.taskTypes.displayedOptions, (int index) =>
+            {
+              window.AddChildNode(BehaviorTreeEditorWindow.taskTypes.AtIndex(index), treeElement);
+            });
+
+            menu.AddPopup("Add/Composites", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
+            {
+              window.AddChildNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), treeElement);
+            });
+          }
+
+
+          // Common
           menu.AddItem("Remove", false, () => window.RemoveNode(treeElement));
         }
 

@@ -57,7 +57,7 @@ MonoBehaviour:
       Data: 3|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 5
+      Data: 1
     - Name: name
       Entry: 1
       Data: Sequence
@@ -97,7 +97,7 @@ MonoBehaviour:
       Data: 6|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 3
+      Data: 4
     - Name: name
       Entry: 1
       Data: LogTask
@@ -125,7 +125,7 @@ MonoBehaviour:
       Data: 
     - Name: message
       Entry: 1
-      Data: Beep
+      Data: Boop
     - Name: 
       Entry: 8
       Data: 
@@ -140,37 +140,67 @@ MonoBehaviour:
       Data: 9|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 6
+      Data: 2
     - Name: name
       Entry: 1
-      Data: Loop
+      Data: CompareSymbol
     - Name: depth
       Entry: 3
       Data: 1
     - Name: data
       Entry: 7
-      Data: 10|Stratus.AI.Loop, Assembly-CSharp
+      Data: 10|Stratus.AI.CompareSymbol, Assembly-CSharp
     - Name: label
       Entry: 6
       Data: 
-    - Name: counter
+    - Name: comparison
       Entry: 3
-      Data: 3
+      Data: 0
+    - Name: first
+      Entry: 7
+      Data: 11|Stratus.Blackboard+SymbolReference, Assembly-CSharp
+    - Name: key
+      Entry: 1
+      Data: A
+    - Name: scope
+      Entry: 3
+      Data: 0
+    - Name: type
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: second
+      Entry: 7
+      Data: 12|Stratus.Blackboard+SymbolReference, Assembly-CSharp
+    - Name: key
+      Entry: 1
+      Data: B
+    - Name: scope
+      Entry: 3
+      Data: 0
+    - Name: type
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 8
       Data: 
     - Name: dataTypeName
       Entry: 1
-      Data: Loop
+      Data: CompareSymbol
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: 11|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+      Data: 13|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 7
+      Data: 3
     - Name: name
       Entry: 1
       Data: LogTask
@@ -179,13 +209,13 @@ MonoBehaviour:
       Data: 2
     - Name: data
       Entry: 7
-      Data: 12|Stratus.AI.LogTask, Assembly-CSharp
+      Data: 14|Stratus.AI.LogTask, Assembly-CSharp
     - Name: label
       Entry: 6
       Data: 
     - Name: services
       Entry: 7
-      Data: 13|System.Collections.Generic.List`1[[Stratus.AI.Service, Assembly-CSharp]],
+      Data: 15|System.Collections.Generic.List`1[[Stratus.AI.Service, Assembly-CSharp]],
         mscorlib
     - Name: 
       Entry: 12
@@ -198,7 +228,7 @@ MonoBehaviour:
       Data: 
     - Name: message
       Entry: 1
-      Data: Boop
+      Data: Beep
     - Name: 
       Entry: 8
       Data: 
@@ -216,7 +246,7 @@ MonoBehaviour:
       Data: 
     - Name: idCounter
       Entry: 3
-      Data: 8
+      Data: 5
     - Name: _maxDepth
       Entry: 3
       Data: 2

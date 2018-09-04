@@ -43,18 +43,18 @@ namespace Stratus
       }
 
 
-      protected override void OnCompositeChildEnded(Arguments args, Status status)
+      protected override bool OnCompositeChildEnded(Arguments args, Status status)
       {
         if (status == Status.Success)
         {
           this.End(args, Status.Success);
-          return;
+          return true;
         }
-
-        if (!this.OnCompositeSetNextChild(args))
+        else if (!this.OnCompositeSetNextChild(args))
         {
           this.End(args, Status.Failure);
         }
+        return true;
       }
 
     }

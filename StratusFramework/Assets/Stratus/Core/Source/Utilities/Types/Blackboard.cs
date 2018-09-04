@@ -83,11 +83,36 @@ namespace Stratus
     /// A reference of a symbol within the blackboard
     /// </summary>
     [Serializable]
+    public class SymbolReference
+    {
+      public string key;
+      public Scope scope;
+      public Variant.VariantType type;
+
+      public object GetValue(Blackboard blackboard, GameObject gameObject)
+      {
+        if (scope == Scope.Local)
+          return blackboard.GetLocal(gameObject, key);
+        return blackboard.GetGlobal(key);
+      }
+
+      public void SetValue(Blackboard blackboard, GameObject gameObject, object value)
+      {
+        if (scope == Scope.Local)
+          blackboard.SetLocal(gameObject, key, value);
+        else
+          blackboard.SetGlobal(key, value);
+      }
+    }
+
+    /// <summary>
+    /// A reference of a symbol within the blackboard
+    /// </summary>
+    [Serializable]
     public class Reference<T>// where T : struct
     {
       public string key;
       public Scope scope;
-
       public Variant.VariantType type { get; } = VariantUtilities.Convert(typeof(T));
 
       public T GetValue(Blackboard blackboard, GameObject gameObject)

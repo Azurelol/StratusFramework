@@ -20,16 +20,33 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Declarations
       //------------------------------------------------------------------------/
+      public struct Arguments
+      {
+        public object target;
+        public bool isChild;
+      }
+
+      //------------------------------------------------------------------------/
+      // Properties
+      //------------------------------------------------------------------------/
       public string name { get; protected set; }
       public string displayName { get; protected set; }
       public Type type { get; protected set; }
-      public abstract bool DrawEditorGUILayout(object target);
+      public abstract bool DrawEditorGUILayout(object target, bool isChild = false);
       public abstract bool DrawEditorGUI(Rect position, object target);
       public bool isDrawable { get; protected set; }
       public bool isPrimitive { get; protected set; }
       public float height { get; protected set; }
       public static float lineHeight => StratusEditorUtility.lineHeight;
       public static float labelWidth => StratusEditorUtility.labelWidth;
+
+      //------------------------------------------------------------------------/
+      // Methods
+      //------------------------------------------------------------------------/
+      internal void SetDisplayName(string name)
+      {
+        this.displayName = ObjectNames.NicifyVariableName(name);
+      }
     }
 
     /// <summary>
@@ -45,7 +62,7 @@ namespace Stratus
 
       public ObjectDrawer(Type type)
       {
-        this.type = type;
+        this.type = type;        
         MemberInfo[] members = OdinSerializer.FormatterUtilities.GetSerializableMembers(type, OdinSerializer.SerializationPolicies.Unity);
         this.fields = members.OfType<FieldInfo>().ToArray();
         this.fieldsByName.AddRange(this.fields, (FieldInfo field) => field.Name);
@@ -57,13 +74,13 @@ namespace Stratus
     {
       public Drawer drawer;
       public FieldInfo field;
-      public bool hasChildren;
+      public bool isField;
 
       public DrawCommand(Drawer drawer, FieldInfo field, bool isField)
       {
         this.drawer = drawer;
         this.field = field;
-        this.hasChildren = isField;
+        this.isField = isField;
       }
     }
 

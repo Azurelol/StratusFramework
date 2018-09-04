@@ -33,7 +33,7 @@ namespace Stratus
       //------------------------------------------------------------------------/
       protected abstract void OnCompositeStart(Arguments args);
       protected abstract bool OnCompositeSetNextChild(Arguments args);
-      protected abstract void OnCompositeChildEnded(Arguments args, Status status);
+      protected abstract bool OnCompositeChildEnded(Arguments args, Status status);
 
       //------------------------------------------------------------------------/
       // Messages
@@ -71,6 +71,12 @@ namespace Stratus
       {
         this.children = children;
       }
+
+      //private bool OnChildEnded(Arguments args, Status status)
+      //{
+      //  this.OnCompositeChildEnded(args, status);
+      //  return true;
+      //}
 
     } 
   }

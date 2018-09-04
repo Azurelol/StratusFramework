@@ -48,7 +48,8 @@ namespace Stratus
       {
         public Agent agent;
         public BehaviorSystem system;
-        public Status lastStatus;
+
+        public Blackboard blackboard => agent.blackboard;
       }
 
       public class BehaviorEvent : Stratus.Event { public Behavior behavior; }
@@ -108,7 +109,7 @@ namespace Stratus
       /// <summary>
       /// Invoked whenever this behavior ends
       /// </summary>
-      public System.Action<Arguments, Status> onEnded { get; private set; }
+      public System.Func<Arguments, Status, bool> onEnded { get; private set; }
 
       //----------------------------------------------------------------------/
       // Interface
@@ -154,14 +155,14 @@ namespace Stratus
 
       public void Start(Arguments args)
       {
-        Trace.Script($"Starting {fullName}");
+        //Trace.Script($"Starting {fullName}");
         this.started = true;
         this.status = Status.Running;
         args.system.OnBehaviorStarted(this);
         this.OnStart(args);
       }
 
-      public void Start(Arguments args, System.Action<Arguments, Status> onEnded)
+      public void Start(Arguments args, System.Func<Arguments, Status, bool> onEnded)
       {
         this.onEnded = onEnded;
         this.Start(args);
@@ -169,11 +170,16 @@ namespace Stratus
 
       public void End(Arguments args)
       {
-        Trace.Script($"Ending {fullName}");
+        //Trace.Script($"Ending {fullName}");
         this.OnEnd(args);
         args.system.OnBehaviorEnded(this, status);
-        this.onEnded?.Invoke(args, this.status);
-        this.Reset();
+        bool reset = (this.onEnded != null) ? this.onEnded.Invoke(args, this.status) : true;
+        //if (this.onEnded != null)
+        //{
+        //  bool reset this.onEnded?.Invoke(args, this.status);
+        //}
+        if (reset)
+          this.Reset();
       }
 
       public void End(Arguments args, Status status)
@@ -184,9 +190,23 @@ namespace Stratus
 
       public void Reset()
       {
-        Trace.Script($"Resetting {fullName}");
+       // Trace.Script($"Resetting {fullName}");
         this.started = false;
         this.onEnded = null;
+      }
+
+      //----------------------------------------------------------------------/
+      // Methods
+      //----------------------------------------------------------------------/
+      /// <summary>
+      /// Retrieves the value of a symbol using the reference and the current arguments
+      /// </summary>
+      /// <param name="args"></param>
+      /// <param name="symbol"></param>
+      /// <returns></returns>
+      protected object GetSymbolValue(Arguments args, Blackboard.SymbolReference symbol)
+      {
+        return symbol.GetValue(args.blackboard, args.agent.gameObject);
       }
 
       //----------------------------------------------------------------------/
