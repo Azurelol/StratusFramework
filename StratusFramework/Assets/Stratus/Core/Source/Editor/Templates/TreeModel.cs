@@ -226,6 +226,17 @@ namespace Stratus
     /// <param name="elements"></param>
     public void MoveElements(TreeElement parentElement, int insertionIndex, List<TreeElement> elements)
     {
+      MoveElements(parentElement, insertionIndex, elements.ToArray());
+    }
+
+    /// <summary>
+    /// Reparents the given elements
+    /// </summary>
+    /// <param name="parentElement"></param>
+    /// <param name="insertionIndex"></param>
+    /// <param name="elements"></param>
+    public void MoveElements(TreeElement parentElement, int insertionIndex, params TreeElement[] elements)
+    {
       if (insertionIndex < 0)
         throw new ArgumentException("Invalid input: insertionIndex is -1, client needs to decide what index elements should be reparented at");
 

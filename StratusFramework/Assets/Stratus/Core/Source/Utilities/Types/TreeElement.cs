@@ -41,6 +41,10 @@ namespace Stratus
     /// Howw many children this element has
     /// </summary>
     public int childrenCount => children != null ? children.Count : 0;
+    /// <summary>
+    /// How many children in total this element has (including subchildren)
+    /// </summary>
+    public int totalChildrenCount  => GetTotalChildrenCount(this);
 
     //------------------------------------------------------------------------/
     // Methods
@@ -102,11 +106,6 @@ namespace Stratus
       root.depth = -1;
       root.id = 0;
       return root;
-    }
-
-    public static void AddElement<TreeElementType>(IList<TreeElementType> list, TreeElementType element)
-    {
-      //foreach(var)
     }
 
     ///// <summary>
@@ -359,6 +358,47 @@ namespace Stratus
       }
 
       return treeList;
+    }
+
+    public static TreeElementType[] GetChildren<TreeElementType, DataType>(TreeElementType element)
+      where TreeElementType : TreeElement<DataType>, new()
+      where DataType : class, INamed
+    {
+      List<TreeElementType> children = new List<TreeElementType>();
+      GetChildrenRecursive<TreeElementType, DataType>(element, children);
+      return children.ToArray();
+    }
+
+    private static void GetChildrenRecursive<TreeElementType, DataType>(TreeElementType element, List<TreeElementType> children)
+      where TreeElementType : TreeElement<DataType>, new()
+      where DataType : class, INamed
+    {
+      foreach (var child in element.children)
+      {
+        TreeElementType derivedChild = (TreeElementType)child;
+        children.Add(derivedChild);
+        GetChildrenRecursive<TreeElementType, DataType>(derivedChild, children);
+      }
+    }
+
+
+    public static int GetTotalChildrenCount(TreeElement element)
+    {
+      int count = 0;
+      GetTotalChildrenCount(element, ref count);
+      return count;
+    }
+
+    private static void GetTotalChildrenCount(TreeElement element, ref int count)
+    {
+      if (!element.hasChildren)
+        return;
+
+      count += element.childrenCount;
+      foreach (var child in element.children)
+      {        
+        GetTotalChildrenCount(child, ref count);
+      }
     }
 
   }

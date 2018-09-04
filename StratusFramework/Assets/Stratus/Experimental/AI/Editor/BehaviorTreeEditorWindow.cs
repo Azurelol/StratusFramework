@@ -427,6 +427,7 @@ namespace Stratus
       private void Save()
       {
         EditorUtility.SetDirty(behaviorTree);
+        Undo.RecordObject(behaviorTree, "Behavior Tree Edit");
         Refresh();
       }
 

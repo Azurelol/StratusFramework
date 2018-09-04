@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using OdinSerializer;
+using System.Linq;
 
 namespace Stratus
 {
@@ -153,7 +154,8 @@ namespace Stratus
     {
       // Insert element below the last child
       TreeElementType element = CreateElement(data, parent.depth + 1);
-      this.elements.Insert(FindLastChildIndex(parent) + 1, element);
+      int insertionIndex = FindLastChildIndex(parent) + 1;      
+      this.elements.Insert(insertionIndex, element);
     }
 
     public void AddParentElement(DataType data, TreeElementType child)
@@ -165,6 +167,53 @@ namespace Stratus
       {
         childChild.depth++;
       }
+    }
+
+    /// <summary>
+    /// Reparents the given elements
+    /// </summary>
+    /// <param name="parentElement"></param>
+    /// <param name="insertionIndex"></param>
+    /// <param name="elements"></param>
+    public void MoveElements(TreeElementType parentElement, int insertionIndex, List<TreeElementType> elements)
+    {
+      MoveElements(parentElement, insertionIndex, elements.ToArray());
+    }
+
+    /// <summary>
+    /// Reparents the given elements
+    /// </summary>
+    /// <param name="parentElement"></param>
+    /// <param name="insertionIndex"></param>
+    /// <param name="elements"></param>
+    public void MoveElements(TreeElementType parentElement, int insertionIndex, params TreeElementType[] elements)
+    {
+      if (insertionIndex < 0)
+        throw new ArgumentException("Invalid input: insertionIndex is -1, client needs to decide what index elements should be reparented at");
+
+      // Invalid reparenting input
+      if (parentElement == null)
+        return;
+
+      // We are moving items so we adjust the insertion index to accomodate that any items above the insertion index is removed before inserting
+      if (insertionIndex > 0)
+        insertionIndex -= parentElement.children.GetRange(0, insertionIndex).Count(elements.Contains);
+
+      // Remove draggedItems from their parents
+      foreach (var draggedItem in elements)
+      {
+        draggedItem.parent.children.Remove(draggedItem);  // remove from old parent
+        draggedItem.parent = parentElement;         // set new parent
+      }
+
+      if (parentElement.children == null)
+        parentElement.children = new List<TreeElement>();
+
+      // Insert dragged items under new parent
+      parentElement.children.InsertRange(insertionIndex, elements);
+
+      TreeElement.UpdateDepthValues(root);
+      //TreeElement.TreeToList(this.root, this.data);
     }
 
     public void RemoveElement(TreeElementType element)
@@ -216,6 +265,8 @@ namespace Stratus
       this.elements.Add(element);      
     }
 
+    private TreeElementType GetElement(int index) => this.elements[index];
+
     private TreeElementType CreateElement(DataType data, int depth)
     {
       TreeElementType element = new TreeElementType();
@@ -252,18 +303,15 @@ namespace Stratus
     private int FindLastChildIndex(TreeElementType element)
     {
       int index = FindIndex(element);
-      int lastIndex = index + element.childrenCount;
+      int lastIndex = index + element.totalChildrenCount;
+      Trace.Script($"index ={index}, lastIndex = {lastIndex}");
       return lastIndex;
     }
 
     private TreeElementType[] FindChildren(TreeElementType element)
     {
       int index = FindIndex(element);
-      //int lastIndex = index + element.childrenCount;
-      //List<TreeElementType>
-      //for(int i = index; i < lastIndex; ++i)
-      //  this.elements.[i]
-      return this.elements.GetRange(index, element.childrenCount).ToArray();
+      return this.elements.GetRange(index, element.totalChildrenCount).ToArray();
     }
 
 
