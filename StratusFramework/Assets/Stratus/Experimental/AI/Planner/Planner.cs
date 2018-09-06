@@ -163,7 +163,10 @@ namespace Stratus
         }
       }
 
-
+      protected override void OnAssert()
+      {
+        throw new NotImplementedException();
+      }
     }
   }
 

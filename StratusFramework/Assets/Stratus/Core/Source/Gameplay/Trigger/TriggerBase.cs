@@ -81,7 +81,7 @@ namespace Stratus.Gameplay
     ///// </summary>
     //public virtual ValidateMessage validation => null;
 
-    public virtual Validation Validate() => null;
+    public virtual ObjectValidation Validate() => null;
 
     //------------------------------------------------------------------------/
     // Messages

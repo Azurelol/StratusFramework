@@ -220,9 +220,9 @@ namespace Stratus.Gameplay
       debug = toggle;
     }
 
-    Validation[] ValidatorAggregator.Validate()
+    ObjectValidation[] ValidatorAggregator.Validate()
     {
-      return Validation.Aggregate(triggerSystem);
+      return ObjectValidation.Aggregate(triggerSystem);
     }
 
     //------------------------------------------------------------------------/

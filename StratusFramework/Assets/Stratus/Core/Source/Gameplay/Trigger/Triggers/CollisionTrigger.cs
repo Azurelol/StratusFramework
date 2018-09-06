@@ -74,10 +74,10 @@ namespace Stratus.Gameplay
         proxy.enabled = false;
     }
 
-    public override Validation Validate()
+    public override ObjectValidation Validate()
     {
-      Validation validation = new Validation(Validation.Level.Warning, this);
-      validation.Add(Validation.NullReference(this, $"<i>{description}</i>"));
+      ObjectValidation validation = new ObjectValidation(ObjectValidation.Level.Warning, this);
+      validation.Add(ObjectValidation.NullReference(this, $"<i>{description}</i>"));
       validation.Add(ValidateLayers());
       return validation;
     }

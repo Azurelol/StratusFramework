@@ -66,11 +66,11 @@ namespace Stratus.Gameplay
       }
     }
 
-    public override Validation Validate()
+    public override ObjectValidation Validate()
     {
       if (segment == null)
       {
-        return new Validation(ComposeLog("There is no segment set!"), Validation.Level.Error, this);
+        return new ObjectValidation(ComposeLog("There is no segment set!"), ObjectValidation.Level.Error, this);
       }
 
       return null;

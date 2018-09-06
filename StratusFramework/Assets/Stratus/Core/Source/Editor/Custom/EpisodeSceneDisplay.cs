@@ -54,7 +54,7 @@ namespace Stratus.Gameplay
       StratusEditorUtility.ModifyProperty(episode, "mode", GUIContent.none);
       if (GUILayout.Button("Validate", EditorStyles.miniButtonRight))
       {
-        ValidatorWindow.Open("Episode Validation", Validation.Aggregate(episode));
+        ValidatorWindow.Open("Episode Validation", ObjectValidation.Aggregate(episode));
       }
       EditorGUILayout.EndHorizontal();
 

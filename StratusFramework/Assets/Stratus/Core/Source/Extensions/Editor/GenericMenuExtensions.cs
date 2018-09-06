@@ -81,25 +81,25 @@ namespace Stratus
       }
     }
 
-    public static MessageType Convert(this Validation.Level type)
+    public static MessageType Convert(this ObjectValidation.Level type)
     {
       switch (type)
       {
         default:
-        case Validation.Level.Info: return MessageType.Info;
-        case Validation.Level.Warning: return MessageType.Warning;
-        case Validation.Level.Error: return MessageType.Error;
+        case ObjectValidation.Level.Info: return MessageType.Info;
+        case ObjectValidation.Level.Warning: return MessageType.Warning;
+        case ObjectValidation.Level.Error: return MessageType.Error;
       }
     }
 
-    public static Validation.Level Convert(this MessageType type)
+    public static ObjectValidation.Level Convert(this MessageType type)
     {
       switch (type)
       {
         default:
-        case MessageType.Info: return Validation.Level.Info;
-        case MessageType.Warning: return Validation.Level.Warning;
-        case MessageType.Error: return Validation.Level.Error;
+        case MessageType.Info: return ObjectValidation.Level.Info;
+        case MessageType.Warning: return ObjectValidation.Level.Warning;
+        case MessageType.Error: return ObjectValidation.Level.Error;
       }
     }
 

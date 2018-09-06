@@ -9,7 +9,7 @@ namespace Stratus
   namespace AI
   {
     [CreateAssetMenu(fileName = "Behavior Tree", menuName = "Stratus/AI/Behavior Tree")]
-    public partial class BehaviorTree : BehaviorSystem
+    public partial class BehaviorTree : BehaviorSystem 
     {
       //------------------------------------------------------------------------/
       // Declarations
@@ -68,6 +68,24 @@ namespace Stratus
         }        
       }
 
+      protected override void OnAssert()
+      {
+        if (this.tree == null)
+        {
+          this.tree = new SerializedTree<BehaviorNode, Behavior>();
+          this.tree.root.data = Behavior.Instantiate(typeof(Sequence));
+        }
+
+        try
+        {
+          this.tree.Assert();
+        }
+        catch (Exception e)
+        {
+          this.tree.Repair();
+        }
+      }
+      
       public override void OnBehaviorStarted(Behavior behavior)
       {
         //Trace.Script($"Adding {behavior}");
@@ -138,7 +156,6 @@ namespace Stratus
             decorator?.Set(behaviorNode.GetChildrenData().First());
         }
       }
-
 
 
     }

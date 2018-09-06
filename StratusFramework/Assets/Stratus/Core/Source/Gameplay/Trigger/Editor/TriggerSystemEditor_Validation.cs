@@ -11,7 +11,7 @@ namespace Stratus.Gameplay
     /// </summary>
     private void ValidateAll()
     {
-      var messages = Validation.Aggregate(target);
+      var messages = ObjectValidation.Aggregate(target);
       foreach (var msg in messages)
         AddMessage(msg);
     }
@@ -28,7 +28,7 @@ namespace Stratus.Gameplay
         string msg = $"Triggers marked as persistent ({persistents.Count}):";
         foreach (var t in persistents)
           msg += $"\n- {t.GetType().Name} : <i>{t.description}</i>";
-        AddMessage(new Validation(msg, Validation.Level.Warning, target));
+        AddMessage(new ObjectValidation(msg, ObjectValidation.Level.Warning, target));
       }
       else
         AddMessage($"There are no persistent triggers in this system", UnityEditor.MessageType.Info, null);
@@ -61,12 +61,12 @@ namespace Stratus.Gameplay
     {
       foreach (var t in triggers)
       {
-        var validation = Validation.NullReference(t, $"<i>{t.description}</i>");
+        var validation = ObjectValidation.NullReference(t, $"<i>{t.description}</i>");
         if (validation != null) AddMessage(validation);
       }
       foreach (var t in triggerables)
       {
-        var validation = Validation.NullReference(t, $"<i>{t.description}</i>");
+        var validation = ObjectValidation.NullReference(t, $"<i>{t.description}</i>");
         if (validation != null) AddMessage(validation);
       }
     }

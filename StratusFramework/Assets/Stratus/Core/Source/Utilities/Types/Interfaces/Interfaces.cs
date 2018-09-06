@@ -50,10 +50,10 @@ namespace Stratus
       /// Validates all loaded behaviours that implement Validator
       /// </summary>
       /// <param name="toggle"></param>
-      public static Validation[] Validate()
+      public static ObjectValidation[] Validate()
       {
         Validator[] validators = FindInterfaces<Validator>();
-        var messages = Validation.Aggregate(validators);
+        var messages = ObjectValidation.Aggregate(validators);
         Trace.Script($"Validated {validators.Length} behaviours.");
         return messages.ToArray();
 
@@ -64,10 +64,10 @@ namespace Stratus
       /// Validates all loaded behaviours that implement Validator
       /// </summary>
       /// <param name="toggle"></param>
-      public static Validation[] ValidateAggregate()
+      public static ObjectValidation[] ValidateAggregate()
       {
         ValidatorAggregator[] validators = FindInterfaces<ValidatorAggregator>();
-        var messages = Validation.Aggregate(validators);
+        var messages = ObjectValidation.Aggregate(validators);
         Trace.Script($"Validated {validators.Length} behaviours.");
         return messages.ToArray();
         // Open a window here ..

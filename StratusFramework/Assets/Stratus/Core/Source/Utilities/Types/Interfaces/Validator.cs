@@ -9,7 +9,7 @@ namespace Stratus
   /// <summary>
   /// A validation message for the user
   /// </summary>
-  public class Validation
+  public class ObjectValidation  : Validation
   {
     //------------------------------------------------------------------------/
     // Declarations
@@ -27,21 +27,17 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    public string message;
-    public Level type;
-    public UnityEngine.Object target;
-    public Func<bool> onValidate;
-    public System.Action onSelect;
-    public bool hasContext;
-    public bool valid => !string.IsNullOrEmpty(message);
+    public Level type { get; protected set; }
+    public UnityEngine.Object target { get; protected set; }
+    public Func<bool> onValidate { get; protected set; }
+    public System.Action onSelect { get; protected set; }
+    public bool hasContext { get; protected set; }
 
     //------------------------------------------------------------------------/
-    // Methods
+    // CTOR
     //------------------------------------------------------------------------/
-
-    public Validation(string message, Level type, UnityEngine.Object target, Func<bool> onValidate = null)
+    public ObjectValidation(string message, Level type, UnityEngine.Object target, Func<bool> onValidate = null) : base(!string.IsNullOrEmpty(message), message)
     {
-      this.message = message;
       this.type = type;
       this.target = target;
       this.onSelect = null;
@@ -49,9 +45,8 @@ namespace Stratus
       hasContext = target != null || onValidate != null;
     }
 
-    public Validation(string message, Level type, System.Action onSelect, Func<bool> onValidate = null)
+    public ObjectValidation(string message, Level type, System.Action onSelect, Func<bool> onValidate = null) : base(!string.IsNullOrEmpty(message), message)
     {
-      this.message = message;
       this.type = type;
       this.target = null;
       this.onSelect = onSelect;
@@ -59,9 +54,8 @@ namespace Stratus
       hasContext = target != null || onValidate != null || onSelect != null;
     }
 
-    public Validation(Level type, UnityEngine.Object target, Func<bool> onValidate = null)
+    public ObjectValidation(Level type, UnityEngine.Object target, Func<bool> onValidate = null)
     {
-      this.message = string.Empty;
       this.type = type;
       this.target = target;
       this.onSelect = null;
@@ -69,9 +63,12 @@ namespace Stratus
       hasContext = target != null || onValidate != null;
     }
 
-    public static Validation[] Aggregate(IEnumerable<Interfaces.Validator> validators)
+    //------------------------------------------------------------------------/
+    // Methods
+    //------------------------------------------------------------------------/
+    public static ObjectValidation[] Aggregate(IEnumerable<Interfaces.Validator> validators)
     {
-      List<Validation> messages = new List<Validation>();
+      List<ObjectValidation> messages = new List<ObjectValidation>();
       foreach (var t in validators)
       {
         var msg = t.Validate();
@@ -81,9 +78,9 @@ namespace Stratus
       return messages.ToArray();
     }
 
-    public static Validation[] Aggregate(IEnumerable<Interfaces.ValidatorAggregator> validators)
+    public static ObjectValidation[] Aggregate(IEnumerable<Interfaces.ValidatorAggregator> validators)
     {
-      List<Validation> messages = new List<Validation>();
+      List<ObjectValidation> messages = new List<ObjectValidation>();
       foreach (var t in validators)
       {
         var msg = t.Validate();
@@ -93,17 +90,17 @@ namespace Stratus
       return messages.ToArray();
     }
 
-    public static Validation[] Aggregate(Interfaces.ValidatorAggregator validator)
+    public static ObjectValidation[] Aggregate(Interfaces.ValidatorAggregator validator)
     {
       return validator.Validate();
     }
 
-    public static Validation Generate(Interfaces.Validator validator)
+    public static ObjectValidation Generate(Interfaces.Validator validator)
     {
       return validator.Validate();
      }
 
-    public static Validation NullReference(Behaviour behaviour, string description = null)
+    public static ObjectValidation NullReference(Behaviour behaviour, string description = null)
     {
       FieldInfo[] nullFields = Stratus.Utilities.Reflection.GetFieldsWithNullReferences(behaviour);
       if (nullFields.Empty())
@@ -116,7 +113,7 @@ namespace Stratus
       string msg = $"{label} has the following fields currently set to null:";
       foreach (var f in nullFields)
         msg += $"\n - <i>{f.Name}</i>";
-      Validation validation = new Validation(msg, Level.Warning, behaviour);
+      ObjectValidation validation = new ObjectValidation(msg, Level.Warning, behaviour);
       return validation;
     }
 
@@ -125,7 +122,7 @@ namespace Stratus
     /// The level is raised to the highest of the two.
     /// </summary>
     /// <param name="other"></param>
-    public void Add(Validation other)
+    public void Add(ObjectValidation other)
     {
       if (other == null || other.target != this.target)
         return;
@@ -153,7 +150,7 @@ namespace Stratus
     /// </summary>
     public interface Validator
     {
-      Validation Validate();
+      ObjectValidation Validate();
     }
 
     /// <summary>
@@ -161,7 +158,7 @@ namespace Stratus
     /// </summary>
     public interface ValidatorAggregator
     {
-      Validation[] Validate();
+      ObjectValidation[] Validate();
     }
 
   }

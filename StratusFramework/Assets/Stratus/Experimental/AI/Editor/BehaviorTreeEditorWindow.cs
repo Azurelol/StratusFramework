@@ -424,6 +424,7 @@ namespace Stratus
 
       private void OnTreeSet()
       {
+        this.behaviorTree.Assert();
         this.behaviorTreeProperties = new SerializedPropertyMap(this.behaviorTree, typeof(StratusScriptable));
         //this.treeProperty = this.behaviorTreeProperties.GetProperty(nameof(BehaviorTree.tree));
         //this.treeElementsProperty = this.treeElementsProperty.FindPropertyRelative("elements");

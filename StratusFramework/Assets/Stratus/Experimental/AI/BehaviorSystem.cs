@@ -73,6 +73,7 @@ namespace Stratus
       protected abstract void OnInitialize();
       protected abstract void OnUpdate();
       protected abstract void OnReset();
+      protected abstract void OnAssert();
       protected abstract void OnBehaviorAdded(Behavior behavior);
       public abstract void OnBehaviorStarted(Behavior behavior);
       public abstract void OnBehaviorEnded(Behavior behavior, Behavior.Status status);
@@ -105,6 +106,15 @@ namespace Stratus
       public void ResetSystem()
       {
         this.OnReset();
+      }
+
+      /// <summary>
+      /// Validates the correctness of this system
+      /// </summary>
+      /// <returns></returns>
+      public void Assert()
+      {
+        this.OnAssert();
       }
 
       /// <summary>

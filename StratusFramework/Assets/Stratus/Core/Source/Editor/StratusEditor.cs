@@ -163,7 +163,7 @@ namespace Stratus
     /// <summary>
     /// A list of all messages added
     /// </summary>
-    public List<Validation> messages { get; private set; } = new List<Validation>();
+    public List<ObjectValidation> messages { get; private set; } = new List<ObjectValidation>();
     //public System.Action onEnteredEditMode { get; protected set; }
     //public System.Action onExitingEditMode { get; protected set; }
     //public System.Action onEnteredPlayMode { get; protected set; }
@@ -361,7 +361,7 @@ namespace Stratus
       }
     }
 
-    private void RemoveMessage(Validation message)
+    private void RemoveMessage(ObjectValidation message)
     {
       endOfFrameRequests.Add(() => { messages.Remove(message); });
     }
@@ -924,7 +924,7 @@ namespace Stratus
     /// <param name="target"></param>
     public void AddMessage(string message, MessageType type, UnityEngine.Object target, Func<bool> onValidate = null)
     {
-      var contextMessage = new Validation(message, type.Convert(), target);
+      var contextMessage = new ObjectValidation(message, type.Convert(), target);
       messages.Add(contextMessage);
     }
 
@@ -934,7 +934,7 @@ namespace Stratus
     /// <param name="message"></param>
     /// <param name="type"></param>
     /// <param name="target"></param>
-    public void AddMessage(Validation message)
+    public void AddMessage(ObjectValidation message)
     {
       messages.Add(message);
     }

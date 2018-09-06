@@ -56,7 +56,7 @@ namespace Stratus
     // Fields
     //------------------------------------------------------------------------/
     private string header;
-    private Validation[] messages;
+    private ObjectValidation[] messages;
     public static ValidatorWindow window;
     private Vector2 scrollPos, sidebarScrollPos;
     [SerializeField]
@@ -74,7 +74,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Static
     //------------------------------------------------------------------------/
-    public static void Open(string header, Validation[] messages)
+    public static void Open(string header, ObjectValidation[] messages)
     {
       window = (ValidatorWindow)EditorWindow.GetWindow(typeof(ValidatorWindow), true, "Stratus Validator");      
       window.ShowValidation(header, messages);
@@ -213,7 +213,7 @@ namespace Stratus
       treeView.OnGUI(new Rect(0, 0, position.width, position.height));
     }
 
-    private void ShowValidation(string header, Validation[] messages)
+    private void ShowValidation(string header, ObjectValidation[] messages)
     {
       this.header = header;
       this.messages = messages;

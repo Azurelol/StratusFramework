@@ -398,9 +398,9 @@ namespace Stratus.Gameplay
       }
     }
 
-    Validation[] ValidatorAggregator.Validate()
+    ObjectValidation[] ValidatorAggregator.Validate()
     {
-      return Validation.Aggregate(segments);      
+      return ObjectValidation.Aggregate(segments);      
     }
 
     void Interfaces.Debuggable.Toggle(bool toggle)

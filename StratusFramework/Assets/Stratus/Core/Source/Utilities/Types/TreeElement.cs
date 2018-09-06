@@ -251,6 +251,42 @@ namespace Stratus
     }
 
     /// <summary>
+    /// Validates the state of the input list, throwing an exception on a failed assertion
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    public static Exception Validate<T>(IList<T> list) where T : TreeElement
+    {
+      // Verify count
+      if (list.Count == 0)
+        return new ArgumentException("The list should have items");
+
+      // Validate depth of first
+      if (list[0].depth != -1)
+        return new ArgumentException("The list item at index 0 (first) should have a depth of -1");
+
+      // Validate depth of rest
+      for (int i = 0; i < list.Count - 1; i++)
+      {
+        int depth = list[i].depth;
+        int nextDepth = list[i + 1].depth;
+        if (nextDepth > depth && nextDepth - depth > 1)
+          return new ArgumentException(string.Format("Invalid depth info in input list. Depth cannot increase more than 1 per row. Index {0} has depth {1} while index {2} has depth {3}", i, depth, i + 1, nextDepth));
+      }
+
+      for (int i = 1; i < list.Count; ++i)
+      {
+        if (list[i].depth < 0)
+          return new ArgumentException($"Invalid depth value for item at index {i}. Only the first item (the root) should have a depth of 0");
+      }
+
+      if (list.Count > 1 && list[1].depth != 0)
+        return new ArgumentException("Input list at index 1 is assumed to have a depth of 0", nameof(list));
+
+      return null;
+    }
+
+    /// <summary>
     /// Updates the depth values below any given element (after reparenting elements)
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -424,7 +460,6 @@ namespace Stratus
     public bool hasData => data != null;
     public Type dataType => data.GetType();
     public DataType[] childrenData { get; private set; }
-    //public IList<TreeElement<DataType>> childrenDerived { get; private set; }
 
     //----------------------------------------------------------------------/
     // Messages
@@ -437,7 +472,6 @@ namespace Stratus
 
     public void OnAfterDeserialize()
     {
-      //this.childrenDerived = (IList<TreeElement<DataType>>)this.children;
       this.childrenData = this.GetChildrenData();
     }
 

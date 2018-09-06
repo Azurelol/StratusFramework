@@ -78,16 +78,16 @@ namespace Stratus.Gameplay
       ShowComponents(false);
     }
 
-    Validation[] ValidatorAggregator.Validate()
+    ObjectValidation[] ValidatorAggregator.Validate()
     {
-      var messages = new List<Validation>();
-      messages.AddIfNotNull(Validation.Generate(this));
-      messages.AddRange(Validation.Aggregate(triggers));
-      messages.AddRange(Validation.Aggregate(triggerables));      
+      var messages = new List<ObjectValidation>();
+      messages.AddIfNotNull(ObjectValidation.Generate(this));
+      messages.AddRange(ObjectValidation.Aggregate(triggers));
+      messages.AddRange(ObjectValidation.Aggregate(triggerables));      
       return messages.ToArray();
     }
 
-    Validation Validator.Validate()
+    ObjectValidation Validator.Validate()
     {
       return ValidateConnections();
     }
@@ -220,7 +220,7 @@ namespace Stratus.Gameplay
       return trigger.targets.NotEmpty();
     }
 
-    public Validation ValidateConnections()
+    public ObjectValidation ValidateConnections()
     {
       List<TriggerBase> disconnected = new List<TriggerBase>();
       foreach (var t in triggers)
@@ -241,7 +241,7 @@ namespace Stratus.Gameplay
       string msg = $"Triggers marked as disconnected ({disconnected.Count}):";
       foreach (var t in disconnected)
         msg += $"\n- {t.GetType().Name} : <i>{t.description}</i>";
-      return new Validation(msg, Validation.Level.Warning, this);
+      return new ObjectValidation(msg, ObjectValidation.Level.Warning, this);
     }   
 
   }

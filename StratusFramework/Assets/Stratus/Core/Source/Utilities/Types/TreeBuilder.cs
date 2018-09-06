@@ -53,7 +53,6 @@ namespace Stratus
       child.id = idCounter++;
       child.depth = depth;
       child.Set(childData);
-      //child.data = childData;
       tree.Add(child);
     }
 
@@ -145,6 +144,22 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Methods: Public
     //------------------------------------------------------------------------/
+    public void Assert()
+    {
+      TreeElement.Assert(this.elements);
+    }
+
+    public void Repair()
+    {
+      TreeElement.UpdateDepthValues(this.root);
+    }
+
+    public Exception Validate()
+    {
+      Exception exception = TreeElement.Validate(this.elements);
+      return exception;
+    }
+
     public void AddElement(DataType data)
     {
       this.AddElement(data, defaultDepth);
@@ -234,8 +249,6 @@ namespace Stratus
       }
 
       this.elements.Remove(element);
-
-      //int index = this.elements.FindIndex(0, x => x == element);
     }
 
     public void AddElements(DataType[] elementsData, int depth)
