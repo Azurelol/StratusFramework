@@ -82,6 +82,7 @@ namespace Stratus
         }
         catch (Exception e)
         {
+          Trace.Script($"The tree {name} is damaged: '{e.Message}'. Attempting to repair...");
           this.tree.Repair();
         }
       }

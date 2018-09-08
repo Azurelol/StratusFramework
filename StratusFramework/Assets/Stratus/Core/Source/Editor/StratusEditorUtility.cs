@@ -508,6 +508,11 @@ namespace Stratus
     public static Rect Pad(Rect rect)
     {
       float padding = StratusEditorGUI.standardPadding;
+      return Pad(rect, padding);
+    }
+
+    public static Rect Pad(Rect rect, float padding)
+    {
       rect.y += padding;
       rect.height -= padding;
       rect.x += padding;
@@ -518,6 +523,11 @@ namespace Stratus
     public static Rect PadVertical(Rect rect)
     {
       float padding = StratusEditorGUI.standardPadding;
+      return PadVertical(rect, padding);
+    }
+
+    public static Rect PadVertical(Rect rect, float padding)
+    {
       rect.y += padding;
       rect.height -= padding;
       return rect;

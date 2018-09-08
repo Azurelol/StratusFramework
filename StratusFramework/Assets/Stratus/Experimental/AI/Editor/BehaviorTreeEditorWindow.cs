@@ -142,7 +142,9 @@ namespace Stratus
       [SerializeField]
       private Mode mode = Mode.Editor;
       [SerializeField]
-      private Agent debugTarget;
+      private Agent agent;
+      [SerializeField]
+      public BehaviorTree behaviorTree;
 
       private SerializedSystemObject currentNodeSerializedObject;
       const string folder = "Stratus/Experimental/AI/";
@@ -189,7 +191,7 @@ namespace Stratus
       /// <summary>
       /// The behavior tree currently being edited
       /// </summary>
-      public BehaviorTree behaviorTree { get; private set; }
+      
 
       /// <summary>
       /// The blackboard being used by the tree
@@ -212,6 +214,16 @@ namespace Stratus
       public BehaviorTree.BehaviorNode currentNode { get; private set; }
 
       public bool hasSelection => currentNodes != null;
+
+      /// <summary>
+      /// Whether the editor for the BT has been initialized
+      /// </summary>
+      private bool isTreeSet { get; set; }
+
+      /// <summary>
+      /// Whether the blackboard has been set
+      /// </summary>
+      private bool isBlackboardSet => behaviorTree.blackboard != null;
 
       //----------------------------------------------------------------------/
       // Messages
@@ -239,17 +251,20 @@ namespace Stratus
 
       protected override void OnWindowGUI()
       {
-        StratusEditorUtility.DrawAligned(this.DrawModeControl, TextAlignment.Center);
+        StratusEditorGUI.BeginAligned(TextAlignment.Center);
+        this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions, GUILayout.ExpandWidth(false));
+        StratusEditorGUI.EndAligned();
+
         GUILayout.Space(padding);
-        Rect rect = this.currentPosition;
-        rect = StratusEditorUtility.Pad(rect);
+        //Rect rect = this.currentPosition;
+        //rect = StratusEditorUtility.Pad(rect);
         switch (this.mode)
         {
           case Mode.Editor:
-            this.DrawEditor(rect);
+            this.DrawEditor();
             break;
           case Mode.Debugger:
-            this.DrawDebugger(rect);
+            this.DrawDebugger();
             break;
         }
 
@@ -258,19 +273,20 @@ namespace Stratus
       //----------------------------------------------------------------------/
       // Procedures
       //----------------------------------------------------------------------/
-      private void DrawModeControl()
+      private void DrawEditor()
       {
-        //EditorGUI.BeginChangeCheck();
-        {
-          this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions, GUILayout.ExpandWidth(false));
-        }
-        //if (EditorGUI.EndChangeCheck())
-        //{          
-        //}
-      }
+        //EditProperty(nameof(this.behaviorTree));
+        if (this.EditObjectFieldWithHeader(ref this.behaviorTree, "Behavior Tree"))
+          this.OnTreeSet();
 
-      private void DrawEditor(Rect rect)
-      {
+        //if (StratusEditorUtility.currentEvent.type != EventType.Repaint)
+        //  return;
+
+        Rect rect = this.guiPosition; //  this.currentPosition;
+        rect = StratusEditorUtility.PadVertical(rect, lineHeight * 4f);
+        rect = StratusEditorUtility.Pad(rect) ;
+        //rect.y += StratusEditorUtility.lineHeight;
+
         // Hierarchy: LEFT
         rect.width *= 0.5f;
         DrawHierarchy(rect);
@@ -286,16 +302,11 @@ namespace Stratus
         DrawBlackboard(rect);
       }
 
-      private void DrawDebugger(Rect rect)
+      private void DrawDebugger()
       {
-        EditorGUILayout.LabelField("Target", StratusGUIStyles.header);
+        //EditProperty(nameof(this.agent));
         //EditProperty(nameof(debugTarget));
-        EditorGUI.BeginChangeCheck();
-        this.debugTarget = (Agent)EditorGUILayout.ObjectField(this.debugTarget, typeof(Agent), true);
-        if (EditorGUI.EndChangeCheck())
-        {
-          EditorUtility.SetDirty(this);
-        }
+        this.EditObjectFieldWithHeader(ref this.agent, "Agent");
       }
 
       private void DrawHierarchy(Rect rect)
@@ -303,9 +314,10 @@ namespace Stratus
         //if (behaviorTree != null)
         GUILayout.BeginArea(rect);
         GUILayout.Label("Hierarchy", StratusGUIStyles.header);
-        rect.y += 10f;
-        treeInspector?.TreeViewGUI(rect);
         GUILayout.EndArea();
+        rect = StratusEditorUtility.PadVertical(rect, lineHeight);
+        //rect.y += lineHeight * 2f;
+        treeInspector?.TreeViewGUI(rect);
       }
 
       private void DrawInspector(Rect rect)
@@ -335,7 +347,7 @@ namespace Stratus
       {
         GUILayout.BeginArea(rect);
         GUILayout.Label("Blackboard", StratusGUIStyles.header);
-        if (this.behaviorTree != null)
+        if (isTreeSet)
         {
           // Set the blackboard
           SerializedProperty blackboardProperty = this.behaviorTreeProperties.GetProperty(nameof(BehaviorTree.blackboard));
@@ -426,13 +438,19 @@ namespace Stratus
       {
         this.behaviorTree.Assert();
         this.behaviorTreeProperties = new SerializedPropertyMap(this.behaviorTree, typeof(StratusScriptable));
-        //this.treeProperty = this.behaviorTreeProperties.GetProperty(nameof(BehaviorTree.tree));
-        //this.treeElementsProperty = this.treeElementsProperty.FindPropertyRelative("elements");
 
         // Blackboard
         this.blackboardEditor = null;
         if (this.blackboard)
           this.OnBlackboardSet();
+
+        this.isTreeSet = true;
+      }
+
+      private void OnBlackboardSet()
+      {
+        this.blackboardEditor = StratusEditor.CreateEditor(this.behaviorTree.blackboard) as StratusEditor;
+        //this.blackboardEditor.OnInspectorGUI();
       }
 
       private void Save()
@@ -442,11 +460,7 @@ namespace Stratus
         Refresh();
       }
 
-      private void OnBlackboardSet()
-      {
-        this.blackboardEditor = StratusEditor.CreateEditor(this.behaviorTree.blackboard) as StratusEditor;
-        //this.blackboardEditor.OnInspectorGUI();
-      }
+
 
       private void OnSelectionChanged(IList<int> ids)
       {

@@ -168,8 +168,10 @@ namespace Stratus
     /// <returns></returns>
     public SerializedProperty GetProperty(string name)
     {
-      //if (!valid)
-      //  RecreateSerializedObject();
+      if (!propertyMap.ContainsKey(name))
+        throw new ArgumentException($"The key {name} is not present among serialized properties for this object");
+
+      //RecreateSerializedObject();
 
       return propertyMap[name];
     }

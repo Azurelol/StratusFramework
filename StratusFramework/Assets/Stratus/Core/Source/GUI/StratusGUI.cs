@@ -188,21 +188,7 @@ namespace Stratus
       GUI.color = currentColor;
     }
 
-    /// <summary>
-    /// Shows the overlay
-    /// </summary>
-    public static void Show()
-    {
-      get.enabled = true;
-    }    
 
-    /// <summary>
-    /// Hides the overlay
-    /// </summary>
-    public static void Hide()
-    {
-      get.enabled = false;
-    }
 
     //------------------------------------------------------------------------/
     // Methods: Private

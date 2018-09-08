@@ -114,6 +114,7 @@ namespace Stratus
     public int maxDepth => _maxDepth;
     public static int rootDepth { get; } = -1;
     public static int defaultDepth { get; } = 0;
+    public bool hasRoot => hasElements && elements[0].depth == rootDepth;
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -151,6 +152,9 @@ namespace Stratus
 
     public void Repair()
     {
+      //this.Clear();
+      if (!hasRoot)
+        this.AddRoot();
       TreeElement.UpdateDepthValues(this.root);
     }
 
@@ -305,7 +309,7 @@ namespace Stratus
       root.name = "Root";
       root.depth = -1;
       root.id = idCounter++;
-      elements.Add(root);
+      elements.Insert(0, root);
     }
 
     private void Parse()

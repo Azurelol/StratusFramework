@@ -142,6 +142,10 @@ namespace Stratus.AI
     /// The rigidbody component used by this component
     /// </summary>
     public new Rigidbody rigidbody { get; private set; }
+    /// <summary>
+    /// If there's a behavior set for this agent
+    /// </summary>
+    public bool hasBehavior => this.behavior != null;
 
     //------------------------------------------------------------------------/
     // Fields: Private
@@ -185,7 +189,9 @@ namespace Stratus.AI
 
     protected internal override void OnManagedStart()
     {
-      this.behavior = BehaviorSystem.InitializeSystemInstance(this, this.behavior);      
+      if (hasBehavior)
+        this.behavior = BehaviorSystem.InitializeSystemInstance(this, this.behavior);      
+
       this.OnAgentStart();
       currentState = State.Idle;
     }
@@ -200,7 +206,7 @@ namespace Stratus.AI
       if (!this.active)
         return;
 
-      if (isAutomatic)
+      if (hasBehavior && isAutomatic)
         this.behavior.UpdateSystem();
 
       this.OnAgentUpdate();

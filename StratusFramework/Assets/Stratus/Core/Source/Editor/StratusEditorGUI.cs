@@ -175,6 +175,22 @@ namespace Stratus
       value = EditorGUILayout.TextField(label, value);
     }
 
+    public static bool ObjectFieldWithHeader<T>(ref T objectField, string label) where T : UnityEngine.Object
+    {
+      EditorGUILayout.LabelField(label, StratusGUIStyles.header);
+      EditorGUI.BeginChangeCheck();
+      objectField = (T)EditorGUILayout.ObjectField(objectField, typeof(T), true);
+      Rect rect = GUILayoutUtility.GetLastRect();
+      return EditorGUI.EndChangeCheck();        
+    }
+
+    public static bool ObjectField<T>(ref T objectField) where T : UnityEngine.Object
+    {
+      EditorGUI.BeginChangeCheck();
+      objectField = (T)EditorGUILayout.ObjectField(objectField, typeof(T), true);
+      return EditorGUI.EndChangeCheck();
+    }
+
 
 
 

@@ -60,6 +60,7 @@ namespace Stratus
     }
 
     public static float padding => StratusEditorGUI.standardPadding;
+    public static float lineHeight => StratusEditorUtility.lineHeight;
 
     //------------------------------------------------------------------------/
     // Methods
@@ -126,6 +127,20 @@ namespace Stratus
     {
       SerializedProperty property = this.serializedPropertyMap.GetProperty(propertyName);      
       EditorGUILayout.PropertyField(property);
+    }
+
+    protected void EditProperty(string propertyName, string label)
+    {
+      SerializedProperty property = this.serializedPropertyMap.GetProperty(propertyName);
+      EditorGUILayout.PropertyField(property, new GUIContent(label));
+    }
+
+    protected bool EditObjectFieldWithHeader<T>(ref T objectField, string label) where T : UnityEngine.Object
+    {
+      bool changed = StratusEditorGUI.ObjectFieldWithHeader(ref objectField, label);
+      if (changed)
+        EditorUtility.SetDirty(this);
+      return changed;
     }
 
     //------------------------------------------------------------------------/
