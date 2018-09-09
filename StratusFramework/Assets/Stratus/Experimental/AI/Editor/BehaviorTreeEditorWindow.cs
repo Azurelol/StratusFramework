@@ -79,8 +79,7 @@ namespace Stratus
 
             menu.AddPopup("Replace", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
             {
-              window.AddChildNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), (BehaviorTree.BehaviorNode)treeElement.parent);
-              window.RemoveNodeOnly(treeElement);              
+              window.ReplaceNode(treeElement, BehaviorTreeEditorWindow.compositeTypes.AtIndex(index));              
 
             }); 
           }
@@ -203,12 +202,7 @@ namespace Stratus
       /// All supported decorator types
       /// </summary>
       public static TypeSelector decoratorTypes { get; } = new TypeSelector(typeof(Decorator), false, true);
-
-      /// <summary>
-      /// The behavior tree currently being edited
-      /// </summary>
       
-
       /// <summary>
       /// The blackboard being used by the tree
       /// </summary>
@@ -234,12 +228,12 @@ namespace Stratus
       /// <summary>
       /// Whether the editor for the BT has been initialized
       /// </summary>
-      private bool isTreeSet { get; set; }
+      private bool isTreeSet => behaviorTree != null && behaviorTreeProperties != null;
 
       /// <summary>
       /// Whether the blackboard has been set
       /// </summary>
-      private bool isBlackboardSet => behaviorTree.blackboard != null;
+      private bool isBlackboardSet => blackboardEditor;
 
       //----------------------------------------------------------------------/
       // Messages
@@ -259,10 +253,9 @@ namespace Stratus
           TreeBuilder<BehaviorTree.BehaviorNode, Behavior> treeBuilder = new TreeBuilder<BehaviorTree.BehaviorNode, Behavior>();
           this.treeInspector = new BehaviourTreeView(treeViewState, treeBuilder.ToTree());
         }
-        //this.treeInspector.onSelectionChanged += this.OnSelectionChanged;
+
         this.treeInspector.onSelectionIdsChanged += this.OnSelectionChanged;
         this.treeInspector.Reload();
-        //this.behaviorSelector = new TypeSelector(typeof(Behavior), false);
       }
 
       protected override void OnWindowGUI()
@@ -272,8 +265,6 @@ namespace Stratus
         StratusEditorGUI.EndAligned();
 
         GUILayout.Space(padding);
-        //Rect rect = this.currentPosition;
-        //rect = StratusEditorUtility.Pad(rect);
         switch (this.mode)
         {
           case Mode.Editor:
@@ -294,6 +285,9 @@ namespace Stratus
         //EditProperty(nameof(this.behaviorTree));
         if (this.EditObjectFieldWithHeader(ref this.behaviorTree, "Behavior Tree"))
           this.OnTreeSet();
+
+        if (!isTreeSet)
+          return;
 
         //if (StratusEditorUtility.currentEvent.type != EventType.Repaint)
         //  return;
@@ -363,7 +357,6 @@ namespace Stratus
       {
         GUILayout.BeginArea(rect);
         GUILayout.Label("Blackboard", StratusGUIStyles.header);
-        if (isTreeSet)
         {
           // Set the blackboard
           SerializedProperty blackboardProperty = this.behaviorTreeProperties.GetProperty(nameof(BehaviorTree.blackboard));
@@ -428,7 +421,6 @@ namespace Stratus
       }
       private void RemoveNode(BehaviorTree.BehaviorNode node)
       {
-        //if (node == currentNode)
         currentNodeSerializedObject = null;
         currentNodes = null;
 
@@ -438,11 +430,18 @@ namespace Stratus
 
       private void RemoveNodeOnly(BehaviorTree.BehaviorNode node)
       {
-        //if (node == currentNode)
         currentNodeSerializedObject = null;
         currentNodes = null;
 
         this.behaviorTree.RemoveBehaviorExcludeChildren(node);
+        Save();
+      }
+
+      private void ReplaceNode(BehaviorTree.BehaviorNode node, Type behaviorType)
+      {
+        currentNodeSerializedObject = null;
+        currentNodes = null;
+        this.behaviorTree.ReplaceBehavior(node, behaviorType);
         Save();
       }
 
@@ -470,14 +469,12 @@ namespace Stratus
         if (this.blackboard)
           this.OnBlackboardSet();
 
-        this.isTreeSet = true;
         this.Refresh();
       }
 
       private void OnBlackboardSet()
       {
         this.blackboardEditor = StratusEditor.CreateEditor(this.behaviorTree.blackboard) as StratusEditor;
-        //this.blackboardEditor.OnInspectorGUI();
       }
 
       private void Save()

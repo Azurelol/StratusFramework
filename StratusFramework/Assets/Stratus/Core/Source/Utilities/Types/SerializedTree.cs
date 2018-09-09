@@ -269,10 +269,17 @@ namespace Stratus
       // Remove all children first
       if (element.hasChildren)
       {
-        foreach(var child in element.children)
+        foreach (var child in element.allChildren)
         {
+          //this.RemoveElement((TreeElementType)child);
           this.elements.Remove((TreeElementType)child);
         }
+
+        //foreach (var child in element.children)
+        //{
+        //  this.RemoveElement((TreeElementType)child);
+        //  //this.elements.Remove((TreeElementType)child);
+        //}
       }
 
       this.elements.Remove(element);

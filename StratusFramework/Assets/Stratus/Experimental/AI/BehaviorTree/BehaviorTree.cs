@@ -85,7 +85,20 @@ namespace Stratus
         {
           Trace.Script($"The tree {name} is damaged: '{e.Message}'. Attempting to repair...");
           this.tree.Repair();
-        }
+
+          // Try again
+
+          try
+          {
+            this.tree.Assert();
+          }
+          catch (Exception e2)
+          {            
+            Trace.Script($"The tree {name} is damaged: '{e.Message}'");
+            throw e2;
+          }
+
+        }        
       }
       
       public override void OnBehaviorStarted(Behavior behavior)

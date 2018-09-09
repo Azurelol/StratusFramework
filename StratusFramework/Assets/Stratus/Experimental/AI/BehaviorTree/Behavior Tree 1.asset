@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d99599d1a97838488d5f255f9b0e3ef, type: 3}
-  m_Name: Behavior Tree
+  m_Name: Behavior Tree 1
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -63,7 +63,7 @@ MonoBehaviour:
       Data: 1
     - Name: _maxDepth
       Entry: 3
-      Data: 1
+      Data: 0
     - Name: 
       Entry: 8
       Data: 

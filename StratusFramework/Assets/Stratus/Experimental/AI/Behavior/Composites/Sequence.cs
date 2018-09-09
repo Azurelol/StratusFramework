@@ -36,12 +36,7 @@ namespace Stratus
         bool valid = this.childrenEnumerator.MoveNext();
         if (valid)
         {
-          //Trace.Script($"Moved onto next child {currentChild.fullName}");
           this.currentChild.Start(args, this.OnCompositeChildEnded);
-        }
-        else
-        {
-          //Trace.Script("Reached end of sequence");
         }
         return valid;
       }

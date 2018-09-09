@@ -249,8 +249,10 @@ namespace Stratus
       // Set new parent
       child.parent = parent;
       // Update depth value
-      child.depth = parent.depth + 1;      
+      child.depth = parent.depth + 1;
       // Insert the child
+      if (parent.children == null)
+        parent.children = new List<TreeElement>();
       parent.children.Add(child);
     }
 
