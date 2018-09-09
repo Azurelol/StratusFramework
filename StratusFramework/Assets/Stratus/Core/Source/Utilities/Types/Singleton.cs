@@ -91,17 +91,17 @@ namespace Stratus
     /// Returns a reference to the singular instance of this class. If not available currently, 
     /// it will instantiate it when accessed.
     /// </summary>
-    public static T get
+    public static T instance
     {
       get
       {
         // Look for an instance in the scene
-        if (!instance)
+        if (!_instance)
         {
-          instance = FindObjectOfType<T>();
+          _instance = FindObjectOfType<T>();
 
           // If not found, instantiate
-          if (!instance)
+          if (!_instance)
           {
             if (shouldInstantiate == false || (isPlayerOnly && EditorBridge.isEditMode))
             {
@@ -112,24 +112,24 @@ namespace Stratus
             //Trace.Script("Creating " + typeof(T).Name);
             var obj = new GameObject();
             obj.name = ownerName;
-            instance = obj.AddComponent<T>();            
+            _instance = obj.AddComponent<T>();            
           }
         }
 
-        return instance;
+        return _instance;
       }      
     }
     /// <summary>
     /// Whether this singleton has been instantiated
     /// </summary>
-    public static bool instantiated => get != null;
+    public static bool instantiated => instance != null;
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
     /// <summary>
     /// The singular instance of the class
     /// </summary>
-    protected static T instance;
+    protected static T _instance;
 
     //------------------------------------------------------------------------/
     // Interface
@@ -153,11 +153,11 @@ namespace Stratus
     void Awake()
     {
       // If the singleton instance hasn't been set, set it to self
-      if (!get)
-        instance = this as T;
+      if (!instance)
+        _instance = this as T;
 
       // If we are the singleton instance that was created (or recently set)
-      if (get == this as T)
+      if (instance == this as T)
       {
         if (isPersistent)
         {
@@ -178,8 +178,8 @@ namespace Stratus
 
     void OnDestroy()
     {
-      if (this != instance) return;
-      instance = null;
+      if (this != _instance) return;
+      _instance = null;
       this.OnSingletonDestroyed();
     }
 
@@ -194,7 +194,7 @@ namespace Stratus
     /// <returns></returns>
     public static bool Instantiate()
     {
-      if (get != null)
+      if (instance != null)
       {
         return true;
       }

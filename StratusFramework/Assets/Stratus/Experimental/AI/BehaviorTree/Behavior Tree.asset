@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d99599d1a97838488d5f255f9b0e3ef, type: 3}
-  m_Name: Sample Behavior Tree
+  m_Name: Behavior Tree
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -30,7 +30,7 @@ MonoBehaviour:
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
-      Data: 3
+      Data: 4
     - Name: 
       Entry: 7
       Data: 2|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
@@ -57,7 +57,7 @@ MonoBehaviour:
       Data: 3|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 1
+      Data: 7
     - Name: name
       Entry: 1
       Data: Sequence
@@ -97,22 +97,52 @@ MonoBehaviour:
       Data: 6|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
     - Name: id
       Entry: 3
-      Data: 2
+      Data: 13
     - Name: name
       Entry: 1
-      Data: LogTask (Boop)
+      Data: Cooldown
     - Name: depth
       Entry: 3
       Data: 1
     - Name: data
       Entry: 7
-      Data: 7|Stratus.AI.LogTask, Assembly-CSharp
+      Data: 7|Stratus.AI.Cooldown, Assembly-CSharp
     - Name: label
+      Entry: 6
+      Data: 
+    - Name: duration
+      Entry: 4
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
       Entry: 1
-      Data: Boop
+      Data: Cooldown
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 8|Stratus.AI.BehaviorTree+BehaviorNode, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 12
+    - Name: name
+      Entry: 1
+      Data: LogTask
+    - Name: depth
+      Entry: 3
+      Data: 2
+    - Name: data
+      Entry: 7
+      Data: 9|Stratus.AI.LogTask, Assembly-CSharp
+    - Name: label
+      Entry: 6
+      Data: 
     - Name: services
       Entry: 7
-      Data: 8|System.Collections.Generic.List`1[[Stratus.AI.Service, Assembly-CSharp]],
+      Data: 10|System.Collections.Generic.List`1[[Stratus.AI.Service, Assembly-CSharp]],
         mscorlib
     - Name: 
       Entry: 12
@@ -124,8 +154,8 @@ MonoBehaviour:
       Entry: 8
       Data: 
     - Name: message
-      Entry: 6
-      Data: 
+      Entry: 1
+      Data: Boop
     - Name: 
       Entry: 8
       Data: 
@@ -143,7 +173,7 @@ MonoBehaviour:
       Data: 
     - Name: idCounter
       Entry: 3
-      Data: 3
+      Data: 14
     - Name: _maxDepth
       Entry: 3
       Data: 1

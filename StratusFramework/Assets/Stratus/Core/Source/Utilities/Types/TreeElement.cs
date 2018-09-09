@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using OdinSerializer;
+using System.Linq;
 
 namespace Stratus
 {
@@ -12,10 +13,6 @@ namespace Stratus
   [Serializable]
   public class TreeElement
   {
-    //------------------------------------------------------------------------/
-    // Declarations
-    //------------------------------------------------------------------------/ 
-
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/ 
@@ -45,6 +42,10 @@ namespace Stratus
     /// How many children in total this element has (including subchildren)
     /// </summary>
     public int totalChildrenCount  => GetTotalChildrenCount(this);
+    /// <summary>
+    /// How many children in total this element has (including subchildren)
+    /// </summary>
+    public TreeElement[] allChildren => GetAllChildren(this);
 
     //------------------------------------------------------------------------/
     // Methods
@@ -107,43 +108,7 @@ namespace Stratus
       root.id = 0;
       return root;
     }
-
-    ///// <summary>
-    ///// Fills out the list from the given root node
-    ///// </summary>
-    ///// <param name="root"></param>
-    ///// <param name="result"></param>
-    //public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
-    //{
-    //  if (root == null)
-    //    throw new NullReferenceException("root");
-    //  if (result == null)
-    //    throw new NullReferenceException("result");
-
-    //  result.Clear();
-
-    //  if (root.children == null)
-    //    return;
-
-    //  Stack<TreeViewItem> stack = new Stack<TreeViewItem>();
-    //  for (int i = root.children.Count - 1; i >= 0; i--)
-    //    stack.Push(root.children[i]);
-
-    //  while (stack.Count > 0)
-    //  {
-    //    TreeViewItem current = stack.Pop();
-    //    result.Add(current);
-
-    //    if (current.hasChildren && current.children[0] != null)
-    //    {
-    //      for (int i = current.children.Count - 1; i >= 0; i--)
-    //      {
-    //        stack.Push(current.children[i]);
-    //      }
-    //    }
-    //  }
-    //} 
-
+    
     /// <summary>
     /// Returns the root of the tree parsed from the list (always the first element)
     /// Note: The first element is requried to have a depth value of -1, with the rest
@@ -214,6 +179,79 @@ namespace Stratus
 
       // Now return the root
       return list[0];
+    }
+
+    /// <summary>
+    /// Reparents the given elements
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="insertionIndex"></param>
+    /// <param name="children"></param>
+    public static void Parent(TreeElement parent, params TreeElement[] children)
+    {
+      // Invalid reparenting input
+      if (parent == null)
+        return;
+
+      // Remove draggedItems from their parents
+      foreach (var child in children)
+      {
+        Parent(parent, child);
+        UpdateDepthValues(child);
+      }
+
+      if (parent.children == null)
+        parent.children = new List<TreeElement>();
+
+      // Insert dragged items under new parent
+      parent.children.AddRange(children);
+    }
+
+    /// <summary>
+    /// Reparents the given elements
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="insertionIndex"></param>
+    /// <param name="children"></param>
+    public static void Reparent(TreeElement oldParent, TreeElement newParent)
+    {
+      int depthDifference = oldParent.depth - newParent.depth;
+      TreeElement[] children = oldParent.allChildren;
+
+      // Remove draggedItems from their parents
+      foreach (var child in children)
+      {
+        Parent(newParent, child);
+        UpdateDepthValues(child);
+      }
+
+      if (newParent.children == null)
+        newParent.children = new List<TreeElement>();
+
+      // Insert dragged items under new parent
+      newParent.children.AddRange(children);
+    }
+
+    /// <summary>
+    /// Reparents the given elements
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="insertionIndex"></param>
+    /// <param name="children"></param>
+    public static void Parent(TreeElement parent, TreeElement child)
+    {
+      // Invalid reparenting input
+      if (parent == null)
+        return;
+
+      // Remove from old parent
+      child.parent.children.Remove(child);
+      // Set new parent
+      child.parent = parent;
+      // Update depth value
+      child.depth = parent.depth + 1;      
+      // Insert the child
+      parent.children.Add(child);
     }
 
     /// <summary>
@@ -420,6 +458,22 @@ namespace Stratus
       return treeList;
     }
 
+    public static TreeElement[] GetAllChildren(TreeElement element)
+    {
+      List<TreeElement> children = new List<TreeElement>();
+      GetChildrenRecursive(element, children);
+      return children.ToArray();
+    }
+
+    private static void GetChildrenRecursive(TreeElement element, List<TreeElement> children)
+    {
+      foreach (var child in element.children)
+      {
+        children.Add(child);
+        GetChildrenRecursive(child, children);
+      }
+    }
+
     public static TreeElementType[] GetChildren<TreeElementType, DataType>(TreeElementType element)
       where TreeElementType : TreeElement<DataType>, new()
       where DataType : class, INamed
@@ -440,7 +494,6 @@ namespace Stratus
         GetChildrenRecursive<TreeElementType, DataType>(derivedChild, children);
       }
     }
-
 
     public static int GetTotalChildrenCount(TreeElement element)
     {

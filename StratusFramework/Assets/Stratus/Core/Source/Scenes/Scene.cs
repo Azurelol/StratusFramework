@@ -189,7 +189,7 @@ namespace Stratus
       #endif
 
       // Play mode
-      get.StartCoroutine(get.LoadAsync(scene, mode, onSceneLoaded));
+      instance.StartCoroutine(instance.LoadAsync(scene, mode, onSceneLoaded));
     }
 
     /// <summary>
@@ -208,7 +208,7 @@ namespace Stratus
       #endif
 
       // Play Mode
-      get.StartCoroutine(get.UnloadAsync(scene, onSceneUnloaded));
+      instance.StartCoroutine(instance.UnloadAsync(scene, onSceneUnloaded));
     }
 
     /// <summary>
@@ -232,7 +232,7 @@ namespace Stratus
       #endif
 
       // Play mode
-      get.StartCoroutine(get.LoadAsync(scenes, onScenesLoaded));
+      instance.StartCoroutine(instance.LoadAsync(scenes, onScenesLoaded));
     }
 
 
@@ -256,7 +256,7 @@ namespace Stratus
       #endif
       
       // Play mode
-      get.StartCoroutine(get.UnloadAsync(scenes, onScenesUnloaded));
+      instance.StartCoroutine(instance.UnloadAsync(scenes, onScenesUnloaded));
 
     }
 
@@ -283,8 +283,8 @@ namespace Stratus
     /// <param name="func"></param>
     public static void Connect<T>(Action<T> func)
     {
-      get.Poke();
-      Stratus.Events.Connect(get.gameObject, func);
+      instance.Poke();
+      Stratus.Events.Connect(instance.gameObject, func);
     }
 
     /// <summary>
@@ -294,8 +294,8 @@ namespace Stratus
     /// <param name="func"></param>
     public static void Connect(Action<Stratus.Event> func, Type type)
     {
-      get.Poke();
-      Stratus.Events.Connect(get.gameObject, func, type);
+      instance.Poke();
+      Stratus.Events.Connect(instance.gameObject, func, type);
     }
 
     /// <summary>
@@ -305,8 +305,8 @@ namespace Stratus
     /// <param name="eventObj"></param>
     public static void Dispatch<T>(T eventObj) where T : Stratus.Event
     {
-      get.Poke();
-      Stratus.Events.Dispatch<T>(get.gameObject, eventObj);
+      instance.Poke();
+      Stratus.Events.Dispatch<T>(instance.gameObject, eventObj);
     }
 
     /// <summary>
@@ -318,8 +318,8 @@ namespace Stratus
     /// <param name="nextFrame">Whether the event should be sent next frame.</param>
     public static void Dispatch(Stratus.Event eventObj, System.Type type, bool nextFrame = false)
     {
-      get.Poke();
-      Stratus.Events.Dispatch(get.gameObject, eventObj, type, nextFrame);
+      instance.Poke();
+      Stratus.Events.Dispatch(instance.gameObject, eventObj, type, nextFrame);
     }
 
     /// <summary>

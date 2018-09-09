@@ -105,7 +105,7 @@ namespace Stratus
     {
       var variableRef = Reflection.GetReference(varExpr);
       var watcher = new Watcher(variableRef, description, behaviour);
-      get.Windows.Watch.Add(watcher);      
+      instance.Windows.Watch.Add(watcher);      
     }
     /// <summary>
     /// Adds a button to the overlay which invokes a function with no parameters.
@@ -115,7 +115,7 @@ namespace Stratus
     public static void AddButton(string description, Button.Callback onButtonDown)
     {      
       var button = new Button(description, onButtonDown);
-      get.Windows.Buttons.Add(button);
+      instance.Windows.Buttons.Add(button);
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ namespace Stratus
     public static void AddButton(Button.Callback onButtonDown)
     {
       var button = new Button(onButtonDown.Method.Name, onButtonDown);
-      get.Windows.Buttons.Add(button);
+      instance.Windows.Buttons.Add(button);
     }
 
     /// <summary>
@@ -137,7 +137,7 @@ namespace Stratus
     public static void AddButton<T>(string description, Button<T>.Callback onButtonDown)
     {
       var button = new Button<T>(description, onButtonDown);
-      get.Windows.Buttons.Add(button);
+      instance.Windows.Buttons.Add(button);
     }
 
     public static void GUILayoutArea(Anchor anchor, Vector2 size, System.Action<Rect> onGUI)

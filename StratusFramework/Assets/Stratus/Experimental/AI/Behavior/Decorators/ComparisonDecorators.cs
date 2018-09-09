@@ -36,9 +36,6 @@ namespace Stratus.AI
         
     }
 
-    protected override void OnDecoratorStart(Arguments args)
-    {      
-    }
 
   }
 

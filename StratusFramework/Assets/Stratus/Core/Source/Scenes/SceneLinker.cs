@@ -30,7 +30,7 @@ namespace Stratus
     //----------------------------------------------------------------------/
     // Properties
     //----------------------------------------------------------------------/
-    public static bool isInitialLoaded => Scene.activeScene == get.scenePool.initialScene;
+    public static bool isInitialLoaded => Scene.activeScene == instance.scenePool.initialScene;
 
     //----------------------------------------------------------------------/
     // Messages
@@ -52,7 +52,7 @@ namespace Stratus
     /// </summary>
     public static void OpenAll()
     {
-      get.scenePool.OpenAll();
+      instance.scenePool.OpenAll();
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ namespace Stratus
     /// </summary>
     public static void CloseAll()
     {
-      get.scenePool.CloseAll();
+      instance.scenePool.CloseAll();
     }
 
     /// <summary>
@@ -68,9 +68,9 @@ namespace Stratus
     /// </summary>      
     public static void Restart(System.Action onFinished = null)
     {
-      get.scenePool.CloseAll(() =>
+      instance.scenePool.CloseAll(() =>
       {
-        get.LoadInitialScene(onFinished);
+        instance.LoadInitialScene(onFinished);
       });
     }
 
@@ -80,9 +80,9 @@ namespace Stratus
     /// <param name="onFinished"></param>
     public static void RestartAll(System.Action onFinished = null)
     {
-      get.scenePool.CloseAll(() =>
+      instance.scenePool.CloseAll(() =>
       {
-        get.scenePool.OpenAll(() => onFinished());
+        instance.scenePool.OpenAll(() => onFinished());
       });
     }
 

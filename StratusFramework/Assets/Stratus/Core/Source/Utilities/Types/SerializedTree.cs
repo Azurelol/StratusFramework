@@ -169,12 +169,13 @@ namespace Stratus
       this.AddElement(data, defaultDepth);
     }
 
-    public void AddChildElement(DataType data, TreeElementType parent)
+    public TreeElementType AddChildElement(DataType data, TreeElementType parent)
     {
       // Insert element below the last child
       TreeElementType element = CreateElement(data, parent.depth + 1);
       int insertionIndex = FindLastChildIndex(parent) + 1;      
       this.elements.Insert(insertionIndex, element);
+      return element;
     }
 
     public void AddParentElement(DataType data, TreeElementType element)
@@ -203,6 +204,28 @@ namespace Stratus
     public void MoveElements(TreeElementType parentElement, int insertionIndex, List<TreeElementType> elements)
     {
       MoveElements(parentElement, insertionIndex, elements.ToArray());
+    }
+
+    /// <summary>
+    /// Reparents the given elements
+    /// </summary>
+    /// <param name="parentElement"></param>
+    /// <param name="insertionIndex"></param>
+    /// <param name="elements"></param>
+    public void Reparent(TreeElement parentElement, params TreeElement[] elements)
+    {
+      TreeElement.Parent(parentElement, elements);
+    }
+
+    /// <summary>
+    /// Reparents the given elements
+    /// </summary>
+    /// <param name="parentElement"></param>
+    /// <param name="insertionIndex"></param>
+    /// <param name="elements"></param>
+    public void Reparent(TreeElement parentElement, List<TreeElement> elements)
+    {
+      TreeElement.Parent(parentElement, elements.ToArray());
     }
 
     /// <summary>
@@ -253,6 +276,25 @@ namespace Stratus
       }
 
       this.elements.Remove(element);
+    }
+
+    public void RemoveElementExcludeChildren(TreeElementType element)
+    {
+      TreeElement parent = element.parent != null ? element.parent : this.root;
+      
+      // Reparent all children first
+      if (element.hasChildren)
+        Reparent(parent, element.children);      
+
+      this.elements.Remove(element);
+    }
+
+    public void ReplaceElement(TreeElementType originalElement, DataType replacementData)
+    {
+      TreeElementType replacementElement = this.AddChildElement(replacementData, (TreeElementType)originalElement.parent);      
+      if (originalElement.hasChildren)
+        Reparent(replacementElement, originalElement.children);
+      RemoveElement(originalElement);
     }
 
     public void AddElements(DataType[] elementsData, int depth)

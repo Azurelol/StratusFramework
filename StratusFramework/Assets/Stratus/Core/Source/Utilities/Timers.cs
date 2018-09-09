@@ -48,12 +48,12 @@ namespace Stratus
       //------------------------------------------------------------------------/
       public static void Add(Timer timer)
       {
-        get.All.Add(timer);
+        instance.All.Add(timer);
       }
 
       public static void Remove(Timer timer)
       {
-        get.All.Remove(timer);
+        instance.All.Remove(timer);
       }
 
 

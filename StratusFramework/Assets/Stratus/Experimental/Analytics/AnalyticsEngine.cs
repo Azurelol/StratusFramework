@@ -31,12 +31,12 @@ namespace Stratus.Analytics
     //------------------------------------------------------------------------/
     public static void Connect(AnalyticsCollector collector)
     {
-      get.collectors.Add(collector);
+      instance.collectors.Add(collector);
     }
 
     public static void Disconnect(AnalyticsCollector collector)
     {
-      get.collectors.Remove(collector);
+      instance.collectors.Remove(collector);
     }
 
     public static void Submit(AnalyticsPayload payload)

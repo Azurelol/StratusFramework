@@ -58,6 +58,7 @@ namespace Stratus
               window.AddParentNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
             });
           }
+
           // Composites
           else if (treeElement.data is Composite)
           {
@@ -73,8 +74,15 @@ namespace Stratus
             
             menu.AddPopup("Add/Decorator", BehaviorTreeEditorWindow.decoratorTypes.displayedOptions, (int index) =>
             {
-              window.AddChildNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
+              window.AddParentNode(BehaviorTreeEditorWindow.decoratorTypes.AtIndex(index), treeElement);
             });
+
+            menu.AddPopup("Replace", BehaviorTreeEditorWindow.compositeTypes.displayedOptions, (int index) =>
+            {
+              window.AddChildNode(BehaviorTreeEditorWindow.compositeTypes.AtIndex(index), (BehaviorTree.BehaviorNode)treeElement.parent);
+              window.RemoveNodeOnly(treeElement);              
+
+            }); 
           }
           // Decorators
           else if (treeElement.data is Decorator)
@@ -95,7 +103,15 @@ namespace Stratus
 
 
           // Common
-          menu.AddItem("Remove", false, () => window.RemoveNode(treeElement));
+          if (treeElement.hasChildren)
+          {
+            menu.AddItem("Remove/Include Children", false, () => window.RemoveNode(treeElement));
+            menu.AddItem("Remove/Exclude Children", false, () => window.RemoveNodeOnly(treeElement));
+          }
+          else
+          {
+            menu.AddItem("Remove", false, () => window.RemoveNode(treeElement));
+          }
         }
 
         protected override void OnContextMenu(GenericMenu menu)
@@ -420,6 +436,16 @@ namespace Stratus
         Save();
       }
 
+      private void RemoveNodeOnly(BehaviorTree.BehaviorNode node)
+      {
+        //if (node == currentNode)
+        currentNodeSerializedObject = null;
+        currentNodes = null;
+
+        this.behaviorTree.RemoveBehaviorExcludeChildren(node);
+        Save();
+      }
+
       private void RemoveAllNodes()
       {
         behaviorTree.ClearBehaviors();
@@ -445,6 +471,7 @@ namespace Stratus
           this.OnBlackboardSet();
 
         this.isTreeSet = true;
+        this.Refresh();
       }
 
       private void OnBlackboardSet()
@@ -457,10 +484,8 @@ namespace Stratus
       {
         EditorUtility.SetDirty(behaviorTree);
         Undo.RecordObject(behaviorTree, "Behavior Tree Edit");
-        Refresh();
+        this.Refresh();
       }
-
-
 
       private void OnSelectionChanged(IList<int> ids)
       {
@@ -502,7 +527,6 @@ namespace Stratus
       {
         this.behaviorTree = tree;
         this.OnTreeSet();
-        this.Refresh();
       }
 
 

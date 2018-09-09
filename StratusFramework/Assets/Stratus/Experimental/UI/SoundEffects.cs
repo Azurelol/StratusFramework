@@ -44,7 +44,7 @@ namespace Stratus
 
       public static void PlayEffect(AudioClip clip)
       {
-        get.Play(clip);
+        instance.Play(clip);
       }
 
 

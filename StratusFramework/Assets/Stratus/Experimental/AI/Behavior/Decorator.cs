@@ -22,6 +22,7 @@ namespace Stratus.AI
     // Virtual
     //------------------------------------------------------------------------/
     protected abstract void OnDecoratorStart(Arguments args);
+    protected abstract bool OnChildEnded(Arguments args, Status status);
 
     //------------------------------------------------------------------------/
     // Messages
@@ -29,6 +30,11 @@ namespace Stratus.AI
     protected override void OnStart(Arguments args)
     {
       this.OnDecoratorStart(args);      
+    }
+
+    protected override Status OnUpdate(Arguments agent)
+    {
+      return Status.Running;
     }
 
     protected override void OnEnd(Arguments args)
@@ -43,13 +49,14 @@ namespace Stratus.AI
       this.child = child;
     }
 
-    //protected void OnDecoratorChildEnded(Arguments args, Status status)
-    //{
-    //  if (this.OnDecoratorCanChildExecute(args))
-    //    this.StartChild(args);
-    //  else
-    //    this.End(args, this.child.status);
-    //}
+    protected void StartChild(Arguments args)
+    {
+      if (this.child == null)
+        throw new ArgumentNullException($"There's no child for the decorator {fullName}");
+
+      //Trace.Script($"Starting {child.fullName}");
+      this.child.Start(args, this.OnChildEnded);
+    }
   }
 
   /// <summary>
@@ -59,21 +66,15 @@ namespace Stratus.AI
   {
     protected abstract bool OnDecoratorCanChildExecute(Arguments args);
 
-    protected override void OnStart(Arguments args)
+    protected override void OnDecoratorStart(Arguments args)
     {
-      this.OnDecoratorStart(args);
       if (this.OnDecoratorCanChildExecute(args))
         this.child.Start(args, OnChildEnded);
       else
         this.End(args, Status.Failure);
     }
 
-    protected override Status OnUpdate(Arguments agent)
-    {
-      return Status.Running;
-    }
-
-    private bool OnChildEnded(Arguments args, Status status)
+    protected override bool OnChildEnded(Arguments args, Status status)
     {
       this.End(args, status);
       return true;
@@ -85,23 +86,28 @@ namespace Stratus.AI
   /// </summary>
   public abstract class PostExecutionDecorator : Decorator
   {
-    protected abstract bool OnDecoratorChildEnded(Arguments args, Status status);
+    //protected abstract void OnPostExecutionDecoratorChildEnded(Arguments args, Status status);
 
-    protected override void OnStart(Arguments args)
+    protected override void OnDecoratorStart(Arguments args)
     {
-      base.OnStart(args);
       this.StartChild(args);
     }
 
-    protected override Status OnUpdate(Arguments args)
-    {
-      return Status.Running;
-    }
+    //protected override bool OnChildEnded(Arguments args, Status status)
+    //{
+    //  this.OnPostExecutionDecoratorChildEnded(args, status);
+    //  this.End(args, status);
+    //  return true;
+    //}
 
-    private bool OnChildEnded(Arguments args, Status status)
+  }
+
+  public abstract class PostExecutionRepeatingDecorator : PostExecutionDecorator
+  {
+    protected abstract bool OnRepeatingDecoratorChildEnded(Arguments args, Status status);
+    protected override bool OnChildEnded(Arguments args, Status status)
     {
-      bool restart = OnDecoratorChildEnded(args, status);
-      //Trace.Script($"Restart {child.fullName}? {restart}");
+      bool restart = OnRepeatingDecoratorChildEnded(args, status);
       if (restart)
       {
         this.StartChild(args);
@@ -110,15 +116,6 @@ namespace Stratus.AI
 
       this.End(args, this.child.status);
       return true;
-    }
-
-    private void StartChild(Arguments args)
-    {
-      if (this.child == null)
-        throw new ArgumentNullException($"There's no child for the decorator {fullName}");
-
-      //Trace.Script($"Starting {child.fullName}");
-      this.child.Start(args, this.OnChildEnded);
     }
 
 

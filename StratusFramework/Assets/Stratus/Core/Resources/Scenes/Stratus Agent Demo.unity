@@ -404,7 +404,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   control: 1
-  behavior: {fileID: 11400000, guid: 346d67e0612bd3c41a53550c22707e59, type: 2}
+  behavior: {fileID: 11400000, guid: 3997d22b746cf664892899d0e024d76c, type: 2}
   active: 1
   debug: 0
 --- !u!1 &464342889

@@ -10,30 +10,25 @@ namespace Stratus.AI
   public class Cooldown : PreExecutionDecorator 
   {
     public float duration = 5.0f;
-    private Stratus.Cooldown cooldown;
+    private Countdown cooldown;
 
     public override string description { get; } = "Bases its condition on wheher its duration has expired";
 
-    protected override void OnDecoratorStart(Arguments args)
-    {
-      if (this.cooldown == null)
-        this.cooldown = new Stratus.Cooldown(this.duration);
-      else
-        this.cooldown.Activate();
-    }
-
-    protected override Status OnUpdate(Arguments args)
-    {
-      cooldown.Update(Time.deltaTime);
-      if (cooldown.isActive)
-        return Status.Running;
-      return Status.Success;
-    }
-
-
-
     protected override bool OnDecoratorCanChildExecute(Arguments args)
     {
+      if (this.cooldown == null)
+      {
+        this.cooldown = new Stratus.Countdown(this.duration);
+        UpdateSystem.Add(this.cooldown);
+      }
+
+      if (this.cooldown.isFinished)
+      {
+        this.cooldown.Reset();
+        return true;
+      }
+
+      //Trace.Script($"Timer @ {cooldown.progress}");
       return false;
     }
   }

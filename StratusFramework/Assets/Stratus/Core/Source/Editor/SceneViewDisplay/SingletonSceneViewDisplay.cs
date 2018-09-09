@@ -11,7 +11,7 @@ namespace Stratus
   public abstract class SingletonSceneViewDisplay<T> : LayoutSceneViewDisplay where T : Singleton<T>
   {
     protected virtual bool showInPlayMode { get; } = true;
-    protected T instance => Singleton<T>.get;
+    protected T instance => Singleton<T>.instance;
     protected override bool isValid => showInPlayMode && Singleton<T>.instantiated && instance.isActiveAndEnabled;
     protected abstract void OnInitializeSingletonState();
     

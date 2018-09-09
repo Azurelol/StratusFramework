@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d609d30001a929f4e9c8d2913797565d, type: 3}
-  m_Name: Blackboard
+  m_Name: Sample Blackboard
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2

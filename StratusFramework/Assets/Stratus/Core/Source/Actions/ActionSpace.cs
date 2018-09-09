@@ -75,7 +75,7 @@ namespace Stratus
     /// <returns></returns>
     public static ActionsOwner Subscribe(GameObject gameObj)
     {
-      return get.SubscribeToActions(gameObj);
+      return instance.SubscribeToActions(gameObj);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ namespace Stratus
       if (isQuitting)
         return;
 
-      get.UnsubscribeFromActions(gameObj);
+      instance.UnsubscribeFromActions(gameObj);
     }
 
     public static void Clear(MonoBehaviour component)
@@ -161,7 +161,7 @@ namespace Stratus
     public static void PrintActiveActions()
     {
       string actionsLeft = "Active Actions: ";
-      foreach (var action in ActionSpace.get.activeActions)
+      foreach (var action in ActionSpace.instance.activeActions)
       {
         actionsLeft += action.gameObject.name + ", ";
       }

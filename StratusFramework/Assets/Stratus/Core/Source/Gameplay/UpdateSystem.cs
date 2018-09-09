@@ -11,10 +11,10 @@ namespace Stratus
   [Singleton(instantiate = true, isPlayOnly = true, persistent = true, name = "Stratus Update System")]
   public class UpdateSystem : Singleton<UpdateSystem>
   {
-    public struct UpdateSubscriber
-    {
-      Dictionary<MonoBehaviour, List<System.Action>> behaviours;
-    }
+    //public struct UpdateSubscriber
+    //{
+    //  Dictionary<MonoBehaviour, List<System.Action>> behaviours;
+    //}
 
     public class FrequencyUpdateBatch
     {
@@ -55,8 +55,6 @@ namespace Stratus
             action.Invoke();
           }
         }
-
-        //Trace.Script($"[Frequency: {timer.total}s] Updated {behaviourCount} behaviours!");
       }
 
       public void Add(System.Action action, MonoBehaviour behaviour)
@@ -88,8 +86,14 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
+
     private Dictionary<float, FrequencyUpdateBatch> update = new Dictionary<float, FrequencyUpdateBatch>();
+
     private Dictionary<float, FrequencyUpdateBatch> fixedUpdate = new Dictionary<float, FrequencyUpdateBatch>();
+    /// <summary>
+    /// A list of timers being updated
+    /// </summary>
+    private List<Timer> timers = new List<Timer>();
 
     //------------------------------------------------------------------------/
     // Messages
@@ -98,16 +102,17 @@ namespace Stratus
     {
     }
 
-    private void Start()
-    {
-
-    }
-
     private void Update()
     {
       foreach (var batch in update)
       {
         batch.Value.Update(Time.deltaTime);
+      }
+
+      foreach(var timer in this.timers)
+      {
+        if (!timer.isFinished)
+          timer.Update(Time.deltaTime);
       }
     }
 
@@ -131,19 +136,19 @@ namespace Stratus
     /// <param name="timeScale"></param>
     public static void Add(float frequency, System.Action action, MonoBehaviour behaviour, TimeScale timeScale = TimeScale.Delta)
     {
-      get.AddAction(frequency, action, behaviour, timeScale);
-      //Dictionary<float, FrequencyUpdateBatch> selected = null;
-      //
-      //switch (timeScale)
-      //{
-      //  case TimeScale.Delta: selected = update; break;
-      //  case TimeScale.FixedDelta: selected = fixedUpdate;  break;
-      //}
-      //
-      //if (!selected.ContainsKey(frequency))
-      //  selected.Add(frequency, new FrequencyUpdateBatch(frequency));
-      //
-      //selected[frequency].Add(action, behaviour);
+      instance.AddAction(frequency, action, behaviour, timeScale);
+    }
+
+    /// <summary>
+    /// Adds a timer to be updated by the system
+    /// </summary>
+    /// <param name="frequency"></param>
+    /// <param name="action"></param>
+    /// <param name="behaviour"></param>
+    /// <param name="timeScale"></param>
+    public static void Add(Timer timer)
+    {
+      instance.timers.Add(timer);
     }
 
     /// <summary>
@@ -155,19 +160,7 @@ namespace Stratus
     /// <param name="timeScale"></param>
     public static void Remove(MonoBehaviour behaviour, TimeScale timeScale = TimeScale.Delta)
     {
-      get.RemoveBehaviour(behaviour, timeScale);
-      //Dictionary<float, FrequencyUpdateBatch> selected = null;
-      //
-      //switch (timeScale)
-      //{
-      //  case TimeScale.Delta: selected = update; break;
-      //  case TimeScale.FixedDelta: selected = fixedUpdate; break;
-      //}
-      //
-      //foreach(var kp in selected)
-      //{
-      //  kp.Value.Remove(behaviour);
-      //}
+      instance.RemoveBehaviour(behaviour, timeScale);
     }
 
     //------------------------------------------------------------------------/

@@ -56,6 +56,7 @@ namespace Stratus
       protected override void OnUpdate()
       {
         //this.rootNode.data.Update(this.behaviorArguments);
+        //if (this.stack.NotEmpty())
         this.currentBehavior.Update(this.behaviorArguments);
       }
 
@@ -109,6 +110,17 @@ namespace Stratus
       public void RemoveBehavior(BehaviorNode behaviorNode)
       {
         this.tree.RemoveElement(behaviorNode);
+      }
+
+      public void RemoveBehaviorExcludeChildren(BehaviorNode behaviorNode)
+      {
+        this.tree.RemoveElementExcludeChildren(behaviorNode);
+      }
+
+      public void ReplaceBehavior(BehaviorNode original, Type replacementBehaviorType)
+      {
+        Behavior replacementBehavior = Behavior.Instantiate(replacementBehaviorType);
+        this.tree.ReplaceElement(original, replacementBehavior);
       }
 
       public Behavior AddBehavior(Type behaviorType, BehaviorNode parent)

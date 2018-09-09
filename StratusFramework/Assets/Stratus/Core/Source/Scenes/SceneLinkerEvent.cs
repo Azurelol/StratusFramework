@@ -43,7 +43,7 @@ namespace Stratus.Gameplay
     //----------------------------------------------------------------------/
     protected override void OnAwake()
     {
-      if (SceneLinker.get == null)
+      if (SceneLinker.instance == null)
         throw new Exception($"No SceneLinker is available!");
     }
 
