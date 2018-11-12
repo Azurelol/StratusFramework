@@ -161,7 +161,7 @@ namespace Stratus
       if (name == null || name == string.Empty)
         name = sceneField.sceneName;
 #else
-        name = sceneField.SceneName;
+        name = sceneField.sceneName;
 #endif
       return name;
     }

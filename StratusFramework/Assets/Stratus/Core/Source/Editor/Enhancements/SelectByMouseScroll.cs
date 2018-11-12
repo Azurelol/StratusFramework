@@ -1,9 +1,3 @@
-/******************************************************************************/
-/*!
-@file   SelectByMouseScroll.cs
-@author Fredrik Ludvigsen
-*/
-/******************************************************************************/
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;

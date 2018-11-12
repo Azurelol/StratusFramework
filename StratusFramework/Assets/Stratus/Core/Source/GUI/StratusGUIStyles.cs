@@ -29,9 +29,11 @@ namespace Stratus
         button = new GUIStyle(GUI.skin.button);
         button.alignment = TextAnchor.MiddleCenter;
 
-        toolbarButton = new GUIStyle(UnityEditor.EditorStyles.toolbarButton);
-        toolbarButton.alignment = TextAnchor.MiddleCenter;
-      }
+		#if UNITY_EDITOR
+				toolbarButton = new GUIStyle(UnityEditor.EditorStyles.toolbarButton);
+				toolbarButton.alignment = TextAnchor.MiddleCenter; 
+		#endif
+			}
 
     }
 
