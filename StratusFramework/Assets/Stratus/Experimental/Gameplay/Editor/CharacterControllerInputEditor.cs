@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(CharacterControllerInput))]
-  public class CharacterControllerInputEditor : BehaviourEditor<CharacterControllerInput>
+  public class CharacterControllerInputEditor : StratusBehaviourEditor<CharacterControllerInput>
   {
     CharacterControllerInput.Preset.Template presetTemplate;
 

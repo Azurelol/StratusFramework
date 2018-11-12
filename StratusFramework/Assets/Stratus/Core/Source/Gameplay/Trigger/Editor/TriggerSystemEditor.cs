@@ -7,8 +7,8 @@ using System;
 
 namespace Stratus.Gameplay
 {
-  [CustomEditor(typeof(TriggerSystem))]
-  public partial class TriggerSystemEditor : BehaviourEditor<TriggerSystem>
+  [CustomEditor(typeof(StratusTriggerSystem))]
+  public partial class TriggerSystemEditor : StratusBehaviourEditor<StratusTriggerSystem>
   {
     //------------------------------------------------------------------------/
     // Fields
@@ -23,7 +23,7 @@ namespace Stratus.Gameplay
     private const int descriptionSize = 10;
     private const float connectedButtonWidth = 20f;
     private List<Tuple<Trigger, Trigger>> triggerSwapOperations = new List<Tuple<Trigger, Trigger>>();
-    private List<Tuple<Triggerable, Triggerable>> triggerableSwapOperations = new List<Tuple<Triggerable, Triggerable>>();
+    private List<Tuple<StratusTriggerable, StratusTriggerable>> triggerableSwapOperations = new List<Tuple<StratusTriggerable, StratusTriggerable>>();
     private GUILayoutOption columnWidth;
     private TypeSelector triggerTypes, triggerableTypes;
 
@@ -32,15 +32,15 @@ namespace Stratus.Gameplay
     //------------------------------------------------------------------------/
     private StratusEditor selectedEditor { get; set; }
     private string selectedName { get; set; }
-    private Triggerable selectedTriggerable { get; set; }
+    private StratusTriggerable selectedTriggerable { get; set; }
     private Trigger selectedTrigger { get; set; }
-    private TriggerBase selected { get; set; }
-    private Dictionary<Triggerable, bool> connectedTriggerables { get; set; } = new Dictionary<Triggerable, bool>();
+    private StratusTriggerBase selected { get; set; }
+    private Dictionary<StratusTriggerable, bool> connectedTriggerables { get; set; } = new Dictionary<StratusTriggerable, bool>();
     private Dictionary<Trigger, bool> connectedTriggers { get; set; } = new Dictionary<Trigger, bool>();
-    public Dictionary<Triggerable, TriggerSystem.ConnectionStatus> triggerableConnectivity { get; private set; } = new Dictionary<Triggerable, TriggerSystem.ConnectionStatus>();
+    public Dictionary<StratusTriggerable, StratusTriggerSystem.ConnectionStatus> triggerableConnectivity { get; private set; } = new Dictionary<StratusTriggerable, StratusTriggerSystem.ConnectionStatus>();
     public List<Trigger> triggers => target.triggers;
-    public List<Triggerable> triggerables => target.triggerables;
-    public Dictionary<TriggerBase, int> connectivityGroups { get; set; } = new Dictionary<TriggerBase, int>();
+    public List<StratusTriggerable> triggerables => target.triggerables;
+    public Dictionary<StratusTriggerBase, int> connectivityGroups { get; set; } = new Dictionary<StratusTriggerBase, int>();
     private bool showDescriptions => target.showDescriptions;
     private Vector2 scrollPos { get; set; } = Vector2.zero;
     private int maxColumnElements => Mathf.Max(target.triggers.Count, target.triggerables.Count);
@@ -54,7 +54,7 @@ namespace Stratus.Gameplay
     protected override void OnStratusEditorEnable()
     {
       triggerTypes = new TypeSelector(typeof(Trigger), true);
-      triggerableTypes = new TypeSelector(typeof(Triggerable), true);
+      triggerableTypes = new TypeSelector(typeof(StratusTriggerable), true);
 
       selectedColor = StratusGUIStyles.Colors.selectedColor;
       connectedColor = StratusGUIStyles.Colors.connectedColor;
@@ -115,7 +115,7 @@ namespace Stratus.Gameplay
 
     }
 
-    private void SetTriggerableContextMenu(Triggerable triggerable, GenericMenu menu)
+    private void SetTriggerableContextMenu(StratusTriggerable triggerable, GenericMenu menu)
     {
       // Connect
       if (selectedTrigger)
@@ -131,26 +131,26 @@ namespace Stratus.Gameplay
     //------------------------------------------------------------------------/
     // Methods: Selection
     //------------------------------------------------------------------------/
-    private Color GetColor(TriggerBase triggerBase, TriggerSystem.ConnectionStatus status)
+    private Color GetColor(StratusTriggerBase triggerBase, StratusTriggerSystem.ConnectionStatus status)
     {
       Color color = Color.white;
       switch (target.connectionDisplay)
       {
-        case TriggerSystem.ConnectionDisplay.Selection:
+        case StratusTriggerSystem.ConnectionDisplay.Selection:
           {
             switch (status)
             {
-              case TriggerSystem.ConnectionStatus.Connected:
+              case StratusTriggerSystem.ConnectionStatus.Connected:
                 color = connectedColor;
                 break;
-              case TriggerSystem.ConnectionStatus.Disconnected:
+              case StratusTriggerSystem.ConnectionStatus.Disconnected:
                 //color = Color.white;
                 break;
-              case TriggerSystem.ConnectionStatus.Selected:
+              case StratusTriggerSystem.ConnectionStatus.Selected:
                 //color = connectedColor;
                 color = selectedColor;
                 break;
-              case TriggerSystem.ConnectionStatus.Disjoint:
+              case StratusTriggerSystem.ConnectionStatus.Disjoint:
                 color = disconnectedColor;
                 break;
               default:
@@ -159,10 +159,10 @@ namespace Stratus.Gameplay
           }
           break;
 
-        case TriggerSystem.ConnectionDisplay.Grouping:
+        case StratusTriggerSystem.ConnectionDisplay.Grouping:
           {
             //int colorIndex = -1;
-            if (status == TriggerSystem.ConnectionStatus.Selected)
+            if (status == StratusTriggerSystem.ConnectionStatus.Selected)
               color = selectedColor;
             if (connectivityGroups.ContainsKey(triggerBase))
             {
@@ -200,7 +200,7 @@ namespace Stratus.Gameplay
       //Highlighter.Highlight(nameof(TriggerSystem), trigger.GetType().Name);
     }
 
-    private void SelectTriggerable(Triggerable triggerable)
+    private void SelectTriggerable(StratusTriggerable triggerable)
     {
       selectedTrigger = null;
       selectedTriggerable = triggerable;
@@ -229,7 +229,7 @@ namespace Stratus.Gameplay
       });
     }
 
-    private void RemoveTriggerable(Triggerable triggerable)
+    private void RemoveTriggerable(StratusTriggerable triggerable)
     {
       if (selected == triggerable)
       {
@@ -246,23 +246,23 @@ namespace Stratus.Gameplay
     //------------------------------------------------------------------------/
     // Methods: Connections
     //------------------------------------------------------------------------/
-    private void Connect(Trigger trigger, Triggerable triggerable)
+    private void Connect(Trigger trigger, StratusTriggerable triggerable)
     {
       Trace.Script($"Connecting {trigger.GetType().Name} and {triggerable.GetType().Name}");
       trigger.targets.Add(triggerable);
       UpdateConnections();
     }
 
-    private void Disconnect(Trigger trigger, Triggerable triggerable)
+    private void Disconnect(Trigger trigger, StratusTriggerable triggerable)
     {
       Trace.Script($"Disconnecting {trigger.GetType().Name} and {triggerable.GetType().Name}");
       trigger.targets.Remove(triggerable);
       UpdateConnections();
     }
 
-    private bool IsConnected(Trigger trigger, Triggerable triggerable) => TriggerSystem.IsConnected(trigger, triggerable);
-    private bool IsConnected(Trigger trigger) => TriggerSystem.IsConnected(trigger);
-    private bool IsConnected(Triggerable triggerable) => triggerableConnectivity.ContainsKey(triggerable) && triggerableConnectivity[triggerable] == TriggerSystem.ConnectionStatus.Connected;
+    private bool IsConnected(Trigger trigger, StratusTriggerable triggerable) => StratusTriggerSystem.IsConnected(trigger, triggerable);
+    private bool IsConnected(Trigger trigger) => StratusTriggerSystem.IsConnected(trigger);
+    private bool IsConnected(StratusTriggerable triggerable) => triggerableConnectivity.ContainsKey(triggerable) && triggerableConnectivity[triggerable] == StratusTriggerSystem.ConnectionStatus.Connected;
 
     private void UpdateConnections()
     {
@@ -286,12 +286,12 @@ namespace Stratus.Gameplay
       triggerableConnectivity.Clear();
       foreach (var triggerable in triggerables)
       {
-        triggerableConnectivity.Add(triggerable, TriggerSystem.ConnectionStatus.Disconnected);
+        triggerableConnectivity.Add(triggerable, StratusTriggerSystem.ConnectionStatus.Disconnected);
         foreach (var trigger in triggers)
         {
           if (trigger.targets.Contains(triggerable))
           {
-            triggerableConnectivity[triggerable] = TriggerSystem.ConnectionStatus.Connected;
+            triggerableConnectivity[triggerable] = StratusTriggerSystem.ConnectionStatus.Connected;
             break;
           }
         }

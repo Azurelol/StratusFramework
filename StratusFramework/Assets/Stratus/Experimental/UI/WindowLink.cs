@@ -65,7 +65,7 @@ namespace Stratus
         }
       }
 
-      void Forward<T>(T forwardedEvent) where T : Stratus.Event
+      void Forward<T>(T forwardedEvent) where T : Stratus.StratusEvent
       {
         this.Target.gameObject.Dispatch<T>(forwardedEvent);
       }

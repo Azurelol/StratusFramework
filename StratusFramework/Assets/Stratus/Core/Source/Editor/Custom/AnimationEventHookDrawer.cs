@@ -6,7 +6,7 @@ using UnityEngine.Animations;
 
 namespace Stratus.Gameplay
 {
-  [CustomPropertyDrawer(typeof(AnimatorEventHook))]
+  [CustomPropertyDrawer(typeof(StratusAnimatorEventHook))]
   public class AnimatorEventHookDrawer : StratusPropertyDrawer
   {
     private const float lines = 2f;
@@ -19,19 +19,19 @@ namespace Stratus.Gameplay
     protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       // Special case if it's being used by the character animator
-      CharacterAnimator characterAnimator = target as CharacterAnimator;
+      StratusCharacterAnimator characterAnimator = target as StratusCharacterAnimator;
       bool hasParameters = characterAnimator != null && characterAnimator.animator != null && characterAnimator.hasParameters;
 
       // Event
-      SerializedProperty onEventProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.onEvent));
+      SerializedProperty onEventProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.onEvent));
       EditorGUI.PropertyField(position, onEventProperty);
       position.y += lineHeight;
 
       // Parameter: Type
-      SerializedProperty parameterTypeProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.parameterType));
+      SerializedProperty parameterTypeProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.parameterType));
       
       // Paramater: Name, Value
-      SerializedProperty parameterNameProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.parameterName));
+      SerializedProperty parameterNameProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.parameterName));
       SerializedProperty parameterValueProperty = null;
       AnimatorControllerParameterType parameterType = (AnimatorControllerParameterType)parameterTypeProperty.intValue;
 
@@ -41,17 +41,17 @@ namespace Stratus.Gameplay
         switch (parameterType)
         {
           case AnimatorControllerParameterType.Float:
-            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.floatValue));
+            parameterValueProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.floatValue));
             parameters = characterAnimator.floatParameters;
             break;
 
           case AnimatorControllerParameterType.Int:
-            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.intValue));
+            parameterValueProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.intValue));
             parameters = characterAnimator.intParameters;
             break;
 
           case AnimatorControllerParameterType.Bool:
-            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.boolValue));
+            parameterValueProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.boolValue));
             parameters = characterAnimator.boolParameters;
             break;
 
@@ -80,15 +80,15 @@ namespace Stratus.Gameplay
         switch (parameterType)
         {
           case AnimatorControllerParameterType.Float:
-            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.floatValue));            
+            parameterValueProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.floatValue));            
             break;
 
           case AnimatorControllerParameterType.Int:
-            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.intValue));
+            parameterValueProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.intValue));
             break;
 
           case AnimatorControllerParameterType.Bool:
-            parameterValueProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.boolValue));
+            parameterValueProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.boolValue));
             break;
         }
 

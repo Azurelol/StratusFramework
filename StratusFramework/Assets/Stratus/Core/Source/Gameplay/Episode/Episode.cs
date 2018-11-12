@@ -57,7 +57,7 @@ namespace Stratus.Gameplay
     /// <summary>
     /// Base class for episode events
     /// </summary>
-    public abstract class EpisodeEvent : Stratus.Event
+    public abstract class EpisodeEvent : Stratus.StratusEvent
     {
       public Episode episode { get; internal set; }
     }

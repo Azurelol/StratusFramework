@@ -92,7 +92,7 @@ namespace Genitus
     //----------------------------------------------------------------------/
     // Events
     //----------------------------------------------------------------------/
-    public abstract class CombatActionEvent : Stratus.Event { public CombatAction Action; }
+    public abstract class CombatActionEvent : Stratus.StratusEvent { public CombatAction Action; }
     /// <summary>
     /// Signals that an action has been queued up
     /// </summary>
@@ -207,7 +207,7 @@ namespace Genitus
     /// <summary>
     /// The sequence currently being played for the active phase
     /// </summary>
-    private ActionSet currentPhaseSequence;
+    private StratusActionSet currentPhaseSequence;
 
     //----------------------------------------------------------------------/
     // Interface
@@ -315,11 +315,11 @@ namespace Genitus
       // Called the first time the action is about to start casting
       //this.OnStart(user, target);
       // Inform the controller the the action has started casting
-      this.currentPhaseSequence = Actions.Sequence(this.User);
-      Actions.Call(this.currentPhaseSequence, () => Inform<StartedEvent>());
-      Actions.Delay(this.currentPhaseSequence, Timers.Start);
-      Actions.Call(this.currentPhaseSequence, ()=>this.OnStart(user, target));
-      Actions.Call(this.currentPhaseSequence, () => 
+      this.currentPhaseSequence = StratusActions.Sequence(this.User);
+      StratusActions.Call(this.currentPhaseSequence, () => Inform<StartedEvent>());
+      StratusActions.Delay(this.currentPhaseSequence, Timers.Start);
+      StratusActions.Call(this.currentPhaseSequence, ()=>this.OnStart(user, target));
+      StratusActions.Call(this.currentPhaseSequence, () => 
       {
         currentPhase = Phase.Casting;
       });
@@ -361,8 +361,8 @@ namespace Genitus
       currentPhase = Phase.Trigger;
 
       // Inform the skill is ready to be triggered
-      this.currentPhaseSequence = Actions.Sequence(this.User);
-      Actions.Call(this.currentPhaseSequence, () => Inform<TriggerEvent>(), Timers.Trigger);
+      this.currentPhaseSequence = StratusActions.Sequence(this.User);
+      StratusActions.Call(this.currentPhaseSequence, () => Inform<TriggerEvent>(), Timers.Trigger);
       // The action is now finished updating
       isFinished = true;
       // Invoke the trigger
@@ -376,11 +376,11 @@ namespace Genitus
     {
       currentPhase = Phase.Execute;
       Trace.Script("Now executing", User);
-      this.currentPhaseSequence = Actions.Sequence(this.User);
-      Actions.Delay(this.currentPhaseSequence, this.Timers.Execute);
-      Actions.Call(this.currentPhaseSequence, () => this.OnExecute(this.User, this.Target));
-      Actions.Call(this.currentPhaseSequence, () => Inform<ExecuteEvent>());
-      Actions.Call(this.currentPhaseSequence, () => this.End(this.User));
+      this.currentPhaseSequence = StratusActions.Sequence(this.User);
+      StratusActions.Delay(this.currentPhaseSequence, this.Timers.Execute);
+      StratusActions.Call(this.currentPhaseSequence, () => this.OnExecute(this.User, this.Target));
+      StratusActions.Call(this.currentPhaseSequence, () => Inform<ExecuteEvent>());
+      StratusActions.Call(this.currentPhaseSequence, () => this.End(this.User));
     }
 
     /// <summary>
@@ -392,8 +392,8 @@ namespace Genitus
       currentPhase = Phase.Ended;
 
       this.OnEnd();
-      this.currentPhaseSequence = Actions.Sequence(this.User);
-      Actions.Call(this.currentPhaseSequence, () => Inform<EndedEvent>(), Timers.End);
+      this.currentPhaseSequence = StratusActions.Sequence(this.User);
+      StratusActions.Call(this.currentPhaseSequence, () => Inform<EndedEvent>(), Timers.End);
     }
 
     /// <summary>

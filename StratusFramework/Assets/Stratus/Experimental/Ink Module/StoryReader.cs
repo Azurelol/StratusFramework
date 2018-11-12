@@ -644,9 +644,9 @@ namespace Stratus.Modules.InkModule
       if (debug)
         Trace.Script($"<i>{e.storyFile.name}</i> to be played in {e.queueDelay} seconds");
 
-      var seq = Actions.Sequence(this);
-      Actions.Delay(seq, e.queueDelay);
-      Actions.Call(seq, () => LoadStory(e.storyFile, e.restart, e.knot));
+      var seq = StratusActions.Sequence(this);
+      StratusActions.Delay(seq, e.queueDelay);
+      StratusActions.Call(seq, () => LoadStory(e.storyFile, e.restart, e.knot));
     }
 
     //------------------------------------------------------------------------------------------/

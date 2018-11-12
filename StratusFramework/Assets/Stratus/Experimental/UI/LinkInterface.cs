@@ -22,7 +22,7 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Declarations
       //------------------------------------------------------------------------/
-      public class ToggleInputEvent : Stratus.Event
+      public class ToggleInputEvent : Stratus.StratusEvent
       {
         public bool Enabled;
         public ToggleInputEvent(bool enabled) { Enabled = enabled; }
@@ -238,7 +238,7 @@ namespace Stratus
       /// <typeparam name="U">The input event class</typeparam>
       /// <param name="inputEvent">The input event.</param>
       /// <returns>True if input was redirected, false otherwise. </returns>
-      bool RedirectInput<U>(U inputEvent) where U : Stratus.Event
+      bool RedirectInput<U>(U inputEvent) where U : Stratus.StratusEvent
       {
         if (Active && CurrentLink)
         {

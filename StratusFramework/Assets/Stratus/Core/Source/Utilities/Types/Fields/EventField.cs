@@ -17,10 +17,10 @@ namespace Stratus
     //------------------------------------------------------------------------/
     [Header("Event")]
     [Tooltip("The scope of the event")]
-    public Event.Scope scope;
+    public StratusEvent.Scope scope;
     [Tooltip("The GameObjects which we want to dispatch the event to")]
     public List<GameObject> targets = new List<GameObject>();
-    [ClassExtends(typeof(Stratus.Event), Grouping = ClassGrouping.ByNamespace)]
+    [ClassExtends(typeof(Stratus.StratusEvent), Grouping = ClassGrouping.ByNamespace)]
     [Tooltip("What type of event this trigger will activate on")]
     public ClassTypeReference type = new ClassTypeReference();
     [SerializeField]
@@ -30,7 +30,7 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/
     public bool hasType => type.Type != null;
-    private Stratus.Event eventInstance { get; set; }
+    private Stratus.StratusEvent eventInstance { get; set; }
 
     //------------------------------------------------------------------------/
     // Methods
@@ -45,18 +45,18 @@ namespace Stratus
         return false;
 
       if (eventInstance == null)
-        eventInstance = Event.Instantiate(type, eventData);
+        eventInstance = StratusEvent.Instantiate(type, eventData);
 
       switch (scope)
       {
-        case Event.Scope.GameObject:
+        case StratusEvent.Scope.GameObject:
           foreach (var target in targets)
           {
             if (target)
               target.Dispatch(eventInstance, type.Type);
           }
           break;
-        case Event.Scope.Scene:
+        case StratusEvent.Scope.Scene:
           Scene.Dispatch(eventInstance, type.Type);
           break;
       }

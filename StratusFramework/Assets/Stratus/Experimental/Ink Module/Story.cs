@@ -131,7 +131,7 @@ namespace Stratus
         /// Signals that a story should be loaded
         /// </summary>
         [Serializable]
-        public class LoadEvent : Stratus.Event
+        public class LoadEvent : Stratus.StratusEvent
         {
           /// <summary>
           /// The story to be loaded
@@ -158,7 +158,7 @@ namespace Stratus
         /// <summary>
         /// Base class for all StoryReader-related events
         /// </summary>
-        public class ReaderEvent : Stratus.Event
+        public class ReaderEvent : Stratus.StratusEvent
         {
           /// <summary>
           /// A reference to the story that has just been loaded
@@ -201,7 +201,7 @@ namespace Stratus
         /// <summary>
         /// Signals that a choice should be presented to the reader
         /// </summary>
-        public class PresentChoicesEvent : Stratus.Event
+        public class PresentChoicesEvent : Stratus.StratusEvent
         {
           public List<Choice> Choices = new List<Choice>();
         }
@@ -218,7 +218,7 @@ namespace Stratus
         /// Represents a parsed line of dialog. It may have multiple parses
         /// such as one for the speaker, another for the message, etc...
         /// </summary>
-        public class UpdateLineEvent : Stratus.Event
+        public class UpdateLineEvent : Stratus.StratusEvent
         {
           /// <summary>
           /// A parse of the current line, containing specified metadata (based on the reader used)
@@ -240,7 +240,7 @@ namespace Stratus
         /// <summary>
         /// Base class for events involving ink variables
         /// </summary>
-        public abstract class VariableValueEvent : Stratus.Event
+        public abstract class VariableValueEvent : Stratus.StratusEvent
         {
           /// <summary>
           /// Represents a variable in Ink
@@ -265,7 +265,7 @@ namespace Stratus
         /// <summary>
         /// Observes the state of a variable
         /// </summary>
-        public class ObserveVariableEvent : Stratus.Event
+        public class ObserveVariableEvent : Stratus.StratusEvent
         {
           public string variableName;
           public Ink.Runtime.Story.VariableObserver variableObserver;
@@ -275,13 +275,13 @@ namespace Stratus
         /// Observes the state of a multiple variables. It will call the function
         /// once per each variable
         /// </summary>
-        public class ObserveVariablesEvent : Stratus.Event
+        public class ObserveVariablesEvent : Stratus.StratusEvent
         {
           public string[] variableNames;
           public Ink.Runtime.Story.VariableObserver variableObserver;
         }
 
-        public class RemoveVariableObserverEvent : Stratus.Event
+        public class RemoveVariableObserverEvent : Stratus.StratusEvent
         {
           public Ink.Runtime.Story.VariableObserver variableObserver;
         }

@@ -6,7 +6,7 @@ using System;
 
 namespace Stratus.Gameplay
 {
-  public partial class TriggerSystemEditor : BehaviourEditor<TriggerSystem>
+  public partial class TriggerSystemEditor : StratusBehaviourEditor<StratusTriggerSystem>
   {
     //------------------------------------------------------------------------/
     // Methods: Drawing
@@ -138,9 +138,9 @@ namespace Stratus.Gameplay
       if (GUILayout.Button(StratusGUIStyles.optionsIcon, StratusGUIStyles.smallLayout))
       {
         var menu = new GenericMenu();
-        menu.AddEnumToggle<TriggerSystem.ConnectionDisplay>(propertyMap[nameof(TriggerSystem.connectionDisplay)]);
-        menu.AddBooleanToggle(propertyMap[nameof(TriggerSystem.showDescriptions)]);
-        menu.AddBooleanToggle(propertyMap[nameof(TriggerSystem.outlines)]);
+        menu.AddEnumToggle<StratusTriggerSystem.ConnectionDisplay>(propertyMap[nameof(StratusTriggerSystem.connectionDisplay)]);
+        menu.AddBooleanToggle(propertyMap[nameof(StratusTriggerSystem.showDescriptions)]);
+        menu.AddBooleanToggle(propertyMap[nameof(StratusTriggerSystem.outlines)]);
         menu.ShowAsContext();
       }
 
@@ -149,17 +149,17 @@ namespace Stratus.Gameplay
 
     private void DrawTrigger(Trigger trigger)
     {
-      TriggerSystem.ConnectionStatus status = TriggerSystem.ConnectionStatus.Disconnected;
+      StratusTriggerSystem.ConnectionStatus status = StratusTriggerSystem.ConnectionStatus.Disconnected;
       if (selected)
       {
         if (selected == trigger)
-          status = TriggerSystem.ConnectionStatus.Selected;
+          status = StratusTriggerSystem.ConnectionStatus.Selected;
         else if (selectedTriggerable && connectedTriggers.ContainsKey(trigger) && connectedTriggers[trigger])
-          status = TriggerSystem.ConnectionStatus.Connected;
+          status = StratusTriggerSystem.ConnectionStatus.Connected;
       }
 
       if (!IsConnected(trigger) && selected != trigger)
-        status = TriggerSystem.ConnectionStatus.Disjoint;
+        status = StratusTriggerSystem.ConnectionStatus.Disjoint;
 
       Color color = GetColor(trigger, status);
       Draw(trigger, color, SelectTrigger, RemoveTrigger, SetTriggerContextMenu);
@@ -169,24 +169,24 @@ namespace Stratus.Gameplay
 
 
 
-    private void DrawTriggerable(Triggerable triggerable)
+    private void DrawTriggerable(StratusTriggerable triggerable)
     {
-      TriggerSystem.ConnectionStatus status = TriggerSystem.ConnectionStatus.Disconnected;
+      StratusTriggerSystem.ConnectionStatus status = StratusTriggerSystem.ConnectionStatus.Disconnected;
       if (selected)
       {
         if (selected == triggerable)
-          status = TriggerSystem.ConnectionStatus.Selected;
+          status = StratusTriggerSystem.ConnectionStatus.Selected;
         else if (selectedTrigger && connectedTriggerables.ContainsKey(triggerable) && connectedTriggerables[triggerable])
-          status = TriggerSystem.ConnectionStatus.Connected;
+          status = StratusTriggerSystem.ConnectionStatus.Connected;
       }
       if (!IsConnected(triggerable) && selected != triggerable)
-        status = TriggerSystem.ConnectionStatus.Disjoint;
+        status = StratusTriggerSystem.ConnectionStatus.Disjoint;
 
       Color color = GetColor(triggerable, status);
       Draw(triggerable, color, SelectTriggerable, RemoveTriggerable, SetTriggerableContextMenu);
     }
 
-    private void Draw<T>(T baseTrigger, Color backgroundColor, System.Action<T> selectFunction, System.Action<T> removeFunction, System.Action<T, GenericMenu> contextMenuSetter) where T : TriggerBase
+    private void Draw<T>(T baseTrigger, Color backgroundColor, System.Action<T> selectFunction, System.Action<T> removeFunction, System.Action<T, GenericMenu> contextMenuSetter) where T : StratusTriggerBase
     {
       string name = baseTrigger.GetType().Name;
 
@@ -240,21 +240,21 @@ namespace Stratus.Gameplay
         {
           if (other is Trigger)
             triggerSwapOperations.Add(new Tuple<Trigger, Trigger>(baseTrigger as Trigger, other as Trigger));
-          else if (other is Triggerable)
-            Connect(baseTrigger as Trigger, other as Triggerable);
+          else if (other is StratusTriggerable)
+            Connect(baseTrigger as Trigger, other as StratusTriggerable);
         }
-        else if (baseTrigger is Triggerable)
+        else if (baseTrigger is StratusTriggerable)
         {
-          if (other is Triggerable)
-            triggerableSwapOperations.Add(new Tuple<Triggerable, Triggerable>(baseTrigger as Triggerable, other as Triggerable));
+          if (other is StratusTriggerable)
+            triggerableSwapOperations.Add(new Tuple<StratusTriggerable, StratusTriggerable>(baseTrigger as StratusTriggerable, other as StratusTriggerable));
           else if (other is Trigger)
-            Connect(other as Trigger, baseTrigger as Triggerable);
+            Connect(other as Trigger, baseTrigger as StratusTriggerable);
         }
       };
 
       Func<object, bool> onValidateDrag = (object other) =>
       {
-        if (other is Trigger || other is Triggerable)
+        if (other is Trigger || other is StratusTriggerable)
           return true;
         return false;
       };

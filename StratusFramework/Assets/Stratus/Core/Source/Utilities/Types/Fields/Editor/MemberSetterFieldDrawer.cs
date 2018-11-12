@@ -28,7 +28,7 @@ namespace Stratus
       float height = EditorGUIUtility.singleLineHeight + padding;
       var memberProp = property.FindPropertyRelative("member");
       var typeProperty = property.FindPropertyRelative("memberType");
-      var type = (ActionProperty.Types)typeProperty.enumValueIndex;
+      var type = (StratusActionProperty.Types)typeProperty.enumValueIndex;
       
 
       //var sourceType = (UnityMember.SourceType)memberProp.FindPropertyRelative("sourceType").enumValueIndex;
@@ -89,28 +89,28 @@ namespace Stratus
         GUIContent valueLabel = GUIContent.none;
         switch (type)
         {
-          case ActionProperty.Types.None:
+          case StratusActionProperty.Types.None:
             EditorGUI.LabelField(contentPosition, valueLabel);
             break;
-          case ActionProperty.Types.Integer:            
+          case StratusActionProperty.Types.Integer:            
               EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative($"intValue{suffix}"), valueLabel);
             break;
-          case ActionProperty.Types.Float:
+          case StratusActionProperty.Types.Float:
             EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative($"floatValue{suffix}"), valueLabel);
             break;
-          case ActionProperty.Types.Boolean:
+          case StratusActionProperty.Types.Boolean:
             EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative($"boolValue{suffix}"), valueLabel);
             break;
-          case ActionProperty.Types.Vector2:
+          case StratusActionProperty.Types.Vector2:
             EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative($"vector2Value{suffix}"), valueLabel);
             break;
-          case ActionProperty.Types.Vector3:
+          case StratusActionProperty.Types.Vector3:
             EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative($"vector3Value{suffix}"), valueLabel);
             break;
-          case ActionProperty.Types.Vector4:
+          case StratusActionProperty.Types.Vector4:
             EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative($"vector4Value{suffix}"), valueLabel);
             break;
-          case ActionProperty.Types.Color:
+          case StratusActionProperty.Types.Color:
             EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative($"colorValue{suffix}"), valueLabel);
             break;
           default:

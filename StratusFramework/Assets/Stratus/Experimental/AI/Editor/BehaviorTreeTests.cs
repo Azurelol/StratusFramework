@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Stratus.AI
 {
-  class BehaviorTreeTests 
+  static class BehaviorTreeTests 
   {
     private static Blackboard MakeTestBlackboard()
     {

@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Stratus
 {
   [CustomEditor(typeof(ScreenOverlay), true)]
-  public class ScreenOverlayEditor : BehaviourEditor<ScreenOverlay>
+  public class ScreenOverlayEditor : StratusBehaviourEditor<ScreenOverlay>
   {
     protected override void OnStratusEditorEnable()
     {

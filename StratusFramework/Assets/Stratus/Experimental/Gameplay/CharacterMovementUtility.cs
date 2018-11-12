@@ -126,9 +126,9 @@ namespace Stratus.Gameplay
 
         case GroundDetection.Collision:
           if (groundCollider.isTrigger)
-            collisionProxy = CollisionProxy.Construct(groundCollider, CollisionProxy.CollisionMessage.TriggerEnter, OnCollider);
+            collisionProxy = StratusCollisionProxy.Construct(groundCollider, StratusCollisionProxy.CollisionMessage.TriggerEnter, OnCollider);
           else
-            collisionProxy = CollisionProxy.Construct(groundCollider, CollisionProxy.CollisionMessage.CollisionEnter, OnCollision);
+            collisionProxy = StratusCollisionProxy.Construct(groundCollider, StratusCollisionProxy.CollisionMessage.CollisionEnter, OnCollision);
           break;
       }
 

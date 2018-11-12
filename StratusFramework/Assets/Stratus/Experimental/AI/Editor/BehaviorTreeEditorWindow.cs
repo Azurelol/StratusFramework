@@ -161,7 +161,7 @@ namespace Stratus
       [SerializeField]
       public BehaviorTree behaviorTree;
 
-      private SerializedSystemObject currentNodeSerializedObject;
+      private StratusSerializedSystemObject currentNodeSerializedObject;
       const string folder = "Stratus/Experimental/AI/";
       private Vector2 inspectorScrollPosition, blackboardScrollPosition;
       private SerializedPropertyMap behaviorTreeProperties;
@@ -493,7 +493,7 @@ namespace Stratus
         if (this.currentNodes.Count > 0)
         {
           this.currentNode = currentNodes[0];
-          this.currentNodeSerializedObject = new SerializedSystemObject(currentNode.data);
+          this.currentNodeSerializedObject = new StratusSerializedSystemObject(currentNode.data);
           //SerializedObject boo = new SerializedObject(currentNode.data);
           //this.currentNodeProperty = this.treeElementsProperty.GetArrayElementAtIndex(ids[0]);
         }

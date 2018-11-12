@@ -46,7 +46,7 @@ namespace Stratus.AI
     /// <summary>
     /// Base class for all status events
     /// </summary>
-    public abstract class StatusEvent : Stratus.Event
+    public abstract class StatusEvent : Stratus.StratusEvent
     {
       public Agent agent { get; internal set; }
     }
@@ -61,7 +61,7 @@ namespace Stratus.AI
     /// <summary>
     /// Signals to the agent that it should be disabled for a set amount of time
     /// </summary>
-    public class DisableEvent : Stratus.Event
+    public class DisableEvent : Stratus.StratusEvent
     {
       public float duration = 0f;
       public DisableEvent(float duration) { this.duration = duration; }
@@ -69,7 +69,7 @@ namespace Stratus.AI
     /// <summary>
     /// Signals that the agent should stop its current action
     /// </summary>
-    public class StopEvent : Stratus.Event { }
+    public class StopEvent : Stratus.StratusEvent { }
 
     /// <summary>
     /// Signals the agent to move to a specified position
@@ -83,7 +83,7 @@ namespace Stratus.AI
     /// <summary>
     /// Signals the agent that the given object can be interacted with. 
     /// </summary>
-    public class InteractionAvailableEvent : Stratus.Event
+    public class InteractionAvailableEvent : Stratus.StratusEvent
     {
       public InteractableTrigger interactive;
       public string context;
@@ -412,8 +412,8 @@ namespace Stratus.AI
     {
       this.active = false;
       this.Stop();
-      var seq = Actions.Sequence(this);
-      Actions.Call(seq, () => { this.active = true; });
+      var seq = StratusActions.Sequence(this);
+      StratusActions.Call(seq, () => { this.active = true; });
     }
 
 

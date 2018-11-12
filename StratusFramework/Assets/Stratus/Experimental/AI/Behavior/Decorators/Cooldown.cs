@@ -19,7 +19,7 @@ namespace Stratus.AI
       if (this.cooldown == null)
       {
         this.cooldown = new Stratus.Countdown(this.duration);
-        UpdateSystem.Add(this.cooldown);
+        StratusUpdateSystem.Add(this.cooldown);
       }
 
       if (this.cooldown.isFinished)

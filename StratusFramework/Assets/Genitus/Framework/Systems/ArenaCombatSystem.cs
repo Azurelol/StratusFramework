@@ -63,9 +63,9 @@ namespace Genitus
       IsResolved = false;
 
       // Enable the combat HUD
-      var seq = Actions.Sequence(this);
-      Actions.Delay(seq, 2.5f);
-      Actions.Call(seq, this.DisplayHUD);
+      var seq = StratusActions.Sequence(this);
+      StratusActions.Delay(seq, 2.5f);
+      StratusActions.Call(seq, this.DisplayHUD);
 
       // Now announce that combat has started to the space!
       var combatStarted = new Combat.StartedEvent();

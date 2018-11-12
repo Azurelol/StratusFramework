@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Stratus.Gameplay
 {
-  public partial class TriggerSystemEditor : BehaviourEditor<TriggerSystem>
+  public partial class TriggerSystemEditor : StratusBehaviourEditor<StratusTriggerSystem>
   {
     /// <summary>
     /// Validates all the components within the system
@@ -21,7 +21,7 @@ namespace Stratus.Gameplay
     /// </summary>
     private void ValidatePersistence()
     {
-      List<TriggerBase> persistents = new List<TriggerBase>();
+      List<StratusTriggerBase> persistents = new List<StratusTriggerBase>();
       persistents.AddRange(triggers.FindAll(x => x.persistent));
       if (persistents.NotEmpty())
       {
@@ -36,7 +36,7 @@ namespace Stratus.Gameplay
     
     private void ValidateConnections()
     {      
-      List<TriggerBase> disconnected = new List<TriggerBase>();
+      List<StratusTriggerBase> disconnected = new List<StratusTriggerBase>();
       foreach (var t in triggers)
       {
         if (!IsConnected(t))
@@ -81,34 +81,34 @@ namespace Stratus.Gameplay
       validateFunc();
     }
 
-    private TriggerSystem.ConnectionStatus GetStatus(Trigger trigger)
+    private StratusTriggerSystem.ConnectionStatus GetStatus(Trigger trigger)
     {
-      TriggerSystem.ConnectionStatus status = TriggerSystem.ConnectionStatus.Disconnected;
+      StratusTriggerSystem.ConnectionStatus status = StratusTriggerSystem.ConnectionStatus.Disconnected;
       if (selected)
       {
         if (selected == trigger)
-          status = TriggerSystem.ConnectionStatus.Selected;
+          status = StratusTriggerSystem.ConnectionStatus.Selected;
         else if (selectedTriggerable && connectedTriggers.ContainsKey(trigger) && connectedTriggers[trigger])
-          status = TriggerSystem.ConnectionStatus.Connected;
+          status = StratusTriggerSystem.ConnectionStatus.Connected;
       }
 
       if (!IsConnected(trigger) && selected != trigger)
-        status = TriggerSystem.ConnectionStatus.Disjoint;
+        status = StratusTriggerSystem.ConnectionStatus.Disjoint;
       return status;
     }
 
-    private TriggerSystem.ConnectionStatus GetStatus(Triggerable triggerable)
+    private StratusTriggerSystem.ConnectionStatus GetStatus(StratusTriggerable triggerable)
     {
-      TriggerSystem.ConnectionStatus status = TriggerSystem.ConnectionStatus.Disconnected;
+      StratusTriggerSystem.ConnectionStatus status = StratusTriggerSystem.ConnectionStatus.Disconnected;
       if (selected)
       {
         if (selected == triggerable)
-          status = TriggerSystem.ConnectionStatus.Selected;
+          status = StratusTriggerSystem.ConnectionStatus.Selected;
         else if (selectedTrigger && connectedTriggerables.ContainsKey(triggerable) && connectedTriggerables[triggerable])
-          status = TriggerSystem.ConnectionStatus.Connected;
+          status = StratusTriggerSystem.ConnectionStatus.Connected;
       }
       if (!IsConnected(triggerable) && selected != triggerable)
-        status = TriggerSystem.ConnectionStatus.Disjoint;
+        status = StratusTriggerSystem.ConnectionStatus.Disjoint;
       return status;
     }
 

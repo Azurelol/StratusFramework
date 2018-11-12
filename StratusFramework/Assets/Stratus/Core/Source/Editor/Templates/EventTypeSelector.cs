@@ -15,13 +15,13 @@ namespace Stratus
     // Fields
     //------------------------------------------------------------------------/
     private SerializedProperty eventDataProperty;
-    private Stratus.Event eventObject;
-    private SerializedSystemObject serializedEvent;
+    private Stratus.StratusEvent eventObject;
+    private StratusSerializedSystemObject serializedEvent;
 
     //------------------------------------------------------------------------/
     // CTOR
     //------------------------------------------------------------------------/
-    public EventTypeSelector() : base(typeof(Stratus.Event), false, true)
+    public EventTypeSelector() : base(typeof(Stratus.StratusEvent), false, true)
     {
       //this.eventDataProperty = eventDataProperty;
     }
@@ -30,7 +30,7 @@ namespace Stratus
     {
     }
 
-    public EventTypeSelector Construct<T>() where T : Stratus.Event
+    public EventTypeSelector Construct<T>() where T : Stratus.StratusEvent
     {
       Type type = typeof(T);
       return new EventTypeSelector(type);
@@ -42,8 +42,8 @@ namespace Stratus
     protected override void OnSelectionChanged()
     {
       base.OnSelectionChanged();
-      eventObject = (Stratus.Event)Utilities.Reflection.Instantiate(selectedClass);
-      serializedEvent = new SerializedSystemObject(selectedClass, eventObject);
+      eventObject = (Stratus.StratusEvent)Utilities.Reflection.Instantiate(selectedClass);
+      serializedEvent = new StratusSerializedSystemObject(selectedClass, eventObject);
       //serializedEvent.Deserialize(eventDataProperty);
     }
 

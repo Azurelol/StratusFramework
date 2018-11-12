@@ -21,7 +21,7 @@ namespace Stratus
       /// <summary>
       /// Custom events must derive from our custom event class 
       /// </summary>
-      public class SampleEvent : Stratus.Event
+      public class SampleEvent : Stratus.StratusEvent
       {
         public int number;
         public Vector2 vector2;

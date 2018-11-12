@@ -22,7 +22,7 @@ namespace Genitus
     //------------------------------------------------------------------------/
     // Events
     //------------------------------------------------------------------------/
-    public class ChangeCombatLeadEvent : Stratus.Event
+    public class ChangeCombatLeadEvent : Stratus.StratusEvent
     {
       public enum ChangeOrder { Previous, Next }
       public ChangeOrder order;

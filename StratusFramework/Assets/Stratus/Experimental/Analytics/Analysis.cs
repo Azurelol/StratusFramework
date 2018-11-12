@@ -30,7 +30,7 @@ namespace Stratus.Analytics
       [Tooltip("An identifier for this attribute")]
       public string label;
       [Tooltip("The type of this attribute")]
-      public ActionProperty.Types type;
+      public StratusActionProperty.Types type;
       [Tooltip("An optional description of this attribute")]
       public string description;
     }

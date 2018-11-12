@@ -78,7 +78,7 @@ namespace Genitus.Effects
     //------------------------------------------------------------------------/
     // Declarations
     //------------------------------------------------------------------------/
-    public class ApplyEvent : Stratus.Event { public PersistentEffect Effect; }
+    public class ApplyEvent : Stratus.StratusEvent { public PersistentEffect Effect; }
 
     //------------------------------------------------------------------------/
     // Properties

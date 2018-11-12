@@ -13,7 +13,7 @@ namespace Stratus.Experimental
     // Event
     //------------------------------------------------------------------------/
     [Serializable]
-    public class TransitionEvent : Stratus.Event
+    public class TransitionEvent : Stratus.StratusEvent
     {
       /// <summary>
       /// The mask being used for this transition
@@ -74,7 +74,7 @@ namespace Stratus.Experimental
     public bool maskInvert;
     private Material m_Material;
     private bool m_maskInvert;
-    private ActionSet currentSeq;
+    private StratusActionSet currentSeq;
 
     /// <summary>
     /// The current material being used by the shader
@@ -153,14 +153,14 @@ namespace Stratus.Experimental
       maskValue = e.initialValue;
       // Create a sequence for the transition
       currentSeq?.Cancel();
-      currentSeq = Actions.Sequence(this);
-      Actions.Property(currentSeq, () => maskValue, e.endingValue, e.speed, Ease.Linear);
+      currentSeq = StratusActions.Sequence(this);
+      StratusActions.Property(currentSeq, () => maskValue, e.endingValue, e.speed, Ease.Linear);
 
       // If the transition is of a fixed duration
       if (e.duration > 0.0f)
       {
-        Actions.Delay(currentSeq, e.duration);
-        Actions.Property(currentSeq, () => maskValue, e.initialValue, e.speed, Ease.Linear);
+        StratusActions.Delay(currentSeq, e.duration);
+        StratusActions.Property(currentSeq, () => maskValue, e.initialValue, e.speed, Ease.Linear);
       }
     }
 

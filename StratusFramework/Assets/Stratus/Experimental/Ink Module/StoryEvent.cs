@@ -8,7 +8,7 @@ namespace Stratus
   {
     namespace InkModule
     {
-      public class StoryEvent : Gameplay.Triggerable
+      public class StoryEvent : Gameplay.StratusTriggerable
       {        
         public enum Scope
         {

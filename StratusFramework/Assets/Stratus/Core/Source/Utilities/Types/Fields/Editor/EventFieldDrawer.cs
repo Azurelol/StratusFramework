@@ -20,7 +20,7 @@ namespace Stratus
     {
       SerializedProperty typeProp = property.FindPropertyRelative(nameof(EventField.type));
       SerializedProperty scopeProperty = property.FindPropertyRelative(nameof(EventField.scope));
-      Event.Scope scope = GetEnumValue<Event.Scope>(scopeProperty);
+      StratusEvent.Scope scope = GetEnumValue<StratusEvent.Scope>(scopeProperty);
 
       //SerializedProperty typeProp = property.FindPropertyRelative("Type");
       //Type eventType = typeProp.objectReferenceValue as Type;
@@ -33,7 +33,7 @@ namespace Stratus
       DrawPropertiesVertical(ref position, typeProp, scopeProperty);
     
       // Scope
-      if (scope == Event.Scope.GameObject)
+      if (scope == StratusEvent.Scope.GameObject)
       {
         DrawSingleProperty(ref position, property.FindPropertyRelative(nameof(EventField.targets)));
         //AddLine(ref position);
@@ -46,14 +46,14 @@ namespace Stratus
     {
       SerializedProperty typeProp = property.FindPropertyRelative(nameof(EventField.type));
       SerializedProperty scopeProperty = property.FindPropertyRelative(nameof(EventField.scope));
-      Event.Scope scope = GetEnumValue<Event.Scope>(scopeProperty);
+      StratusEvent.Scope scope = GetEnumValue<StratusEvent.Scope>(scopeProperty);
 
       //SerializedProperty typeProp = property.FindPropertyRelative("Type");
       //Type eventType = typeProp.objectReferenceValue as Type;
       DrawPropertiesVertical(ref position, typeProp, scopeProperty);
       
       // Scope
-      if (scope == Event.Scope.GameObject)
+      if (scope == StratusEvent.Scope.GameObject)
       {
         EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(EventField.targets)));
         AddLine(ref position);

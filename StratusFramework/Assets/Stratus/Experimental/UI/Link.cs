@@ -69,19 +69,19 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Events
       //------------------------------------------------------------------------/
-      public class DescriptionEvent : Stratus.Event
+      public class DescriptionEvent : Stratus.StratusEvent
       {
         public LinkDescription Description;
         public DescriptionEvent(LinkDescription description) { Description = description; }
         public DescriptionEvent() { }
       }
 
-      public class TransitionEvent : Stratus.Event
+      public class TransitionEvent : Stratus.StratusEvent
       {
         public LinkState State;
       }
 
-      public abstract class LinkEvent : Stratus.Event { public Link Link; }
+      public abstract class LinkEvent : Stratus.StratusEvent { public Link Link; }
 
       /// <summary>
       /// Contains navigation data used for input in the system.
@@ -110,17 +110,17 @@ namespace Stratus
       /// <summary>
       /// Used for cancelling the current link. 
       /// </summary>
-      public class CancelEvent : Stratus.Event { }
+      public class CancelEvent : Stratus.StratusEvent { }
 
       /// <summary>
       /// Used when a link has been opened.
       /// </summary>
-      public class OpenedEvent : Stratus.Event { }
+      public class OpenedEvent : Stratus.StratusEvent { }
 
       /// <summary>
       /// Used when a link has been closed.
       /// </summary>
-      public class ClosedEvent : Stratus.Event { }
+      public class ClosedEvent : Stratus.StratusEvent { }
 
       //------------------------------------------------------------------------/
       // Properties
@@ -212,9 +212,9 @@ namespace Stratus
 
       public void Initialize()
       {
-        var seq = Actions.Sequence(this);
-        Actions.Delay(seq, 0.1f);
-        Actions.Call(seq, AssignNeighbors);
+        var seq = StratusActions.Sequence(this);
+        StratusActions.Delay(seq, 0.1f);
+        StratusActions.Call(seq, AssignNeighbors);
       }
 
       /// <summary>

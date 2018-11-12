@@ -52,7 +52,7 @@ namespace Stratus
         public Blackboard blackboard => agent.blackboard;
       }
 
-      public class BehaviorEvent : Stratus.Event { public Behavior behavior; }
+      public class BehaviorEvent : Stratus.StratusEvent { public Behavior behavior; }
       public class StartedEvent : BehaviorEvent { }
       public class UpdateEvent : BehaviorEvent { }
       public class SuspendEvent : BehaviorEvent { }

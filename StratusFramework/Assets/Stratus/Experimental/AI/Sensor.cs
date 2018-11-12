@@ -26,7 +26,7 @@ namespace Stratus.AI
     /// respond with a corresponding event to signal that they are able to be
     /// interacted with.
     /// </summary>
-    public class DetectionEvent : Stratus.Event
+    public class DetectionEvent : Stratus.StratusEvent
     {
       /// <summary>
       /// The sensor that is outputting the scan
@@ -41,7 +41,7 @@ namespace Stratus.AI
     /// <summary>
     /// Signals an interactive object that the sensor wants to interact with it
     /// </summary>
-    public class InteractEvent : Stratus.Event
+    public class InteractEvent : Stratus.StratusEvent
     {
       /// <summary>
       /// The sensor that wants to interact
@@ -56,7 +56,7 @@ namespace Stratus.AI
     /// <summary>
     /// The results of a given scan
     /// </summary>
-    public class DetectionResultEvent : Stratus.Event
+    public class DetectionResultEvent : Stratus.StratusEvent
     {
       /// <summary>
       /// Whether interactions were found by this sensor

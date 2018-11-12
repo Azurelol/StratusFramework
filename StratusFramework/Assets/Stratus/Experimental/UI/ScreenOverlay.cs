@@ -13,7 +13,7 @@ namespace Stratus
   [Singleton(instantiate = false, persistent = false)]
   public class ScreenOverlay : Singleton<ScreenOverlay>
   {
-    public abstract class ScreenOverlayEvent : Stratus.Event
+    public abstract class ScreenOverlayEvent : Stratus.StratusEvent
     {
       public float duration;
       public System.Action onFinished;

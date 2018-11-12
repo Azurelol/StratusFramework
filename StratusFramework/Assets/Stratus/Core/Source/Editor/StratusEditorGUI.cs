@@ -118,7 +118,7 @@ namespace Stratus
 
     public static void DrawGUI(Rect position, FieldInfo field, object target)
     {
-      SerializedPropertyType propertyType = SerializedSystemObject.DeducePropertyType(field);
+      SerializedPropertyType propertyType = StratusSerializedSystemObject.DeducePropertyType(field);
       string name = ObjectNames.NicifyVariableName(field.Name);
       object value = null;
       switch (propertyType)

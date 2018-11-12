@@ -16,12 +16,12 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Declarations
       //------------------------------------------------------------------------/
-      public class FormulatedEvent : Stratus.Event
+      public class FormulatedEvent : Stratus.StratusEvent
       {
         public Plan Plan;
         public FormulatedEvent(Plan plan) { Plan = plan; }
       }
-      public class ExecutedEvent : Stratus.Event { }
+      public class ExecutedEvent : Stratus.StratusEvent { }
 
       //------------------------------------------------------------------------/
       // Properties

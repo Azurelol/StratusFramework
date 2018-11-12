@@ -33,8 +33,8 @@ namespace Stratus.Analytics
     public Condition condition;
     // Event
     [Tooltip("The scope of the event")]
-    public Event.Scope eventScope;
-    [ClassExtends(typeof(Stratus.Event), Grouping = ClassGrouping.ByNamespace)]
+    public StratusEvent.Scope eventScope;
+    [ClassExtends(typeof(Stratus.StratusEvent), Grouping = ClassGrouping.ByNamespace)]
     [Tooltip("What type of event will have this data be collected")]
     public ClassTypeReference eventType;
     // Timer
@@ -59,7 +59,7 @@ namespace Stratus.Analytics
     // Properties
     //------------------------------------------------------------------------/
     public UnityEngine.EventSystems.EventTrigger eventTrigger { get; private set; }
-    public EventProxy eventProxy { get; private set; }
+    public StratusEventProxy eventProxy { get; private set; }
     public GameObject targetGameObject { get; set; }
     public Transform targetTransform { get; set; }
     public object latestValue { get; set; }
@@ -75,7 +75,7 @@ namespace Stratus.Analytics
       switch (condition)
       {
         case Condition.Timer:
-          UpdateSystem.Add(onTimer, Submit, this);
+          StratusUpdateSystem.Add(onTimer, Submit, this);
           break;
 
         case Condition.Nessage:
@@ -92,7 +92,7 @@ namespace Stratus.Analytics
           break;
 
         case Condition.Event:
-          eventProxy = EventProxy.Construct(this.gameObject, eventScope, eventType, OnEvent, true, debug);
+          eventProxy = StratusEventProxy.Construct(this.gameObject, eventScope, eventType, OnEvent, true, debug);
           break;
         default:
           break;
@@ -105,7 +105,7 @@ namespace Stratus.Analytics
       switch (condition)
       {
         case Condition.Timer:
-          UpdateSystem.Remove(this);
+          StratusUpdateSystem.Remove(this);
           break;
         case Condition.Nessage:
           break;
@@ -130,7 +130,7 @@ namespace Stratus.Analytics
     //------------------------------------------------------------------------/
     // Events
     //------------------------------------------------------------------------/
-    void OnEvent<T>(T e) where T : Stratus.Event
+    void OnEvent<T>(T e) where T : Stratus.StratusEvent
     {
       Submit();
     }

@@ -5,7 +5,7 @@ using System;
 
 namespace Stratus.Gameplay
 {
-  public abstract class StateDrivenChangeStateEvent<State> : Triggerable where State : struct, IConvertible
+  public abstract class StateDrivenChangeStateEvent<State> : StratusTriggerable where State : struct, IConvertible
   {
     public State state;
 

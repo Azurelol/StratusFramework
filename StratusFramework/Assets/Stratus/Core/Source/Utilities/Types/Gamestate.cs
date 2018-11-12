@@ -10,7 +10,7 @@ namespace Stratus.Gameplay
   /// <typeparam name="State"></typeparam>
   public abstract class Gamestate<State> where State : struct
   {
-    public class ChangeEvent : Stratus.Event
+    public class ChangeEvent : Stratus.StratusEvent
     {
       public State State;
       public ChangeEvent(State state) { State = state; }

@@ -8,15 +8,15 @@ namespace Stratus.Experimental
   public class SelectableHighlighter : StratusBehaviour
   {
     public Selectable selectable;
-    public Gameplay.ImageEffectEvent imageEffect;
+    public Gameplay.StratusImageEffectEvent imageEffect;
     public bool selectOnHighlight;
 
-    private SelectableProxy proxy;
+    private StratusSelectableProxy proxy;
 
 
     private void Awake()
     {
-      proxy = SelectableProxy.Construct(selectable);
+      proxy = StratusSelectableProxy.Construct(selectable);
       proxy.onSelect += OnSelected;
     }
 

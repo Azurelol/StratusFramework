@@ -8,7 +8,7 @@ using Stratus.Utilities;
 namespace Stratus
 {
   [CustomEditor(typeof(ExtensibleBehaviour), true)]
-  public class ExtensibleBehaviourEditor : BehaviourEditor<ExtensibleBehaviour>
+  public class ExtensibleBehaviourEditor : StratusBehaviourEditor<ExtensibleBehaviour>
   {
     //--------------------------------------------------------------------------------------------/
     // Fields

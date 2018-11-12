@@ -48,7 +48,7 @@ namespace Stratus.Gameplay
       Exited
     }
 
-    public class BaseSegmentEvent : Stratus.Event
+    public class BaseSegmentEvent : Stratus.StratusEvent
     {
       public Segment segment { get; protected set; }
     }
@@ -85,7 +85,7 @@ namespace Stratus.Gameplay
     [Tooltip("The string identifier for this segment")]
     public string label;
     [Tooltip("The trigger system used by this segment")]
-    public TriggerSystem triggerSystem;
+    public StratusTriggerSystem triggerSystem;
     [Tooltip("Whether the triggers on the trigger system are controlled by this segment")]
     public bool controlTriggers = true;
     [Tooltip("Whether selected objects are toggled by this segment")]
@@ -94,7 +94,7 @@ namespace Stratus.Gameplay
     public bool restart = true;
 
     [Tooltip("The list of checkpoints within this segment")]
-    public List<Checkpoint> checkpoints = new List<Checkpoint>();
+    public List<StratusCheckpoint> checkpoints = new List<StratusCheckpoint>();
     [Tooltip("Objects to be toggled on and off by this segment")]
     public List<GameObject> toggledObjects = new List<GameObject>();
 
@@ -129,7 +129,7 @@ namespace Stratus.Gameplay
     /// <summary>
     /// The initial checkpoint for this segment
     /// </summary>
-    public Checkpoint initialCheckpoint => checkpoints[0];
+    public StratusCheckpoint initialCheckpoint => checkpoints[0];
     /// <summary>
     /// All currently active segments, indexed by their labels
     /// </summary>
@@ -211,8 +211,8 @@ namespace Stratus.Gameplay
 
     private void Reset()
     {
-      triggerSystem = GetComponent<TriggerSystem>();
-      checkpoints.AddRange(GetComponentsInChildren<Checkpoint>());
+      triggerSystem = GetComponent<StratusTriggerSystem>();
+      checkpoints.AddRange(GetComponentsInChildren<StratusCheckpoint>());
     }
 
     void Debuggable.Toggle(bool toggle)
@@ -369,7 +369,7 @@ namespace Stratus.Gameplay
     /// Translates the given object onto one of the checkpoints
     /// </summary>
     /// <param name="obj"></param>
-    public void TranslateToCheckpoint(Transform target, Checkpoint checkpoint)
+    public void TranslateToCheckpoint(Transform target, StratusCheckpoint checkpoint)
     {
       Vector3 position = checkpoint.transform.position;
       var navigation = target.GetComponent<NavMeshAgent>();

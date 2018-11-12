@@ -5,7 +5,7 @@ using Stratus.AI;
 
 namespace Stratus.Gameplay
 {
-  public class AgentEvent : Triggerable
+  public class AgentEvent : StratusTriggerable
   {
     public enum EventType
     {

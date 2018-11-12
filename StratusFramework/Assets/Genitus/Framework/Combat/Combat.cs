@@ -13,11 +13,11 @@ namespace Stratus
     /// <summary>
     /// If an input has been accepted, and is legal, represents the beginning of an action
     /// </summary>
-    public class GainEvent : Stratus.Event { public ValueType value; }
+    public class GainEvent : Stratus.StratusEvent { public ValueType value; }
     /// <summary>
     /// If an input has been accepted, and is legal, represents the beginning of an action
     /// </summary>
-    public class LossEvent : Stratus.Event { public ValueType value; }
+    public class LossEvent : Stratus.StratusEvent { public ValueType value; }
   }
 }
 
@@ -42,15 +42,15 @@ namespace Genitus
     /// <summary>
     /// Base class for all combat events
     /// </summary>
-    public abstract class BaseCombatEvent : Stratus.Event {}
+    public abstract class BaseCombatEvent : Stratus.StratusEvent {}
     /// <summary>
     /// Combat has started
     /// </summary>
-    public class StartedEvent : Stratus.Event { public CombatEncounter Encounter; }
+    public class StartedEvent : Stratus.StratusEvent { public CombatEncounter Encounter; }
     /// <summary>
     /// Combat has ended
     /// </summary>
-    public class EndedEvent : Stratus.Event {}
+    public class EndedEvent : Stratus.StratusEvent {}
 
     //------------------------------------------------------------------------/
     // Events: Damage

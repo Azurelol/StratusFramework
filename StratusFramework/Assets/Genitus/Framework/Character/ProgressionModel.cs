@@ -18,7 +18,7 @@ namespace Genitus.Models
     /// <summary>
     /// Signals that a character has gained a level
     /// </summary>
-    public class LevelUpEvent : Stratus.Event
+    public class LevelUpEvent : Stratus.StratusEvent
     {
       public Character character;
     }

@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Stratus.Gameplay
 {
-  public class StatefulEvent : Triggerable
+  public class StatefulEvent : StratusTriggerable
   {
     [Tooltip("The scope for this event")]
-    public Event.Scope eventScope = Event.Scope.GameObject;
+    public StratusEvent.Scope eventScope = StratusEvent.Scope.GameObject;
 
     [Tooltip("The stateful object")]
-    [DrawIf("eventScope", Event.Scope.GameObject, ComparisonType.Equals)]
+    [DrawIf("eventScope", StratusEvent.Scope.GameObject, ComparisonType.Equals)]
     public Stateful target;
 
     [Tooltip("The event type")]
@@ -51,11 +51,11 @@ namespace Stratus.Gameplay
     {
       switch (eventScope)
       {
-        case Event.Scope.GameObject:
+        case StratusEvent.Scope.GameObject:
           target.gameObject.Dispatch<Stateful.StateEvent>(new Stateful.StateEvent(eventType, state));
           break;
 
-        case Event.Scope.Scene:
+        case StratusEvent.Scope.Scene:
           Scene.Dispatch<Stateful.StateEvent>(new Stateful.StateEvent(eventType, state));
           break;
       }

@@ -10,8 +10,8 @@ namespace Stratus
   /// <typeparam name="PauseEvent"></typeparam>
   /// <typeparam name="ResumeEvent"></typeparam>
   public abstract class EventDrivenPausable<PauseEvent, ResumeEvent> : PausableObject
-    where PauseEvent : Stratus.Event
-    where ResumeEvent : Stratus.Event
+    where PauseEvent : Stratus.StratusEvent
+    where ResumeEvent : Stratus.StratusEvent
   {
     protected override void SetPauseMechanism()
     {

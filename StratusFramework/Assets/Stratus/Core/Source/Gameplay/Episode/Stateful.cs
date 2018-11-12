@@ -56,7 +56,7 @@ namespace Stratus
       OnDelay,       
     }
 
-    public class StateEvent : Stratus.Event
+    public class StateEvent : Stratus.StratusEvent
     {
       public StateEvent(EventType type, string label)
       {
@@ -74,7 +74,7 @@ namespace Stratus
     // Fields
     //------------------------------------------------------------------------/
     public bool debug = false;
-    public Event.Scope scope = Event.Scope.Scene;
+    public StratusEvent.Scope scope = StratusEvent.Scope.Scene;
     public InitialStateConfiguration initialStateConfiguration = InitialStateConfiguration.Immediate;
     public UnityEvent onInitialState = new UnityEvent();
     public float delay = 0.0f;
@@ -118,7 +118,7 @@ namespace Stratus
     private void Awake()
     {
       // Optionally, subscribe to scene-wide events
-      if (scope == Event.Scope.Scene)
+      if (scope == StratusEvent.Scope.Scene)
         Scene.Connect<StateEvent>(this.OnStateEvent);
 
       // Always subscribe to specific requests

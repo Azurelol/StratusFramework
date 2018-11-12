@@ -33,7 +33,7 @@ namespace Genitus
   /// </summary>
   public abstract class ItemObject<T> : ItemObject
   {
-    public class LootEvent : Stratus.Event { public ItemObject<T> Object; }
+    public class LootEvent : Stratus.StratusEvent { public ItemObject<T> Object; }
     public T Item;
   }
 }

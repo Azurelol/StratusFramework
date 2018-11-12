@@ -11,8 +11,8 @@ namespace Genitus
     public class ItemEntry
     {
       //------------------------------------------------------------------------/
-      public class LootEvent : Stratus.Event { public ItemEntry Item; }
-      public class LootedEvent : Stratus.Event { public ItemEntry Item; }
+      public class LootEvent : Stratus.StratusEvent { public ItemEntry Item; }
+      public class LootedEvent : Stratus.StratusEvent { public ItemEntry Item; }
       //------------------------------------------------------------------------/
       public Item Item;
       public string Name { get { return Item.Name; } }

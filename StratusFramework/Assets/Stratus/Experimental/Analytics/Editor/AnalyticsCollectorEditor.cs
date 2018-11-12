@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Stratus.Analytics
 {
   [CustomEditor(typeof(AnalyticsCollector))]
-  public class AnalyticsCollectorEditor : BehaviourEditor<AnalyticsCollector>
+  public class AnalyticsCollectorEditor : StratusBehaviourEditor<AnalyticsCollector>
   {
     private DropdownList<Analysis.Attribute> attributes;
 

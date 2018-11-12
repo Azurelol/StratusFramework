@@ -185,7 +185,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     private List<EventTreeElement> BuildEventTree()
     {
-      events = Reflection.GetSubclass<Stratus.Event>();
+      events = Reflection.GetSubclass<Stratus.StratusEvent>();
       EventInformation[] eventsInformation = new EventInformation[events.Length];
       for (int i = 0; i < events.Length; ++i)
       {

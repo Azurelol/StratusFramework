@@ -49,7 +49,7 @@ namespace Stratus.Gameplay
     /// <summary>
     /// Base class for all CharacterMovement events
     /// </summary>
-    public abstract class BaseMoveEvent : Stratus.Event
+    public abstract class BaseMoveEvent : Stratus.StratusEvent
     {
       public FloatOverride speedOVerride;
       public bool turn;
@@ -75,7 +75,7 @@ namespace Stratus.Gameplay
     /// <summary>
     /// Signals the character to jump
     /// </summary>
-    public class JumpEvent : Stratus.Event { }
+    public class JumpEvent : Stratus.StratusEvent { }
 
     //--------------------------------------------------------------------------------------------/
     // Fields
@@ -125,7 +125,7 @@ namespace Stratus.Gameplay
     public new Rigidbody rigidbody { get; private set; }
     public NavMeshAgent navMeshAgent { get; private set; }
     public CharacterController characterController { get; private set; }
-    private CollisionProxy collisionProxy { get; set; }
+    private StratusCollisionProxy collisionProxy { get; set; }
 
     public static Vector3 gravity => Physics.gravity;
     public bool moving { get; private set; }

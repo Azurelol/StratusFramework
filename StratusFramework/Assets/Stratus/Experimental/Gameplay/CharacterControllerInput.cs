@@ -239,7 +239,7 @@ namespace Stratus.Gameplay
 
       if (currentPreset.synchronizeForward)
       {
-        Vector3 newForward = cameraTransform.forward.Strip(VectorAxis.y);
+        Vector3 newForward = cameraTransform.forward.Strip(VectorAxis.Y);
         if (newForward != Vector3.zero)
           transform.forward = newForward;
       }

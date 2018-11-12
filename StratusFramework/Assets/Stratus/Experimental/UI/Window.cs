@@ -24,13 +24,13 @@ namespace Stratus
       //------------------------------------------------------------------------/
       // Declarations
       //------------------------------------------------------------------------/
-      public class RedirectInputEvent : Stratus.Event { public Window Window; }
-      public class OpenEvent : Stratus.Event { }
-      public class CloseEvent : Stratus.Event { }
-      public class OpenedEvent : Stratus.Event { }
-      public class ClosedEvent : Stratus.Event { }
-      public class TransitionEvent : Stratus.Event { }
-      public class DescriptionEvent : Stratus.Event
+      public class RedirectInputEvent : Stratus.StratusEvent { public Window Window; }
+      public class OpenEvent : Stratus.StratusEvent { }
+      public class CloseEvent : Stratus.StratusEvent { }
+      public class OpenedEvent : Stratus.StratusEvent { }
+      public class ClosedEvent : Stratus.StratusEvent { }
+      public class TransitionEvent : Stratus.StratusEvent { }
+      public class DescriptionEvent : Stratus.StratusEvent
       {
         public string Title;
         public string Description;
@@ -152,9 +152,9 @@ namespace Stratus
         if (this.Transition)
           delay = this.Transition.Duration + 0.05f;
 
-        var seq = Actions.Sequence(this);
-        Actions.Delay(seq, delay);
-        Actions.Call(seq, base.Close);
+        var seq = StratusActions.Sequence(this);
+        StratusActions.Delay(seq, delay);
+        StratusActions.Call(seq, base.Close);
       }
 
       void OnTransitionEvent(TransitionEvent e)

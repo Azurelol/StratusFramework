@@ -11,7 +11,7 @@ namespace Genitus
     /// <summary>
     /// Base kinetic event
     /// </summary>
-    public abstract class KineticEvent : Stratus.Event
+    public abstract class KineticEvent : Stratus.StratusEvent
     {
       public Transform Source;
       public float Amount;

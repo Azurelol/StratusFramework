@@ -43,7 +43,7 @@ namespace Genitus
     /// Queries for a given potency for an effect based on a customized query
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class PotencyQueryEvent<T> : Stratus.Event
+    public abstract class PotencyQueryEvent<T> : Stratus.StratusEvent
     {
       public T query { get; private set; }
       public float potency { get; set; }

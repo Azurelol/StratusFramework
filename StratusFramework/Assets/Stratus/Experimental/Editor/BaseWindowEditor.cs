@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Stratus
 {
   [CustomEditor(typeof(BaseWindow), true)]
-  public class BaseWindowEditor : BehaviourEditor<BaseWindow>
+  public class BaseWindowEditor : StratusBehaviourEditor<BaseWindow>
   {
     protected override void OnStratusEditorEnable()
     {

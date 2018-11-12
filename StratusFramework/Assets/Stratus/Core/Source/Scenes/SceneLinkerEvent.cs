@@ -9,7 +9,7 @@ namespace Stratus.Gameplay
   /// <summary>
   /// When triggered, makes sure the selected scenes are loaded
   /// </summary>
-  public class SceneLinkerEvent : Triggerable
+  public class SceneLinkerEvent : StratusTriggerable
   {
     //----------------------------------------------------------------------/
     // Fields

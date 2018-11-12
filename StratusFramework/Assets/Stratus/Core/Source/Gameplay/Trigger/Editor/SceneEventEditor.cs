@@ -5,10 +5,10 @@ using UnityEditor;
 
 namespace Stratus.Gameplay
 {
-  [CustomEditor(typeof(SceneEvent))]
-  public class SceneEventEditor : TriggerableEditor<SceneEvent>
+  [CustomEditor(typeof(StratusSceneEvent))]
+  public class SceneEventEditor : TriggerableEditor<StratusSceneEvent>
   {
-    SceneEvent sceneEvent => target as SceneEvent;
+    StratusSceneEvent sceneEvent => target as StratusSceneEvent;
 
     protected override void OnTriggerableEditorEnable()
     {
@@ -19,11 +19,11 @@ namespace Stratus.Gameplay
     {
       bool changed = false;
       changed |= DrawSerializedProperty(declaredProperties.Item2[0].unitySerialized, serializedObject);
-      if (sceneEvent.type == SceneEvent.Type.Load || sceneEvent.type == SceneEvent.Type.Unload)
+      if (sceneEvent.type == StratusSceneEvent.Type.Load || sceneEvent.type == StratusSceneEvent.Type.Unload)
       {
         changed |= DrawSerializedProperty(declaredProperties.Item2[1].unitySerialized, serializedObject);
       }
-      if (sceneEvent.type == SceneEvent.Type.Load)
+      if (sceneEvent.type == StratusSceneEvent.Type.Load)
       {
         changed |= DrawSerializedProperty(declaredProperties.Item2[2].unitySerialized, serializedObject);
       }

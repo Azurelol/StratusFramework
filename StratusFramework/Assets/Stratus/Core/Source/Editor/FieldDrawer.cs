@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace Stratus
 {
-  public partial class SerializedSystemObject
+  public partial class StratusSerializedSystemObject
   {
     //------------------------------------------------------------------------/
     // Declarations
@@ -42,7 +42,7 @@ namespace Stratus
         this.name = ObjectNames.NicifyVariableName(field.Name);
 
         this.attributesByName.AddRange(this.field.GetCustomAttributes(attributeType), (Attribute attribute) => attribute.GetType());
-        this.propertyType = SerializedSystemObject.DeducePropertyType(field);
+        this.propertyType = StratusSerializedSystemObject.DeducePropertyType(field);
         this.isPrimitive = OdinSerializer.FormatterUtilities.IsPrimitiveType(this.type);
         this.isArray = typeof(IList).IsAssignableFrom(this.type); 
         // Drawable unless its meant to be hidden

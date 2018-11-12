@@ -9,7 +9,7 @@ namespace Genitus
   /// <summary>
   /// Initiates combat when triggered.
   /// </summary>
-  public class CombatEncounter : Triggerable
+  public class CombatEncounter : StratusTriggerable
   {
     /// <summary>
     /// What should happen to the object after combat ends.

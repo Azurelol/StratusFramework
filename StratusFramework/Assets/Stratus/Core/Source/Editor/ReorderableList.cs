@@ -19,7 +19,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    public OdinSerializedProperty odinSerializedProperty { get; private set; }
+    public StratusOdinSerializedProperty odinSerializedProperty { get; private set; }
     //public string label { get; set; }
     //public bool isExpanded { get; set; }
 
@@ -49,7 +49,7 @@ namespace Stratus
     {
     }
 
-    public static StratusReorderableList PolymorphicList(OdinSerializedProperty serializedProperty)
+    public static StratusReorderableList PolymorphicList(StratusOdinSerializedProperty serializedProperty)
     {
       if (!serializedProperty.isArray)
         throw new ArgumentException($"The field {serializedProperty.displayName} is not an array!");
@@ -64,7 +64,7 @@ namespace Stratus
 
     public static StratusReorderableList PolymorphicList(FieldInfo field, object target)
     {
-      OdinSerializedProperty odinSerializedProperty = new OdinSerializedProperty(field, target);
+      StratusOdinSerializedProperty odinSerializedProperty = new StratusOdinSerializedProperty(field, target);
       return PolymorphicList(odinSerializedProperty);
     }
 
@@ -96,7 +96,7 @@ namespace Stratus
       this.SetElementHeightCallback(serializedProperty);
     }
 
-    public void SetPolymorphic(OdinSerializedProperty serializedProperty)
+    public void SetPolymorphic(StratusOdinSerializedProperty serializedProperty)
     {
       this.SetHeaderCallback(serializedProperty);
       this.SetPolymorphicElementDrawCallback(serializedProperty);
@@ -125,7 +125,7 @@ namespace Stratus
       };
     }
 
-    public void SetHeaderCallback(OdinSerializedProperty serializedProperty)
+    public void SetHeaderCallback(StratusOdinSerializedProperty serializedProperty)
     {
       this.drawHeaderCallback = (Rect rect) =>
       {
@@ -160,7 +160,7 @@ namespace Stratus
        };
     }
 
-    public void SetPolymorphicElementDrawCallback(OdinSerializedProperty serializedProperty)
+    public void SetPolymorphicElementDrawCallback(StratusOdinSerializedProperty serializedProperty)
     {
       this.drawElementCallback =
        (Rect rect, int index, bool isActive, bool isFocused) =>
@@ -175,7 +175,7 @@ namespace Stratus
          // Get the drawer for the element type
          var element = serializedProperty.GetArrayElementAtIndex(index);
          Type elementType = element.GetType();
-         SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(elementType);
+         StratusSerializedSystemObject.ObjectDrawer drawer = StratusSerializedSystemObject.GetObjectDrawer(elementType);
          
          // Draw the element
          Rect position = new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight);
@@ -199,7 +199,7 @@ namespace Stratus
       };
     }
 
-    public void SetPolymorphicElementHeightCallback(OdinSerializedProperty serializedProperty)
+    public void SetPolymorphicElementHeightCallback(StratusOdinSerializedProperty serializedProperty)
     {
       elementHeightCallback = (int indexer) =>
       {
@@ -210,16 +210,16 @@ namespace Stratus
         }
         else
         {
-          SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(serializedProperty.GetArrayElementAtIndex(indexer));
+          StratusSerializedSystemObject.ObjectDrawer drawer = StratusSerializedSystemObject.GetObjectDrawer(serializedProperty.GetArrayElementAtIndex(indexer));
           float height = drawer.height;
           // We add an additional line of height since we are drawing a label for polymorphic list
-          if (drawElementTypeLabel) height += SerializedSystemObject.DefaultObjectDrawer.lineHeight;
+          if (drawElementTypeLabel) height += StratusSerializedSystemObject.DefaultObjectDrawer.lineHeight;
           return height;
         }
       };
     }
 
-    public void SetElementAddCallback(OdinSerializedProperty serializedProperty)
+    public void SetElementAddCallback(StratusOdinSerializedProperty serializedProperty)
     {
       onAddDropdownCallback = (Rect buttonRect, ReorderableList list) =>
       {

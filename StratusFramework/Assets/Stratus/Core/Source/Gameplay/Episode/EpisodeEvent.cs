@@ -8,7 +8,7 @@ namespace Stratus.Gameplay
   /// <summary>
   /// An event that handles transitions between segments within an episode
   /// </summary>
-  public class EpisodeEvent : Triggerable
+  public class EpisodeEvent : StratusTriggerable
   {
     //------------------------------------------------------------------------/
     // Fields

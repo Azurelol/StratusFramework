@@ -9,7 +9,7 @@ namespace Stratus.Gameplay
   public class EpisodeEventEditor : TriggerableEditor<EpisodeEvent>
   {
     private ObjectDropdownList<Segment> segments;
-    private ObjectDropdownList<Checkpoint> checkpoints;
+    private ObjectDropdownList<StratusCheckpoint> checkpoints;
     private SerializedProperty episodeProperty;
     private SerializedProperty segmentProperty;
 
@@ -76,7 +76,7 @@ namespace Stratus.Gameplay
       checkpoints = null;
       if (!triggerable.segment)
         return;
-      checkpoints = new ObjectDropdownList<Checkpoint>(triggerable.segment.checkpoints, triggerable.checkpointIndex);
+      checkpoints = new ObjectDropdownList<StratusCheckpoint>(triggerable.segment.checkpoints, triggerable.checkpointIndex);
     }
 
 

@@ -60,7 +60,7 @@ namespace Genitus.AI
     /// <summary>
     /// Base class for all targeting events
     /// </summary>
-    public abstract class TargetingEvent : Stratus.Event { public Agent target; }
+    public abstract class TargetingEvent : Stratus.StratusEvent { public Agent target; }
     /// <summary>
     /// Signals to the agent to engage the target in combat
     /// </summary>

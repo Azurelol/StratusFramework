@@ -19,8 +19,8 @@ namespace Stratus
 
     static void LookUpTypes()
     {
-      eventTypes = Reflection.GetSubclass<Stratus.Event>(false);
-      eventTypeNames = Reflection.GetSubclassNames<Stratus.Event>(false);
+      eventTypes = Reflection.GetSubclass<Stratus.StratusEvent>(false);
+      eventTypeNames = Reflection.GetSubclassNames<Stratus.StratusEvent>(false);
     }
 
   }

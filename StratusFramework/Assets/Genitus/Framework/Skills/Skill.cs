@@ -18,7 +18,7 @@ namespace Genitus
     /// <summary>
     /// Base class for skill events
     /// </summary>
-    public abstract class BaseSkillEvent : Stratus.Event { public Skill skill { get; set; } }
+    public abstract class BaseSkillEvent : Stratus.StratusEvent { public Skill skill { get; set; } }
     /// <summary>
     /// A query to determine whether this skill can be used
     /// </summary>
@@ -113,7 +113,7 @@ namespace Genitus
       /// <param name="target">The target of this skill.</param>
       public void Use(CombatController user, CombatController[] targets)
       {
-        Skill.ActivationEvent skillUsed = Stratus.Event.Cache<Skill.ActivationEvent>();
+        Skill.ActivationEvent skillUsed = Stratus.StratusEvent.Cache<Skill.ActivationEvent>();
         reference.Cast(user, targets);
         skillUsed.skill = reference;
         user.gameObject.Dispatch<Skill.ActivationEvent>(skillUsed);

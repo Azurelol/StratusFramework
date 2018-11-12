@@ -18,7 +18,7 @@ namespace Stratus
       /// <summary>
       /// Received by this controller, which then forwards it onto the Cinemachine camera
       /// </summary>
-      public class InputEvent : Stratus.Event { public Vector2 Axis; }
+      public class InputEvent : Stratus.StratusEvent { public Vector2 Axis; }
 
       //----------------------------------------------------------------------/
       // Fields

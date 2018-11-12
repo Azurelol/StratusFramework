@@ -20,7 +20,7 @@ namespace Stratus
     [RequireComponent(typeof(AudioSource))]
     public class SoundEffects : Singleton<SoundEffects>
     {
-      public class PlayEvent : Stratus.Event { public AudioClip Clip; }
+      public class PlayEvent : Stratus.StratusEvent { public AudioClip Clip; }
 
       private AudioSource Player;
       protected override void OnAwake()

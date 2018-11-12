@@ -6,7 +6,7 @@ using UnityEngine.Animations;
 
 namespace Stratus.Gameplay
 {
-  [CustomPropertyDrawer(typeof(AnimatorParameterHook))]
+  [CustomPropertyDrawer(typeof(StratusAnimatorParameterHook))]
   public class AnimatorParameterHookDrawer : StratusPropertyDrawer
   {
     private const float lines = 3f;
@@ -19,20 +19,20 @@ namespace Stratus.Gameplay
     protected override void OnDrawProperty(Rect position, SerializedProperty property)
     {
       // Special case if it's being used by the character animator
-      CharacterAnimator characterAnimator = target as CharacterAnimator;
+      StratusCharacterAnimator characterAnimator = target as StratusCharacterAnimator;
       bool hasParameters = characterAnimator != null && characterAnimator.animator != null && characterAnimator.hasParameters;
 
       // Member
-      SerializedProperty memberProperty = property.FindPropertyRelative(nameof(AnimatorParameterHook.member));
+      SerializedProperty memberProperty = property.FindPropertyRelative(nameof(StratusAnimatorParameterHook.member));
       EditorGUI.PropertyField(position, memberProperty);
       position.y += lineHeight * 2f;
 
       // Parameter
-      SerializedProperty parameterNameProperty = property.FindPropertyRelative(nameof(AnimatorParameterHook.parameterName));
+      SerializedProperty parameterNameProperty = property.FindPropertyRelative(nameof(StratusAnimatorParameterHook.parameterName));
 
       if (hasParameters)
       {
-        SerializedProperty parameterTypeProperty = property.FindPropertyRelative(nameof(AnimatorEventHook.parameterType));
+        SerializedProperty parameterTypeProperty = property.FindPropertyRelative(nameof(StratusAnimatorEventHook.parameterType));
         //AnimatorControllerParameterType parameterType = GetEnumValue<AnimatorControllerParameterType>(parameterTypeProperty);
         AnimatorControllerParameterType parameterType = (AnimatorControllerParameterType)parameterTypeProperty.intValue;
         string[] parameters = null;

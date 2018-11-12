@@ -67,7 +67,7 @@ namespace Stratus
 
     // The enumerated type of this property
     [SerializeField] 
-    private ActionProperty.Types memberType = ActionProperty.Types.None;
+    private StratusActionProperty.Types memberType = StratusActionProperty.Types.None;
     // Saved values for toggling
     private object previousValue;
     // Interpolate function used
@@ -99,7 +99,7 @@ namespace Stratus
       IEnumerator interpolator = null;
       switch (memberType)
       {
-        case ActionProperty.Types.Integer:
+        case StratusActionProperty.Types.Integer:
           {
             int currentValue = member.Get<int>();
             bool shouldToggle = (toggle && currentValue == intValue);
@@ -109,7 +109,7 @@ namespace Stratus
             previousValue = currentValue;
           }
           break;
-        case ActionProperty.Types.Float:
+        case StratusActionProperty.Types.Float:
           {
             float currentValue = member.Get<float>();
             bool shouldToggle = (toggle && currentValue == floatValue);
@@ -120,7 +120,7 @@ namespace Stratus
             previousValue = currentValue;
           }
           break;
-        case ActionProperty.Types.Boolean:
+        case StratusActionProperty.Types.Boolean:
           {
             bool currentValue = member.Get<bool>();
             bool shouldToggle = (toggle && currentValue == boolValue);
@@ -129,7 +129,7 @@ namespace Stratus
             previousValue = currentValue;
           }
           break;
-        case ActionProperty.Types.Vector2:
+        case StratusActionProperty.Types.Vector2:
           {
             Vector2 currentValue = member.Get<Vector2>();
             bool shouldToggle = (toggle && currentValue == vector2Value);
@@ -139,7 +139,7 @@ namespace Stratus
             previousValue = currentValue;
           }
           break;
-        case ActionProperty.Types.Vector3:
+        case StratusActionProperty.Types.Vector3:
           {
             Vector3 currentValue = member.Get<Vector3>();
             bool shouldToggle = (toggle && currentValue == vector3Value);
@@ -149,7 +149,7 @@ namespace Stratus
             previousValue = currentValue;
           }
           break;
-        case ActionProperty.Types.Vector4:
+        case StratusActionProperty.Types.Vector4:
           {
             Vector4 currentValue = member.Get<Vector4>();
             bool shouldToggle = (toggle && currentValue == vector4Value);
@@ -159,7 +159,7 @@ namespace Stratus
             previousValue = currentValue;
           }
           break;
-        case ActionProperty.Types.Color:
+        case StratusActionProperty.Types.Color:
           {
             Color currentValue = member.Get<Color>();
             bool shouldToggle = (toggle && currentValue == colorValue);
@@ -181,9 +181,9 @@ namespace Stratus
     public void Validate()
     {
       if (member.isAssigned)
-        memberType = ActionProperty.Deduce(member.type);
+        memberType = StratusActionProperty.Deduce(member.type);
       else
-        memberType = ActionProperty.Types.None;
+        memberType = StratusActionProperty.Types.None;
     }
 
     /// <summary>

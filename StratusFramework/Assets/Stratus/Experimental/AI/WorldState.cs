@@ -32,7 +32,7 @@ namespace Stratus
       /// <summary>
       /// Modifies a single symbol of the WorldState
       /// </summary>
-      public class ModifySymbolEvent : Stratus.Event
+      public class ModifySymbolEvent : Stratus.StratusEvent
       {
         public Symbol Symbol;
         public ModifySymbolEvent(Symbol symbol) { Symbol = symbol; }

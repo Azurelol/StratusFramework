@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(Episode))]
-  public class EpisodeEditor : BehaviourEditor<Episode>
+  public class EpisodeEditor : StratusBehaviourEditor<Episode>
   {
     private Episode.JumpMechanism jumpMechanism => target.mechanism;
 

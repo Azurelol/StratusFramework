@@ -117,7 +117,7 @@ namespace Stratus
       {
       }
 
-      void Forward<T>(T forwardedEvent) where T : Stratus.Event
+      void Forward<T>(T forwardedEvent) where T : Stratus.StratusEvent
       {
         //Trace.Script("Redirecting event to " + this.Target.name);
         this.Target.gameObject.Dispatch<T>(forwardedEvent);

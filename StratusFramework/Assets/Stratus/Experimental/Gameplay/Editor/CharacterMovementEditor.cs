@@ -8,7 +8,7 @@ using System;
 namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(CharacterMovement), true)]
-  public class CharacterMovementEditor : BehaviourEditor<CharacterMovement>
+  public class CharacterMovementEditor : StratusBehaviourEditor<CharacterMovement>
   {
     protected override void OnStratusEditorEnable()
     {

@@ -13,7 +13,7 @@ namespace Genitus
     //------------------------------------------------------------------------/
     // Declarations
     //------------------------------------------------------------------------/
-    public abstract class StatusEvent : Stratus.Event { public Status.Instance status; }
+    public abstract class StatusEvent : Stratus.StratusEvent { public Status.Instance status; }
     public class StartedEvent : StatusEvent {}
     public class EndedEvent : StatusEvent {}
 

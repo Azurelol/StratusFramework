@@ -84,7 +84,7 @@ namespace Genitus
   /// </summary>
   public partial class Inventory : MonoBehaviour
   {    
-    public class RequestEvent : Stratus.Event { public Inventory Inventory; }
+    public class RequestEvent : Stratus.StratusEvent { public Inventory Inventory; }
     // Let's do list since serializing dictionaries in Unity is a pain @_@
     //public List<ConsumableItem> Consumables = new List<ConsumableItem>();
     public List<ConsumableEntry> Consumables = new List<ConsumableEntry>();    

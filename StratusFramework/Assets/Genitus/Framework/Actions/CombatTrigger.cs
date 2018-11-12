@@ -15,7 +15,7 @@ namespace Genitus
     public enum Result { Critical, Success, Failure }
     public enum Type { Attack, Defend }
 
-    public abstract class TriggerEvent : Stratus.Event
+    public abstract class TriggerEvent : Stratus.StratusEvent
     {
       public Instance Instance;
     }

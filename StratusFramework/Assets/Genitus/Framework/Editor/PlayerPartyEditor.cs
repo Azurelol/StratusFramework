@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Genitus
 {
   [CustomEditor(typeof(PlayerParty))]
-  public class PlayerPartyEditor : BehaviourEditor<PlayerParty>
+  public class PlayerPartyEditor : StratusBehaviourEditor<PlayerParty>
   {
     //private SerializedProperty PartyMembers;
 

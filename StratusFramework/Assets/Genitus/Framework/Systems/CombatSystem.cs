@@ -18,21 +18,21 @@ namespace Genitus
     //------------------------------------------------------------------------/
     // Events
     //------------------------------------------------------------------------/
-    public class ReferenceEvent : Stratus.Event { public CombatSystem System; }
+    public class ReferenceEvent : Stratus.StratusEvent { public CombatSystem System; }
     // Informs that a combat turn has passed
-    public class TurnPassedEvent : Stratus.Event { public int Turn; }
+    public class TurnPassedEvent : Stratus.StratusEvent { public int Turn; }
     // Informs that time has advanced in combat
-    public class TimeStepEvent : Stratus.Event { public float Step; }
+    public class TimeStepEvent : Stratus.StratusEvent { public float Step; }
     // Informs that the combat system has finished its initialization routine
-    public class InitializedEvent : Stratus.Event { }
+    public class InitializedEvent : Stratus.StratusEvent { }
     // Informs that combat has been resolved
-    public class ResolveEvent : Stratus.Event { }
+    public class ResolveEvent : Stratus.StratusEvent { }
     // Informs that combat has been won by the player
-    public class VictoryEvent : Stratus.Event { public CombatEncounter Encounter; }
+    public class VictoryEvent : Stratus.StratusEvent { public CombatEncounter Encounter; }
     // Informs that the player has been defeated
-    public class DefeatEvent : Stratus.Event { public CombatEncounter Encounter; }
+    public class DefeatEvent : Stratus.StratusEvent { public CombatEncounter Encounter; }
     // Informs that combat is to be retried
-    public class RetryEvent : Stratus.Event { public CombatEncounter Encounter; }
+    public class RetryEvent : Stratus.StratusEvent { public CombatEncounter Encounter; }
 
     //------------------------------------------------------------------------/
     // Properties

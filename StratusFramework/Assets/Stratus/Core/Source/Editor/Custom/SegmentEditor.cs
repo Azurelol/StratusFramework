@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(Segment))]
-  public class SegmentEditor : BehaviourEditor<Segment>
+  public class SegmentEditor : StratusBehaviourEditor<Segment>
   {
     protected override void OnStratusEditorEnable()
     {

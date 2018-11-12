@@ -13,7 +13,7 @@ namespace Genitus
     //------------------------------------------------------------------------/
     // Declarations
     //------------------------------------------------------------------------/
-    public abstract class ArenaEvent : Stratus.Event { public CombatEncounter encounter; }
+    public abstract class ArenaEvent : Stratus.StratusEvent { public CombatEncounter encounter; }
     public class InitializedEvent : ArenaEvent { public CombatArena arena; }
     public class ResetEvent : ArenaEvent { }
     public class AllSpawnedEvent : ArenaEvent { }

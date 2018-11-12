@@ -7,7 +7,7 @@ using System;
 namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(EpisodeTrigger))]
-  public class EpisodeTriggerEditor : BehaviourEditor<EpisodeTrigger>
+  public class EpisodeTriggerEditor : StratusBehaviourEditor<EpisodeTrigger>
   {
     private ObjectDropdownList<Segment> segments;
     private SerializedProperty episodeProperty;

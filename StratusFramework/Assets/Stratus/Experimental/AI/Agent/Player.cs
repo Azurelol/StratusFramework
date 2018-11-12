@@ -22,15 +22,15 @@ namespace Stratus.AI
       /// <summary>
       /// An input event represents a request to perform a specific action
       /// </summary>
-      public class InputEvent : Stratus.Event { public InputField.State state; }
+      public class InputEvent : Stratus.StratusEvent { public InputField.State state; }
       /// <summary>
       /// If an input has been accepted, and is legal, represents the beginning of an action
       /// </summary>
-      public class StartedEvent : Stratus.Event { }
+      public class StartedEvent : Stratus.StratusEvent { }
       /// <summary>
       /// If an input has been accepted, and is legal, represents the beginning of an action
       /// </summary>
-      public class EndedEvent : Stratus.Event { }
+      public class EndedEvent : Stratus.StratusEvent { }
     }
 
     //--------------------------------------------------------------------------------------------/

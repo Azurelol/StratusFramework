@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Stratus
 {
-  public partial class SerializedSystemObject
+  public partial class StratusSerializedSystemObject
   {
     /// <summary>
     /// Base class for all drawers

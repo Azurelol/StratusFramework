@@ -10,7 +10,7 @@ namespace Genitus
     /// <summary>
     /// Base class for skill events
     /// </summary>
-    public class BaseEvent : Stratus.Event
+    public class BaseEvent : Stratus.StratusEvent
     {
       public Ability ability { get; set; }
     }
@@ -26,7 +26,7 @@ namespace Genitus
     /// <summary>
     /// Signals that the skill has been used
     /// </summary>
-    public class UsedEvent : Stratus.Event
+    public class UsedEvent : Stratus.StratusEvent
     {
       public Ability ability;
       public AudioClip clip;
@@ -42,7 +42,7 @@ namespace Genitus
     /// <summary>
     /// Signals that this ability is ready to be used
     /// </summary>
-    public class ActivateEvent : Stratus.Event
+    public class ActivateEvent : Stratus.StratusEvent
     {
       public float build;
     }
@@ -50,7 +50,7 @@ namespace Genitus
     /// <summary>
     /// Signals that the ability has hit a target
     /// </summary>
-    public class HitEvent : Stratus.Event
+    public class HitEvent : Stratus.StratusEvent
     {
     }
 

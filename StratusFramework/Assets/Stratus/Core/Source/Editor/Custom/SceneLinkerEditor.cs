@@ -6,7 +6,7 @@ using UnityEditor;
 namespace Stratus
 {
   [CustomEditor(typeof(SceneLinker))]
-  public class SceneLinkerEditor : BehaviourEditor<SceneLinker>
+  public class SceneLinkerEditor : StratusBehaviourEditor<SceneLinker>
   {
     protected override void OnStratusEditorEnable()
     {

@@ -52,7 +52,7 @@ namespace Stratus.Gameplay
 
     void StartSlideshow()
     {
-      var seq = Actions.Sequence(this);
+      var seq = StratusActions.Sequence(this);
 
       // We will divide the duration evenly for the number of splashes
       float durationForEach;
@@ -65,13 +65,13 @@ namespace Stratus.Gameplay
       {
         slide.gameObject.SetActive(true);
         var graphical = slide.gameObject.GetComponent<Graphic>();
-        Actions.Property(seq, () => graphical.color, Color.white, durationForEach, TransitionEase);
-        Actions.Call(seq, this.AdvanceSlide);
-        Actions.Property(seq, () => graphical.color, Color.clear, durationForEach, TransitionEase);
+        StratusActions.Property(seq, () => graphical.color, Color.white, durationForEach, TransitionEase);
+        StratusActions.Call(seq, this.AdvanceSlide);
+        StratusActions.Property(seq, () => graphical.color, Color.clear, durationForEach, TransitionEase);
       }
 
       // Now exit
-      Actions.Call(seq, this.End);
+      StratusActions.Call(seq, this.End);
     }
 
     /// <summary>

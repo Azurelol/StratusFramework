@@ -112,9 +112,9 @@ namespace Stratus
       /// <param name="t">How long before this button is destroyed.</param>
       public void Destroy(float t)
       {
-        var seq = Actions.Sequence(this);
-        Actions.Delay(seq, t + this.Style.Duration);
-        Actions.Call(seq, this.gameObject.Destroy);
+        var seq = StratusActions.Sequence(this);
+        StratusActions.Delay(seq, t + this.Style.Duration);
+        StratusActions.Call(seq, this.gameObject.Destroy);
       }
 
 

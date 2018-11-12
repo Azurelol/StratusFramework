@@ -12,7 +12,7 @@ namespace Genitus
     // Actions
 
     /// <summary> Informs a change in status in this combat controller </summary>
-    public abstract class CombatControllerEvent : Stratus.Event { public CombatController controller; }    
+    public abstract class CombatControllerEvent : Stratus.StratusEvent { public CombatController controller; }    
     /// <summary>
     /// Informs that a combat controller is ready to act
     /// </summary>
@@ -45,7 +45,7 @@ namespace Genitus
     /// <summary>
     /// Signals to the controller that it should forcefully change its state
     /// </summary>
-    public class ChangeStateEvent : Stratus.Event
+    public class ChangeStateEvent : Stratus.StratusEvent
     {
       public State nextState;
       public ChangeStateEvent(State nextState) { this.nextState = nextState; }
@@ -59,22 +59,22 @@ namespace Genitus
     /// <summary>
     /// Changes the control mode for this controller 
     /// </summary>
-    public class ChangeControlModeEvent : Stratus.Event { public Character.ControlMode mode; }
+    public class ChangeControlModeEvent : Stratus.StratusEvent { public Character.ControlMode mode; }
     /// <summary>
     /// Sets the target for a controller
     /// </summary>
-    public class TargetEvent : Stratus.Event { public CombatController target; }
+    public class TargetEvent : Stratus.StratusEvent { public CombatController target; }
     /// <summary>
     /// Resumes activity for this character.
     /// </summary>
-    public class ResumeEvent : Stratus.Event { }
+    public class ResumeEvent : Stratus.StratusEvent { }
     /// <summary>
     /// Ceases activity for this character.
     /// </summary>
-    public class PauseEvent : Stratus.Event { }
+    public class PauseEvent : Stratus.StratusEvent { }
 
     // Resources
-    public abstract class CheatEvent : Stratus.Event { public bool flag; }
+    public abstract class CheatEvent : Stratus.StratusEvent { public bool flag; }
     /// <summary>
     /// Signals that the character should ignore damage events
     /// </summary>
@@ -86,11 +86,11 @@ namespace Genitus
     /// <summary>
     /// Signals that this character blocked the most recent source of damage
     /// </summary>
-    public class DamageBlockedEvent : Stratus.Event { }
+    public class DamageBlockedEvent : Stratus.StratusEvent { }
     /// <summary>
     /// Signals that this character has just received the specified amount of damage
     /// </summary>
-    public class DamageReceivedEvent : Stratus.Event
+    public class DamageReceivedEvent : Stratus.StratusEvent
     {
       public CombatController source;
       public float damage;
@@ -110,7 +110,7 @@ namespace Genitus
     /// <summary>
     /// Signals that the character's current action should be interrupted
     /// </summary>
-    public class InterruptEvent : Stratus.Event
+    public class InterruptEvent : Stratus.StratusEvent
     {
       /// <summary>
       /// How long after being interrupted should the character remain unable

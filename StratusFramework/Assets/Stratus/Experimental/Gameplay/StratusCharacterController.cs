@@ -41,7 +41,7 @@ namespace Stratus.Gameplay
       public MovementOffset offset;
     }
 
-    public class JumpEvent : Stratus.Event { }
+    public class JumpEvent : Stratus.StratusEvent { }
 
     //--------------------------------------------------------------------------------------------/
     // Fields

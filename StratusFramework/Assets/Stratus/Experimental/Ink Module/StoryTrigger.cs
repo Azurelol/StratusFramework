@@ -12,9 +12,9 @@ namespace Stratus
       public class StoryTrigger : Gameplay.Trigger
       {
         [Tooltip("The scope of the event to listen to")]
-        public Event.Scope eventScope = Event.Scope.GameObject;
+        public StratusEvent.Scope eventScope = StratusEvent.Scope.GameObject;
         [Tooltip("The story this trigger is reacting to")]
-        [DrawIf("eventScope", Event.Scope.GameObject, ComparisonType.Equals)]
+        [DrawIf("eventScope", StratusEvent.Scope.GameObject, ComparisonType.Equals)]
         public StoryReader reader;
         [Tooltip("The story this trigger is checking against. If none is specified, it will trigger on any.")]
         public TextAsset storyFile;
@@ -31,35 +31,35 @@ namespace Stratus
           switch (storyEvent)
           {
             case Story.ReaderEventType.Loaded:
-              if (eventScope == Event.Scope.GameObject)
+              if (eventScope == StratusEvent.Scope.GameObject)
                 reader.gameObject.Connect<Story.LoadedEvent>(this.OnStoryLoadedEvent);
               else 
                 Scene.Connect<Story.LoadedEvent>(this.OnStoryLoadedEvent);
               break;
 
             case Story.ReaderEventType.Started:
-              if (eventScope == Event.Scope.GameObject)
+              if (eventScope == StratusEvent.Scope.GameObject)
                 reader.gameObject.Connect<Story.StartedEvent>(this.OnStoryStartedEvent);
               else
                 Scene.Connect<Story.StartedEvent>(this.OnStoryStartedEvent);
               break;
 
             case Story.ReaderEventType.Continue:
-              if (eventScope == Event.Scope.GameObject)
+              if (eventScope == StratusEvent.Scope.GameObject)
                 reader.gameObject.Connect<Story.ContinueEvent>(this.OnStoryContinueEvent);
               else
                 Scene.Connect<Story.ContinueEvent>(this.OnStoryContinueEvent);
               break;
 
             case Story.ReaderEventType.Ended:
-              if (eventScope == Event.Scope.GameObject)
+              if (eventScope == StratusEvent.Scope.GameObject)
                 reader.gameObject.Connect<Story.EndedEvent>(this.OnStoryEndedEvent);
               else
                 Scene.Connect<Story.EndedEvent>(this.OnStoryEndedEvent);
               break;
 
             case Story.ReaderEventType.SelectChoice:
-              if (eventScope == Event.Scope.GameObject)
+              if (eventScope == StratusEvent.Scope.GameObject)
                 reader.gameObject.Connect<Story.SelectChoiceEvent>(this.OnSelectChoiceEvent);
               else
                 Scene.Connect<Story.SelectChoiceEvent>(this.OnSelectChoiceEvent);

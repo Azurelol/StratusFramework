@@ -48,7 +48,7 @@ namespace Stratus
     public bool pollInput = false;
     public InputField cancel = new InputField();
 
-    protected ActionSet currentSeq;
+    protected StratusActionSet currentSeq;
 
     //--------------------------------------------------------------------------------------------/
     // Properties
@@ -136,20 +136,20 @@ namespace Stratus
       pollingInput = show;
 
       currentSeq?.Cancel();
-      currentSeq = Actions.Sequence(this);
+      currentSeq = StratusActions.Sequence(this);
 
 
 
       // Fade the canvas
-      Actions.Property(currentSeq, () => canvas.alpha, show ? 1f : 0f, transitionSpeed, Ease.Linear);
-      Actions.Call(currentSeq, () => { visible = false; });
+      StratusActions.Property(currentSeq, () => canvas.alpha, show ? 1f : 0f, transitionSpeed, Ease.Linear);
+      StratusActions.Call(currentSeq, () => { visible = false; });
 
       // Optionally, select the default button
       if (defaultSelected)
       {
         //Trace.Script($"Selecting {defaultSelected.name}", this);
         if (show) 
-          Actions.Call(currentSeq, () => eventSystem.SetSelectedGameObject(defaultSelected.gameObject));
+          StratusActions.Call(currentSeq, () => eventSystem.SetSelectedGameObject(defaultSelected.gameObject));
       }
 
       // Optionally, reset the state of all other selectables
@@ -166,7 +166,7 @@ namespace Stratus
 
       // Now invoke any callbacks
       if (onFinished != null)
-        Actions.Call(currentSeq, () => { onFinished(); });
+        StratusActions.Call(currentSeq, () => { onFinished(); });
     }
 
     void Interfaces.Debuggable.Toggle(bool toggle)
@@ -187,7 +187,7 @@ namespace Stratus
     /// <summary>
     /// Signals that this windows should open
     /// </summary>
-    public class OpenEvent : Stratus.Event
+    public class OpenEvent : Stratus.StratusEvent
     {
       /// <summary>
       /// The parent window
@@ -222,7 +222,7 @@ namespace Stratus
     /// <summary>
     /// Signals that this windows should close
     /// </summary>
-    public class CloseEvent : Stratus.Event
+    public class CloseEvent : Stratus.StratusEvent
     {
     }
 
@@ -333,9 +333,9 @@ namespace Stratus
         };
         e.parent.Transition(false);
 
-        var seq = Actions.Sequence(e.parent);
-        Actions.Delay(seq, e.parent.transitionSpeed);
-        Actions.Call(seq, () => Scene.Dispatch<OpenEvent>(e));
+        var seq = StratusActions.Sequence(e.parent);
+        StratusActions.Delay(seq, e.parent.transitionSpeed);
+        StratusActions.Call(seq, () => Scene.Dispatch<OpenEvent>(e));
       }
       // Otherwise the child window right away
       else
@@ -358,9 +358,9 @@ namespace Stratus
         };
         e.parent.Transition(false);
 
-        var seq = Actions.Sequence(e.parent);
-        Actions.Delay(seq, e.parent.transitionSpeed);
-        Actions.Call(seq, () => Scene.Dispatch<OpenEvent>(e));
+        var seq = StratusActions.Sequence(e.parent);
+        StratusActions.Delay(seq, e.parent.transitionSpeed);
+        StratusActions.Call(seq, () => Scene.Dispatch<OpenEvent>(e));
       }
 
       // Otherwise the child window right away

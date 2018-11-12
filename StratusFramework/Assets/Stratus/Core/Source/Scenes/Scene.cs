@@ -28,11 +28,11 @@ namespace Stratus
     //----------------------------------------------------------------------------------/
     // Declarations
     //----------------------------------------------------------------------------------/
-    public abstract class StatusEvent : Stratus.Event { public string name; }
+    public abstract class StatusEvent : Stratus.StratusEvent { public string name; }
     public class ChangedEvent : StatusEvent { }
     public class LoadedEvent : StatusEvent { }
     public class UnloadedEvent : StatusEvent { }
-    public class ReloadEvent : Stratus.Event { }
+    public class ReloadEvent : Stratus.StratusEvent { }
 
     /// <summary>
     /// Callback for scene events
@@ -284,7 +284,7 @@ namespace Stratus
     public static void Connect<T>(Action<T> func)
     {
       instance.Poke();
-      Stratus.Events.Connect(instance.gameObject, func);
+      Stratus.StratusEvents.Connect(instance.gameObject, func);
     }
 
     /// <summary>
@@ -292,10 +292,10 @@ namespace Stratus
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="func"></param>
-    public static void Connect(Action<Stratus.Event> func, Type type)
+    public static void Connect(Action<Stratus.StratusEvent> func, Type type)
     {
       instance.Poke();
-      Stratus.Events.Connect(instance.gameObject, func, type);
+      Stratus.StratusEvents.Connect(instance.gameObject, func, type);
     }
 
     /// <summary>
@@ -303,10 +303,10 @@ namespace Stratus
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="eventObj"></param>
-    public static void Dispatch<T>(T eventObj) where T : Stratus.Event
+    public static void Dispatch<T>(T eventObj) where T : Stratus.StratusEvent
     {
       instance.Poke();
-      Stratus.Events.Dispatch<T>(instance.gameObject, eventObj);
+      Stratus.StratusEvents.Dispatch<T>(instance.gameObject, eventObj);
     }
 
     /// <summary>
@@ -316,10 +316,10 @@ namespace Stratus
     /// <param name="gameObj">The GameObject to which to connect to.</param>
     /// <param name="eventObj">The event object. </param>
     /// <param name="nextFrame">Whether the event should be sent next frame.</param>
-    public static void Dispatch(Stratus.Event eventObj, System.Type type, bool nextFrame = false)
+    public static void Dispatch(Stratus.StratusEvent eventObj, System.Type type, bool nextFrame = false)
     {
       instance.Poke();
-      Stratus.Events.Dispatch(instance.gameObject, eventObj, type, nextFrame);
+      Stratus.StratusEvents.Dispatch(instance.gameObject, eventObj, type, nextFrame);
     }
 
     /// <summary>

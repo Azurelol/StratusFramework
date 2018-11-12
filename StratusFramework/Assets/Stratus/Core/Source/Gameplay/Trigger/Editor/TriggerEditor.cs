@@ -9,15 +9,15 @@ using System;
 namespace Stratus.Gameplay
 {
   [CustomEditor(typeof(Trigger), true), CanEditMultipleObjects]
-  public class TriggerEditor : TriggerBaseEditor<Trigger>
+  public class TriggerEditor : StratusTriggerBaseEditor<Trigger>
   {
     internal override void OnTriggerBaseEditorEnable()
     {
     }
   }
 
-  [CustomEditor(typeof(Triggerable), true), CanEditMultipleObjects]
-  public class TriggerableEditor : TriggerBaseEditor<Triggerable>
+  [CustomEditor(typeof(StratusTriggerable), true), CanEditMultipleObjects]
+  public class TriggerableEditor : StratusTriggerBaseEditor<StratusTriggerable>
   {
     internal override void OnTriggerBaseEditorEnable()
     {
@@ -41,8 +41,8 @@ namespace Stratus.Gameplay
     }
   }
 
-  [CustomEditor(typeof(Triggerable), true), CanEditMultipleObjects]
-  public abstract class TriggerableEditor<T> : TriggerableEditor where T : Triggerable
+  [CustomEditor(typeof(StratusTriggerable), true), CanEditMultipleObjects]
+  public abstract class TriggerableEditor<T> : TriggerableEditor where T : StratusTriggerable
   {
     /// <summary>
     /// The target cast as the declared triggerable type
