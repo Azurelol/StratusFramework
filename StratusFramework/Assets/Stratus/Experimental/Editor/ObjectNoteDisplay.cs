@@ -146,11 +146,11 @@ namespace Stratus
 
     private void OnMouseOver(ObjectNote note, UnityEngine.Event e)
     {
-      Trace.Script("Moused over " + note.name);
+      StratusDebug.Log("Moused over " + note.name);
 
       if (e.isMouse && e.button == 0)
       {
-        Trace.Script("Clicked on " + note.name);
+        StratusDebug.Log("Clicked on " + note.name);
         highlightedNote = note;
         //e.Use();
       }
@@ -163,12 +163,12 @@ namespace Stratus
       {
         case EventType.MouseDown:
           if (e.button == 0)
-            Trace.Script("Left mouse down");
+            StratusDebug.Log("Left mouse down");
           break;
 
         case EventType.MouseUp:
           if (e.button == 0)
-            Trace.Script("Left mouse up!");
+            StratusDebug.Log("Left mouse up!");
           break;
       }
     }
@@ -178,7 +178,7 @@ namespace Stratus
       Vector2 screen = new Vector2(Screen.width, Screen.height);
       Rect bottomRight = new Rect(screen, screen);
       EditorGUI.HelpBox(bottomRight, "Boop", MessageType.Info);
-      Trace.Script("Showing tooltip");
+      StratusDebug.Log("Showing tooltip");
     }
 
 

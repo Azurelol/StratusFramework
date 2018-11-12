@@ -38,7 +38,7 @@ namespace Stratus
     /// </summary>
     static PreferencesWindow()
     {
-      Trace.Reset();
+      StratusDebug.Reset();
       Load();
     }
 
@@ -142,14 +142,14 @@ namespace Stratus
     static void ModifyTrace()
     {
       //GUILayout.Label("Tracing", HeaderStyle);
-      Trace.enabled = EditorGUILayout.Toggle("Enabled", Trace.enabled);
-      Trace.timeStamp = EditorGUILayout.Toggle("Timestamp", Trace.timeStamp);
+      StratusDebug.enabled = EditorGUILayout.Toggle("Enabled", StratusDebug.enabled);
+      StratusDebug.timeStamp = EditorGUILayout.Toggle("Timestamp", StratusDebug.timeStamp);
       GUILayout.Label("Colors", EditorStyles.boldLabel);
 
-      Trace.methodColor = EditorGUILayout.ColorField("Method", Trace.methodColor);
-      Trace.classColor = EditorGUILayout.ColorField("Class", Trace.classColor);
-      Trace.gameObjectColor = EditorGUILayout.ColorField("GameObject", Trace.gameObjectColor);
-      Trace.timeStampColor = EditorGUILayout.ColorField("TimeStamp", Trace.timeStampColor);
+      StratusDebug.methodColor = EditorGUILayout.ColorField("Method", StratusDebug.methodColor);
+      StratusDebug.classColor = EditorGUILayout.ColorField("Class", StratusDebug.classColor);
+      StratusDebug.gameObjectColor = EditorGUILayout.ColorField("GameObject", StratusDebug.gameObjectColor);
+      StratusDebug.timeStampColor = EditorGUILayout.ColorField("TimeStamp", StratusDebug.timeStampColor);
     }
 
     ////------------------------------------------------------------------------/
@@ -162,13 +162,13 @@ namespace Stratus
     {
       //Trace.Script("Saving!");
       // Trace
-      EditorPrefs.SetBool("Stratus_Trace_Enabled", Trace.enabled);
-      EditorPrefs.SetBool("Stratus_Trace_Timestamp", Trace.timeStamp);
-      EditorPrefs.SetString("Stratus_Trace_MethodColor", Trace.methodColor.ToHex());
-      EditorPrefs.SetString("Stratus_Trace_ClassColor", Trace.classColor.ToHex());
-      EditorPrefs.SetString("Stratus_Trace_GameObjectColor", Trace.gameObjectColor.ToHex());
+      EditorPrefs.SetBool("Stratus_Trace_Enabled", StratusDebug.enabled);
+      EditorPrefs.SetBool("Stratus_Trace_Timestamp", StratusDebug.timeStamp);
+      EditorPrefs.SetString("Stratus_Trace_MethodColor", StratusDebug.methodColor.ToHex());
+      EditorPrefs.SetString("Stratus_Trace_ClassColor", StratusDebug.classColor.ToHex());
+      EditorPrefs.SetString("Stratus_Trace_GameObjectColor", StratusDebug.gameObjectColor.ToHex());
       //Trace.Script("GameObject color = " + Trace.GameObjectColor.ToHex());
-      EditorPrefs.SetString("Stratus_Trace_TimestampColor", Trace.timeStampColor.ToHex());
+      EditorPrefs.SetString("Stratus_Trace_TimestampColor", StratusDebug.timeStampColor.ToHex());
       // Events
       EditorPrefs.SetBool("Stratus_Events_Connect", StratusEvents.logging.connect);
       EditorPrefs.SetBool("Stratus_Events_Dispatch", StratusEvents.logging.dispatch);
@@ -183,12 +183,12 @@ namespace Stratus
     {
       //Trace.Script("Loading!");
       // Trace
-      Trace.enabled = EditorPrefs.GetBool("Stratus_Trace_Enabled", true);
-      Trace.timeStamp = EditorPrefs.GetBool("Stratus_Trace_Timestamp", true);
-      Trace.methodColor = Utilities.Graphical.HexToColor(EditorPrefs.GetString("Stratus_Trace_MethodColor", Color.black.ToHex()));
-      Trace.classColor = Utilities.Graphical.HexToColor(EditorPrefs.GetString("Stratus_Trace_ClassColor", Color.black.ToHex()));
-      Trace.gameObjectColor = Utilities.Graphical.HexToColor(EditorPrefs.GetString("Stratus_Trace_GameObjectColor", Color.blue.ToHex()));
-      Trace.timeStampColor = Utilities.Graphical.HexToColor(EditorPrefs.GetString("Stratus_Trace_TimestampColor", Color.green.ToHex()));
+      StratusDebug.enabled = EditorPrefs.GetBool("Stratus_Trace_Enabled", true);
+      StratusDebug.timeStamp = EditorPrefs.GetBool("Stratus_Trace_Timestamp", true);
+      StratusDebug.methodColor = Utilities.Rendering.HexToColor(EditorPrefs.GetString("Stratus_Trace_MethodColor", Color.black.ToHex()));
+      StratusDebug.classColor = Utilities.Rendering.HexToColor(EditorPrefs.GetString("Stratus_Trace_ClassColor", Color.black.ToHex()));
+      StratusDebug.gameObjectColor = Utilities.Rendering.HexToColor(EditorPrefs.GetString("Stratus_Trace_GameObjectColor", Color.blue.ToHex()));
+      StratusDebug.timeStampColor = Utilities.Rendering.HexToColor(EditorPrefs.GetString("Stratus_Trace_TimestampColor", Color.green.ToHex()));
       // Events
       StratusEvents.logging.connect = EditorPrefs.GetBool("Stratus_Events_Connect", false);
       StratusEvents.logging.dispatch = EditorPrefs.GetBool("Stratus_Events_Dispatch", false);

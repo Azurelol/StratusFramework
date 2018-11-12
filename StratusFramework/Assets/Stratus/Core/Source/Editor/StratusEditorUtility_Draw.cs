@@ -36,13 +36,13 @@ namespace Stratus
       if (!abstractListHeights.ContainsKey(hashCode))
         abstractListHeights.Add(hashCode, 0);
 
-      IntegerReference maxCount = 0;
+      IntegerRef maxCount = 0;
       ReorderableListGUI.Title(title);
       ReorderableListGUI.ListField(list, (Rect position, T value) =>
       {
         // Get the drawer
         Type type = value.GetType();
-        StratusSerializedSystemObject.ObjectDrawer drawer = StratusSerializedSystemObject.GetObjectDrawer(type);
+        SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(type);
 
         // We draw one line at a time
         position.height = lineHeight;
@@ -123,7 +123,7 @@ namespace Stratus
 
         // Get the drawer for the type
         Type elementType = element.GetType();
-        StratusSerializedSystemObject.ObjectDrawer drawer = StratusSerializedSystemObject.GetObjectDrawer(elementType);
+        SerializedSystemObject.ObjectDrawer drawer = SerializedSystemObject.GetObjectDrawer(elementType);
 
         EditorGUILayout.BeginVertical(ReorderableListStyles.Container);
         {
@@ -153,7 +153,7 @@ namespace Stratus
     public static bool DrawField<T>(T field)
     {
       Type type = field.GetType();
-      return StratusSerializedSystemObject.GetObjectDrawer(type).DrawEditorGUILayout(field);
+      return SerializedSystemObject.GetObjectDrawer(type).DrawEditorGUILayout(field);
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ namespace Stratus
     /// <returns>True if the field was changed</returns>
     public static bool DrawField(FieldInfo field, object target)
     {
-      return StratusSerializedSystemObject.GetFieldDrawer(field).DrawEditorGUILayout(target);
+      return SerializedSystemObject.GetFieldDrawer(field).DrawEditorGUILayout(target);
     }
 
     public static Enum EnumPopup(Rect position, string label, Enum selected)

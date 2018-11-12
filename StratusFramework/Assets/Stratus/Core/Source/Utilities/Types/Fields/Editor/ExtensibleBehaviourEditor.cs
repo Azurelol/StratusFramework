@@ -159,11 +159,11 @@ namespace Stratus
       IExtensionBehaviour extension = target.gameObject.AddComponent(extensionType) as IExtensionBehaviour;
       if (extension == null)
       {
-        Trace.Error($"Failed to construct extension of type {extensionType.Name}");
+        StratusDebug.Error($"Failed to construct extension of type {extensionType.Name}");
         return;
       }
 
-      Trace.Script($"Adding extension {extensionType.Name}");
+      StratusDebug.Log($"Adding extension {extensionType.Name}");
       target.Add(extension);
       Undo.RecordObject(target, extensionType.Name);
       serializedObject.ApplyModifiedProperties();

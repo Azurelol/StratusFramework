@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 // https://forum.unity.com/threads/change-the-value-of-a-toggle-without-triggering-onvaluechanged.275056/
 
@@ -44,6 +45,13 @@ namespace Stratus
       instance.value = value;
       instance.onValueChanged = originalEvent;
     }
+
+		public static string[] GetDisplayOptions(this Dropdown dropdown)
+		{
+			//string[] displayOptions = new string[dropdown.options.Count];
+			return dropdown.options.Select(x => x.text).ToArray();
+			
+		}
 
   }
 }

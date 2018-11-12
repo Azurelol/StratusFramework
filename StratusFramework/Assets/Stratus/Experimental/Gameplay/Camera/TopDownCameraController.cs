@@ -25,9 +25,9 @@ namespace Stratus
       public float maximumDistanceFromNavMesh = 5f;
 
       [Header("Input")]
-      public InputField horizontalAxis = new InputField();
-      public InputField verticalAxis = new InputField();
-      public InputField scrollAxis = new InputField();
+      public InputBinding horizontalAxis = new InputBinding();
+      public InputBinding verticalAxis = new InputBinding();
+      public InputBinding scrollAxis = new InputBinding();
 
       protected override void OnAwake()
       {

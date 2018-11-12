@@ -14,7 +14,7 @@ namespace Genitus.Effects
       // Interrupt the target's current action
       if (target.isActing)
       {
-        Trace.Script("Sending interrupt event");
+        StratusDebug.Log("Sending interrupt event");
         target.gameObject.Dispatch<CombatAction.CancelEvent>(new CombatAction.CancelEvent());
       }
 

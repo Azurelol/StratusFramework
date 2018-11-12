@@ -86,7 +86,7 @@ namespace Stratus.Gameplay
       }
       else if (debug)
       {
-        Trace.Script($"{other.name} is not a valid target for this trigger", this);
+        StratusDebug.Log($"{other.name} is not a valid target for this trigger", this);
       }
     }
 
@@ -98,7 +98,7 @@ namespace Stratus.Gameplay
       }
       else if (debug)
       {
-        Trace.Script($"{collision.gameObject.name} is not a valid target for this trigger", this);
+        StratusDebug.Log($"{collision.gameObject.name} is not a valid target for this trigger", this);
       }
     }
 

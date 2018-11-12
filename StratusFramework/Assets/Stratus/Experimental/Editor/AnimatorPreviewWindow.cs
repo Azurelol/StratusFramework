@@ -135,7 +135,7 @@ namespace Stratus
         if (animator == null)
         {
           string erorrMsg = $"{animatorObject.name} has no animator component!";
-          Trace.Script(erorrMsg);
+          StratusDebug.Log(erorrMsg);
           EditorUtility.DisplayDialog("Missing Animator", erorrMsg, "OK");
           animatorObject = null;
         }

@@ -108,7 +108,7 @@ namespace Stratus.Gameplay
         if (!scene.isLoaded)
         {
           if (debug)
-            Trace.Script("Loading " + scene);
+            StratusDebug.Log("Loading " + scene);
           scene.Load(LoadSceneMode.Additive);
         }
       }

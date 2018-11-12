@@ -21,7 +21,7 @@ namespace Stratus
     {
       protected override void OnActivate()
       {
-        Trace.Script("CANCEL!");
+        StratusDebug.Log("CANCEL!");
       }
 
       protected override void OnSelect()
@@ -33,7 +33,7 @@ namespace Stratus
 
       protected override void OnConfirm()
       {
-        Trace.Script("CANCEL!");
+        StratusDebug.Log("CANCEL!");
         //this.Deactivate();
       }
 

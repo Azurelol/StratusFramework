@@ -205,7 +205,7 @@ namespace Stratus
         }
         else
         {
-          Stratus.Trace.Script("Couldn't find the property!");
+          Stratus.StratusDebug.Log("Couldn't find the property!");
         }
       }      
       // Field
@@ -248,7 +248,7 @@ namespace Stratus
         }
         else
         {
-          Stratus.Trace.Script("Couldn't find the field!");
+          Stratus.StratusDebug.Log("Couldn't find the field!");
         }
       }
       // Now add it!

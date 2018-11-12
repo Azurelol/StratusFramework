@@ -33,7 +33,7 @@ namespace Stratus
     {
       if (UnityEditor.BuildPipeline.isBuildingPlayer)
       {
-        Trace.Script($"Removing all instances of:");
+        StratusDebug.Log($"Removing all instances of:");
         GameObjectBookmark.RemoveAll();
         
       }

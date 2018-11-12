@@ -20,18 +20,18 @@ namespace Stratus
     {      
       SerializedProperty inputProperty = property.FindPropertyRelative(nameof(InputAction.input));
       SerializedProperty typeProp = inputProperty.FindPropertyRelative("_type");
-      var type = (InputField.Type)typeProp.enumValueIndex;
+      var type = (InputBinding.Type)typeProp.enumValueIndex;
 
       SerializedProperty stateProperty= property.FindPropertyRelative(nameof(InputAction.state));
 
       SerializedProperty callbackProperty = null;
       switch (type)
       {
-        case InputField.Type.Key:
-        case InputField.Type.MouseButton:
+        case InputBinding.Type.Key:
+        case InputBinding.Type.MouseButton:
           callbackProperty = property.FindPropertyRelative(nameof(InputAction.onInput));
           break;
-        case InputField.Type.Axis:
+        case InputBinding.Type.Axis:
           callbackProperty = property.FindPropertyRelative(nameof(InputAction.onAxisInput));
           break;
       }

@@ -48,7 +48,7 @@ namespace Stratus
       /// The style settings for this editor
       /// </summary>
       private Settings settings { get; set; }
-      public GridDrawer gridDrawer { get; private set; }
+      public StratusGridDrawer gridDrawer { get; private set; }
       protected ConnectionPoint SelectedInPoint { private set; get; }
       protected ConnectionPoint SelectedOutPoint { private set; get; }
       protected bool IsDragging { private set; get; }
@@ -461,7 +461,7 @@ namespace Stratus
 
       void AutoArrange()
       {
-        Trace.Script("Resetting the viewport back to (0,0)");
+        StratusDebug.Log("Resetting the viewport back to (0,0)");
         ViewportCenter = Vector2.zero;
       }
 
@@ -616,7 +616,7 @@ namespace Stratus
 
       private void DeselectAll()
       {
-        Trace.Script("Deselecting all nodes )" + SelectedNodes.Count + ")");
+        StratusDebug.Log("Deselecting all nodes )" + SelectedNodes.Count + ")");
         foreach (var node in SelectedNodes)
           node.Deselect();
         SelectedNodes.Clear();
@@ -624,7 +624,7 @@ namespace Stratus
 
       private void DeleteAll()
       {
-        Trace.Script("Deleting all selected nodes (" + SelectedNodes.Count + ")");        
+        StratusDebug.Log("Deleting all selected nodes (" + SelectedNodes.Count + ")");        
         foreach (var node in SelectedNodes)
         {
           node.Deselect();
@@ -639,7 +639,7 @@ namespace Stratus
       private void CreateConnection()
       {
         Connections.Add(new Connection(SelectedInPoint, SelectedOutPoint, OnClickRemoveConnection));
-        Trace.Script("Creating connection between " + SelectedInPoint.Node.Name + " and " + SelectedOutPoint.Node.Name);
+        StratusDebug.Log("Creating connection between " + SelectedInPoint.Node.Name + " and " + SelectedOutPoint.Node.Name);
       }
 
       private void ClearConnectionSelection()

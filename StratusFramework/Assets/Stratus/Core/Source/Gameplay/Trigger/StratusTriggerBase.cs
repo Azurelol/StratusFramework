@@ -138,12 +138,12 @@ namespace Stratus.Gameplay
 
     protected void Error(string msg, Behaviour trigger)
     {
-      Trace.Error(ComposeLog(msg), trigger);
+      StratusDebug.Error(ComposeLog(msg), trigger);
     }
 
     protected void Log(string msg, Behaviour trigger)
     {
-      Trace.Script(ComposeLog(msg), trigger);
+      StratusDebug.Log(ComposeLog(msg), trigger);
     }
 
     protected string ComposeLog(string msg)

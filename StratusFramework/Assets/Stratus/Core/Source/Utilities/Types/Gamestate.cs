@@ -171,7 +171,7 @@ namespace Stratus.Gameplay
         if (state.Equals(goal) && !isAtGoalState)
         {
           if (logging)
-            Trace.Script("Now at goal state '" + goal.ToString() + "'", parent);
+            StratusDebug.Log("Now at goal state '" + goal.ToString() + "'", parent);
 
           isAtGoalState = true;
           if (onEnterState != null) onEnterState();
@@ -184,13 +184,13 @@ namespace Stratus.Gameplay
           if (onExitState != null)
           {
             if (logging)
-              Trace.Script("Now exiting state '" + state.ToString() + "'", parent);
+              StratusDebug.Log("Now exiting state '" + state.ToString() + "'", parent);
             onExitState();
           }
           else if (onStateChange != null)
           {
             if (logging)
-              Trace.Script("Not at goal state '" + goal.ToString() + "', flipping state to " + isAtGoalState, parent);
+              StratusDebug.Log("Not at goal state '" + goal.ToString() + "', flipping state to " + isAtGoalState, parent);
             onStateChange(isAtGoalState);
           }
         }

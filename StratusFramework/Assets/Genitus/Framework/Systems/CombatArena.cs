@@ -113,11 +113,11 @@ namespace Genitus
       {
         if (e.controller.faction == CombatController.Faction.Player)
         {
-          Trace.Script(e.controller.gameObject.name + " has registered as FRIENDLY");
+          StratusDebug.Log(e.controller.gameObject.name + " has registered as FRIENDLY");
         }
         else
         {
-          Trace.Script(e.controller.gameObject.name + " has registered as HOSTILE");
+          StratusDebug.Log(e.controller.gameObject.name + " has registered as HOSTILE");
         }
       }      
     }
@@ -177,7 +177,7 @@ namespace Genitus
     /// </summary>
     void End()
     {
-      Trace.Script("Ending combat!");
+      StratusDebug.Log("Ending combat!");
 
       // Remove all remaining CombatControllers
       Clear();

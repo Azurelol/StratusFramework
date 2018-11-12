@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   EditorHelper.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using System.Collections.Generic;
 using Stratus;
@@ -15,8 +8,6 @@ using UnityEditor;
 
 namespace Stratus
 {
-
-
   /// <summary>
   /// Provides a bridge to functions in the UnityEditor namespace
   /// </summary>
@@ -132,15 +123,5 @@ namespace Stratus
       EditorGUILayout.EndHorizontal();
 #endif
     }
-
-    
-
-    //public static T Enum<T>(string label, T value) 
-    //{
-    //  #if UNITY_EDITOR
-    //  return (T)EditorGUILayout.EnumPopup(label, (T)value);
-    //  #endif
-    //}
-
   }
 }

@@ -150,7 +150,7 @@ namespace Stratus
       initialized = true;
       previousState = currentState;
       currentState = nextState;
-      Trace.Script($"'{previousState}' -> '{ currentState}'");
+      StratusDebug.Log($"'{previousState}' -> '{ currentState}'");
       foreach (var toggle in toggleables.ToArray())
         toggle.Apply(currentState);
       foreach (var handler in handlers)
@@ -339,7 +339,7 @@ namespace Stratus
         if (Compare(state, goal) && !isAtGoalState)
         {
           if (logging)
-            Trace.Script("Now at goal state '" + goal.ToString() + "'", parent);
+            StratusDebug.Log("Now at goal state '" + goal.ToString() + "'", parent);
 
           isAtGoalState = true;
           if (onEnterState != null) onEnterState();
@@ -352,13 +352,13 @@ namespace Stratus
           if (onExitState != null)
           {
             if (logging)
-              Trace.Script("Now exiting state '" + state.ToString() + "'", parent);
+              StratusDebug.Log("Now exiting state '" + state.ToString() + "'", parent);
             onExitState();
           }
           else if (onStateChange != null)
           {
             if (logging)
-              Trace.Script("Not at goal state '" + goal.ToString() + "', flipping state to " + isAtGoalState, parent);
+              StratusDebug.Log("Not at goal state '" + goal.ToString() + "', flipping state to " + isAtGoalState, parent);
             onStateChange(isAtGoalState);
           }
         }

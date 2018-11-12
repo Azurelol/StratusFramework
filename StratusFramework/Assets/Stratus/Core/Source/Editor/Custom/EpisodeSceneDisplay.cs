@@ -7,15 +7,15 @@ using UnityEditor;
 namespace Stratus.Gameplay
 {
   [LayoutViewDisplayAttribute("Episodes", 225f, 150f, StratusGUI.Anchor.BottomRight, StratusGUI.Dimensions.Absolute)]
-  public class EpisodeSceneDisplay : MultitonSceneViewDisplay<Episode>
+  public class EpisodeSceneDisplay : MultitonSceneViewDisplay<StratusEpisode>
   {
-    private Dictionary<Segment, bool> segmentExpanded;
+    private Dictionary<StratusSegment, bool> segmentExpanded;
 
     protected override void OnInitializeMultitonState()
     {
-      segmentExpanded = new Dictionary<Segment, bool>();
+      segmentExpanded = new Dictionary<StratusSegment, bool>();
 
-      foreach (var episode in Episode.availableList)
+      foreach (var episode in StratusEpisode.availableList)
       {
         foreach (var segment in episode.get.segments)
         {
@@ -35,7 +35,7 @@ namespace Stratus.Gameplay
 
     private void ShowEpisodes()
     {
-      foreach (var episode in Episode.availableList)
+      foreach (var episode in StratusEpisode.availableList)
       {
         GUILayout.BeginVertical(GUI.skin.box);
         {
@@ -45,7 +45,7 @@ namespace Stratus.Gameplay
       }
     }
 
-    private void Show(Episode episode)
+    private void Show(StratusEpisode episode)
     {
       GUILayout.Label(episode.label, EditorStyles.whiteLargeLabel);
       //StratusEditorUtility.OnLastControlMouseClick(null, null, () => { Selection.activeGameObject = episode.gameObject; });
@@ -91,7 +91,7 @@ namespace Stratus.Gameplay
 
         System.Action onDoubleClick = () =>
         {
-          Trace.Script("Boop");
+          StratusDebug.Log("Boop");
           Selection.activeGameObject = segment.gameObject;
         };
 
@@ -111,7 +111,7 @@ namespace Stratus.Gameplay
 
     }
 
-    private void ShowSegment(Episode episode, Segment segment)
+    private void ShowSegment(StratusEpisode episode, StratusSegment segment)
     {
       //expanded = GUILayout.(expanded, ); //, expanded ? minimizeButtonContent : expandButtonContent); 
       //if (segment.checkpoints.NotEmpty() && GUILayout.Button(expanded ? minimizeButtonContent : expandButtonContent, EditorStyles.toggle))

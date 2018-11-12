@@ -135,7 +135,7 @@ namespace Genitus
     public void Import()
     {
       if (party == null)
-        Trace.Error("No party was set!", this, true);
+        StratusDebug.Error("No party was set!", this, true);
 
       members.Clear();
 
@@ -143,11 +143,11 @@ namespace Genitus
       foreach (var member in party.Members)
       {
         var partyMember = new PartyMember(member);
-        Trace.Script("Added " + member.name, this);
+        StratusDebug.Log("Added " + member.name, this);
         members.Add(partyMember);
       }
 
-      Trace.Script("Imported '" + party.name + "' with the following members: " + members, this);
+      StratusDebug.Log("Imported '" + party.name + "' with the following members: " + members, this);
     }
 
     /// <summary>
@@ -157,7 +157,7 @@ namespace Genitus
     public void Add(Character character)
     {
       members.Add(new PartyMember(character));
-      if (debug) Trace.Script(character.name + " has joined the party!");
+      if (debug) StratusDebug.Log(character.name + " has joined the party!");
     }
     
     /// <summary>

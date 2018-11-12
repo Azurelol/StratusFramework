@@ -61,21 +61,5 @@ namespace Stratus
       this.OnBeforeRow(args.rowRect, (TreeViewItem<TreeElementType>)args.item);
       base.RowGUI(args);
     }
-
-    //protected override DragAndDropVisualMode HandleDragAndDrop(DragAndDropArgs args)
-    //{      
-    //  TreeElementType treeElement = this.GetElement(args.parentItem.id);
-    //  //Trace.Script($"{treeElement.name}");
-    //  return base.HandleDragAndDrop(args);
-    //}
-
-    //protected override void SetupDragAndDrop(SetupDragAndDropArgs args)
-    //{
-    //  args.
-    //}
-
-
-
-
   }
 }

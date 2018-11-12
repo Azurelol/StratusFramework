@@ -72,7 +72,7 @@ namespace Stratus
     public bool isArray { get; private set; }
     public IList list { get; private set; }    
     public Type listElementType { get; private set; }
-    public StratusSerializedSystemObject.ObjectDrawer drawer { get; private set; }
+    public SerializedSystemObject.ObjectDrawer drawer { get; private set; }
     public string[] enumDisplayNames { get; private set; }
     public SerializedPropertyType propertyType { get; private set; }
 
@@ -80,13 +80,13 @@ namespace Stratus
     {
       this.field = field;
       this.type = this.field.FieldType;
-      this.propertyType = StratusSerializedSystemObject.DeducePropertyType(this.field);
+      this.propertyType = SerializedSystemObject.DeducePropertyType(this.field);
       this.displayName = ObjectNames.NicifyVariableName(this.field.Name);
       this.target = target;
 
       // Enum
       if (this.propertyType == SerializedPropertyType.Enum)
-        this.enumDisplayNames = SearchableEnum.GetEnumDisplayNames(this.type);
+        this.enumDisplayNames = StratusSearchableEnum.GetEnumDisplayNames(this.type);
       
       // Array
       this.isArray = typeof(IList).IsAssignableFrom(this.type);
@@ -97,7 +97,7 @@ namespace Stratus
       }
 
       // Set the drawer
-      this.drawer = StratusSerializedSystemObject.GetObjectDrawer(this.isArray ? this.listElementType : this.type);
+      this.drawer = SerializedSystemObject.GetObjectDrawer(this.isArray ? this.listElementType : this.type);
     }
 
     public void DrawEditorGUILayout(object target)

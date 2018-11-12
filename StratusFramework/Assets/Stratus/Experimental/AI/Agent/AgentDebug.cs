@@ -123,7 +123,7 @@ namespace Stratus
         {
           pathStr += " " + corner;
         }
-        Trace.Script(pathStr, this);
+        StratusDebug.Log(pathStr, this);
       }
 
 

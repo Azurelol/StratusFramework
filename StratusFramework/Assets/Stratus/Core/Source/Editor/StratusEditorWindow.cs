@@ -15,7 +15,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     protected const string rootMenu = "Stratus/";
     protected SerializedObject serializedObject { get; set; }
-    protected SerializedPropertyMap serializedPropertyMap { get; set; }
+    protected StratusSerializedPropertyMap serializedPropertyMap { get; set; }
   }
 
   public abstract class StratusEditorWindow<T> : StratusEditorWindow where T : EditorWindow
@@ -77,7 +77,7 @@ namespace Stratus
     {
       instance = this as T;
       this.serializedObject = new SerializedObject(this);
-      this.serializedPropertyMap = new SerializedPropertyMap(this.serializedObject);
+      this.serializedPropertyMap = new StratusSerializedPropertyMap(this.serializedObject);
       this.menuBarDrawer = this.OnSetMenuBar();
       this.OnWindowEnable();
       EditorApplication.playModeStateChanged += this.OnPlayModeStateChange;

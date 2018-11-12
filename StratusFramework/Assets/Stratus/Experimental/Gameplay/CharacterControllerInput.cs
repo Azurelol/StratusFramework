@@ -115,19 +115,19 @@ namespace Stratus.Gameplay
     public InputMode mode = InputMode.Controller;
 
     // Controller    
-    public InputField horizontal = new InputField();
-    public InputField vertical = new InputField();
-    public InputField sprint = new InputField();
-    public InputField jump = new InputField();
+    public InputBinding horizontal = new InputBinding();
+    public InputBinding vertical = new InputBinding();
+    public InputBinding sprint = new InputBinding();
+    public InputBinding jump = new InputBinding();
     // Mouse    
     public MouseMovement mouseMovement = MouseMovement.Direction;
-    public InputField moveButton = new InputField(InputField.MouseButton.Right);
+    public InputBinding moveButton = new InputBinding(InputBinding.MouseButton.Right);
 
     [Header("Custom")]
     public List<InputAction> additional = new List<InputAction>();
 
     [Header("Camera")]
-    public InputField changeCamera = new InputField(KeyCode.C);
+    public InputBinding changeCamera = new InputBinding(KeyCode.C);
     public List<Preset> presets = new List<Preset>();
 
     private static CharacterMovement.MoveEvent moveEvent = new CharacterMovement.MoveEvent();

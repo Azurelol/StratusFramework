@@ -1,12 +1,3 @@
-/******************************************************************************/
-/*!
-@file   PartyEditor.cs
-@author Christian Sagel
-@par    email: c.sagel\@digipen.edu
-@par    DigiPen login: c.sagel
-@date   5/25/2016
-*/
-/******************************************************************************/
 #if UNITY_EDITOR
 using UnityEngine;
 using System.Collections.Generic;

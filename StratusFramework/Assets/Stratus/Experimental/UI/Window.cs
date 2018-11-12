@@ -206,11 +206,11 @@ namespace Stratus
 
       public IEnumerator EnableClosingOfWindow()
       {
-        Trace.Script("Preventing window from being closed for " + this.ClosingThreshold + " seconds!", this);
+        StratusDebug.Log("Preventing window from being closed for " + this.ClosingThreshold + " seconds!", this);
         this.CanBeClosed = false;
         yield return StartCoroutine(Routines.WaitForRealSeconds(this.ClosingThreshold));
         this.CanBeClosed = true;
-        Trace.Script("This window can now be closed", this);
+        StratusDebug.Log("This window can now be closed", this);
       }
 
 

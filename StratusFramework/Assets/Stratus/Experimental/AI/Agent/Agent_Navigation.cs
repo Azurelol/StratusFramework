@@ -103,7 +103,7 @@ namespace Stratus
         // Now travel the path
         foreach (var point in points)
         {
-          Trace.Script("Moving to next point: " + point, this);
+          StratusDebug.Log("Moving to next point: " + point, this);
           while (Vector3.Distance(transform.position, point) > stoppingDistance)
           {
             this.navigation.SetDestination(point);
@@ -111,7 +111,7 @@ namespace Stratus
           }
         }
 
-        Trace.Script("Finished the path!");
+        StratusDebug.Log("Finished the path!");
         if (this.debug)
         {
           StopCoroutine(drawRoutine);

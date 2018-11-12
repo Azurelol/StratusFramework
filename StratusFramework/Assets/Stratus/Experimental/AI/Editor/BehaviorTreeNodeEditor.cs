@@ -48,7 +48,7 @@ namespace Stratus
 
       void Woof()
       {
-        Trace.Script("Woof!");
+        StratusDebug.Log("Woof!");
       }
 
 

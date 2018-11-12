@@ -117,7 +117,7 @@ namespace Stratus
         return actionsOwnerMap[gameObject].owner;
 
       if (StratusActions.debug)
-        Trace.Script("Adding the GameObject to the ActionSpace");
+        StratusDebug.Log("Adding the GameObject to the ActionSpace");
 
       var owner = new StratusActionsOwner(gameObject);
       ActionsContainer container = new ActionsContainer(gameObject, owner);
@@ -139,7 +139,7 @@ namespace Stratus
         return;
 
       if (StratusActions.debug)
-        Trace.Script("'" + gameObject.name + "'");
+        StratusDebug.Log("'" + gameObject.name + "'");
 
       ActionsContainer container = actionsOwnerMap[gameObject];
       activeActions.Remove(container);
@@ -157,7 +157,7 @@ namespace Stratus
       {
         actionsLeft += action.gameObject.name + ", ";
       }
-      Trace.Script(actionsLeft);
+      StratusDebug.Log(actionsLeft);
     }
   }
 }

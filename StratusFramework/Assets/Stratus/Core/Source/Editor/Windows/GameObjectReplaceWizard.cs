@@ -161,7 +161,7 @@ namespace Stratus
     private static void ReplaceSelected(GameObject[] originals, GameObject prefab, bool keepNames, bool respectHierarchy, bool verbose = false)
     {
       if (verbose)
-        Trace.Script("Now replacing " + originals.Length + " objects!");
+        StratusDebug.Log("Now replacing " + originals.Length + " objects!");
 
       Undo.IncrementCurrentGroup();
       Undo.SetCurrentGroupName(typeof(GameObjectReplaceWizard).Name);

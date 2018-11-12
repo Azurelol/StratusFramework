@@ -148,13 +148,13 @@ namespace Stratus.Gameplay
     private void OnCollision(Collision collision)
     {
       grounded = collision.gameObject.layer == groundLayer;
-      Trace.Script($"Grounded = {grounded}");
+      StratusDebug.Log($"Grounded = {grounded}");
     }
 
     private void OnCollider(Collider collider)
     {
       grounded = collider.gameObject.layer == groundLayer;
-      Trace.Script($"Grounded = {grounded}");
+      StratusDebug.Log($"Grounded = {grounded}");
     }
   }
 

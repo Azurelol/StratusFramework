@@ -59,7 +59,7 @@ namespace Stratus
         {
           if (drawIf.comparison != ComparisonType.Equals && drawIf.comparison != ComparisonType.NotEqual)
           {
-            Trace.Error("The only comparsion types available to type '" + comparedFieldValue.GetType() + "' are Equals and NotEqual. (On object '" + property.serializedObject.targetObject.name + "')", null, true);
+            StratusDebug.Error("The only comparsion types available to type '" + comparedFieldValue.GetType() + "' are Equals and NotEqual. (On object '" + property.serializedObject.targetObject.name + "')", null, true);
             return;
           }
         }

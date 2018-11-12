@@ -21,32 +21,32 @@ namespace Stratus
     //------------------------------------------------------------------------/
     public static void GUILayoutPopup(string label, int selectedindex, string[] displayedOptions, System.Action<int> onSelected)
     {
-      SearchablePopup.Popup(label, selectedindex, displayedOptions, onSelected);
+      StratusSearchablePopup.Popup(label, selectedindex, displayedOptions, onSelected);
     }
 
     public static void GUILayoutPopup(string label, DropdownList dropdownList)
     {
-      SearchablePopup.Popup(label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
+      StratusSearchablePopup.Popup(label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
     }
 
     public static void GUILayoutPopup(DropdownList dropdownList)
     {
-      SearchablePopup.Popup(dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
+      StratusSearchablePopup.Popup(dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
     }
 
     public static void GUIPopup(Rect position, string label, DropdownList dropdownList)
     {
-      SearchablePopup.Popup(position, label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
+      StratusSearchablePopup.Popup(position, label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
     }
 
     public static void GUIPopup(Rect position, DropdownList dropdownList)
     {
-      SearchablePopup.Popup(position, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
+      StratusSearchablePopup.Popup(position, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
     }
 
     public static void GUIPopup(Rect position, string label, int selectedindex, string[] displayedOptions, System.Action<int> onSelected)
     {
-      SearchablePopup.Popup(position, label, selectedindex, displayedOptions, onSelected);
+      StratusSearchablePopup.Popup(position, label, selectedindex, displayedOptions, onSelected);
     }
 
     public static int GUILayoutPopup(string label, int selectedindex, string[] displayedOptions)
@@ -69,7 +69,7 @@ namespace Stratus
 
     public static void EnumToolbar<T>(ref T enumValue)
     {
-      string[] options = SearchableEnum.GetEnumDisplayNames((Enum)(object)enumValue);
+      string[] options = StratusSearchableEnum.GetEnumDisplayNames((Enum)(object)enumValue);
       enumValue = (T)(object)GUILayout.Toolbar(Convert.ToInt32(enumValue), options, GUILayout.ExpandWidth(false));
     }
 
@@ -118,7 +118,7 @@ namespace Stratus
 
     public static void DrawGUI(Rect position, FieldInfo field, object target)
     {
-      SerializedPropertyType propertyType = StratusSerializedSystemObject.DeducePropertyType(field);
+      SerializedPropertyType propertyType = SerializedSystemObject.DeducePropertyType(field);
       string name = ObjectNames.NicifyVariableName(field.Name);
       object value = null;
       switch (propertyType)
@@ -145,7 +145,7 @@ namespace Stratus
           value = EditorGUI.LayerField(position, name, field.GetValue<LayerMask>(target));
           break;
         case SerializedPropertyType.Enum:
-          SearchableEnum.EnumPopup(position, name, field.GetValue<Enum>(target), (Enum selected) => field.SetValue(target, selected));
+          StratusSearchableEnum.EnumPopup(position, name, field.GetValue<Enum>(target), (Enum selected) => field.SetValue(target, selected));
           break;
         case SerializedPropertyType.Vector2:
           value = EditorGUI.Vector2Field(position, name, field.GetValue<Vector2>(target));

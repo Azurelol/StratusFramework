@@ -113,7 +113,7 @@ namespace Stratus
           {
             float currentValue = member.Get<float>();
             bool shouldToggle = (toggle && currentValue == floatValue);
-            Trace.Script("Previous float " + previousValue + ", Current Float = " + currentValue + ", Float Value = " + floatValue + ", shouldToggle = " + shouldToggle);
+            StratusDebug.Log("Previous float " + previousValue + ", Current Float = " + currentValue + ", Float Value = " + floatValue + ", shouldToggle = " + shouldToggle);
             float nextValue = shouldToggle ? (float)previousValue : floatValue;
             //interpolator = Routines.Lerp(currentValue, nextValue, duration, (float val) => { property.Set(val); }, Routines.Lerp);
             interpolator = Routines.Interpolate(currentValue, nextValue, duration, (float val) => { member.Set(val); }, ease);

@@ -92,7 +92,7 @@ namespace Stratus
       ObjectNote[] notes = Scene.GetComponentsInAllActiveScenes<ObjectNote>();
       foreach (var note in notes)
         Undo.DestroyObjectImmediate(note);
-      Trace.Script($"Removed {notes.Length} notes!");
+      StratusDebug.Log($"Removed {notes.Length} notes!");
     }
 
     private void ProcessEvents(UnityEngine.Event e)
@@ -101,12 +101,12 @@ namespace Stratus
       {
         case EventType.MouseDown:
           if (e.button == 0)
-            Trace.Script("Left mouse down");
+            StratusDebug.Log("Left mouse down");
           break;
 
         case EventType.MouseUp:
           if (e.button == 0)
-            Trace.Script("Left mouse up!");
+            StratusDebug.Log("Left mouse up!");
           break;
       }
     }
@@ -115,7 +115,7 @@ namespace Stratus
     {
       isAddingNoteOnSceneView = true;
       //Cursor.SetCursor(icon, Vector2.zero, CursorMode.Auto);
-      Trace.Script("Now selecting mouse position");
+      StratusDebug.Log("Now selecting mouse position");
     }
 
     void OnSelectingNotePosition()
@@ -126,14 +126,14 @@ namespace Stratus
         OnMouseReleased();
         e.Use();
         isAddingNoteOnSceneView = false;
-        Trace.Script("Now releasing mouse");
+        StratusDebug.Log("Now releasing mouse");
       }
     }
 
     void OnMouseReleased()
     {
       var pos = Camera.main.CastRayFromMouseScreenPosition();
-      Trace.Script($"pos = {pos.point}");
+      StratusDebug.Log($"pos = {pos.point}");
     }
 
     private void AddNote(GameObject go) => go.AddComponent<ObjectNote>().hideFlags = HideFlags.HideInInspector | HideFlags.DontSaveInBuild | HideFlags.HideInHierarchy;

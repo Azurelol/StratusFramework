@@ -5,13 +5,13 @@ using UnityEditor;
 
 namespace Stratus.Gameplay
 {
-  [CustomEditor(typeof(Segment))]
-  public class SegmentEditor : StratusBehaviourEditor<Segment>
+  [CustomEditor(typeof(StratusSegment))]
+  public class SegmentEditor : StratusBehaviourEditor<StratusSegment>
   {
     protected override void OnStratusEditorEnable()
     {
       //AddConstraint(nameof(Segment.onRestarted), () => target.restart);
-      AddConstraint(() => target.toggleObjects, nameof(Segment.toggledObjects));
+      AddConstraint(() => target.toggleObjects, nameof(StratusSegment.toggledObjects));
     }
   }
 

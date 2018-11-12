@@ -1,10 +1,3 @@
-/******************************************************************************/
-/*!
-@file   CombatAction.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
@@ -31,31 +24,31 @@ namespace Genitus
       /// </summary>
       [Tooltip("How long to wait before the action starts casting")]
       [Range(0f, 1.5f)]
-      public float Start = 0.1f;
+      public float start = 0.1f;
       /// <summary>
       /// How long this action will take to cast
       /// </summary>
       [Range(0f, 10f)]
       [Tooltip("How long it will take this action to cast")]
-      public float Cast = 0.5f;
+      public float cast = 0.5f;
       /// <summary>
       /// How long to wait before the action is executed
       /// </summary>
       [Range(0f, 1.5f)]
       [Tooltip("How long to wait before the action starts executing.")]
-      public float Trigger = 0.0f;
+      public float trigger = 0.0f;
       /// <summary>
       /// How long it takes to execute the action
       /// </summary>
       [Range(0f, 1.5f)]
       [Tooltip("How long it takes to execute the action")]
-      public float Execute = 0.25f;
+      public float execute = 0.25f;
       /// <summary>
       /// How long to wait before the action is ended
       /// </summary>
       [Range(0f, 1.5f)]
       [Tooltip("How long to wait before the action is ended")]
-      public float End = 0.25f;
+      public float end = 0.25f;
     }
 
     /// <summary>
@@ -170,8 +163,8 @@ namespace Genitus
     {
       get
       {
-        if (Timers.Cast == 0.0f) return 1.0f;
-        return castTimer / Timers.Cast;
+        if (Timers.cast == 0.0f) return 1.0f;
+        return castTimer / Timers.cast;
       }
     }
 
@@ -317,7 +310,7 @@ namespace Genitus
       // Inform the controller the the action has started casting
       this.currentPhaseSequence = StratusActions.Sequence(this.User);
       StratusActions.Call(this.currentPhaseSequence, () => Inform<StartedEvent>());
-      StratusActions.Delay(this.currentPhaseSequence, Timers.Start);
+      StratusActions.Delay(this.currentPhaseSequence, Timers.start);
       StratusActions.Call(this.currentPhaseSequence, ()=>this.OnStart(user, target));
       StratusActions.Call(this.currentPhaseSequence, () => 
       {
@@ -341,7 +334,7 @@ namespace Genitus
       // Once we are done casting the current action, execute it! It will first
       // animate it and check for a trigger.
       // Once the trigger has run, it will be calling this action's 'Execute' method
-      if (castTimer >= Timers.Cast)
+      if (castTimer >= Timers.cast)
       {
         this.Trigger(user, target);
       }
@@ -362,7 +355,7 @@ namespace Genitus
 
       // Inform the skill is ready to be triggered
       this.currentPhaseSequence = StratusActions.Sequence(this.User);
-      StratusActions.Call(this.currentPhaseSequence, () => Inform<TriggerEvent>(), Timers.Trigger);
+      StratusActions.Call(this.currentPhaseSequence, () => Inform<TriggerEvent>(), Timers.trigger);
       // The action is now finished updating
       isFinished = true;
       // Invoke the trigger
@@ -375,9 +368,9 @@ namespace Genitus
     public void Execute()
     {
       currentPhase = Phase.Execute;
-      Trace.Script("Now executing", User);
+      StratusDebug.Log("Now executing", User);
       this.currentPhaseSequence = StratusActions.Sequence(this.User);
-      StratusActions.Delay(this.currentPhaseSequence, this.Timers.Execute);
+      StratusActions.Delay(this.currentPhaseSequence, this.Timers.execute);
       StratusActions.Call(this.currentPhaseSequence, () => this.OnExecute(this.User, this.Target));
       StratusActions.Call(this.currentPhaseSequence, () => Inform<ExecuteEvent>());
       StratusActions.Call(this.currentPhaseSequence, () => this.End(this.User));
@@ -393,7 +386,7 @@ namespace Genitus
 
       this.OnEnd();
       this.currentPhaseSequence = StratusActions.Sequence(this.User);
-      StratusActions.Call(this.currentPhaseSequence, () => Inform<EndedEvent>(), Timers.End);
+      StratusActions.Call(this.currentPhaseSequence, () => Inform<EndedEvent>(), Timers.end);
     }
 
     /// <summary>
@@ -412,7 +405,7 @@ namespace Genitus
     /// </summary>
     public void Cancel()
     {      
-      Trace.Script("Action cancelled!", User);
+      StratusDebug.Log("Action cancelled!", User);
       if (this.currentPhaseSequence != null)
         this.currentPhaseSequence.Cancel();
       this.OnCancel();

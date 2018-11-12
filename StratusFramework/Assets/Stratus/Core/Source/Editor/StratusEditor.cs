@@ -485,7 +485,7 @@ namespace Stratus
             // Custom enum drawer, ho!
             if (property.propertyType == SerializedPropertyType.Enum)
             {
-              SearchableEnum.EnumPopup(property);
+              StratusSearchableEnum.EnumPopup(property);
             }
             else
             {

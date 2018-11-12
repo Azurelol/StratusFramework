@@ -18,7 +18,7 @@ namespace Stratus
 
 		public override float Update(float dt)
 		{
-			Trace.Script(message, this.target);
+			StratusDebug.Log(message, this.target);
 			this.isFinished = true;
 
 			if (StratusActions.debug)

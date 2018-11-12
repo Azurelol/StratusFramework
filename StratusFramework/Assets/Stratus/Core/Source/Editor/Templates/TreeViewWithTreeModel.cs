@@ -91,7 +91,7 @@ namespace Stratus
     {
       if (this.treeModel.root == null)
       {
-        Trace.Error($"Tree model root is null. Was the data set?");
+        StratusDebug.Error($"Tree model root is null. Was the data set?");
       }
 
       this.rows.Clear();

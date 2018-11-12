@@ -82,7 +82,7 @@ namespace Stratus
       /// <param name="linkInterface"></param>
       public void Connect(LinkInterface linkInterface)
       {
-        if (Tracing) Trace.Script("Connected to '" + linkInterface.gameObject.name + "'", this);
+        if (Tracing) StratusDebug.Log("Connected to '" + linkInterface.gameObject.name + "'", this);
         Interface = linkInterface;
         Connect();
       }
@@ -118,21 +118,21 @@ namespace Stratus
         // If there's no layer, do nothing
         if (Layers.Count == 0)
         {
-          Trace.Script("No layers available!", this);
+          StratusDebug.Log("No layers available!", this);
           return false;
         }
 
         // If the layer could not be found, do nothing
         if (!Layers.ContainsKey(layerName))
         {
-          Trace.Script("The layer '" + layerName + "' could not be found!", this);
+          StratusDebug.Log("The layer '" + layerName + "' could not be found!", this);
           return false;
         }
 
         // If it's the same layer, do nothing
         if (CurrentLayer.name == layerName)
         {
-          if (Tracing) Trace.Script(layerName + " is the same layer!", this);
+          if (Tracing) StratusDebug.Log(layerName + " is the same layer!", this);
           return false;
         }
 
@@ -167,7 +167,7 @@ namespace Stratus
         Links.Clear();
         // Add all available links
         Links.AddRange(this.GetComponentsInChildren<Link>(true));
-        if (Tracing) Trace.Script("Connecting '" + Links.Count + "' links!" , this);
+        if (Tracing) StratusDebug.Log("Connecting '" + Links.Count + "' links!" , this);
         foreach (var link in Links)
         {
           link.Interface = Interface;
@@ -294,9 +294,9 @@ namespace Stratus
         var linkToFind = Links.Find(x => x.name == name);
         if (!linkToFind)
         {
-          Trace.Script("Could not find link of name '" + name + "'", this);
-          Trace.Script("Available links: ", this);
-          foreach (var link in Links) Trace.Script("- " + link.name, this);
+          StratusDebug.Log("Could not find link of name '" + name + "'", this);
+          StratusDebug.Log("Available links: ", this);
+          foreach (var link in Links) StratusDebug.Log("- " + link.name, this);
           throw new System.Exception();
         }
 

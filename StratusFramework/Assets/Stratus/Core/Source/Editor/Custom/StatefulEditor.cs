@@ -5,13 +5,13 @@ using UnityEditor;
 
 namespace Stratus
 {
-  [CustomEditor(typeof(Stateful))]
-  public class StatefulEditor : StratusBehaviourEditor<Stateful>
+  [CustomEditor(typeof(StratusStatefulObject))]
+  public class StatefulEditor : StratusBehaviourEditor<StratusStatefulObject>
   {
     protected override void OnStratusEditorEnable()
     {
-      AddConstraint(() => target.initialStateConfiguration == Stateful.InitialStateConfiguration.OnCallbackFinished, nameof(Stateful.onInitialState));
-      AddConstraint(() => target.initialStateConfiguration == Stateful.InitialStateConfiguration.OnDelay, nameof(Stateful.delay));
+      AddConstraint(() => target.initialStateConfiguration == StratusStatefulObject.InitialStateConfiguration.OnCallbackFinished, nameof(StratusStatefulObject.onInitialState));
+      AddConstraint(() => target.initialStateConfiguration == StratusStatefulObject.InitialStateConfiguration.OnDelay, nameof(StratusStatefulObject.delay));
     }
   }
 

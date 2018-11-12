@@ -33,7 +33,7 @@ namespace Stratus
 		{
 			if (logging)
 			{
-				Trace.Script("#" + this.id + ": Calling function '" + this.DelegateInstance.Method.Name + "'");
+				StratusDebug.Log("#" + this.id + ": Calling function '" + this.DelegateInstance.Method.Name + "'");
 			}
 
 			this.DelegateInstance.DynamicInvoke();
@@ -41,7 +41,7 @@ namespace Stratus
 
 			if (logging)
 			{
-				Trace.Script("#" + this.id + ": Finished!");
+				StratusDebug.Log("#" + this.id + ": Finished!");
 			}
 
 			return 0.0f;
@@ -88,7 +88,7 @@ namespace Stratus
 		{
 			if (logging)
 			{
-				Trace.Script("#" + this.id + ": Calling function '" + this.delegateInstance.Method.Name + "'");
+				StratusDebug.Log("#" + this.id + ": Calling function '" + this.delegateInstance.Method.Name + "'");
 			}
 
 			// If the target was destroyed in the meantime...
@@ -102,7 +102,7 @@ namespace Stratus
 
 			if (logging)
 			{
-				Trace.Script("#" + this.id + ": Finished!");
+				StratusDebug.Log("#" + this.id + ": Finished!");
 			}
 
 			return 0.0f;

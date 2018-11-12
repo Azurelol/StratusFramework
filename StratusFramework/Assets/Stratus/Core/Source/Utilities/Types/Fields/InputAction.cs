@@ -24,16 +24,16 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    public InputField input = new InputField();
-    public InputField.AxisType axisType;
-    public InputField.State state;
+    public InputBinding input = new InputBinding();
+    public InputBinding.AxisType axisType;
+    public InputBinding.State state;
     public OnButtonInput onInput = new OnButtonInput();
     public OnAxisInput onAxisInput = new OnAxisInput();
 
     //------------------------------------------------------------------------/
     // Properties
     //------------------------------------------------------------------------/
-    public InputField.Type type => input.type;
+    public InputBinding.Type type => input.type;
 
     //------------------------------------------------------------------------/
     // Methods
@@ -42,22 +42,22 @@ namespace Stratus
     {
       switch (type)
       {
-        case InputField.Type.Key:
-        case InputField.Type.MouseButton:
+        case InputBinding.Type.Key:
+        case InputBinding.Type.MouseButton:
           {
             switch (state)
             {
-              case InputField.State.Down:
+              case InputBinding.State.Down:
                 if (input.isDown)
                   onInput.Invoke();
                 break;
 
-              case InputField.State.Up:
+              case InputBinding.State.Up:
                 if (input.isUp)
                   onInput.Invoke();
                 break;
 
-              case InputField.State.Pressed:
+              case InputBinding.State.Pressed:
                 if (input.isPressed)
                   onInput.Invoke();
                 break;
@@ -67,7 +67,7 @@ namespace Stratus
           break;
 
 
-        case InputField.Type.Axis:
+        case InputBinding.Type.Axis:
           if (!input.isNeutral)
             onAxisInput.Invoke(input.value);
           break;

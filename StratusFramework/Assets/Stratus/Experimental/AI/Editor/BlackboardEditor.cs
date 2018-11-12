@@ -8,7 +8,7 @@ namespace Stratus
     [CustomEditor(typeof(Blackboard))]
     public class BlackboardEditor : ScriptableEditor<Blackboard>
     {
-      private static string[] blackboardOptions { get; } = SearchableEnum.GetEnumDisplayNames(typeof(Blackboard.Scope));
+      private static string[] blackboardOptions { get; } = StratusSearchableEnum.GetEnumDisplayNames(typeof(Blackboard.Scope));
 
 
       protected override void OnStratusEditorEnable()

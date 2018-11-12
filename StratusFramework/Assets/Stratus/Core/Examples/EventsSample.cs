@@ -36,27 +36,27 @@ namespace Stratus
 
       void SampleEventToGameObject()
       {
-        Trace.Script("Dispatching event!", this);
+        StratusDebug.Log("Dispatching event!", this);
         // Connect a member function to the given event
         this.gameObject.Connect<SampleEvent>(OnSampleEvent);
         // Construct the event object
         SampleEvent eventObj = new SampleEvent();
         eventObj.number = 5;
         // Dispatch the event
-        Trace.Script("Event dispatched", this);
+        StratusDebug.Log("Event dispatched", this);
         this.gameObject.Dispatch<SampleEvent>(eventObj);
       }
 
       void SampleEventToScene()
       {
-        Trace.Script("Connecting the member function on this component to an event sent to the space");
+        StratusDebug.Log("Connecting the member function on this component to an event sent to the space");
         // Connect a member function to the given event
         Scene.Connect<SampleEvent>(this.OnSampleEvent);
         // Construct the event object
         SampleEvent eventObj = new SampleEvent();
         eventObj.number = 15;
         // Dispatch the event
-        Trace.Script("Event about to be dispatched");
+        StratusDebug.Log("Event about to be dispatched");
         Scene.Dispatch<SampleEvent>(eventObj);
       }
 
@@ -66,8 +66,8 @@ namespace Stratus
       /// <param name="eventObj">The event object, a custom class which may contain member variables.</param>
       public void OnSampleEvent(SampleEvent eventObj)
       {
-        Trace.Script("Event received!", this);
-        Trace.Script("Number = " + eventObj.number, this);
+        StratusDebug.Log("Event received!", this);
+        StratusDebug.Log("Number = " + eventObj.number, this);
       }
 
 

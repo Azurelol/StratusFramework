@@ -208,7 +208,7 @@ namespace Stratus.Gameplay
         return false;
 
       if (debug)
-        Trace.Script("Setting boolean '" + name + "' to " + value, this);
+        StratusDebug.Log("Setting boolean '" + name + "' to " + value, this);
 
       this.animator.SetBool(name, value);
       return true;
@@ -225,7 +225,7 @@ namespace Stratus.Gameplay
         return false;
 
       if (debug)
-        Trace.Script("Setting trigger '" + name + "'", this);
+        StratusDebug.Log("Setting trigger '" + name + "'", this);
 
       this.animator.SetTrigger(name);
       this.previousTrigger = name;
@@ -282,7 +282,7 @@ namespace Stratus.Gameplay
       {
         if (hook.onEvent.Type == null || hook.parameterName == null)
         {
-          Trace.Error($"An animator trigger has not been set properly!", this);
+          StratusDebug.Error($"An animator trigger has not been set properly!", this);
           continue;
         }
         animatorEventTriggers.Add(hook.onEvent, hook.parameterName);
@@ -294,7 +294,7 @@ namespace Stratus.Gameplay
       {
         if (!hook.member.isAssigned)
         {
-          Trace.Error($"An animator parameter has not been set properly!", this);
+          StratusDebug.Error($"An animator parameter has not been set properly!", this);
           continue;
         }
 

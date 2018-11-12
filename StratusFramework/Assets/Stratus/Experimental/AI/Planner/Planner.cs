@@ -152,14 +152,14 @@ namespace Stratus
         if (this.currentPlan != null)
         {
           //if (Tracing)
-            Trace.Script("Executing new plan!", this.agent);
+            StratusDebug.Log("Executing new plan!", this.agent);
           this.agent.gameObject.Dispatch<Plan.FormulatedEvent>(new Plan.FormulatedEvent(this.currentPlan));
           this.ContinuePlan();
         }
         else
         {
           //if (Tracing)
-            Trace.Script("The plan could not be formulated!", this.agent);
+            StratusDebug.Log("The plan could not be formulated!", this.agent);
         }
       }
 

@@ -25,7 +25,7 @@ namespace Stratus
       protected override void OnActivate()
       {
         // Request the window to open
-        Trace.Script("Opening window!", this);
+        StratusDebug.Log("Opening window!", this);
         Target.gameObject.Dispatch<Window.OpenEvent>(new Window.OpenEvent());
       }
 

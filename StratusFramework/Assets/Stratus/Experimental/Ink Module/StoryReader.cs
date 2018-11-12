@@ -197,7 +197,7 @@ namespace Stratus.Modules.InkModule
       if (previouslyLoaded)
       {
         if (debug)
-          Trace.Script($"{storyFile.name} has already been loaded! Using the previous state.");
+          StratusDebug.Log($"{storyFile.name} has already been loaded! Using the previous state.");
         newStory = stories[storyFile.name];
         LoadState(newStory);
       }
@@ -205,7 +205,7 @@ namespace Stratus.Modules.InkModule
       else
       {
         if (debug)
-          Trace.Script($"{storyFile.name} has not been loaded yet. Constructing a new state.");
+          StratusDebug.Log($"{storyFile.name} has not been loaded yet. Constructing a new state.");
         newStory = ConstructStory(storyFile);
       }
 
@@ -220,7 +220,7 @@ namespace Stratus.Modules.InkModule
           if (automaticRestart)
             Restart(clearStateOnRestart);
           else
-            Trace.Error($"The story {story.name} has already been ended, thus we can't jump to the knot!", this);
+            StratusDebug.Error($"The story {story.name} has already been ended, thus we can't jump to the knot!", this);
         }
         JumpToKnot(knot);
       }
@@ -252,7 +252,7 @@ namespace Stratus.Modules.InkModule
       newStory.file = storyFile;
       newStory.runtime = new Ink.Runtime.Story(storyFile.text);
       if (!newStory.runtime)
-        Trace.Error("Failed to load the story", this, true);
+        StratusDebug.Error("Failed to load the story", this, true);
 
       // Bind external functions to it
       OnBindExternalFunctions(newStory);
@@ -266,7 +266,7 @@ namespace Stratus.Modules.InkModule
     void GoToStart()
     {
       if (debug)
-        Trace.Script($"Navigating to the start of the story {story.name}", this);
+        StratusDebug.Log($"Navigating to the start of the story {story.name}", this);
       story.runtime.ResetCallstack();
     }
 
@@ -276,7 +276,7 @@ namespace Stratus.Modules.InkModule
     void Restart(bool clearState)
     {
       if (debug)
-        Trace.Script("Restarting the state for the story '" + story.name + "'", this);
+        StratusDebug.Log("Restarting the state for the story '" + story.name + "'", this);
       if (clearState)
         story.runtime.ResetState();
       else
@@ -313,7 +313,7 @@ namespace Stratus.Modules.InkModule
       if (currentlyReading && queueStories && e.queue)
       {
         if (debug)
-          Trace.Script($"Queued up <i>{e.storyFile.name}</i>");
+          StratusDebug.Log($"Queued up <i>{e.storyFile.name}</i>");
         storyQueue.Enqueue(e);
       }
       // Otherwise take over the current story
@@ -363,7 +363,7 @@ namespace Stratus.Modules.InkModule
           break;
         case Story.Types.String:
           Story.SetVariableValue<string>(story.runtime, e.variable.name, e.variable.stringValue);
-          Trace.Script($"Setting variable {e.variable.name} to {e.variable.stringValue}");
+          StratusDebug.Log($"Setting variable {e.variable.name} to {e.variable.stringValue}");
           break;
         case Story.Types.Float:
           Story.SetVariableValue<float>(story.runtime, e.variable.name, e.variable.floatValue);
@@ -374,7 +374,7 @@ namespace Stratus.Modules.InkModule
     void OnObserveVariableEvent(Story.ObserveVariableEvent e)
     {
       if (debug)
-        Trace.Script("Observing " + e.variableName);
+        StratusDebug.Log("Observing " + e.variableName);
       story.runtime.ObserveVariable(e.variableName, e.variableObserver);
     }
 
@@ -417,7 +417,7 @@ namespace Stratus.Modules.InkModule
     public void Save()
     {
       if (debug)
-        Trace.Script("Saving...", this);
+        StratusDebug.Log("Saving...", this);
 
       // Save the current story
       if (saveStates)
@@ -433,7 +433,7 @@ namespace Stratus.Modules.InkModule
     public void Clear()
     {
       if (debug)
-        Trace.Script("Cleared!", this);
+        StratusDebug.Log("Cleared!", this);
       stories.Clear();
       //storySave.Delete();
       storySave = new StorySave();
@@ -456,14 +456,14 @@ namespace Stratus.Modules.InkModule
       if (storySave.currentStory == null)
       {
         if (debug)
-          Trace.Script("No story to resume from!", this);
+          StratusDebug.Log("No story to resume from!", this);
         return;
       }
 
       story = storySave.currentStory;
       LoadState(story);// story.LoadState();
       StartStory(true);
-      Trace.Script($"Resuming {story.name}", this);
+      StratusDebug.Log($"Resuming {story.name}", this);
     }
 
     private void LoadState(Story story)
@@ -511,7 +511,7 @@ namespace Stratus.Modules.InkModule
       StorySave.Save(storySave, saveFileName, saveFolder);
 
       if (debug)
-        Trace.Script($"Saved {StorySave.ComposePath(saveFileName, saveFolder)}");
+        StratusDebug.Log($"Saved {StorySave.ComposePath(saveFileName, saveFolder)}");
     }
 
     protected virtual void Load(Dictionary<string, Story> stories)
@@ -524,7 +524,7 @@ namespace Stratus.Modules.InkModule
         foreach (var story in storySave.stories)
         {
           if (debug)
-            Trace.Script($"Loaded {story.name}");
+            StratusDebug.Log($"Loaded {story.name}");
           stories.Add(story.name, story);
         }
         //if (debug)
@@ -535,7 +535,7 @@ namespace Stratus.Modules.InkModule
     protected virtual void OnClear()
     {
       if (!StorySave.Delete(saveFileName, saveFolder))
-        Trace.Error("Failed to delete save file!", this);
+        StratusDebug.Error("Failed to delete save file!", this);
     }
 
     private void GetLatestKnot()
@@ -578,7 +578,7 @@ namespace Stratus.Modules.InkModule
 
       if (debug)
       {
-        Trace.Script($"The story {story.name} has started at the knot '{latestKnot}'");
+        StratusDebug.Log($"The story {story.name} has started at the knot '{latestKnot}'");
       }
     }
 
@@ -619,7 +619,7 @@ namespace Stratus.Modules.InkModule
     void EndStory()
     {
       if (debug)
-        Trace.Script($"The story {story.name} has ended at the knot '{story.latestKnot}'");
+        StratusDebug.Log($"The story {story.name} has ended at the knot '{story.latestKnot}'");
 
       // Dispatch the ended event
       var storyEnded = new Story.EndedEvent() { reader = this, story = this.story };
@@ -642,7 +642,7 @@ namespace Stratus.Modules.InkModule
       var e = storyQueue.Dequeue();
 
       if (debug)
-        Trace.Script($"<i>{e.storyFile.name}</i> to be played in {e.queueDelay} seconds");
+        StratusDebug.Log($"<i>{e.storyFile.name}</i> to be played in {e.queueDelay} seconds");
 
       var seq = StratusActions.Sequence(this);
       StratusActions.Delay(seq, e.queueDelay);
@@ -663,7 +663,7 @@ namespace Stratus.Modules.InkModule
     void PresentChoices()
     {
       if (debug)
-        Trace.Script("Presenting dialog choices!");
+        StratusDebug.Log("Presenting dialog choices!");
 
       var choicesEvent = new Story.PresentChoicesEvent();
       choicesEvent.Choices = story.runtime.currentChoices;
@@ -697,7 +697,7 @@ namespace Stratus.Modules.InkModule
     {
       story.latestKnot = knotName;
       if (debug)
-        Trace.Script("Jumping to the knot '" + knotName + "'", this);
+        StratusDebug.Log("Jumping to the knot '" + knotName + "'", this);
       this.story.runtime.ChoosePathString(knotName + this.stitch);
     }
     /// <summary>
@@ -711,7 +711,7 @@ namespace Stratus.Modules.InkModule
 
       this.stitch = "." + stitchName;
       if (debug)
-        Trace.Script("Updating stitch to '" + stitch + "'", this);
+        StratusDebug.Log("Updating stitch to '" + stitch + "'", this);
     }
 
     /// <summary>
@@ -728,10 +728,10 @@ namespace Stratus.Modules.InkModule
     /// </summary>
     public void SaveVariables()
     {
-      Trace.Script("Variables:", this);
+      StratusDebug.Log("Variables:", this);
       foreach (var variable in story.runtime.variablesState)
       {
-        Trace.Script($"Variable {variable}");
+        StratusDebug.Log($"Variable {variable}");
       }
     }
 
@@ -788,9 +788,9 @@ namespace Stratus.Modules.InkModule
       bool visited = CheckIfKnotVisited();
 
       if (visited && debug)
-        Trace.Script("This knot has been visited previously!");
+        StratusDebug.Log("This knot has been visited previously!");
       if (debug)
-        Trace.Script($"\"{line}\" ");
+        StratusDebug.Log($"\"{line}\" ");
 
       var updateEvent = new Story.UpdateLineEvent(parser.Parse(line, tags), visited);
       Scene.Dispatch<Story.UpdateLineEvent>(updateEvent);

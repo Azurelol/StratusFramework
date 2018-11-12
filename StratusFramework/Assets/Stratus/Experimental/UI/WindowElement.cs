@@ -32,19 +32,19 @@ namespace Stratus
         if (Hidden)
         {
           //Trace.Script("Hiding", this);
-          Graphical.Fade(this, 0.0f, 0.0f);
+          Rendering.Fade(this, 0.0f, 0.0f);
         }
       }
 
       public void Show(float duration)
       {
         //Trace.Script("Now showing", this);
-        Graphical.Fade(this, 1.0f, 0.0f);
+        Rendering.Fade(this, 1.0f, 0.0f);
       }
 
       public void Hide(float duration)
       {
-        Graphical.Fade(this, 0.0f, duration);
+        Rendering.Fade(this, 0.0f, duration);
       }
 
     }

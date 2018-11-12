@@ -207,7 +207,7 @@ namespace Stratus
 
       void OnMouseDown()
       {
-        Trace.Script("Ow!", this);
+        StratusDebug.Log("Ow!", this);
       }
 
       public void Initialize()
@@ -251,7 +251,7 @@ namespace Stratus
             var msg = new System.Text.StringBuilder();
             msg.AppendLine();        
             foreach (var neighbour in links) msg.AppendLine(neighbour.name + neighbour.transform.position);
-            Trace.Error("Links placed at the same position! " + msg, this, true);
+            StratusDebug.Error("Links placed at the same position! " + msg, this, true);
           }
 
           // Right 
@@ -381,7 +381,7 @@ namespace Stratus
       {
         if (!Enabled)
         {
-          Trace.Script("Disabled!", this);
+          StratusDebug.Log("Disabled!", this);
           return;
         }        
 
@@ -392,7 +392,7 @@ namespace Stratus
       {
         if (!Enabled)
         {
-          Trace.Script("Disabled!", this);
+          StratusDebug.Log("Disabled!", this);
           return;
         }
         this.Cancel();

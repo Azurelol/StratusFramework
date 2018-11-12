@@ -16,7 +16,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     private SerializedProperty eventDataProperty;
     private Stratus.StratusEvent eventObject;
-    private StratusSerializedSystemObject serializedEvent;
+    private SerializedSystemObject serializedEvent;
 
     //------------------------------------------------------------------------/
     // CTOR
@@ -43,7 +43,7 @@ namespace Stratus
     {
       base.OnSelectionChanged();
       eventObject = (Stratus.StratusEvent)Utilities.Reflection.Instantiate(selectedClass);
-      serializedEvent = new StratusSerializedSystemObject(selectedClass, eventObject);
+      serializedEvent = new SerializedSystemObject(selectedClass, eventObject);
       //serializedEvent.Deserialize(eventDataProperty);
     }
 

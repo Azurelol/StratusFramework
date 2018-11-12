@@ -14,18 +14,18 @@ namespace Stratus.Gameplay
     //------------------------------------------------------------------------/
     [Header("Controls")]
     public Camera target;
-    public InputField movementHorizontal = new InputField("Horizontal");
-    public InputField movementVertical = new InputField("Vertical");
-    public InputField lookHorizontal = new InputField("Mouse X");
-    public InputField lookVertical = new InputField("Mouse Y");
-    public InputField turbo = new InputField(KeyCode.LeftShift);
-    public InputField ascend = new InputField(KeyCode.Space);
-    public InputField descend = new InputField(KeyCode.LeftControl);
+    public InputBinding movementHorizontal = new InputBinding("Horizontal");
+    public InputBinding movementVertical = new InputBinding("Vertical");
+    public InputBinding lookHorizontal = new InputBinding("Mouse X");
+    public InputBinding lookVertical = new InputBinding("Mouse Y");
+    public InputBinding turbo = new InputBinding(KeyCode.LeftShift);
+    public InputBinding ascend = new InputBinding(KeyCode.Space);
+    public InputBinding descend = new InputBinding(KeyCode.LeftControl);
     public bool lockCursor = true;
-    public InputField lockCursorInput = new InputField(InputField.MouseButton.Left);
-    public InputField releaseCursorInput = new InputField(KeyCode.Escape);
+    public InputBinding lockCursorInput = new InputBinding(InputBinding.MouseButton.Left);
+    public InputBinding releaseCursorInput = new InputBinding(KeyCode.Escape);
     [Tooltip("Warps to the next checkpoint in the scene, provided the Stratus Checkpoint component is present")]
-    public InputField skipToCheckpoint = new InputField(KeyCode.Tab);
+    public InputBinding skipToCheckpoint = new InputBinding(KeyCode.Tab);
 
     [Header("Configuration")]
     [Range(0f, 300f)] public float sensitivity = 90f;

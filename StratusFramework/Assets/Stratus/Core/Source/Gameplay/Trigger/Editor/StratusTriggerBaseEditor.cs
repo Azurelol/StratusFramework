@@ -43,7 +43,7 @@ namespace Stratus.Gameplay
     protected override void OnBehaviourEditorValidate()
     {
       if (target == null)
-        Trace.Script($"Null at {GetType().Name}");
+        StratusDebug.Log($"Null at {GetType().Name}");
 
       UpdateDescription();
     }

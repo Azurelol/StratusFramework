@@ -255,7 +255,7 @@ namespace Stratus
           {
             if (element.OnClick != null)
             {
-              Trace.Script("Clicked on " + element.Title);
+              StratusDebug.Log("Clicked on " + element.Title);
               element.OnClick();
               return true;
             }

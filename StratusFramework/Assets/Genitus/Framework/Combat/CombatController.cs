@@ -79,7 +79,7 @@ namespace Genitus
         }
 
         if (this.logging)
-          Trace.Script("Received " + damage + " damage! Now at " + this.health.current + " health!", this);
+          StratusDebug.Log("Received " + damage + " damage! Now at " + this.health.current + " health!", this);
 
         // Announce that health has been modified
         this.gameObject.Dispatch<HealthModifiedEvent>(new HealthModifiedEvent(this));

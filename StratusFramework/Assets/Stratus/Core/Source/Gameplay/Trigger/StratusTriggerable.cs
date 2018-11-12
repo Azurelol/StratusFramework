@@ -81,7 +81,7 @@ namespace Stratus.Gameplay
         return;
 
       if (debug)
-        Trace.Script($"<i>{description}</i> has been triggered!", this);
+        StratusDebug.Log($"<i>{description}</i> has been triggered!", this);
       this.RunTriggerSequence();
       activated = true;
     }    

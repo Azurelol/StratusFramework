@@ -154,7 +154,7 @@ namespace Stratus
         public void SelectChoice(Choice choice)
         {
           if (logging)
-            Trace.Script(choice.text + " was selected", this);
+            StratusDebug.Log(choice.text + " was selected", this);
 
           // Inform the current conversation of the choice
           var choiceEvent = new Story.SelectChoiceEvent() { story = this.story, reader = this.reader };

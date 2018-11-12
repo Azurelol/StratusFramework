@@ -435,7 +435,7 @@ namespace Stratus.Gameplay
           break;
       }
 
-      Trace.Script($"Started jump at velocity = {nextVelocity}", this);
+      StratusDebug.Log($"Started jump at velocity = {nextVelocity}", this);
       OnJump();
     }
 

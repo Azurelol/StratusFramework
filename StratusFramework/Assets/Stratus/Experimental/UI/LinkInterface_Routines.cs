@@ -177,7 +177,7 @@ namespace Stratus
       /// <param name="enabled"></param>
       public void ToggleControls(bool enabled, bool nextFrame = false)
       {
-        if (Tracing) Trace.Script("Toggle = " + enabled, this);
+        if (Tracing) StratusDebug.Log("Toggle = " + enabled, this);
         this.gameObject.Dispatch<ToggleInputEvent>(new ToggleInputEvent(enabled), nextFrame);
       }
 

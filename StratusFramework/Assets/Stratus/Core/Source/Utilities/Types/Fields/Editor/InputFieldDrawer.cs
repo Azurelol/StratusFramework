@@ -5,7 +5,7 @@ namespace Stratus
 {
   namespace Types
   {
-    [CustomPropertyDrawer(typeof(InputField))]
+    [CustomPropertyDrawer(typeof(InputBinding))]
     public class InputFieldDrawer : PropertyDrawer
     {
       float typeWidth { get; } = 0.3f;
@@ -14,7 +14,7 @@ namespace Stratus
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
       {
         SerializedProperty typeProp = property.FindPropertyRelative("_type");
-        var type = (InputField.Type)typeProp.enumValueIndex;
+        var type = (InputBinding.Type)typeProp.enumValueIndex;
 
 
         label = EditorGUI.BeginProperty(position, label, typeProp);
@@ -33,13 +33,13 @@ namespace Stratus
         contentPosition.width = width * inputValueWidth;        
         switch (type)
         {
-          case InputField.Type.Key:
+          case InputBinding.Type.Key:
             EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative("key"), GUIContent.none);
             break;
-          case InputField.Type.MouseButton:
+          case InputBinding.Type.MouseButton:
             EditorGUI.PropertyField(contentPosition, property.FindPropertyRelative("mouseButton"), GUIContent.none);
             break;
-          case InputField.Type.Axis:
+          case InputBinding.Type.Axis:
             SerializedProperty axis = property.FindPropertyRelative("axis");
             int index = InputManagerUtility.GetIndex(axis.stringValue);
             index = EditorGUI.Popup(contentPosition, label.text, index, InputManagerUtility.axesNames);

@@ -11,7 +11,7 @@ namespace Stratus.Gameplay
   public class DispatchEventEditor : TriggerableEditor<StratusDispatchEvent>
   {
     private Stratus.StratusEvent eventObject;
-    private StratusSerializedSystemObject serializedEvent;
+    private SerializedSystemObject serializedEvent;
     private Type type => triggerable.type.Type;
     private SerializedProperty eventDataProperty;
 
@@ -46,7 +46,7 @@ namespace Stratus.Gameplay
         return;
 
       eventObject = (Stratus.StratusEvent)Utilities.Reflection.Instantiate(type);
-      serializedEvent = new StratusSerializedSystemObject(type, eventObject);
+      serializedEvent = new SerializedSystemObject(type, eventObject);
       serializedEvent.Deserialize(eventDataProperty);
     }
 

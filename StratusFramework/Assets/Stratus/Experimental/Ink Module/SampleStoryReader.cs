@@ -37,7 +37,7 @@ namespace Stratus.Modules.InkModule
 
     void OnParse(Parse parse)
     {
-      Trace.Script(parse.ToString());
+      StratusDebug.Log(parse.ToString());
     }
 
     //------------------------------------------------------------------------------------------/
@@ -45,7 +45,7 @@ namespace Stratus.Modules.InkModule
     //------------------------------------------------------------------------------------------/
     public void PlayMusic(string trackName)
     {
-      Trace.Script("Playing music track '" + trackName + "'");
+      StratusDebug.Log("Playing music track '" + trackName + "'");
     }
 
 

@@ -13,7 +13,7 @@ namespace Stratus
     public StratusActionsOwner(GameObject owner, TimeScale mode = TimeScale.Delta) : base(mode)
     {
       this.owner = owner;
-      if (StratusActions.debug) Trace.Script("Owner = '" + this.owner + "'");
+      if (StratusActions.debug) StratusDebug.Log("Owner = '" + this.owner + "'");
     }
 
     ~StratusActionsOwner() { }

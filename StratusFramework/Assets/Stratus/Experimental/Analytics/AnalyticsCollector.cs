@@ -146,7 +146,7 @@ namespace Stratus.Analytics
       if (!Collect())
         return;
 
-      Trace.Script($"Submitting {latestValue}", this);
+      StratusDebug.Log($"Submitting {latestValue}", this);
       AnalyticsEngine.Submit(new AnalyticsPayload(attribute, latestValue, Time.realtimeSinceStartup));
       //if (target.hasValue)
 

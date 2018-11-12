@@ -16,12 +16,12 @@ namespace Stratus
     protected abstract void OnInitializeSingletonState();
     
 
-    protected SerializedPropertyMap properties { get; private set; }
+    protected StratusSerializedPropertyMap properties { get; private set; }
 
     protected override void OnInitializeState()
     {
       if (instance)
-        properties = new SerializedPropertyMap(instance, typeof(MonoBehaviour));
+        properties = new StratusSerializedPropertyMap(instance, typeof(MonoBehaviour));
       OnInitializeSingletonState();
     }
 

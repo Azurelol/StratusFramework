@@ -13,7 +13,7 @@ namespace Stratus
     {
       label = EditorGUI.BeginProperty(position, label, property);
       {
-        SearchableEnum.EnumPopup(position, label, property);
+        StratusSearchableEnum.EnumPopup(position, label, property);
       }
       EditorGUI.EndProperty();
     }

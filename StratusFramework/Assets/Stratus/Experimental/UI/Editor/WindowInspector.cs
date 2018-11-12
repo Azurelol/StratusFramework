@@ -277,7 +277,7 @@ namespace Stratus
     /// </summary>
     void CloseWindow()
     {
-      Trace.Script("Close");
+      StratusDebug.Log("Close");
       Target.RequestClose();
     }
 

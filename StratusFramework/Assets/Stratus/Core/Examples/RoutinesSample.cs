@@ -118,7 +118,7 @@ namespace Stratus
 
       void OnFinished()
       {
-        Trace.Script("Routine has finished!");
+        StratusDebug.Log("Routine has finished!");
       }
 
       

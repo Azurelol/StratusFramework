@@ -41,14 +41,14 @@ namespace Stratus
             story.file = Resources.Load(story.filePath) as TextAsset;
             if (story.file == null)
             {
-              Trace.Error($"Failed to load {story.filePath}");
+              StratusDebug.Error($"Failed to load {story.filePath}");
               return false;
             }
           }
           currentStory.file = Resources.Load(currentStory.filePath) as TextAsset;
           if (currentStory.file == null)
           {
-            Trace.Error($"Failed to load {currentStory.filePath}");
+            StratusDebug.Error($"Failed to load {currentStory.filePath}");
             return false;
           }
 

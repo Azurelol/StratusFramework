@@ -221,14 +221,14 @@ namespace Stratus
       /// </summary>
       /// <param name="index"></param>
       /// <returns></returns>
-      public static Color GetDistinct(int index) => Utilities.Graphical.HexToColor(distinct1024[index]);
+      public static Color GetDistinct(int index) => Utilities.Rendering.HexToColor(distinct1024[index]);
 
       /// <summary>
       /// Gets a distinct color, given an index (up to 1024)
       /// </summary>
       /// <param name="index"></param>
       /// <returns></returns>
-      public static Color GetDistinct56(int index) => Utilities.Graphical.HexToColor(distinct56[index]);
+      public static Color GetDistinct56(int index) => Utilities.Rendering.HexToColor(distinct56[index]);
     }
 
   }

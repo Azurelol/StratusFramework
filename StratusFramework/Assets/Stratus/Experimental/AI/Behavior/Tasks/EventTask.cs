@@ -30,7 +30,7 @@ namespace Stratus.AI
 
     protected override void OnTaskEnd(Agent agent)
     {
-      Trace.Script(message);
+      StratusDebug.Log(message);
     }
 
     protected override void OnTaskStart(Agent agent)

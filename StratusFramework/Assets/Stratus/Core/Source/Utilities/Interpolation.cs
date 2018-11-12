@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Interpolation.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@date   5/25/2016
-*/
-/******************************************************************************/
 using UnityEngine;
 using Stratus;
 using System;
@@ -23,8 +15,8 @@ namespace Stratus
       //----------------------------------------------------------------------/
       // Fields
       //----------------------------------------------------------------------/
-      protected T _StartingValue;
-      protected T _CurrentValue;
+      protected T _startingValue;
+      protected T _currentValue;
       protected T _EndingValue;
       bool _Active;
       Stopwatch Timer;
@@ -35,23 +27,23 @@ namespace Stratus
       /// <summary>
       /// The starting value
       /// </summary>
-      public T StartingValue
+      public T startingValue
       {
         set
         {
-          _StartingValue = value;
+          _startingValue = value;
         }
       }
 
       /// <summary>
       /// The current value
       /// </summary>
-      public T CurrentValue
+      public T currentValue
       {
         get
         {
           if (Active)
-            return _CurrentValue;
+            return _currentValue;
           return _EndingValue;
         }
       }
@@ -59,7 +51,7 @@ namespace Stratus
       /// <summary>
       /// The ending value
       /// </summary>
-      public T EndingValue
+      public T endingValue
       {
         set
         {
@@ -119,7 +111,7 @@ namespace Stratus
           Interpolate(t);
 
           // Interpolate depending on type
-          if (CurrentValue is Vector3)
+          if (currentValue is Vector3)
           {
             
           }
@@ -137,7 +129,7 @@ namespace Stratus
     {
       protected override void Interpolate(float t)
       {
-        _CurrentValue = Vector3.Slerp(_StartingValue, _EndingValue, t);
+        _currentValue = Vector3.Slerp(_startingValue, _EndingValue, t);
       }
     }
 
@@ -148,7 +140,7 @@ namespace Stratus
     {
       protected override void Interpolate(float t)
       {
-        _CurrentValue = Vector2.Lerp(_StartingValue, _EndingValue, t);
+        _currentValue = Vector2.Lerp(_startingValue, _EndingValue, t);
       }
     }
 

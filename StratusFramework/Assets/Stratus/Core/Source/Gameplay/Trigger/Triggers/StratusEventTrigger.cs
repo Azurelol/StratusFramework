@@ -49,7 +49,7 @@ namespace Stratus.Gameplay
     {
       if (type.Type == null)
       {
-        Trace.Error("Type not set. Please select the Stratus.Event type to connect to!", this);
+        StratusDebug.Error("Type not set. Please select the Stratus.Event type to connect to!", this);
         return;
       }
 

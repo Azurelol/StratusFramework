@@ -6,8 +6,8 @@ namespace Stratus.Gameplay
 {
   public class StratusInputTrigger : Trigger
   {
-    public InputField input = new InputField();
-    public InputField.Action action = InputField.Action.Down;
+    public InputBinding input = new InputBinding();
+    public InputBinding.Action action = InputBinding.Action.Down;
 
     public override string automaticDescription => $"On {input} {action}";
 
@@ -25,13 +25,13 @@ namespace Stratus.Gameplay
       bool triggered = false;
       switch (action)
       {
-        case InputField.Action.Down:
+        case InputBinding.Action.Down:
           triggered = input.isDown;
           break;
-        case InputField.Action.Up:
+        case InputBinding.Action.Up:
           triggered = input.isUp;
           break;
-        case InputField.Action.Held:
+        case InputBinding.Action.Held:
           triggered = input.isPressed;
           break;
       }

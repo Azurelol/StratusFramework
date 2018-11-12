@@ -182,7 +182,7 @@ namespace Genitus.AI
     void OnDeathEvent(DeathEvent e)
     {
       targetable = false;
-      if (this.debug) Trace.Script("This agent has been killed.", this);
+      if (this.debug) StratusDebug.Log("This agent has been killed.", this);
       this.Stop();
       this.OnCombatAgentDeath();
 
@@ -206,7 +206,7 @@ namespace Genitus.AI
     public void Engage(Agent target)
     {
       if (debug)
-        Trace.Script("Now engaging " + target.name, this);
+        StratusDebug.Log("Now engaging " + target.name, this);
 
       if (this.target)
         Disengage();
@@ -225,7 +225,7 @@ namespace Genitus.AI
     public void Disengage()
     {
       if (debug)
-        Trace.Script("Disengaging!", this);
+        StratusDebug.Log("Disengaging!", this);
 
       // Inform that we have disengaged from the target
       if (this.target)

@@ -68,7 +68,7 @@ namespace Stratus
     //  }
     //}
 
-    public class SymbolReferenceDrawer2 : StratusSerializedSystemObject.CustomObjectDrawer<Symbol.Reference>
+    public class SymbolReferenceDrawer2 : SerializedSystemObject.CustomObjectDrawer<Symbol.Reference>
     {
       protected override float GetHeight(Symbol.Reference value)
       {

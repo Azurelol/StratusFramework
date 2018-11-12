@@ -22,7 +22,7 @@ namespace Stratus.Gameplay
 
     [Header("Control")]
     public float duration = 1.5f;
-    public InputField skipInput = new InputField();
+    public InputBinding skipInput = new InputBinding();
     [Tooltip("Whether this is the total duration or for each slide")]
     public DurationType type = DurationType.Total;
 

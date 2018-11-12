@@ -5,10 +5,10 @@ using UnityEditor;
 
 namespace Stratus.Gameplay
 {
-  [CustomEditor(typeof(EpisodeEvent))]
-  public class EpisodeEventEditor : TriggerableEditor<EpisodeEvent>
+  [CustomEditor(typeof(StratusEpisodeEvent))]
+  public class EpisodeEventEditor : TriggerableEditor<StratusEpisodeEvent>
   {
-    private ObjectDropdownList<Segment> segments;
+    private ObjectDropdownList<StratusSegment> segments;
     private ObjectDropdownList<StratusCheckpoint> checkpoints;
     private SerializedProperty episodeProperty;
     private SerializedProperty segmentProperty;
@@ -67,7 +67,7 @@ namespace Stratus.Gameplay
         return;
       }
 
-      segments = new ObjectDropdownList<Segment>(triggerable.episode.segments, triggerable.segment);
+      segments = new ObjectDropdownList<StratusSegment>(triggerable.episode.segments, triggerable.segment);
       MakeCheckpointList();
     }
 

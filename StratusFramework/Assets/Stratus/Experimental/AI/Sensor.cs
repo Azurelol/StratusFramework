@@ -199,7 +199,7 @@ namespace Stratus.AI
     private void Awake()
     {
       if (!root)
-        Trace.Error("No root transform selected for sensing!", this, true);
+        StratusDebug.Error("No root transform selected for sensing!", this, true);
 
       this.interactEvent = new InteractEvent() { sensor = this };
       this.scanTimer = new Stopwatch(this.scanInterval);
@@ -264,14 +264,14 @@ namespace Stratus.AI
       if (foundInteractables)
       {
         if (showDebug)
-          Trace.Script($"Interactives in range = {interactivesInRange.Length}, closest is '{closestInteractable}'", this);
+          StratusDebug.Log($"Interactives in range = {interactivesInRange.Length}, closest is '{closestInteractable}'", this);
         OnInteractablesFound();
       }
       // Else if we didn't detect anything and there was previously something detected
       else if (!foundInteractables && hadInteractions)
       {
         if (showDebug)
-          Trace.Script($"No interactives in range.", this);
+          StratusDebug.Log($"No interactives in range.", this);
         OnInteractablesOutOfRange();
       }
 
@@ -286,14 +286,14 @@ namespace Stratus.AI
       if (!CanInteract(interactable.transform))
       {
         if (showDebug)
-          Trace.Script($"Out of interaction range from {interactable.name}", this);
+          StratusDebug.Log($"Out of interaction range from {interactable.name}", this);
         return;
       }
 
       interactable.gameObject.Dispatch<InteractEvent>(this.interactEvent);
 
       if (showDebug)
-        Trace.Script($"Interacted with {interactable.name}", this);
+        StratusDebug.Log($"Interacted with {interactable.name}", this);
     }
 
     public bool Detect(Transform target)

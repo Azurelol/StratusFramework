@@ -135,13 +135,13 @@ namespace Stratus
         //Trace.Script("hey!");
         if (!_IsAcceptingInput)
         {
-          if (Tracing) Trace.Script("Not accepting input!", this);
+          if (Tracing) StratusDebug.Log("Not accepting input!", this);
           return;
         }
 
         if (!CurrentLink)
         {
-          if (Tracing) Trace.Script("No link available!", this);
+          if (Tracing) StratusDebug.Log("No link available!", this);
           return;
         }
         
@@ -211,7 +211,7 @@ namespace Stratus
         }
 
         this.OnLinkSelect();
-        if (Tracing) Trace.Script("Current link now " + this.CurrentLink.name, this);
+        if (Tracing) StratusDebug.Log("Current link now " + this.CurrentLink.name, this);
       }
 
       /// <summary>
@@ -242,12 +242,12 @@ namespace Stratus
       {
         if (Active && CurrentLink)
         {
-          if (Tracing) Trace.Script("Redirecting to '" + CurrentLink.name + "'", this);
+          if (Tracing) StratusDebug.Log("Redirecting to '" + CurrentLink.name + "'", this);
           CurrentLink.gameObject.Dispatch<U>(inputEvent);
           return true;
         }
 
-        if (Tracing) Trace.Script("Can't redirect!", this);
+        if (Tracing) StratusDebug.Log("Can't redirect!", this);
         return false;
       }
 
@@ -258,7 +258,7 @@ namespace Stratus
       {
         // If the link interface is already open, do nothing
         if (Active) return;
-        if (Tracing) Trace.Script("Opening interface!", this);
+        if (Tracing) StratusDebug.Log("Opening interface!", this);
 
         Toggle(true);
         this.SelectFirstLink();
@@ -275,7 +275,7 @@ namespace Stratus
       {
         // If the link interface is already closed, do nothing
         if (!Active) return;
-        if (Tracing) Trace.Script("Closing!", this);
+        if (Tracing) StratusDebug.Log("Closing!", this);
 
         if (this.CurrentLink) this.CurrentLink.Deselect();
         this.OnInterfaceClose();

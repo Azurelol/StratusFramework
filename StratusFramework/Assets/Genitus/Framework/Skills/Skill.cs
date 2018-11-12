@@ -113,7 +113,7 @@ namespace Genitus
       /// <param name="target">The target of this skill.</param>
       public void Use(CombatController user, CombatController[] targets)
       {
-        Skill.ActivationEvent skillUsed = Stratus.StratusEvent.Cache<Skill.ActivationEvent>();
+        Skill.ActivationEvent skillUsed = Stratus.StratusEvent.Get<Skill.ActivationEvent>();
         reference.Cast(user, targets);
         skillUsed.skill = reference;
         user.gameObject.Dispatch<Skill.ActivationEvent>(skillUsed);

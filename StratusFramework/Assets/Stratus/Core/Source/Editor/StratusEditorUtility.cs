@@ -162,7 +162,7 @@ namespace Stratus
         serializedObject.UpdateIfRequiredOrScript();
         serializedObject.ApplyModifiedProperties();
         UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
-        Trace.Script($"Saving change on {obj.name}");
+        StratusDebug.Log($"Saving change on {obj.name}");
       }
     }
 

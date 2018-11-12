@@ -37,7 +37,7 @@ namespace Stratus
       {
         // Fade in
         Fade(1.0f, this.Duration);
-        Trace.Script("Fading in!");
+        StratusDebug.Log("Fading in!");
       }
 
       /// <summary>
@@ -47,7 +47,7 @@ namespace Stratus
       {
         // Fade out
         Fade(0.0f, this.Duration);
-        Trace.Script("Fading out!");
+        StratusDebug.Log("Fading out!");
       }
 
       /// <summary>

@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Scene.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@date   5/25/2016
-*/
-/******************************************************************************/
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -248,7 +240,7 @@ namespace Stratus
       {
         foreach (var scene in scenes)
         {
-          Trace.Script($"Closing {scene.name}");
+          StratusDebug.Log($"Closing {scene.name}");
           EditorSceneManager.CloseScene(scene.runtime, true);
         }
         return;

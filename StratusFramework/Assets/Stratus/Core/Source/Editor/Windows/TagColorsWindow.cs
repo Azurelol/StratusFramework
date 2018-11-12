@@ -26,7 +26,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
-    private static Internal.TagColors tagColors { get { return Preferences.instance.tagColors; } }
+    private static Internal.StratusTagColors tagColors { get { return StratusPreferences.instance.tagColors; } }
     private static float tagColorPrefixWidth { get; } = 15f;
 
     //------------------------------------------------------------------------/
@@ -109,7 +109,7 @@ namespace Stratus
     private static void Refresh()
     {
       tagColors.Validate();
-      Preferences.Save();
+      StratusPreferences.Save();
     }
 
     //------------------------------------------------------------------------/
@@ -131,7 +131,7 @@ namespace Stratus
 
       if (GUI.changed)
       {
-        Preferences.Save();
+        StratusPreferences.Save();
       }
     }
   }

@@ -152,12 +152,12 @@ namespace Stratus
           {
             // Pop the cheapest node off the open list
             var parent = FindCheapest();
-            if (Tracing) Trace.Script("Iteration #" + CurrentIteration + " | Parent = " + parent.Description);
+            if (Tracing) StratusDebug.Log("Iteration #" + CurrentIteration + " | Parent = " + parent.Description);
 
             // if the a route to the starting node was found...
             if (IsFinished(parent))
             {
-              if (Tracing) Trace.Script("Valid path found!");
+              if (Tracing) StratusDebug.Log("Valid path found!");
               return BuildPath(parent);
             }
             // For all neighboring child nodes...
@@ -192,7 +192,7 @@ namespace Stratus
           }
 
           // If the open list is empty, no path was found
-          if (Tracing) Trace.Script("No valid path found!");
+          if (Tracing) StratusDebug.Log("No valid path found!");
           return null;
         }
 
@@ -211,13 +211,13 @@ namespace Stratus
         {
           if (list == Node.ListStatus.Open)
           {
-            if (Tracing) Trace.Script(node.Description + " has been added to the open list!");
+            if (Tracing) StratusDebug.Log(node.Description + " has been added to the open list!");
             OpenList.Add(node);
             node.Status = Node.ListStatus.Open;
           }
           else
           {
-            if (Tracing) Trace.Script(node.Description + " has been removed from the open list!");
+            if (Tracing) StratusDebug.Log(node.Description + " has been removed from the open list!");
             OpenList.Remove(node);
             node.Status = Node.ListStatus.Closed;
           }
@@ -236,12 +236,12 @@ namespace Stratus
             if (node.Cost < OpenList[cheapestIndex].Cost)
             {
               cheapestIndex = i;
-              if (Tracing) Trace.Script("Current cheapest = " + OpenList[cheapestIndex].Description);
+              if (Tracing) StratusDebug.Log("Current cheapest = " + OpenList[cheapestIndex].Description);
             }
-            else if (Tracing) Trace.Script(OpenList[i].Description + " is not cheaper than " + OpenList[cheapestIndex].Description);
+            else if (Tracing) StratusDebug.Log(OpenList[i].Description + " is not cheaper than " + OpenList[cheapestIndex].Description);
           }
           var cheapestNode = OpenList[cheapestIndex];
-          if (Tracing) Trace.Script("Cheapest node = " + cheapestNode.Action);
+          if (Tracing) StratusDebug.Log("Cheapest node = " + cheapestNode.Action);
           return cheapestNode;
         }
 
@@ -253,7 +253,7 @@ namespace Stratus
         Node[] FindNeighbors(Node node)
         {
           var neighbors = new List<Node>();
-          if (Tracing) Trace.Script("Looking for neighboring nodes (actions) for the node: " + node.Description + " with preconditions: " + node.State.ToString());
+          if (Tracing) StratusDebug.Log("Looking for neighboring nodes (actions) for the node: " + node.Description + " with preconditions: " + node.State.ToString());
 
           // Check for actions that satisfy the preconditions of this node
           foreach (var action in ActionEffectsTable)
@@ -263,14 +263,14 @@ namespace Stratus
             // neighbor
             if (state.Satisfies(node.State))
             {
-              if (Tracing) Trace.Script(action.Value + " satifies the condition = " + node.State.ToString());
+              if (Tracing) StratusDebug.Log(action.Value + " satifies the condition = " + node.State.ToString());
               var preconditions = action.Value.preconditions;
               neighbors.Add(new Node(node, action.Value.cost, preconditions, action.Value));
             }
           }
 
           if (neighbors.Count == 0)
-            if (Tracing) Trace.Script("No nodes satisfy the condition!");
+            if (Tracing) StratusDebug.Log("No nodes satisfy the condition!");
 
           return neighbors.ToArray();
         }
@@ -286,7 +286,7 @@ namespace Stratus
           //bool alreadySatisfied = DestinationNode.State.Satisfies(node.State);
           if (node.State.isEmpty || DestinationNode.State.Satisfies(node.State))
           {
-            if (Tracing) Trace.Script("No preconditions left to fulfill for node: " + node.Description);
+            if (Tracing) StratusDebug.Log("No preconditions left to fulfill for node: " + node.Description);
             return true;
           }
           return false;

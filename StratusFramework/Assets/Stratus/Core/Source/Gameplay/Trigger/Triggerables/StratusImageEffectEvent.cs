@@ -113,7 +113,7 @@ namespace Stratus.Gameplay
     public void Fade(float alpha, float duration, bool ignoreTimeScale)
     {
       if (debug)
-        Trace.Script("Fading to " + alpha, this);
+        StratusDebug.Log("Fading to " + alpha, this);
       previousAlpha = currentAlpha;
       currentAlpha = alpha;
       //image.CrossFadeAlpha(alpha, duration, ignoreTimeScale);
@@ -124,7 +124,7 @@ namespace Stratus.Gameplay
     public void FadeColor(Color color, float duration, bool ignoreTimeScale)
     {
       if (debug)
-        Trace.Script("Fading to " + color, this);
+        StratusDebug.Log("Fading to " + color, this);
       previousColor = currentColor;
       currentColor = color;
       //image.CrossFadeColor(color, duration, ignoreTimeScale, useAlpha);

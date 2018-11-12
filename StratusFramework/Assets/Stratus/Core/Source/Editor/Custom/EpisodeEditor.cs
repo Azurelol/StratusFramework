@@ -5,20 +5,20 @@ using UnityEditor;
 
 namespace Stratus.Gameplay
 {
-  [CustomEditor(typeof(Episode))]
-  public class EpisodeEditor : StratusBehaviourEditor<Episode>
+  [CustomEditor(typeof(StratusEpisode))]
+  public class EpisodeEditor : StratusBehaviourEditor<StratusEpisode>
   {
-    private Episode.JumpMechanism jumpMechanism => target.mechanism;
+    private StratusEpisode.JumpMechanism jumpMechanism => target.mechanism;
 
     protected override void OnStratusEditorEnable()
     {
-      AddConstraint(() => jumpMechanism == Episode.JumpMechanism.Translate, nameof(Episode.targetTransform));
-      AddConstraint(() => jumpMechanism == Episode.JumpMechanism.Callback, nameof(Episode.onJump));
+      AddConstraint(() => jumpMechanism == StratusEpisode.JumpMechanism.Translate, nameof(StratusEpisode.targetTransform));
+      AddConstraint(() => jumpMechanism == StratusEpisode.JumpMechanism.Callback, nameof(StratusEpisode.onJump));
 
       AddConstraint(() => target.debugNavigation, 
-        nameof(Episode.windowAnchor), 
-        nameof(Episode.nextSegmentInput), 
-        nameof(Episode.previousSegmentInput));
+        nameof(StratusEpisode.windowAnchor), 
+        nameof(StratusEpisode.nextSegmentInput), 
+        nameof(StratusEpisode.previousSegmentInput));
     }
   }
 

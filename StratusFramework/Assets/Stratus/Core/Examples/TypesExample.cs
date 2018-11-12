@@ -12,7 +12,7 @@ namespace Stratus
     public class TypesExample : StratusBehaviour
     {
       [Header("Stratus Field Types")]
-      public InputField inputField = new InputField();
+      public InputBinding inputField = new InputBinding();
       public SceneField scene = new SceneField();
       public TagField tagField = new TagField();
       public FloatRange floatRange = new FloatRange();
@@ -29,7 +29,7 @@ namespace Stratus
         if (inputField.isPositive) {}
         if (inputField.isNegative) {}
         if (inputField.isNeutral) {}
-        Trace.Script(value);        
+        StratusDebug.Log(value);        
       }
 
       void TryLoadingScene()
@@ -40,13 +40,13 @@ namespace Stratus
       void TryTag()
       {        
         if (gameObject.CompareTag(tagField))
-          Trace.Script("The GameObject's tag and selected tag field match! (" + tagField + ")");
+          StratusDebug.Log("The GameObject's tag and selected tag field match! (" + tagField + ")");
       }
 
       void TryLayer()
       {
         if (layer.Matches(this.gameObject))
-          Trace.Script("The GameObject's layer and selected layer field are a match! (" + layer + ")");
+          StratusDebug.Log("The GameObject's layer and selected layer field are a match! (" + layer + ")");
       }     
       
 

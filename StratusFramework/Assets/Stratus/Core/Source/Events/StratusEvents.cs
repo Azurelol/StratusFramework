@@ -232,7 +232,7 @@ namespace Stratus
       {
         // If we are watching events of this type
         if (watching)
-          Trace.Script("Invoking member function on " + deleg.Target.ToString());
+          StratusDebug.Log("Invoking member function on " + deleg.Target.ToString());
 
         // Do a lazy delete if it has been nulled out?
         if (IsNull(deleg.Method) || IsNull(deleg.Target))
@@ -300,7 +300,7 @@ namespace Stratus
       {
         // If we are watching events of this type
         if (watching)
-          Trace.Script("Invoking member function on " + deleg.Target.ToString());
+          StratusDebug.Log("Invoking member function on " + deleg.Target.ToString());
 
         // Do a lazy delete if it has been nulled out?
         if (IsNull(deleg.Method) || IsNull(deleg.Target))
@@ -497,7 +497,7 @@ namespace Stratus
       if (StratusEvents.instance.dispatchMap.ContainsKey(obj))
       {
         if (logging.register)
-          Trace.Script(obj.name + " has been disconnected from the event system");
+          StratusDebug.Log(obj.name + " has been disconnected from the event system");
         StratusEvents.instance.dispatchMap.Remove(obj);
       }
     }

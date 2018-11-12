@@ -41,7 +41,7 @@ namespace Stratus.Gameplay
     private void PrepareVideo()
     {
       if (debug)
-        Trace.Script($"Now playing {clip.name}", this);
+        StratusDebug.Log($"Now playing {clip.name}", this);
 
       // Set the clip
       videoPlayer.clip = clip;

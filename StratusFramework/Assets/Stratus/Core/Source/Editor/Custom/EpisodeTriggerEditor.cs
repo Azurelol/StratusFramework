@@ -6,10 +6,10 @@ using System;
 
 namespace Stratus.Gameplay
 {
-  [CustomEditor(typeof(EpisodeTrigger))]
-  public class EpisodeTriggerEditor : StratusBehaviourEditor<EpisodeTrigger>
+  [CustomEditor(typeof(StratusEpisodeTrigger))]
+  public class EpisodeTriggerEditor : StratusBehaviourEditor<StratusEpisodeTrigger>
   {
-    private ObjectDropdownList<Segment> segments;
+    private ObjectDropdownList<StratusSegment> segments;
     private SerializedProperty episodeProperty;
 
     protected override void OnStratusEditorEnable()
@@ -43,7 +43,7 @@ namespace Stratus.Gameplay
         return;
       }
 
-      segments = new ObjectDropdownList<Segment>(target.episode.segments, target.segment);
+      segments = new ObjectDropdownList<StratusSegment>(target.episode.segments, target.segment);
     }
 
   }

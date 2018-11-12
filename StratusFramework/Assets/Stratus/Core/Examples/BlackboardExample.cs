@@ -41,13 +41,13 @@ namespace Stratus
             value = blackboard.GetGlobal(key);
             break;
         }
-        Trace.Script($"The value of {key} is {value}", this);
+        StratusDebug.Log($"The value of {key} is {value}", this);
       }
 
       private void GetValueWithSelector()
       {
         object value = selector.Get(gameObject);
-        Trace.Script($"The value of {selector.key} is {value}", this);
+        StratusDebug.Log($"The value of {selector.key} is {value}", this);
       }
 
       //--------------------------------------------------------------------/
@@ -82,12 +82,12 @@ namespace Stratus
       //--------------------------------------------------------------------/
       private void OnLocalSymbolChanged(GameObject gameObject, Symbol symbol)
       {
-        Trace.Script($"The value on local symbol {symbol.key} on the GameObject {gameObject} was changed to {symbol.value}", this);
+        StratusDebug.Log($"The value on local symbol {symbol.key} on the GameObject {gameObject} was changed to {symbol.value}", this);
       }
 
       private void OnGlobalSymbolChanged(Symbol symbol)
       {
-        Trace.Script($"The value on global symbol {symbol} was changed to {symbol.value}", this);
+        StratusDebug.Log($"The value on global symbol {symbol} was changed to {symbol.value}", this);
       }
 
     }

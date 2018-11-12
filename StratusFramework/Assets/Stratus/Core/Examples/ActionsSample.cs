@@ -55,7 +55,7 @@ namespace Stratus
 
       void TestActionGroup()
       {
-        Trace.Script($"Action Group Test: Interpolating the color of {imageGroup.Length} images at the same time", this);
+        StratusDebug.Log($"Action Group Test: Interpolating the color of {imageGroup.Length} images at the same time", this);
         var group = StratusActions.Group(this);
         foreach(var image in imageGroup)
           StratusActions.Property(group, ()=>image.color, colorValue, duration, ease);
@@ -86,17 +86,17 @@ namespace Stratus
 
       void Boop(float boopValue)
       {
-        Trace.Script("Booped for '" + boopValue + "' points!", this);
+        StratusDebug.Log("Booped for '" + boopValue + "' points!", this);
       }
 
       void Beep(string first, string second, GameObject obj)
       {
-        Trace.Script(obj + " says = " + first + " " + second);
+        StratusDebug.Log(obj + " says = " + first + " " + second);
       }
 
       void PrintValue(object obj)
       {
-        Trace.Script(obj);
+        StratusDebug.Log(obj);
       }
     } 
   }

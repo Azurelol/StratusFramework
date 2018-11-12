@@ -132,7 +132,7 @@ namespace Stratus.Gameplay
         return;
 
       if (debug)
-        Trace.Script($"<i>{description}</i> has been activated!", this);
+        StratusDebug.Log($"<i>{description}</i> has been activated!", this);
 
       // Dispatch the trigger event onto a given target if one is provided
       foreach (var target in targets)

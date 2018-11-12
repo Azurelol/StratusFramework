@@ -30,7 +30,7 @@ namespace Stratus
         foreach (var t in toggles)
           t.Toggle(toggle);
 
-        Trace.Script($"Debug = {toggle} on {toggles.Length} behaviours.");
+        StratusDebug.Log($"Debug = {toggle} on {toggles.Length} behaviours.");
       }
 
       /// <summary>
@@ -43,7 +43,7 @@ namespace Stratus
         foreach (var t in toggles)
           t.Toggle(toggle);
 
-        Trace.Script($"Debug = {toggle} on {toggles.Length} behaviours.");
+        StratusDebug.Log($"Debug = {toggle} on {toggles.Length} behaviours.");
       }
 
       /// <summary>
@@ -54,7 +54,7 @@ namespace Stratus
       {
         Validator[] validators = FindInterfaces<Validator>();
         var messages = ObjectValidation.Aggregate(validators);
-        Trace.Script($"Validated {validators.Length} behaviours.");
+        StratusDebug.Log($"Validated {validators.Length} behaviours.");
         return messages.ToArray();
 
         // Open a window here ..
@@ -68,7 +68,7 @@ namespace Stratus
       {
         ValidatorAggregator[] validators = FindInterfaces<ValidatorAggregator>();
         var messages = ObjectValidation.Aggregate(validators);
-        Trace.Script($"Validated {validators.Length} behaviours.");
+        StratusDebug.Log($"Validated {validators.Length} behaviours.");
         return messages.ToArray();
         // Open a window here ..
       }

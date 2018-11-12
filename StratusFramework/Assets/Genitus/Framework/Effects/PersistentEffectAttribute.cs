@@ -42,7 +42,7 @@ namespace Genitus.Effects
     /// <param name="target"></param>
     protected override void OnApply(CombatController caster, CombatController target)
     {
-      Trace.Script("Applying " + GetType().Name);
+      StratusDebug.Log("Applying " + GetType().Name);
 
       // Adds the effect to the target     
       var effect = new PersistentEffect(this, caster, target);

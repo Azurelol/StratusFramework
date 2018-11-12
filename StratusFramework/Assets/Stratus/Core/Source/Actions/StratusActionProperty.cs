@@ -184,7 +184,7 @@ namespace Stratus
 
 			if (logging)
 			{
-				Trace.Script("InitialValue = '" + this.initialValue
+				StratusDebug.Log("InitialValue = '" + this.initialValue
 								+ "', EndValue = '" + this.endValue + "'"
 								+ "' Difference = '" + this.difference + "'");
 			}
@@ -201,7 +201,7 @@ namespace Stratus
 			T currentValue = this.ComputeCurrentValue((easeVal));
 			if (logging)
 			{
-				Trace.Script("CurrentValue = '" + currentValue + "'");
+				StratusDebug.Log("CurrentValue = '" + currentValue + "'");
 			}
 
 			this.Set(currentValue);

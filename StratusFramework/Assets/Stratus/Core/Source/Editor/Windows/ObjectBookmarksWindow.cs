@@ -36,7 +36,7 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/
     public static ObjectBookmarks bookmarks { get; private set; }
-    public static List<SceneAsset> bookmarkedScenes { get { return Preferences.instance.bookmarkedScenes; } }
+    public static List<SceneAsset> bookmarkedScenes { get { return StratusPreferences.instance.bookmarkedScenes; } }
     public static List<GameObjectBookmark> sceneBookmarks { get; private set; }
     private static ObjectBookmarksWindow instance { get; set; }
 
@@ -51,7 +51,7 @@ namespace Stratus
 
     private void OnEnable()
     {
-      bookmarks = Preferences.instance.objectBookmarks;
+      bookmarks = StratusPreferences.instance.objectBookmarks;
       sceneBookmarks = GameObjectBookmark.availableList;
       showScenes = new AnimBool(true); showScenes.valueChanged.AddListener(Repaint);
       showSceneObjects = new AnimBool(true); showSceneObjects.valueChanged.AddListener(Repaint);
@@ -94,7 +94,7 @@ namespace Stratus
       // Special case for scenes
       if (activeObject.GetType() == typeof(SceneAsset))
       {
-        Trace.Script("That's a scene!");
+        StratusDebug.Log("That's a scene!");
         SceneAsset scene = activeObject as SceneAsset;
         if (!bookmarkedScenes.Contains(scene))
         {
@@ -103,10 +103,10 @@ namespace Stratus
       }
       else
       {
-        Preferences.instance.objectBookmarks.projectBookmarks.Add(activeObject);
+        StratusPreferences.instance.objectBookmarks.projectBookmarks.Add(activeObject);
       }
 
-      Preferences.Save();
+      StratusPreferences.Save();
     }
 
     [MenuItem("GameObject/Bookmark", false, 49)]
@@ -287,7 +287,7 @@ namespace Stratus
       if (GUILayout.Button("Add", EditorStyles.miniButtonRight) && sceneToAdd != null && !bookmarkedScenes.Contains(sceneToAdd))
       {
         bookmarkedScenes.Add(sceneToAdd);
-        Preferences.Save();
+        StratusPreferences.Save();
         sceneToAdd = null;
       }
 
@@ -298,7 +298,7 @@ namespace Stratus
     void RemoveBookmarkedScene(SceneAsset scene)
     {
       bookmarkedScenes.Remove(scene);
-      Preferences.Save();
+      StratusPreferences.Save();
       Repaint();
     }
 
@@ -310,7 +310,7 @@ namespace Stratus
 
     private void OnChange()
     {
-      Preferences.Save();
+      StratusPreferences.Save();
       Repaint();
     }
 

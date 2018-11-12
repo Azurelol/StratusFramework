@@ -97,7 +97,7 @@ namespace Stratus.Gameplay
       current.Remove(other);
       if (ShouldActivate())
         Activate();
-      Trace.Script("Elements left = " + current.Count, this);
+      StratusDebug.Log("Elements left = " + current.Count, this);
     }
 
     bool ShouldActivate()

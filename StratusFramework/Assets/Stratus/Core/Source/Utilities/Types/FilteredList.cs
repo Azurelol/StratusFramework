@@ -1,85 +1,122 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 
 namespace Stratus
 {
-  public class FilteredList<T>
-  {
-    public struct Entry
-    {
-      public int index;      
-      public Item item;
-    }
+	public class FilteredList<T>
+	{
+		//--------------------------------------------------------------------------/
+		// Declarations
+		//--------------------------------------------------------------------------/
+		public struct Entry
+		{
+			public int index;
+			public Item item;
+		}
 
-    public class Item
-    {
-      public string name;
-      public T value;
-    }
+		public class Item
+		{
+			public string name;
+			public T value;
+		}
 
-    public string filter { get; private set; }
-    public List<Entry> entries { get; private set; }
-    public int entryCount => entries.Count;
-    public Item[] items { get; private set; }
-    private Func<T, string> nameFunction { get; set; }
-    public int maxIndex => entries.Count - 1;
+		protected struct EntriesHook
+		{
+			public List<T> values;
+			public System.Action onFinished;
+		}
 
-    public FilteredList(T[] items, Func<T, string> nameFunction)
-    {
-      this.items =  new Item[items.Length];      
-      for(int i = 0; i < items.Length; ++i)
-      {
-        T value = items[i];
-        this.items[i] = new Item() { name = nameFunction(value), value = value };
-      }
-      this.nameFunction = nameFunction;
-      this.entries = new List<Entry>();
-      this.UpdateFilter("");
-    }
 
-    public bool UpdateFilter(string filter)
-    {
-      if (filter == this.filter)
-        return false;
+		private string _filter;
 
-      this.filter = filter;
-      this.entries.Clear();
+		//--------------------------------------------------------------------------/
+		// Properties
+		//--------------------------------------------------------------------------/
+		public string filter
+		{
+			get { return _filter; }
+			private set { UpdateFilter(value); }
+		}
 
-      string filterLowercase = this.filter.ToLower();
+		public List<Entry> currentEntries { get; private set; }
+		public Item[] entries { get; private set; }
+		public string[] displayOptions { get; private set; }
+		public int currentEntryCount => this.currentEntries.Count;
+		private Func<T, string> nameFunction { get; set; }
+		public int maxIndex => this.currentEntries.Count - 1;
+		
+		//--------------------------------------------------------------------------/
+		// CTOR
+		//--------------------------------------------------------------------------/
+		public FilteredList(T[] items, Func<T, string> nameFunction)
+		{
+			this.entries = new Item[items.Length];
+			for (int i = 0; i < items.Length; ++i)
+			{
+				T value = items[i];
+				this.entries[i] = new Item() { name = nameFunction(value), value = value };
+			}
+			this.nameFunction = nameFunction;
+			this.currentEntries = new List<Entry>();
+			this.UpdateFilter(string.Empty);
+		}
 
-      for (int i = 0; i < this.items.Length; ++i)
-      {
-        string name = items[i].name.ToLower();        
-        if (string.IsNullOrEmpty(this.filter) || name.Contains(filterLowercase))
-        {
-          Entry entry = new Entry
-          {
-            index = i,
-            item = items[i]
-          };
+		//--------------------------------------------------------------------------/
+		// Methods
+		//--------------------------------------------------------------------------/
+		public bool UpdateFilter(string filter)
+		{
+			// Set the filter
+			if (filter == this._filter)
+			{
+				return false;
+			}
+			this._filter = filter;
+			string filterLowercase = this.filter.ToLower();
 
-          if (string.Equals(name, filter, StringComparison.CurrentCultureIgnoreCase))
-            this.entries.Insert(0, entry);
-          else
-            this.entries.Add(entry);
-        }
-      }
+			// Update the entries
+			this.currentEntries.Clear();
 
-      return true;
-    }
+			// Optional
+			List<string> displayOptions = new List<string>();
+			
+			for (int i = 0; i < this.entries.Length; ++i)
+			{
+				string name = this.entries[i].name.ToLower();
+				if (string.IsNullOrEmpty(this.filter) || name.Contains(filterLowercase))
+				{
+					Entry entry = new Entry
+					{
+						index = i,
+						item = this.entries[i]
+					};
 
-  }
+					if (string.Equals(name, filter, StringComparison.CurrentCultureIgnoreCase))
+					{
+						this.currentEntries.Insert(0, entry);
+						displayOptions.Insert(0, entries[i].name);
+					}
+					else
+					{
+						this.currentEntries.Add(entry);
+						displayOptions.Add(entries[i].name);
+					}					
+				}
+			}
 
-  public class FilteredStringList : FilteredList<string>
-  {
-    private static Func<string, string> stringNameFunction { get; } = (string value) => value;
+			this.displayOptions = displayOptions.ToArray();
+			return true;
+		}
+	}
 
-    public FilteredStringList(string[] items) : base(items, stringNameFunction)
-    {
-    }
+	public class FilteredStringList : FilteredList<string>
+	{
+		private static Func<string, string> stringNameFunction { get; } = (string value) => value;		
 
-  }
+		public FilteredStringList(string[] items) : base(items, stringNameFunction)
+		{
+		}
+
+	}
 
 }

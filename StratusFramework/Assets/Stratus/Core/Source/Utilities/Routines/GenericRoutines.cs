@@ -1,11 +1,3 @@
-/******************************************************************************/
-/*!
-@file   Coroutines.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@date   5/25/2016
-*/
-/******************************************************************************/
 using UnityEngine;
 using System.Collections;
 using System;

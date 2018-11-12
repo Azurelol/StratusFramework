@@ -81,10 +81,10 @@ namespace Stratus
 
         if (planner.debug)
         {
-          Trace.Script("Making plan to satisfy the goal '" + goal.Name + "' with preconditions:" + goal.DesiredState.ToString(), planner.agent);
-          Trace.Script("Actions available:", planner.agent);
+          StratusDebug.Log("Making plan to satisfy the goal '" + goal.Name + "' with preconditions:" + goal.DesiredState.ToString(), planner.agent);
+          StratusDebug.Log("Actions available:", planner.agent);
           foreach (var action in usableActions)
-            Trace.Script("- " + action.description, planner.agent);
+            StratusDebug.Log("- " + action.description, planner.agent);
         }
 
         // The path of actions
@@ -108,7 +108,7 @@ namespace Stratus
           // If the path has not been found
           if (!hasFoundPath)
           {
-            if (planner.debug) Trace.Script("No plan could be formulated!", planner.agent);
+            if (planner.debug) StratusDebug.Log("No plan could be formulated!", planner.agent);
             return new Plan();
           }
         }
@@ -137,14 +137,14 @@ namespace Stratus
         bool solutionFound = false;
         Search.Node cheapestNode = null;
 
-        if (planner.debug) Trace.Script("Looking to fulfill the preconditions:" + parent.State.ToString());
+        if (planner.debug) StratusDebug.Log("Looking to fulfill the preconditions:" + parent.State.ToString());
 
         // Look for actions that fulfill the preconditions
         foreach (var action in actions)
         {
           if (action.effects.Satisfies(parent.State))
           {
-            if (planner.debug) Trace.Script(action.description + " satisfies the preconditions");
+            if (planner.debug) StratusDebug.Log(action.description + " satisfies the preconditions");
 
             // Create a new node
             var node = new Search.Node(parent, parent.Cost + action.cost, action.preconditions, action);
@@ -155,7 +155,7 @@ namespace Stratus
           }
           else
           {
-            if (planner.debug) Trace.Script(action.description + " does not satisfy the preconditions");
+            if (planner.debug) StratusDebug.Log(action.description + " does not satisfy the preconditions");
           }
         }
 
@@ -165,13 +165,13 @@ namespace Stratus
           // If the current state is already fulfilling this condition, we are done!
           if (planner.state.Satisfies(parent.State)) return true;
           // Otherwise, no valid solution could be found
-          if (planner.debug) Trace.Script("No actions could fulfill these preconditions");
+          if (planner.debug) StratusDebug.Log("No actions could fulfill these preconditions");
           return false;
         }
 
         // Add the cheapest node to the path
         path.Add(cheapestNode.Action);
-        if (planner.debug) Trace.Script("Adding " + cheapestNode.Action.description + " to the path");
+        if (planner.debug) StratusDebug.Log("Adding " + cheapestNode.Action.description + " to the path");
 
         // If this action has no more preconditions left to fulfill
         if (cheapestNode.Action.preconditions.isEmpty)

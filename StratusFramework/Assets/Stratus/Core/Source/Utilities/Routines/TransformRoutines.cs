@@ -348,7 +348,7 @@ namespace Stratus
       {
         foreach (var scale in scales)
         {
-          Trace.Script("Scaling to " + scale);
+          StratusDebug.Log("Scaling to " + scale);
           yield return Scale(transform, scale, durationForEach, timeScale);
         }
       } while (repeat);
@@ -371,7 +371,7 @@ namespace Stratus
       {
         foreach (var scale in scalingCurves)
         {
-          Trace.Script("Scaling to " + scale);
+          StratusDebug.Log("Scaling to " + scale);
           yield return Scale(transform, scale, durationForEach, timeScale);
         }
       } while (repeat);

@@ -83,7 +83,7 @@ namespace Stratus
         }
         catch (Exception e)
         {
-          Trace.Script($"The tree {name} is damaged: '{e.Message}'. Attempting to repair...");
+          StratusDebug.Log($"The tree {name} is damaged: '{e.Message}'. Attempting to repair...");
           this.tree.Repair();
 
           // Try again
@@ -94,7 +94,7 @@ namespace Stratus
           }
           catch (Exception e2)
           {            
-            Trace.Script($"The tree {name} is damaged: '{e.Message}'");
+            StratusDebug.Log($"The tree {name} is damaged: '{e.Message}'");
             throw e2;
           }
 

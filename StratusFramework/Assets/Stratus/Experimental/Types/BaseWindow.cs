@@ -46,7 +46,7 @@ namespace Stratus
     [Header("Input")]
     [Tooltip("Whether input is being polled for this window")]
     public bool pollInput = false;
-    public InputField cancel = new InputField();
+    public InputBinding cancel = new InputBinding();
 
     protected StratusActionSet currentSeq;
 
@@ -126,7 +126,7 @@ namespace Stratus
     public void Transition(bool show, System.Action onFinished = null)
     {
       if (debug)
-        Trace.Script(show, this);
+        StratusDebug.Log(show, this);
 
       if (!show)
         eventSystem.SetSelectedGameObject(null);
@@ -273,7 +273,7 @@ namespace Stratus
       if (pollInput && pollingInput && isCurrent && cancel.isDown)
       {
         if (debug)
-          Trace.Script("Received input to close window");
+          StratusDebug.Log("Received input to close window");
         Close();
       }
 
@@ -303,7 +303,7 @@ namespace Stratus
       if (state != State.Closed || !shouldOpen)
       {
         if (debug)
-          Trace.Script($"Cannot open this window!, state = {state}");
+          StratusDebug.Log($"Cannot open this window!, state = {state}");
         return;
       }
 
@@ -386,7 +386,7 @@ namespace Stratus
     public void Open()
     {
       if (debug)
-        Trace.Script("", this);
+        StratusDebug.Log("", this);
       canvas.gameObject.SetActive(true);
       Transition(true, () =>
       {
@@ -407,7 +407,7 @@ namespace Stratus
     public void Close()
     {
       if (debug)
-        Trace.Script("", this);
+        StratusDebug.Log("", this);
 
       System.Action close = ()=>{
         canvas.gameObject.SetActive(false);

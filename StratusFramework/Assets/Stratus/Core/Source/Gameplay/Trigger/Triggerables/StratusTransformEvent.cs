@@ -118,7 +118,7 @@ namespace Stratus.Gameplay
       currentAction = StratusActions.Sequence(this);
 
       if (debug)
-        Trace.Script($"The {eventType} operation was applied on {target.name}", this);
+        StratusDebug.Log($"The {eventType} operation was applied on {target.name}", this);
 
       switch (eventType)
       {

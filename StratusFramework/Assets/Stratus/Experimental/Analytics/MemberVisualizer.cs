@@ -291,7 +291,7 @@ namespace Stratus
         bool valid = memberField.Initialize();
         if (!valid)
         {
-          Trace.Error($"No member has been selected on the target {memberField.member.target.name}", this);
+          StratusDebug.Error($"No member has been selected on the target {memberField.member.target.name}", this);
           continue;
         }
 

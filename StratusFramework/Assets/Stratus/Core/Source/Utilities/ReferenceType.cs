@@ -1,74 +1,78 @@
-/******************************************************************************/
-/*!
-@file   ReferenceType.cs
-@author Christian Sagel
-@par    email: ckpsm@live.com
-@date   5/25/2016
-*/
-/******************************************************************************/
 using UnityEngine;
 
 namespace Stratus
 {
-  public class ReferenceType<T>
-  {
-    public T Value;
-    //------------------------------------------------------------------------/
-    public delegate void Setter(T val);
-    public void Set(T val) { this.Value = val; }
-    public delegate T Getter();
-    public T Get() { return this.Value; }
-    //------------------------------------------------------------------------/
-    public ReferenceType(T val) { Value = val; }
-    public override string ToString()
-    {
-      return Value.ToString();
-    }
-  }
+	public class ReferenceType<T>
+	{
+		//----------------------------------------------------------------------/
+		// Fields
+		//----------------------------------------------------------------------/
+		public T value { get; set; }
 
-  public class IntegerReference : ReferenceType<int>
-  {
-    public IntegerReference(int val) : base(val) {}
-    public static implicit operator IntegerReference(int val) { return new IntegerReference(val); }
-    public static implicit operator int(IntegerReference refType) { return refType.Value; }
-  }
+		//----------------------------------------------------------------------/
+		// Methods
+		//----------------------------------------------------------------------/
+		public delegate void Setter(T val);
+		public delegate T Getter();
 
-  public class Real :  ReferenceType<float>
-  {
-    public Real(float val) : base(val) { }
-    public static implicit operator Real(float val) { return new Real(val); }
-    public static implicit operator float(Real refType) { return refType.Value; }
-  }
+		public void Set(T val) { this.value = val; }
+		public T Get() { return this.value; }
 
-  public class Boolean : ReferenceType<bool>
-  {
-    public Boolean(bool val) : base(val) { }
-    public static implicit operator Boolean(bool val) { return new Boolean(val); }
-    public static implicit operator bool(Boolean refType) { return refType.Value; }
-  }
+		//----------------------------------------------------------------------/
+		// CTOR
+		//----------------------------------------------------------------------/
+		public ReferenceType(T val) { this.value = val; }
 
-  public class Real2 : ReferenceType<Vector2>
-  { 
-    public Real2() : base(new Vector2()) {}
-    public Real2(Vector2 val) : base(val) { }
-    public static implicit operator Real2(Vector2 val) { return new Real2(val); }
-    public static implicit operator Vector2(Real2 refType) { return refType.Value; }
-  }
+		//----------------------------------------------------------------------/
+		// Messages
+		//----------------------------------------------------------------------/
+		public override string ToString()
+		{
+			return this.value.ToString();
+		}
+	}
+	public class IntegerRef : ReferenceType<int>
+	{
+		public IntegerRef(int val) : base(val) { }
+		public static implicit operator IntegerRef(int val) { return new IntegerRef(val); }
+		public static implicit operator int(IntegerRef refType) { return refType.value; }
+	}
+	public class FloatRef : ReferenceType<float>
+	{
+		public FloatRef(float val) : base(val) { }
+		public static implicit operator FloatRef(float val) { return new FloatRef(val); }
+		public static implicit operator float(FloatRef refType) { return refType.value; }
+	}
 
-  public class Real3 : ReferenceType<Vector3>
-  {
-    public Real3() : base(new Vector3()) { }
-    public Real3(Vector3 val) : base(val) { }
-    public static implicit operator Real3(Vector3 val) { return new Real3(val); }
-    public static implicit operator Vector3(Real3 refType) { return refType.Value; }
-  }
+	public class BooleanRef : ReferenceType<bool>
+	{
+		public BooleanRef(bool val) : base(val) { }
+		public static implicit operator BooleanRef(bool val) { return new BooleanRef(val); }
+		public static implicit operator bool(BooleanRef refType) { return refType.value; }
+	}
 
-  public class Real4 : ReferenceType<Vector4>
-  {
-    public Real4() : base(new Vector4()) { }
-    public Real4(Vector4 val) : base(val) { }
-    public static implicit operator Real4(Vector4 val) { return new Real4(val); }
-    public static implicit operator Vector4(Real4 refType) { return refType.Value; }
-  }
+	public class Vector2Ref : ReferenceType<Vector2>
+	{
+		public Vector2Ref() : base(new Vector2()) { }
+		public Vector2Ref(Vector2 val) : base(val) { }
+		public static implicit operator Vector2Ref(Vector2 val) { return new Vector2Ref(val); }
+		public static implicit operator Vector2(Vector2Ref refType) { return refType.value; }
+	}
+
+	public class Vector3Ref : ReferenceType<Vector3>
+	{
+		public Vector3Ref() : base(new Vector3()) { }
+		public Vector3Ref(Vector3 val) : base(val) { }
+		public static implicit operator Vector3Ref(Vector3 val) { return new Vector3Ref(val); }
+		public static implicit operator Vector3(Vector3Ref refType) { return refType.value; }
+	}
+
+	public class Vector4Ref : ReferenceType<Vector4>
+	{
+		public Vector4Ref() : base(new Vector4()) { }
+		public Vector4Ref(Vector4 val) : base(val) { }
+		public static implicit operator Vector4Ref(Vector4 val) { return new Vector4Ref(val); }
+		public static implicit operator Vector4(Vector4Ref refType) { return refType.value; }
+	}
 
 }

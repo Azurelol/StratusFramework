@@ -24,7 +24,7 @@ namespace Stratus
           if (target)
           {
             this.agent = target;
-            Trace.Script("Now controlling " + this.agent);
+            StratusDebug.Log("Now controlling " + this.agent);
             //this.RepositionOnAgent();
           }
         }

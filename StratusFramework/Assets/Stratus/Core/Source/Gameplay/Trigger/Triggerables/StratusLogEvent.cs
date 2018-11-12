@@ -36,7 +36,7 @@ namespace Stratus.Gameplay
 
     protected override void OnTrigger()
     {
-      Trace.Script(description, this);
+      StratusDebug.Log(description, this);
 
       //string value = null;
       //

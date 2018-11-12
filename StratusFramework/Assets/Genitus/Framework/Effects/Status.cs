@@ -134,7 +134,7 @@ namespace Genitus
 
         // Run its duration
         this.duration -= step;
-        Trace.Script(this.name + ": Duration left = " + this.duration);
+        StratusDebug.Log(this.name + ": Duration left = " + this.duration);
         if (this.duration <= 0.0f)
         {
           // The status has run its duration
