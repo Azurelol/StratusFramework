@@ -44,6 +44,7 @@ namespace Stratus
 		public int currentEntryCount => this.currentEntries.Count;
 		private Func<T, string> nameFunction { get; set; }
 		public int maxIndex => this.currentEntries.Count - 1;
+		public bool hasFilter { get { return !string.IsNullOrEmpty(filter); } }
 		
 		//--------------------------------------------------------------------------/
 		// CTOR
