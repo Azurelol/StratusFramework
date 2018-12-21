@@ -1,14 +1,7 @@
-/******************************************************************************/
-/*!
-@file   Utilities.cs
-@author Christian Sagel
-@par    email: c.sagel\@digipen.edu
-@par    DigiPen login: c.sagel
-*/
-/******************************************************************************/
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Stratus
 {
@@ -79,12 +72,12 @@ namespace Stratus
     /// <summary>
     /// The amount of 0-indexed elements in the array
     /// </summary>
-    private int indexSize { get { return array.Length - 1; } }
+    private int indexSize { get { return array.Count - 1; } }
 
     /// <summary>
     /// The length of the array
     /// </summary>
-    public int length => array.Length;
+    public int length => array.Count;
 
     /// <summary>
     /// Whether the underlying array is empty
@@ -102,7 +95,7 @@ namespace Stratus
     /// <summary>
     /// The array being used
     /// </summary>
-    private T[] array;
+    private IList<T> array;
 
     /// <summary>
     /// The current index
@@ -122,16 +115,9 @@ namespace Stratus
       currentIndex = 0;
     }
 
-    public ArrayNavigator(T[] array, bool loop = false)
+    public ArrayNavigator(IList<T> array, bool loop = false)
     {
       this.array = array;
-      this.loop = loop;
-      this.currentIndex = 0;
-    }
-
-    public ArrayNavigator(List<T> list, bool loop = false)
-    {
-      this.array = list.ToArray();
       this.loop = loop;
       this.currentIndex = 0;
     }
@@ -140,7 +126,7 @@ namespace Stratus
     /// Sets an updated array to use for navigation
     /// </summary>
     /// <param name="array"></param>
-    public void Set(T[] array)
+    public void Set(IList<T> array)
     {
       this.array = array;
       currentIndex = 0;

@@ -45,7 +45,7 @@ namespace Stratus
       drawGroupRequests.Add(new DrawGroupRequest(DrawExtensions));
 
       // Remove any null behaviours
-      this.target.extensionBehaviours.RemoveNull();
+      this.target.extensionBehaviours.TrimNull();
 
       // Find all possible extension types
       this.extensibleType = target.GetType();
@@ -193,7 +193,7 @@ namespace Stratus
 
     private void RefreshExtensions()
     {
-      this.target.extensionBehaviours.RemoveNull();
+      this.target.extensionBehaviours.TrimNull();
       // Check that there's no extensions present on the GAmeObject but not added to the extensible
       var extensionBehaviours = ExtensibleBehaviour.GetExtensionBehaviours(this.target.GetComponents<MonoBehaviour>());
       foreach (var behaviour in extensionBehaviours)

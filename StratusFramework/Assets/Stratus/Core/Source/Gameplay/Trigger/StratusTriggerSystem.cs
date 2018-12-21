@@ -73,8 +73,8 @@ namespace Stratus.Gameplay
     private void OnValidate()
     {
       //ToggleComponents(enabled);
-      triggers.RemoveNull();
-      triggerables.RemoveNull();
+      triggers.TrimNull();
+      triggerables.TrimNull();
       ShowComponents(false);
     }
 
@@ -186,8 +186,8 @@ namespace Stratus.Gameplay
     private void Refresh()
     {
       // Remove any invalid
-      triggers.RemoveNull();
-      triggerables.RemoveNull();
+      triggers.TrimNull();
+      triggerables.TrimNull();
 
       // Add previously not found
       triggers.AddRangeUnique(GetComponents<Trigger>());

@@ -4,7 +4,6 @@ using UnityEditor;
 using System.Linq;
 using UnityEditor.Animations;
 using UnityEditorInternal;
-using UnityEditor.Experimental.Animations;
 using System.Collections;
 using System.Collections.Generic;
 using System;

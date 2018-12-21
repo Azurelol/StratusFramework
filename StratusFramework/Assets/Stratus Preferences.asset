@@ -4,7 +4,8 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -39,9 +40,10 @@ MonoBehaviour:
     projectBookmarks:
     - {fileID: 11400000}
     - {fileID: 11400000, guid: 7c252266617aae3479272c671d225861, type: 2}
-    - {fileID: 1796509462004904, guid: d9fbbf25f343a8c4aa0bfb5f893ef373, type: 2}
+    - {fileID: 1796509462004904, guid: d9fbbf25f343a8c4aa0bfb5f893ef373, type: 3}
     - {fileID: 11400000, guid: 7dab221bce8cb9344ad16b900fe587ba, type: 2}
     - {fileID: 11500000, guid: 3176f85ee4ec2644db0cffb44a3948ad, type: 3}
     - {fileID: 11500000, guid: 43b954b576043a74491743b20d353ae5, type: 3}
     - {fileID: 11500000, guid: 4d99599d1a97838488d5f255f9b0e3ef, type: 3}
     - {fileID: 102900000, guid: 5afba2ed56594f64aaa674ab038fe700, type: 3}
+    - {fileID: 102900000, guid: 6eee07198d1088d418ba0e4ab2dd2f67, type: 3}
