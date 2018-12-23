@@ -8,21 +8,20 @@ namespace Stratus
 	public static partial class Extensions
 	{
 		/// <summary>
-		/// Retrieves a specific attribute from the given type, if it is present
+		/// Returns true if the given type is an array or list
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="type"></param>
+		/// <param name="listType"></param>
 		/// <returns></returns>
-		public static T GetAttribute<T>(this Type type) where T : Attribute
-		{
-			return AttributeUtility.FindAttribute<T>(type);
-		}
-
 		public static bool IsArrayOrList(this Type listType)
 		{
 			return listType.IsArray || (listType.IsGenericType && listType.GetGenericTypeDefinition() == typeof(List<>));
 		}
 
+		/// <summary>
+		/// If the given type is a list, returns the underlying element type
+		/// </summary>
+		/// <param name="listType"></param>
+		/// <returns></returns>
 		public static Type GetArrayOrListElementType(this Type listType)
 		{
 			if (listType.IsArray)
@@ -37,14 +36,9 @@ namespace Stratus
 			return null;
 		}
 
-		/// <summary>
-		/// Returns a dictionary of all attributes of a given type
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public static Dictionary<Type, Attribute> MapAttributes(this Type type)
+		public static bool HasDefaultConstructor(this Type t)
 		{
-			return AttributeUtility.MapAttributes(type);
+			return t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
 		}
 
 

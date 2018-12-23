@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 using UnityEngine.AI;
 using System;
 
@@ -192,7 +191,7 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
-    protected internal override void OnManagedAwake()
+    protected override void OnManagedAwake()
     {
       inertiaTimer = new Countdown(0.05f);
       jumpTimer = new Countdown(jumpApex);
@@ -210,12 +209,12 @@ namespace Stratus.Gameplay
       CheckGrounded();
     }
 
-    protected internal override void OnManagedUpdate()
+    protected override void OnManagedUpdate()
     {
       UpdateTimers();
     }
 
-    protected internal override void OnManagedFixedUpdate()
+    protected override void OnManagedFixedUpdate()
     {
       if (turning)
         ApplyTurn();
@@ -227,7 +226,7 @@ namespace Stratus.Gameplay
         ApplyFall();
     }
 
-    protected internal override void OnManagedLateUpdate()
+    protected override void OnManagedLateUpdate()
     {      
       CheckMovement();
 

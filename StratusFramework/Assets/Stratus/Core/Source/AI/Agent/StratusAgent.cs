@@ -48,7 +48,7 @@ namespace Stratus.AI
     /// </summary>
     public abstract class StatusEvent : Stratus.StratusEvent
     {
-      public Agent agent { get; internal set; }
+      public Agent agent { get; set; }
     }
     /// <summary>
     /// Signals that the agent has spawned
@@ -174,7 +174,7 @@ namespace Stratus.AI
     //------------------------------------------------------------------------/
     // Messages
     //------------------------------------------------------------------------/
-    protected internal override void OnManagedAwake()
+    protected override void OnManagedAwake()
     {
       // Cache the main components, ho!
       this.navigation = GetComponent<NavMeshAgent>(); ;
@@ -187,7 +187,7 @@ namespace Stratus.AI
       Scene.Dispatch<SpawnEvent>(new SpawnEvent() { agent = this });
     }
 
-    protected internal override void OnManagedStart()
+    protected override void OnManagedStart()
     {
       if (hasBehavior)
         this.behavior = BehaviorSystem.InitializeSystemInstance(this, this.behavior);      
@@ -196,12 +196,12 @@ namespace Stratus.AI
       currentState = State.Idle;
     }
 
-    protected internal override void OnManagedDestroy()
+    protected override void OnManagedDestroy()
     {
       this.OnAgentDestroy();
     }
 
-    protected internal override void OnManagedUpdate()
+    protected override void OnManagedUpdate()
     {
       if (!this.active)
         return;

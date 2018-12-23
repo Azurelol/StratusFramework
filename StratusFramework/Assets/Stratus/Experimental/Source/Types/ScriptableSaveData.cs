@@ -52,7 +52,7 @@ namespace Stratus.Experimental
         if (attribute_ == null)
         {
           var type = typeof(T);
-          attribute_ = AttributeUtility.FindAttribute<SaveDataAttribute>(type);
+		  attribute_ = type.GetAttribute<SaveDataAttribute>();
           if (attribute_ == null)
             throw new SaveDataAttribute.MissingException(type.Name);
         }

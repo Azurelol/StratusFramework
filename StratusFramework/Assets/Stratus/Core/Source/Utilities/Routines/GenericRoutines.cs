@@ -131,14 +131,14 @@ namespace Stratus
     /// <param name="onStart"></param>
     /// <param name="onUpdate"></param>
     /// <param name="onEnd"></param>
-    /// <param name="duration"></param>
+    /// <param name="delay"></param>
     /// <returns></returns>
-    public static IEnumerator InvokeWaitInvoke(System.Action onStart, System.Action onEnd, float duration)
+    public static IEnumerator InvokeWaitInvoke(System.Action onStart, float delay, System.Action onEnd)
     {
       onStart();
 
       float timeElapsed = 0f;
-      while (timeElapsed <= duration)
+      while (timeElapsed <= delay)
       {
         timeElapsed += Time.deltaTime;
         yield return new WaitForFixedUpdate();

@@ -110,7 +110,7 @@ namespace Stratus
     protected static T LoadOrCreate()
     {
       var type = typeof(T);
-      var settings = AttributeUtility.FindAttribute<SingletonAssetAttribute>(type);
+			var settings = type.GetAttribute<SingletonAssetAttribute>();
       if (settings == null)
         throw new SingletonAssetAttribute.MissingException(type.Name);
 

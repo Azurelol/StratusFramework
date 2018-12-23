@@ -22,6 +22,26 @@ namespace Stratus
 		{
 			StratusDebug.Log(value, this);
 		}
-  }
+
+		/// <summary>
+		/// Runs a coroutine on this behaviour
+		/// </summary>
+		/// <param name="enumerator"></param>
+		/// <returns></returns>
+		public Coroutine Invoke(IEnumerator enumerator)
+		{
+			return StartCoroutine(enumerator);
+		}
+
+		/// <summary>
+		/// Runs a coroutine on this behaviour that will invoke the given action after the set amount of time
+		/// </summary>
+		/// <param name="enumerator"></param>
+		/// <returns></returns>
+		public Coroutine Invoke(System.Action action, float delay)
+		{
+			return StartCoroutine(Routines.Call(action, delay));
+		}
+	}
 
 }

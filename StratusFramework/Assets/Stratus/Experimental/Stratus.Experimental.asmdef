@@ -1,0 +1,16 @@
+{
+    "name": "Stratus.Experimental",
+    "references": [
+        "Unity.TextMeshPro",
+        "Cinemachine",
+        "Stratus.Core"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

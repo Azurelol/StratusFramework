@@ -1,93 +1,106 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace Stratus
 {
-  [Singleton(instantiate = true)]
-  public class ManagedBehaviourSystem : Singleton<ManagedBehaviourSystem>
-  {
-    //--------------------------------------------------------------------------------------------/
-    // Fields
-    //--------------------------------------------------------------------------------------------/
-    private static List<ManagedBehaviour> behaviours = new List<ManagedBehaviour>();
+	[Singleton(instantiate = true)]
+	public class ManagedBehaviourSystem : Singleton<ManagedBehaviourSystem>
+	{
+		//--------------------------------------------------------------------------------------------/
+		// Fields
+		//--------------------------------------------------------------------------------------------/
+		private static List<ManagedBehaviour> behaviours = new List<ManagedBehaviour>();
 
-    //--------------------------------------------------------------------------------------------/
-    // Static Methods
-    //--------------------------------------------------------------------------------------------/
-    //[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    //private static void OnSceneLoaded()
-    //{
-    //  Instantiate();
-    //}
+		//--------------------------------------------------------------------------------------------/
+		// Properties
+		//--------------------------------------------------------------------------------------------/
+		public bool update { get; set; } = true;
+		public bool lateUpdate { get; set; } = true;
+		public bool fixedUpdate { get; set; } = true;
 
-    //--------------------------------------------------------------------------------------------/
-    // Messages
-    //--------------------------------------------------------------------------------------------/
-    protected override void OnAwake()
-    {
-      //AddCurrentBehaviours();
-      //foreach (var behaviour in behaviours)
-      //  behaviour.OnBehaviourAwake();
-    }
+		//--------------------------------------------------------------------------------------------/
+		// Messages
+		//--------------------------------------------------------------------------------------------/
+		protected override void OnAwake()
+		{
+			//AddCurrentBehaviours();
+			//foreach (var behaviour in behaviours)
+			//  behaviour.OnBehaviourAwake();
+		}
 
-    private void Start()
-    {
-      foreach (var behaviour in behaviours)
-        behaviour.OnManagedStart();
-    }
+		private void Start()
+		{
+			foreach (ManagedBehaviour behaviour in behaviours)
+			{
+				behaviour.ManagedStart();
+			}
+		}
 
-    private void Update()
-    {
-      foreach (var behaviour in behaviours)
-      {
-        if (behaviour.enabled)
-          behaviour.OnManagedUpdate();
-      }
-    }
+		private void Update()
+		{
+			if (!update)
+				return; 
 
-    private void FixedUpdate()
-    {
-      foreach (var behaviour in behaviours)
-      {
-        if (behaviour.enabled)
-          behaviour.OnManagedFixedUpdate();
-      }
-    }
+			foreach (ManagedBehaviour behaviour in behaviours)
+			{
+				if (behaviour.enabled)
+				{
+					behaviour.ManagedUpdate();
+				}
+			}
+		}
 
-    private void LateUpdate()
-    {
-      foreach (var behaviour in behaviours)
-      {
-        if (behaviour.enabled)
-          behaviour.OnManagedLateUpdate();
-      }
-    }
+		private void FixedUpdate()
+		{
+			if (!fixedUpdate)
+				return;
 
-    //--------------------------------------------------------------------------------------------/
-    // Methods
-    //--------------------------------------------------------------------------------------------/
-    public static void Add(ManagedBehaviour behaviour)
-    {
-      Instantiate();
-      behaviours.Add(behaviour);
-    }
+			foreach (ManagedBehaviour behaviour in behaviours)
+			{
+				if (behaviour.enabled)
+				{
+					behaviour.ManagedFixedUpdate();
+				}
+			}
+		}
 
-    public static void Remove(ManagedBehaviour behaviour)
-    {
-      behaviours.Remove(behaviour);
-    }
+		private void LateUpdate()
+		{
+			if (!lateUpdate)
+				return;
 
-    private static void AddCurrentBehaviours()
-    {
-      ManagedBehaviour[] behaviours = Scene.GetComponentsInAllActiveScenes<ManagedBehaviour>();
-      StratusDebug.Log($"Adding {behaviours.Length} behaviours");
-      ManagedBehaviourSystem.behaviours.AddRange(behaviours);
-    }
+			foreach (ManagedBehaviour behaviour in behaviours)
+			{
+				if (behaviour.enabled)
+				{
+					behaviour.ManagedLateUpdate();
+				}
+			}
+		}
+
+		//--------------------------------------------------------------------------------------------/
+		// Methods
+		//--------------------------------------------------------------------------------------------/
+		public static void Add(ManagedBehaviour behaviour)
+		{
+			Instantiate();
+			behaviours.Add(behaviour);
+		}
+
+		public static void Remove(ManagedBehaviour behaviour)
+		{
+			behaviours.Remove(behaviour);
+		}
+
+		private static void AddCurrentBehaviours()
+		{
+			ManagedBehaviour[] behaviours = Scene.GetComponentsInAllActiveScenes<ManagedBehaviour>();
+			StratusDebug.Log($"Adding {behaviours.Length} behaviours");
+			ManagedBehaviourSystem.behaviours.AddRange(behaviours);
+		}
 
 
 
 
-  }
+	}
 
 }

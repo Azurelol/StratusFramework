@@ -157,7 +157,7 @@ namespace Stratus.Gameplay
 
     }
 
-    protected internal override void OnManagedAwake()
+    protected override void OnManagedAwake()
     {
       this.OnTargetChanged();
       cameraTransform = camera.transform;
@@ -177,7 +177,7 @@ namespace Stratus.Gameplay
       this.target = GetComponent<CharacterControllerMovement>();
     }
 
-    protected internal override void OnManagedUpdate()
+    protected override void OnManagedUpdate()
     {
       PollInput();
     }

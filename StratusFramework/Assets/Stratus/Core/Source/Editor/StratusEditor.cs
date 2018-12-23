@@ -183,7 +183,7 @@ namespace Stratus
     /// <summary>
     /// Whether the target component is still valid
     /// </summary>
-    protected bool isTargetValid => !target.Destroyed();
+    protected bool isTargetValid => !target.IsDestroyed();
 
     
 

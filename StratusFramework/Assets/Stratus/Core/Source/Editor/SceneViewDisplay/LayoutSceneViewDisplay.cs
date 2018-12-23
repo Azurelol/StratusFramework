@@ -69,8 +69,8 @@ namespace Stratus
 		/// <summary>
 		/// Invoked by the Unity's Scene window. This is where we hook in our own drawing code
 		/// </summary>
-		/// <param name="sceneView"></param>
-		protected override void OnSceneGUI(SceneView sceneView)
+		/// <param name="view"></param>
+		protected override void OnSceneGUI(SceneView view)
 		{
 			//if (!hasCalculatedDimensions && dimensions == StratusGUI.Dimensions.Relative)
 			//{
@@ -79,10 +79,10 @@ namespace Stratus
 			//}
 
 			// What size to use
-			this.currentSize = this.CalculateSize(sceneView);
+			this.currentSize = this.CalculateSize(view);
 
 			// Draw the default GUI
-			this.OnGUI(sceneView.position);
+			this.OnGUI(view.position);
 
 			// Draw the provided layout 2D GUI Block
 			//Draw_Old(sceneView);
@@ -127,7 +127,7 @@ namespace Stratus
 		protected override void OnReset()
 		{
 			Type type = this.GetType();
-			LayoutViewDisplayAttributeAttribute settings = AttributeUtility.FindAttribute<LayoutViewDisplayAttributeAttribute>(type);
+			LayoutViewDisplayAttributeAttribute settings = type.GetAttribute<LayoutViewDisplayAttributeAttribute>();
 			if (settings == null)
 			{
 				throw new MissingReferenceException("Missing [LayoutSceneViewDisplay] attribute declaration for the class '" + type.Name + "'");

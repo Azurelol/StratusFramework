@@ -34,11 +34,37 @@ namespace Stratus
 		/// <param name="rgbColor"></param>
 		/// <param name="saturationRatio"></param>
 		/// <returns></returns>
-		public static Color Saturate(this Color rgbColor, float saturationRatio)
+		public static Color ScaleSaturation(this Color rgbColor, float saturationRatio)
 		{
 			float h, s, v;
 			Color.RGBToHSV(rgbColor, out h, out s, out v);
 			return Color.HSVToRGB(h, s * saturationRatio, v);
+		}
+
+		/// <summary>
+		/// Recomputes this color with a modified hue value (multiplying the original by a normalized value between 0-1)
+		/// </summary>
+		/// <param name="rgbColor"></param>
+		/// <param name="hue"></param>
+		/// <returns></returns>
+		public static Color ScaleHue(this Color rgbColor, float hue)
+		{
+			float h, s, v;
+			Color.RGBToHSV(rgbColor, out h, out s, out v);
+			return Color.HSVToRGB(h * hue, s, v);
+		}
+
+		/// <summary>
+		/// Recomputes this color with a modified hue value (multiplying the original by a normalized value between 0-1)
+		/// </summary>
+		/// <param name="rgbColor"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static Color ScaleValue(this Color rgbColor, float value)
+		{
+			float h, s, v;
+			Color.RGBToHSV(rgbColor, out h, out s, out v);
+			return Color.HSVToRGB(h , s, v * value);
 		}
 
 

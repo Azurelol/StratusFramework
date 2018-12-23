@@ -137,14 +137,14 @@ namespace Stratus.Gameplay
     //--------------------------------------------------------------------------------------------/
     // Messages
     //--------------------------------------------------------------------------------------------/
-    protected internal override void OnManagedAwake()
+    protected override void OnManagedAwake()
     {
       onUpdate = new UpdateFunction(() => { });
       SetHooks();
       Subscribe();
     }
 
-    protected internal override void OnManagedFixedUpdate()
+    protected override void OnManagedFixedUpdate()
     {
       UpdateParameters();
       onUpdate();

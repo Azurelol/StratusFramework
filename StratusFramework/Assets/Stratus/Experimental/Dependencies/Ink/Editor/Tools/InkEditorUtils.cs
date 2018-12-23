@@ -23,7 +23,7 @@ namespace Ink.UnityIntegration {
 		}
 		
 		internal static UnityEngine.Object CreateScriptAsset(string pathName, string text) {
-			string fullPath = Path.GetFullPath(pathName);
+			string fullPath = System.IO.Path.GetFullPath(pathName);
 			UTF8Encoding encoding = new UTF8Encoding(true, false);
 			bool append = false;
 			StreamWriter streamWriter = new StreamWriter(fullPath, append, encoding);
@@ -69,7 +69,7 @@ namespace Ink.UnityIntegration {
 			foreach(InkFile masterInkFile in masterInkFiles) {
 				if(InkSettings.Instance.compileAutomatically || masterInkFile.compileAutomatically) {
 					InkCompiler.CompileInk(masterInkFile);
-					compiledFiles.Add(Path.GetFileName(masterInkFile.filePath));
+					compiledFiles.Add(System.IO.Path.GetFileName(masterInkFile.filePath));
 				}
 			}
 			string logString = compiledFiles.Count == 0 ? 
@@ -82,7 +82,7 @@ namespace Ink.UnityIntegration {
 		[MenuItem("Assets/Create/Ink", false, 120)]
 		public static void CreateNewInkFile () {
 			string fileName = "New Ink.ink";
-			string filePath = AssetDatabase.GenerateUniqueAssetPath(Path.Combine(GetSelectedPathOrFallback(), fileName));
+			string filePath = AssetDatabase.GenerateUniqueAssetPath(System.IO.Path.Combine(GetSelectedPathOrFallback(), fileName));
 			CreateNewInkFile(filePath, InkSettings.Instance.templateFilePath);
 		}
 
@@ -95,7 +95,7 @@ namespace Ink.UnityIntegration {
 			foreach (UnityEngine.Object obj in Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.Assets)) {
 				path = AssetDatabase.GetAssetPath(obj);
 				if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
-					path = Path.GetDirectoryName(path);
+					path = System.IO.Path.GetDirectoryName(path);
 					break;
 	        	}
 			}
@@ -127,7 +127,7 @@ namespace Ink.UnityIntegration {
 		}
 
 		public static TextAsset CreateStoryStateTextFile (string jsonStoryState, string defaultPath = "Assets/Ink", string defaultName = "storyState") {
-			string name = AssetDatabase.GenerateUniqueAssetPath(Path.Combine(defaultPath, defaultName+".json")).Substring(defaultPath.Length+1);
+			string name = AssetDatabase.GenerateUniqueAssetPath(System.IO.Path.Combine(defaultPath, defaultName+".json")).Substring(defaultPath.Length+1);
 			string fullPathName = EditorUtility.SaveFilePanel("Save Story State", defaultPath, name, "json");
 			if(fullPathName == "") 
 				return null;
@@ -191,7 +191,7 @@ namespace Ink.UnityIntegration {
 
 		public static string GetInklecateFilePath () {
 			if(InkSettings.Instance.customInklecateOptions.inklecate != null) {
-				return Path.GetFullPath(AssetDatabase.GetAssetPath(InkSettings.Instance.customInklecateOptions.inklecate));
+				return System.IO.Path.GetFullPath(AssetDatabase.GetAssetPath(InkSettings.Instance.customInklecateOptions.inklecate));
 			} else {
 				#if UNITY_EDITOR
 				#if UNITY_EDITOR_WIN
@@ -215,7 +215,7 @@ namespace Ink.UnityIntegration {
 				if(inklecateDirectories.Length == 0)
 					return null;
 
-				return Path.GetFullPath(inklecateDirectories[0]);
+				return System.IO.Path.GetFullPath(inklecateDirectories[0]);
 			}
 		}
 		
@@ -234,7 +234,7 @@ namespace Ink.UnityIntegration {
 		// system this method will always return a path which uses forward slashes ('/' characters) exclusively to ensure
 		// equality checks on path strings return equalities as expected.
 		public static string CombinePaths(string firstPath, string secondPath) {
-			return SanitizePathString(Path.Combine(firstPath, secondPath));
+			return SanitizePathString(System.IO.Path.Combine(firstPath, secondPath));
 		}
 
 		public static string AbsoluteToUnityRelativePath(string fullPath) {
