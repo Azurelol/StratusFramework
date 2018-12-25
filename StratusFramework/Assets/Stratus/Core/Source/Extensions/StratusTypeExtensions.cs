@@ -7,6 +7,12 @@ namespace Stratus
 {
 	public static partial class Extensions
 	{
+		private const BindingFlags bindingFlagsFullSearch =
+			System.Reflection.BindingFlags.Public 
+			| System.Reflection.BindingFlags.NonPublic 
+			| System.Reflection.BindingFlags.Static
+			| System.Reflection.BindingFlags.Instance;
+
 		/// <summary>
 		/// Returns true if the given type is an array or list
 		/// </summary>
@@ -39,6 +45,11 @@ namespace Stratus
 		public static bool HasDefaultConstructor(this Type t)
 		{
 			return t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
+		}
+
+		public static FieldInfo GetFieldExhaustive(this Type t, string name)
+		{
+			return t.GetField(name, bindingFlagsFullSearch);
 		}
 
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using System.Reflection;
+using System;
 
 namespace Stratus.Tests
 {
@@ -14,6 +16,7 @@ namespace Stratus.Tests
 		[FieldDescription(value1Description)]
 		private static float value1;
 		private const string value1Description = "A value";
+		private static readonly Type extensionsType = typeof(Extensions);
 
 		//------------------------------------------------------------------------/
 		// Methods
@@ -21,18 +24,9 @@ namespace Stratus.Tests
 		[Test]
         public static void TestAttributes()
         {
-			var description = value1.GetType().GetDescription();
+			var field = typeof(Extensions).GetFieldExhaustive(nameof(value1));
+			var description = field.GetDescription();
 			Assert.AreEqual(value1Description, description);
         }
-
-        //// A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-        //// `yield return null;` to skip a frame.
-        //[UnityTest]
-        //public IEnumerator MemberInfoExtensionTestsWithEnumeratorPasses()
-        //{
-        //    // Use the Assert class to test conditions.
-        //    // Use yield to skip a frame.
-        //    yield return null;
-        //}
     }
 }
