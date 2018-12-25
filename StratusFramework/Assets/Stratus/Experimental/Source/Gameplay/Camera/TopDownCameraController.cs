@@ -72,7 +72,7 @@ namespace Stratus
       bool IsWithinNavMesh(Vector3 position, float maxDistance)
       {        
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(position.Strip(VectorAxis.Y), out hit, maxDistance, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(position.XZ(), out hit, maxDistance, NavMesh.AllAreas))
           return true;
         return false;
       }

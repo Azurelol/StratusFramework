@@ -1,0 +1,190 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d99599d1a97838488d5f255f9b0e3ef, type: 3}
+  m_Name: Behavior Tree 1
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: tree
+      Entry: 7
+      Data: 0|Stratus.SerializedTree`2[[Stratus.AI.BehaviorTree+BehaviorNode, Stratus.AI],[Stratus.AI.Behavior,
+        Stratus.AI]], Stratus.Core
+    - Name: elements
+      Entry: 7
+      Data: 1|System.Collections.Generic.List`1[[Stratus.AI.BehaviorTree+BehaviorNode,
+        Stratus.AI]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 2|Stratus.AI.BehaviorTree+BehaviorNode, Stratus.AI
+    - Name: id
+      Entry: 3
+      Data: 0
+    - Name: name
+      Entry: 1
+      Data: Root
+    - Name: depth
+      Entry: 3
+      Data: -1
+    - Name: data
+      Entry: 6
+      Data: 
+    - Name: dataTypeName
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 3|Stratus.AI.BehaviorTree+BehaviorNode, Stratus.AI
+    - Name: id
+      Entry: 3
+      Data: 5
+    - Name: name
+      Entry: 1
+      Data: Selector
+    - Name: depth
+      Entry: 3
+      Data: 0
+    - Name: data
+      Entry: 7
+      Data: 4|Stratus.AI.Selector, Stratus.AI
+    - Name: label
+      Entry: 6
+      Data: 
+    - Name: services
+      Entry: 7
+      Data: 5|System.Collections.Generic.List`1[[Stratus.AI.Service, Stratus.AI]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: Selector
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 6|Stratus.AI.BehaviorTree+BehaviorNode, Stratus.AI
+    - Name: id
+      Entry: 3
+      Data: 2
+    - Name: name
+      Entry: 1
+      Data: MoveToTask
+    - Name: depth
+      Entry: 3
+      Data: 1
+    - Name: data
+      Entry: 7
+      Data: 7|Stratus.AI.MoveToTask, Stratus.AI
+    - Name: label
+      Entry: 6
+      Data: 
+    - Name: services
+      Entry: 7
+      Data: 8|System.Collections.Generic.List`1[[Stratus.AI.Service, Stratus.AI]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 9|Stratus.AI.SetRandomPosition, Stratus.AI
+    - Name: interval
+      Entry: 4
+      Data: 1
+    - Name: deviation
+      Entry: 4
+      Data: 0
+    - Name: key
+      Entry: 1
+      Data: Waypoint
+    - Name: type
+      Entry: 3
+      Data: 1
+    - Name: radius
+      Entry: 4
+      Data: 15
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: targetSymbol
+      Entry: 7
+      Data: 10|Stratus.Blackboard+Reference`1[[UnityEngine.Vector3, UnityEngine.CoreModule]],
+        Stratus.Core
+    - Name: key
+      Entry: 1
+      Data: Waypoint
+    - Name: scope
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: range
+      Entry: 4
+      Data: 5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: dataTypeName
+      Entry: 1
+      Data: MoveToTask
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: idCounter
+      Entry: 3
+      Data: 6
+    - Name: _maxDepth
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+  debug: 0
+  description: 
+  blackboard: {fileID: 11400000, guid: 06f4e3f9e9f7d404b83669bbedb9b7a5, type: 2}

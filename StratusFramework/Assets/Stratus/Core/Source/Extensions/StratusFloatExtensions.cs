@@ -15,7 +15,7 @@ namespace Stratus
 		/// <returns></returns>
 		public static float LerpFrom(this float b, float a, float t)
 		{
-			return (1 - t) * a + t * b;
+			return a.LerpTo(b, t);
 		}
 
 		/// <summary>
@@ -27,7 +27,7 @@ namespace Stratus
 		/// <returns></returns>
 		public static float LerpTo(this float a, float b, float t)
 		{
-			return (1 - t) * a + t * b;
+			return (1f - t) * a + t * b;
 		}
 
 	}

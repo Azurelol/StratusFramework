@@ -10,9 +10,25 @@ namespace Stratus
 		/// <param name="range">A vector containing a min-max range.</param>
 		/// <param name="value">The value to check.</param>
 		/// <returns>True if the value is within the range, false otherwise</returns>
-		public static bool Contains(this Vector2 range, float value)
+		public static bool ContainsExclusive(this Vector2 range, float value)
 		{
 			if (value > range.x && value < range.y)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Checks the specified value is within the range of this vector
+		/// </summary>
+		/// <param name="range">A vector containing a min-max range.</param>
+		/// <param name="value">The value to check.</param>
+		/// <returns>True if the value is within the range, false otherwise</returns>
+		public static bool ContainsInclusive(this Vector2 range, float value)
+		{
+			if (value >= range.x && value <= range.y)
 			{
 				return true;
 			}
@@ -67,48 +83,35 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Strips one of the components from the vector
+		/// Returns a Vector2 with only the XY components
 		/// </summary>
 		/// <param name="vec"></param>
-		/// <param name="axis"></param>
 		/// <returns></returns>
-		public static Vector3 Strip(this Vector3 vec, VectorAxis axis)
+		public static Vector2 XY(this Vector3 vec)
 		{
-			switch (axis)
-			{
-				case VectorAxis.X:
-					return new Vector3(0f, vec.y, vec.z);
-				case VectorAxis.Y:
-					return new Vector3(vec.x, 0f, vec.z);
-				case VectorAxis.Z:
-					return new Vector3(vec.x, vec.y, 0f);
-			}
-
-			throw new System.Exception("Missing component");
+			return new Vector2(vec.x, vec.y);
 		}
 
 		/// <summary>
-		/// Calculates a position in front of the transform at a given distance
+		/// Returns a Vector2 with only the XZ components
 		/// </summary>
-		/// <param name="transform"></param>
-		/// <param name="distance"></param>
+		/// <param name="vec"></param>
 		/// <returns></returns>
-		public static Vector3 CalculateForwardPosition(this Transform transform, float distance)
+		public static Vector2 XZ(this Vector3 vec)
 		{
-			return transform.position + (transform.forward * distance);
+			return new Vector2(vec.x, vec.z);
 		}
 
 		/// <summary>
-		/// Calculates a position on a given normalized direction vector from the transform's position.
+		/// Returns a Vector2 with only the YZ components
 		/// </summary>
-		/// <param name="transform"></param>
-		/// <param name="normalizedDirVec"></param>
-		/// <param name="distance"></param>
+		/// <param name="vec"></param>
 		/// <returns></returns>
-		public static Vector3 CalculatePositionAtDirection(this Transform transform, Vector3 normalizedDirVec, float distance)
+		public static Vector2 YZ(this Vector3 vec)
 		{
-			return transform.position + (normalizedDirVec * distance);
+			return new Vector2(vec.y, vec.z);
 		}
+
 	}
 
 

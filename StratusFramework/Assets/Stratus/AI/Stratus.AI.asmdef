@@ -1,6 +1,8 @@
 {
-    "name": "Stratus.Core",
-    "references": [],
+    "name": "Stratus.AI",
+    "references": [
+        "Stratus.Core"
+    ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,7 +1,9 @@
 {
-    "name": "Stratus.Core",
+    "name": "Stratus.AI.Tests",
     "references": [],
-    "optionalUnityReferences": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

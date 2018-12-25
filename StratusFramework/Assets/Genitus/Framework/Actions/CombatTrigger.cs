@@ -69,7 +69,7 @@ namespace Genitus
       /// <returns>True if active, false otherwise.</returns>
       public void Update(float currentTime)
       {
-        if (Range.Contains(currentTime))
+        if (Range.ContainsExclusive(currentTime))
         {
           if (State != InputState.Active)
             State = InputState.Ready;          

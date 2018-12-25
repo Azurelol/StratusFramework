@@ -1,6 +1,9 @@
 {
-    "name": "Stratus.Core",
-    "references": [],
+    "name": "Stratus.UI",
+    "references": [
+        "Stratus.Core",
+        "Unity.TextMeshPro"
+    ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],

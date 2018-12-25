@@ -1,9 +1,13 @@
 {
-    "name": "Stratus.Core",
+    "name": "Stratus.AI.Tests.Editor",
     "references": [],
-    "optionalUnityReferences": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
     "includePlatforms": [],
-    "excludePlatforms": [],
+    "excludePlatforms": [
+        "Editor"
+    ],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
