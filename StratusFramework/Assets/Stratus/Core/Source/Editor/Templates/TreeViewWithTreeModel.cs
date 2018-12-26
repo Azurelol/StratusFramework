@@ -187,7 +187,7 @@ namespace Stratus
     }
 
     protected virtual void OnMainGUI(Rect rect)
-    {
+    {			
       this.OnGUI(rect);
     }
 

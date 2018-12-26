@@ -89,6 +89,16 @@ namespace Stratus
 		{
 			return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str.ToLower());
 		}
+
+		public static string Join(this string[] str, string separator)
+		{
+			return string.Join(separator, str);
+		}
+
+		public static string JoinLines(this string[] str)
+		{
+			return string.Join("\n", str);
+		}
 	}
 
 

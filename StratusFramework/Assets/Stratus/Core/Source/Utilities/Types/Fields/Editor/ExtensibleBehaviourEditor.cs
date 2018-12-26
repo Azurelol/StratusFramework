@@ -228,7 +228,7 @@ namespace Stratus
       List<Type> matchingTypes = new List<Type>();
 
       // 1. Get all extensible types who have marked support for this extensible
-      var allExtensionTypes = Reflection.GetInterfacesExhaustive(typeof(MonoBehaviour), extensionType);
+      var allExtensionTypes = Reflection.GetInterfaces(typeof(MonoBehaviour), extensionType);
       foreach (var type in allExtensionTypes)
       {
         var attributeMap = type.MapAttributes();

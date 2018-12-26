@@ -34,14 +34,30 @@ namespace Stratus
 		/// Returns an array of strings, consisting of the names identified on their name property
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
+		/// <param name="enumerable"></param>
 		/// <returns></returns>
-		public static string[] TypeNames<T>(this IEnumerable<T> list)
+		public static string[] TypeNames<T>(this IEnumerable<T> enumerable)
 		{
 			List<string> names = new List<string>();
-			foreach (T item in list)
+			foreach (T item in enumerable)
 			{
 				names.Add(item.GetType().Name);
+			}
+			return names.ToArray();
+		}
+
+		/// <summary>
+		/// Returns an array of strings, consisting of the names identified on their name property
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="enumerable"></param>
+		/// <returns></returns>
+		public static string[] TypeNames(this IEnumerable<Type> enumerable)
+		{
+			List<string> names = new List<string>();
+			foreach (Type item in enumerable)
+			{
+				names.Add(item.Name);
 			}
 			return names.ToArray();
 		}

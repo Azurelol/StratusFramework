@@ -178,7 +178,7 @@ MonoBehaviour:
       Data: 
     - Name: idCounter
       Entry: 3
-      Data: 6
+      Data: 7
     - Name: _maxDepth
       Entry: 3
       Data: 1

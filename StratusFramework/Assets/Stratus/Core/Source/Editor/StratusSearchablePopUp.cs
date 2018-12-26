@@ -50,7 +50,7 @@ namespace Stratus
     // Properties
     //------------------------------------------------------------------------/
     public static float height = StratusEditorUtility.lineHeight;    
-    public static Rect defaultPosition => GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth, height);
+    public static Rect defaultPosition => GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth - 50f, height);
     public static GUIStyle toolbarStyle => EditorStyles.toolbar;
     public static Color selectedColor => Color.cyan;
     public static Color defaultColor => Color.white;
