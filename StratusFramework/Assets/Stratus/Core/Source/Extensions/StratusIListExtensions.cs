@@ -125,39 +125,7 @@ namespace Stratus
 			return list.NotEmpty() ? list[0] : default(T);
 		}
 
-		/// <summary>
-		/// Returns an array of strings, consisting of the names identified on their name property
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
-		/// <returns></returns>
-		public static string[] Names<T>(this IList<T> list) where T : UnityEngine.Object
-		{
-			string[] names = new string[list.Count];
-			for (int i = 0; i < list.Count; ++i)
-			{
-				names[i] = list[i].name;
-			}
 
-			return names;
-		}
-
-		/// <summary>
-		/// Returns an array of strings, consisting of the names identified on their name property
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
-		/// <returns></returns>
-		public static string[] Names<T>(this IList<T> list, Func<T, string> nameFunc)
-		{
-			string[] names = new string[list.Count];
-			for (int i = 0; i < list.Count; ++i)
-			{
-				names[i] = nameFunc(list[i]);
-			}
-
-			return names;
-		}
 
 		/// <summary>
 		/// Given a list, returns an array of strings based on the naming function provided

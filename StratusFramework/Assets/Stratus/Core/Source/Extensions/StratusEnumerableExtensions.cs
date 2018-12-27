@@ -67,13 +67,13 @@ namespace Stratus
 		/// that extracts the key for each element
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
+		/// <param name="enumerable"></param>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		public static bool HasDuplicateKeys<T>(this IEnumerable<T> list, Func<T, string> keyFunction)
+		public static bool HasDuplicateKeys<T>(this IEnumerable<T> enumerable, Func<T, string> keyFunction)
 		{
 			HashSet<string> hashset = new HashSet<string>();
-			foreach (T element in list)
+			foreach (T element in enumerable)
 			{
 				string key = keyFunction(element);
 				if (hashset.Contains(key))
@@ -85,17 +85,65 @@ namespace Stratus
 			return false;
 		}
 
+		///// <summary>
+		///// Returns an array of strings, consisting of the names identified on their name property
+		///// </summary>
+		///// <typeparam name="T"></typeparam>
+		///// <param name="enumerable"></param>
+		///// <returns></returns>
+		//public static string[] Names<T>(this IEnumerable<T> enumerable) where T : UnityEngine.Object
+		//{
+		//	List<string> names = new List<string>();
+		//	foreach (var entry in enumerable)
+		//	{
+		//		names.Add(entry.name);
+		//	}
+		//	return names.ToArray();
+		//}
+
+		/// <summary>
+		/// Returns an array of strings, consisting of the names identified on their name property
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="enumerable"></param>
+		/// <returns></returns>
+		public static string[] Names<T>(this IEnumerable<T> enumerable, Func<T, string> nameFunc)
+		{
+			List<string> names = new List<string>();
+			foreach (var entry in enumerable)
+			{
+				names.Add(nameFunc(entry));
+			}
+			return names.ToArray();
+		}
+
+		/// <summary>
+		/// Returns an array of strings, consisting of the names identified on their name property
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="enumerable"></param>
+		/// <returns></returns>
+		public static string[] Names<T>(this IEnumerable<T> enumerable)
+		{
+			List<string> names = new List<string>();
+			foreach (var entry in enumerable)
+			{
+				names.Add(entry.ToString());
+			}
+			return names.ToArray();
+		}
+
 		/// <summary>
 		/// Returns the first element in this list that has a duplicate
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
+		/// <param name="enumerable"></param>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		public static T FindFirstDuplicate<T>(this IEnumerable<T> list, Func<T, string> keyFunction)
+		public static T FindFirstDuplicate<T>(this IEnumerable<T> enumerable, Func<T, string> keyFunction)
 		{
 			HashSet<string> hashset = new HashSet<string>();
-			foreach (T element in list)
+			foreach (T element in enumerable)
 			{
 				string key = keyFunction(element);
 				if (hashset.Contains(key))
@@ -134,8 +182,6 @@ namespace Stratus
 			return enumerable.Select(c => c as U).Where(c => c != null).ToArray();
 		}
 	}
-
-
 
 	public abstract class ConstrainedEnumParser<TClass> where TClass : class
 		// value type constraint S ("TEnum") depends on reference type T ("TClass") [and on struct]

@@ -99,6 +99,16 @@ namespace Stratus
 		{
 			return string.Join("\n", str);
 		}
+
+		public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
+
+		/// <summary>
+		/// Returns true if the string is neither null or empty
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static bool IsValid(this string str) => !str.IsNullOrEmpty();
+
 	}
 
 

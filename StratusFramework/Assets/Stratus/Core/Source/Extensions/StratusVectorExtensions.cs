@@ -112,6 +112,32 @@ namespace Stratus
 			return new Vector2(vec.y, vec.z);
 		}
 
+		/// <summary>
+		/// Attempts to parse a Vector3 in either the format:
+		/// (a,b,c) or a,b,c
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static Vector3 ParseVector3(string value)
+		{
+			// Remove the parentheses
+			if (value.StartsWith("(") && value.EndsWith(")"))
+			{
+				value = value.Substring(1, value.Length - 2);
+			}
+
+			// split the items
+			string[] values = value.Split(',');
+
+			// store as a Vector3
+			Vector3 result = new Vector3(
+				float.Parse(values[0]),
+				float.Parse(values[1]),
+				float.Parse(values[2]));
+
+			return result;
+		}
+
 	}
 
 
