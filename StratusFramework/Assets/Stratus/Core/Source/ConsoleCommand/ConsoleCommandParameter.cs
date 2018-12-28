@@ -93,6 +93,7 @@ namespace Stratus
 					value = float.Parse(arg);
 					break;
 				case ConsoleCommandParameter.String:
+					value = arg;
 					break;
 				case ConsoleCommandParameter.Boolean:
 					string lowercaseArg = arg.ToLower();

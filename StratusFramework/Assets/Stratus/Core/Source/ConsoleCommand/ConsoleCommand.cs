@@ -95,7 +95,8 @@ namespace Stratus
 
 						try
 						{
-							commandAction(string.Join(delimiter.ToString(), args.Skip(i)));
+							string arg = string.Join(delimiter.ToString(), args.Skip(i));
+							commandAction(arg);
 						}
 						catch (Exception e)
 						{
@@ -152,7 +153,7 @@ namespace Stratus
 					TryAddCommand(method, (command) =>
 					{
 						command.parameters = ConsoleCommandParameterExtensions.DeduceMethodParameters(method);
-						commandActions.Add(command.name, (args) =>
+						commandActions.Add(command.name, (string args) =>
 						{
 							object[] parameters = Parse(command, args);
 							object returnValue = method.Invoke(null, parameters);
@@ -171,17 +172,12 @@ namespace Stratus
 					{
 						command.parameters = ConsoleCommandParameterExtensions.DeduceParameters(field);
 						ConsoleCommandParameter parameter = command.parameters[0];
-						commandActions.Add(command.name, (args) =>
+						commandActions.Add(command.name, (string args) =>
 						{
 							bool hasValue = args.IsValid();
 							if (hasValue)
 							{
 								field.SetValue(null, Parse(parameter, args));
-							}
-							else if (parameter == ConsoleCommandParameter.Boolean)
-							{
-								bool previousValue = (bool)field.GetValue(null);
-								field.SetValue(null, !previousValue);
 							}
 							else
 							{
@@ -204,7 +200,7 @@ namespace Stratus
 						bool hasSetter = property.GetSetMethod(true) != null;
 						if (hasSetter)
 						{
-							commandActions.Add(command.name, (args) =>
+							commandActions.Add(command.name, (string args) =>
 							{
 								bool hasValue = args.IsValid();
 								if (hasValue)

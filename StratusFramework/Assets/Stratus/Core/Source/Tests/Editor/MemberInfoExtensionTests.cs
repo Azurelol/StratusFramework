@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Stratus.Tests
 {
-	public static class Extensions
+	public partial class ExtensionsTests
 	{
 		//------------------------------------------------------------------------/
 		// Fields
@@ -13,7 +13,7 @@ namespace Stratus.Tests
 		[FieldDescription(field1Description)]
 		private static float field1;
 		private const string field1Description = "A value";
-		private static readonly Type extensionsType = typeof(Extensions);
+		private static readonly Type extensionsType = typeof(ExtensionsTests);
 
 		//------------------------------------------------------------------------/
 		// Methods
@@ -21,7 +21,7 @@ namespace Stratus.Tests
 		[Test]
 		public static void TestAttributes()
 		{
-			FieldInfo field1Field = typeof(Extensions).GetFieldExhaustive(nameof(field1));
+			FieldInfo field1Field = typeof(ExtensionsTests).GetFieldExhaustive(nameof(field1));
 			Assert.False(field1Field.HasAttribute<ArgumentAttribute>());
 
 			string description = field1Field.GetDescription();
