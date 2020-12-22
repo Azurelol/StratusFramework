@@ -1,0 +1,17 @@
+{
+    "name": "Stratus.Core.Editor",
+    "references": [
+        "Stratus.Core",
+        "Stratus.OdinSerializer"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

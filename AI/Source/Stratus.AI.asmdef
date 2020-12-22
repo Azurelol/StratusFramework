@@ -1,0 +1,15 @@
+{
+    "name": "Stratus.AI",
+    "references": [
+        "Stratus.Core",
+        "Stratus.OdinSerializer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

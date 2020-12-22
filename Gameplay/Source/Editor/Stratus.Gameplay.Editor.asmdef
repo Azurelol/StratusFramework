@@ -1,0 +1,18 @@
+{
+    "name": "Stratus.Gameplay.Editor",
+    "references": [
+        "Stratus.Gameplay",
+        "Stratus.Core.Editor",
+        "Stratus.Core"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

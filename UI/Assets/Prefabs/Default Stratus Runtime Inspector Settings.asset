@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c8507392c0405049ae75197ca536b58, type: 3}
+  m_Name: Default Stratus Runtime Inspector Settings
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  fieldBehaviour: {fileID: 8411739010033912662, guid: bef4c6cdcc45b894fb508fe97ad0e746,
+    type: 3}
+  booleanDrawer: {fileID: 6536797906793649784, guid: ff98259959df2614aa4974319e3d0faf,
+    type: 3}
+  numericDrawer: {fileID: 1867458029424102381, guid: aaae5f60b28418e4faf7606e0b587035,
+    type: 3}
+  dropdownDrawer: {fileID: 3590492641988913664, guid: 0fe9cdbf24af11243bedfc1715a55ebc,
+    type: 3}
+  valueNavigationDrawer: {fileID: 3475540410909578339, guid: e4ac707ac4e1f9245a08a979b0655cee,
+    type: 3}

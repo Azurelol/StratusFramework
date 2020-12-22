@@ -1,0 +1,21 @@
+{
+    "name": "Stratus.Core.Tests.Runtime",
+    "references": [
+        "Stratus.Core",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Stratus.OdinSerializer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": []
+}

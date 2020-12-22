@@ -1,0 +1,54 @@
+/******************************************************************************/
+/*!
+@file   SoundEffects.cs
+@author Christian Sagel
+@par    email: c.sagel\@digipen.edu
+@par    DigiPen login: c.sagel
+*/
+/******************************************************************************/
+using UnityEngine;
+using Stratus;
+using System;
+
+namespace Stratus
+{
+  namespace UI
+  {
+    /// <summary>
+    /// Plays sound effects used by the UI.
+    /// </summary>
+    [RequireComponent(typeof(AudioSource))]
+    public class SoundEffects : StratusSingletonBehaviour<SoundEffects>
+    {
+      public class PlayEvent : Stratus.StratusEvent { public AudioClip Clip; }
+
+      private AudioSource Player;
+      protected override void OnAwake()
+      {
+        Player = this.gameObject.GetComponent<AudioSource>();
+        Player.loop = false;
+        StratusScene.Connect<PlayEvent>(this.OnPlayEvent);
+      }
+
+      void OnPlayEvent(PlayEvent e)
+      {
+        this.Play(e.Clip);
+      }
+
+      void Play(AudioClip clip)
+      {
+        Player.clip = clip;
+        Player.Play();
+      }
+
+
+      public static void PlayEffect(AudioClip clip)
+      {
+        instance.Play(clip);
+      }
+
+
+    }
+  }
+
+}

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6917083e56b992d45aed67eb47ff89a3
+timeCreated: 1511767127
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - shader: {fileID: 4800000, guid: 52432dbdae239614b9d5d23b382317be, type: 3}
+  - maskTexture: {fileID: 2800000, guid: 45ebb0bdc0ecfe44dbd034ee7370d465, type: 3}
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 34a8a269e87f25e4a99810ea8dcb9a09, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

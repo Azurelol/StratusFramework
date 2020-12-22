@@ -1,0 +1,19 @@
+{
+    "name": "Stratus.Core.Tests.Editor",
+    "references": [
+        "Stratus.Core",
+        "Stratus.Core.Editor"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

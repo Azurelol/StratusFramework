@@ -1,0 +1,18 @@
+Stratus Framework
+by Christian Sagel
+
+Main Modules:
+- Actions
+- Events
+- Overlay
+- Routines, RoutineBehaviours
+- Triggers
+- UI
+
+Dependencies:
+- Ludiq Reflection: Lazlo Bonin
+- Rotorz Reorderable field: Rotorz Limited
+
+Other authors whose open-source scripts I have adopted into the framework (and learned so much from):
+- Fredrik Ludvigsen: SceneField, SelectByMouseScroll
+- Kevin_Tarchenski: SceneSelector (SceneViewWindow)

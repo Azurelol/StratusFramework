@@ -1,0 +1,16 @@
+{
+    "name": "Stratus.2D.Editor",
+    "references": [
+        "GUID:8c7846037d1c7bd4c9d5079586861535",
+        "GUID:3a9781db4804a9945b9883f3a7c46d45"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

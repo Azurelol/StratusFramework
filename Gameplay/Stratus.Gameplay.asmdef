@@ -1,0 +1,20 @@
+{
+    "name": "Stratus.Gameplay",
+    "references": [
+        "Stratus.Core",
+        "Cinemachine",
+        "Unity.TextMeshPro",
+        "Ink-Runtime",
+        "Unity.InputSystem",
+        "Stratus.AI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
